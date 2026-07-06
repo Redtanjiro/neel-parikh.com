@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neel Parikh — Interaction &amp; Immersive Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+    --wash:#2c2834;         /* set from active scene */
+    --spot-x:72%;           /* spotlight origin, updated on select */
+    --spot-y:34%;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--body);background:var(--wash);color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .9s ease}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;height:100vh;min-height:600px;overflow:hidden}
+  .scene{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease}
+  .scene.active{opacity:1}
+
+  /* dim veil that the spotlight cuts through */
+  .veil{position:absolute;inset:0;background:rgba(8,7,12,0);transition:background .5s ease;pointer-events:none;z-index:2}
+  .hero.lit .veil{background:rgba(8,7,12,.5)}
+
+  /* ambient glow that breathes FROM the painting's own light (window + lamp) */
+  .glow{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(30% 40% at 15% 46%, rgba(255,196,110,.34), transparent 66%),
+      radial-gradient(24% 30% at 38% 36%, rgba(255,224,160,.20), transparent 70%);
+    mix-blend-mode:screen;
+    animation:breathe 8.5s ease-in-out infinite;
+    will-change:opacity,transform;
+  }
+  @keyframes breathe{
+    0%,100%{opacity:.72;transform:scale(1)}
+    50%{opacity:1;transform:scale(1.045)}
+  }
+  .glow{transition:opacity .5s ease}
+  .hero.lit .glow{opacity:.35 !important;animation-play-state:paused}
+  @media(prefers-reduced-motion:reduce){
+    .glow{animation:none;opacity:.85}
+    .scene{transition:none}
+  }
+
+  /* the spotlight cone itself */
+  .spot{
+    position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+    transition:opacity .5s ease;
+    background:radial-gradient(60% 55% at var(--spot-x) var(--spot-y),
+      rgba(255,225,170,.42) 0%,
+      rgba(255,210,150,.20) 30%,
+      rgba(255,200,140,.06) 52%,
+      transparent 70%);
+    mix-blend-mode:screen;
+  }
+  .hero.lit .spot{opacity:1}
+
+  /* UI overlay */
+  .hero-ui{position:relative;z-index:5;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:26px 40px 40px}
+  /* scrims so text reads over any part of the painting */
+  .scrim-top{position:absolute;top:0;left:0;right:0;height:140px;background:linear-gradient(180deg,rgba(20,14,8,.45),transparent);pointer-events:none;z-index:4}
+  .scrim-bottom{position:absolute;bottom:0;left:0;right:0;height:240px;background:linear-gradient(0deg,rgba(20,14,8,.52),transparent);pointer-events:none;z-index:4}
+
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .wordmark{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.01em}
+  .nav{display:flex;gap:26px;font-family:var(--display);font-size:14px}
+  .nav a{opacity:.82;transition:opacity .2s}
+  .nav a:hover{opacity:1}
+
+  .bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+  .tagline h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.08;letter-spacing:-.01em;max-width:16ch;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+  .tagline p{margin-top:12px;font-size:15px;opacity:.82;max-width:38ch}
+
+  .time-chip{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--display);font-size:13px;font-weight:500;letter-spacing:.06em;
+    padding:10px 16px;border-radius:100px;
+    background:rgba(20,18,26,.5);border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(8px);cursor:pointer;color:#fff;white-space:nowrap;
+    transition:border-color .2s,background .2s;
+  }
+  .time-chip:hover{border-color:rgba(255,255,255,.5);background:rgba(20,18,26,.7)}
+  .time-chip .dot{width:8px;height:8px;border-radius:50%;background:#ffd27a;box-shadow:0 0 10px #ffd27a}
+
+  /* ---------- DISCIPLINE SPOTLIGHT (desktop only) ---------- */
+  .disciplines{
+    position:absolute;top:50%;right:44px;transform:translateY(-50%);
+    z-index:6;display:flex;flex-direction:column;gap:2px;align-items:flex-end;
+    text-align:right;
+  }
+  .disc-label{
+    font-family:var(--display);font-size:11px;font-weight:600;letter-spacing:.24em;
+    text-transform:uppercase;color:rgba(40,30,20,.55);margin-bottom:16px;
+  }
+  .disc{
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(30px,3.6vw,50px);line-height:1.12;letter-spacing:-.01em;
+    color:rgba(38,28,18,.42);
+    cursor:pointer;background:none;border:none;text-align:right;
+    padding:2px 0;transition:color .35s ease,transform .35s ease,text-shadow .35s ease;
+    transform-origin:right center;
+  }
+  .disc:hover{color:rgba(38,28,18,.72)}
+  .disc.active{
+    color:#fff;
+    text-shadow:0 0 30px rgba(255,180,90,.9),0 0 12px rgba(255,150,60,.7),0 2px 14px rgba(60,30,0,.5);
+    transform:scale(1.04);
+  }
+  .disc-hint{
+    font-family:var(--display);font-size:12px;color:rgba(40,30,20,.5);margin-top:18px;letter-spacing:.03em;
+    max-width:22ch;text-align:right;line-height:1.5;
+  }
+
+  /* hide spotlight list on smaller screens; keep clean scroll hero */
+  @media(max-width:900px){
+    .disciplines{display:none}
+    .hero.lit .veil{background:rgba(8,7,12,0)}
+    .hero.lit .spot{opacity:0}
+    .hero-ui{padding:22px 22px 30px}
+    .bottom{flex-direction:column;align-items:flex-start;gap:20px}
+  }
+
+  /* ---------- BELOW HERO (proof there's a page) ---------- */
+  .work{background:var(--wash);padding:90px 40px;transition:background .9s ease}
+  .work-inner{max-width:1100px;margin:0 auto}
+  .eyebrow{font-family:var(--display);font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;margin-bottom:26px}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:26px 0;border-top:1px solid rgba(255,255,255,.14)}
+  .row h2{font-family:var(--display);font-weight:600;font-size:clamp(22px,3vw,32px)}
+  .row p{opacity:.7;font-size:15px;max-width:44ch;margin-top:6px}
+  .row .meta{font-family:var(--display);font-size:13px;opacity:.55;white-space:nowrap}
+  @media(max-width:640px){.row{flex-direction:column;gap:8px}.work{padding:60px 22px}}
+</style>
+</head>
+<body>
+
+<header class="hero" id="hero">
+  <div class="scene" data-scene="morning"></div>
+  <div class="scene" data-scene="noon"></div>
+  <div class="scene" data-scene="sunset"></div>
+  <div class="scene" data-scene="night"></div>
+
+  <div class="glow"></div>
+  <div class="veil"></div>
+  <div class="spot"></div>
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+
+  <!-- desktop discipline spotlight -->
+  <div class="disciplines" id="disciplines">
+    <span class="disc-label">What I do</span>
+    <button class="disc" data-x="40%" data-y="66%" data-blurb="Flows, IA, and interfaces that get out of the way.">UI/UX</button>
+    <button class="disc" data-x="15%" data-y="46%" data-blurb="Hand-illustration and identity, from Procreate up.">Visual</button>
+    <button class="disc" data-x="38%" data-y="34%" data-blurb="TouchDesigner &amp; p5.js — spatial, real-time work.">Immersive</button>
+    <button class="disc" data-x="16%" data-y="60%" data-blurb="Brand systems &amp; events, from EMF ACE to launch.">Brand</button>
+    <span class="disc-hint" id="discHint">Hover a discipline — the light finds it.</span>
+  </div>
+
+  <div class="hero-ui">
+    <div class="top">
+      <a class="wordmark" href="/">Neel Parikh</a>
+      <nav class="nav">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="mailto:neelparikh7@gmail.com">Contact</a>
+      </nav>
+    </div>
+    <div class="bottom">
+      <div class="tagline">
+        <h1>Interaction &amp; immersive designer, Sydney.</h1>
+        <p>This scene is hand-painted — and it follows your clock.</p>
+      </div>
+      <button class="time-chip" id="timeChip">
+        <span class="dot"></span>
+        <span id="chipText">--:-- · LOADING</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="work" id="work">
+  <div class="work-inner">
+    <p class="eyebrow">Selected work</p>
+    <a class="row" href="/work/futee">
+      <div><h2>Futee</h2><p>A football matchmaking platform for Bangkok — research through UI.</p></div>
+      <span class="meta">UX · UI · Visual ↗</span>
+    </a>
+    <a class="row" href="#">
+      <div><h2>EMF ACE</h2><p>Brand identity for a 1,000-attendee experiential conference in Abu Dhabi.</p></div>
+      <span class="meta">Brand · Events ↗</span>
+    </a>
+    <a class="row" href="#">
+      <div><h2>Into Yesterday</h2><p>A speculative immersive installation concept for Vivid Sydney.</p></div>
+      <span class="meta">Immersive ↗</span>
+    </a>
+  </div>
+</section>
+
+<script>
+  // ---------- SCENES: time-of-day system ----------
+  const SCENES = [
+    {key:"morning", from:5,  to:11, label:"MORNING",     wash:"#3b3128", available:true},
+    {key:"noon",    from:11, to:16, label:"MIDDAY",      wash:"#4a4033", available:true},
+    {key:"sunset",  from:16, to:19, label:"GOLDEN HOUR", wash:"#3b3128", available:true},
+    {key:"night",   from:19, to:24, label:"NIGHT",       wash:"#4a4033", available:true},
+  ];
+  const nightEarly = {from:0,to:5};
+
+  // preload backgrounds
+  document.querySelectorAll('.scene').forEach(el=>{
+    const k = el.dataset.scene;
+    el.style.backgroundImage = `image-set(url('assets/hero-${k}.webp') 1x, url('assets/hero-${k}.webp') 2x)`;
+    el.style.backgroundImage = `url('assets/hero-${k}.webp')`;
+  });
+
+  function sceneForHour(h){
+    if(h>=nightEarly.from && h<nightEarly.to) return SCENES.find(s=>s.key==='night');
+    return SCENES.find(s=> h>=s.from && h<s.to) || SCENES[0];
+  }
+  const scenes = [...document.querySelectorAll('.scene')];
+  const chipText = document.getElementById('chipText');
+  let idx = 0;
+
+  function applyScene(s){
+    scenes.forEach(el=>el.classList.toggle('active', el.dataset.scene===s.key));
+    document.documentElement.style.setProperty('--wash', s.wash);
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    chipText.textContent = `${hh}:${mm} · ${s.label}`;
+  }
+  // init to local time
+  const startScene = sceneForHour(new Date().getHours());
+  idx = SCENES.indexOf(startScene);
+  applyScene(startScene);
+
+  // chip cycles through scenes
+  document.getElementById('timeChip').addEventListener('click',()=>{
+    idx = (idx+1)%SCENES.length;
+    applyScene(SCENES[idx]);
+  });
+
+  // ---------- DISCIPLINE SPOTLIGHT ----------
+  const hero = document.getElementById('hero');
+  const discs = [...document.querySelectorAll('.disc')];
+  const hint = document.getElementById('discHint');
+  const root = document.documentElement;
+  let lockedDisc = null;
+
+  function lightOn(btn){
+    root.style.setProperty('--spot-x', btn.dataset.x);
+    root.style.setProperty('--spot-y', btn.dataset.y);
+    hero.classList.add('lit');
+    discs.forEach(d=>d.classList.toggle('active', d===btn));
+    hint.textContent = btn.dataset.blurb;
+  }
+  function lightOff(){
+    if(lockedDisc){ lightOn(lockedDisc); return; }
+    hero.classList.remove('lit');
+    discs.forEach(d=>d.classList.remove('active'));
+    hint.textContent = "Hover a discipline — the light finds it.";
+  }
+  discs.forEach(btn=>{
+    btn.addEventListener('mouseenter',()=>lightOn(btn));
+    btn.addEventListener('mouseleave',lightOff);
+    btn.addEventListener('click',()=>{
+      lockedDisc = (lockedDisc===btn)?null:btn;
+      lockedDisc?lightOn(btn):lightOff();
+    });
+    btn.addEventListener('focus',()=>lightOn(btn));
+    btn.addEventListener('blur',lightOff);
+  });
+</script>
+</body>
+</html>
