@@ -655,14 +655,14 @@
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
   },{threshold:.12,rootMargin:"0px 0px -40px 0px"});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  // ---------- MacBook scroll reveal (Aceternity-style: scale + rise + lid open) ----------
+  // ---------- MacBook scroll reveal (lid open only) ----------
   (function(){
     const stage = document.getElementById('mbStage');
     const macbook = document.getElementById('macbook');
     const lid = document.getElementById('mbLid');
     if(!stage || !macbook || !lid) return;
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      lid.style.transform='none'; macbook.style.transform='none'; return;
+      lid.style.transform='none'; return;
     }
     const easeOut = t => 1-Math.pow(1-t,3);
     let ticking=false;
@@ -678,12 +678,6 @@
       const lidP = easeOut(Math.min(1, p/0.6));
       const angle = -90 + lidP*90;
       lid.style.transform = `perspective(1400px) rotateX(${angle}deg)`;
-
-      // Whole macbook scales up (0.7 -> 1) and rises, across first 78%
-      const grow = easeOut(Math.min(1, p/0.78));
-      const scale = 0.7 + grow*0.3;
-      const rise = (1-grow)*50;
-      macbook.style.transform = `translateY(${rise}px) scale(${scale})`;
 
       ticking=false;
     }
