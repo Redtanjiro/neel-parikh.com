@@ -7,7 +7,7 @@
 <meta name="description" content="EMF ACE Abu Dhabi: full event brand and campaign for EMF Global's 11th-year flagship. Design lead — Neel Parikh at Media Mushroom.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#140f1c;             /* deep aubergine-black */
@@ -45,8 +45,7 @@
 
   /* HERO */
   header.hero{position:relative;min-height:100vh;background:var(--ink);color:#fff;overflow:hidden;display:flex;align-items:center;padding:120px 0 70px}
-  .hero-bg{position:absolute;inset:0;background:url('assets/kv-5.webp') center/cover;opacity:.42}
-  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,28,.6),rgba(20,15,28,.4) 40%,rgba(20,15,28,.85));z-index:1}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,28,.2),transparent 40%,rgba(20,15,28,.4));z-index:1}
   .hero-glow{position:absolute;inset:0;z-index:1;background:radial-gradient(60% 50% at 78% 30%,rgba(224,180,92,.22),transparent 60%),radial-gradient(50% 50% at 10% 90%,rgba(107,63,160,.3),transparent 60%);mix-blend-mode:screen;animation:heroBreathe 9s ease-in-out infinite}
   @keyframes heroBreathe{0%,100%{opacity:.7}50%{opacity:1}}
   .hero .wrap{position:relative;z-index:2}
@@ -103,8 +102,8 @@
   .type-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:28px}
   .type-card .tname{font-family:var(--ui);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
   .type-card .tsample{font-size:34px;line-height:1.1;color:#fff}
-  .type-card.serif .tsample{font-family:'Bricolage Grotesque',serif;font-weight:700}
-  .type-card.sans .tsample{font-family:var(--body);font-weight:500}
+  .type-card.serif .tsample{font-family:'Playfair Display',serif;font-weight:700}
+  .type-card.sans .tsample{font-family:'Poppins',sans-serif;font-weight:600}
 
   /* social gallery */
   .social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
@@ -120,19 +119,19 @@
   @media(max-width:820px){.process{grid-template-columns:1fr 1fr}}
   @media(max-width:520px){.process{grid-template-columns:1fr}}
 
-  /* event photos — editorial masonry */
+  /* event photos — clean uniform gallery */
   .event-lead{margin-top:48px}
-  .event-lead img{width:100%;border-radius:16px}
+  .event-lead img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px}
   .event-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
-  .event-grid img{width:100%;height:100%;object-fit:cover;border-radius:14px;aspect-ratio:3/4}
-  .event-grid .wide{grid-column:span 2;aspect-ratio:auto}
-  @media(max-width:680px){.event-grid{grid-template-columns:1fr 1fr}.event-grid .wide{grid-column:span 2}}
+  .event-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px}
+  @media(max-width:680px){.event-grid{grid-template-columns:1fr 1fr}}
 
-  /* stats */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:52px}
-  .stat .n{font-family:var(--display);font-weight:800;font-size:clamp(36px,5vw,58px);letter-spacing:-.03em;line-height:1;color:var(--gold)}
-  .stat .l{font-size:14px;color:var(--muted-dark);margin-top:10px;max-width:20ch}
-  @media(max-width:680px){.stats{grid-template-columns:1fr 1fr;gap:24px}}
+  /* outcome ledger — editorial figure + detail rows */
+  .ledger{margin-top:52px;border-top:1px solid var(--line)}
+  .ledger-row{display:grid;grid-template-columns:0.9fr 1.6fr;gap:40px;padding:28px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .lg-fig{font-family:var(--display);font-weight:800;font-size:clamp(28px,3.4vw,42px);letter-spacing:-.02em;color:var(--gold-deep);line-height:1}
+  .lg-desc{font-size:clamp(16px,1.8vw,18px);color:#3a3933;line-height:1.55}
+  @media(max-width:680px){.ledger-row{grid-template-columns:1fr;gap:10px}}
 
   /* closer */
   .closer{background:var(--ink);color:#fff;padding:110px 0 90px;text-align:center;position:relative;overflow:hidden}
@@ -191,7 +190,6 @@
 
 <!-- HERO (illustration swaps in here later) -->
 <header class="hero">
-  <div class="hero-bg"></div>
   <div class="hero-glow"></div>
   <div class="wrap">
     <p class="eyebrow">Case Study — Brand &amp; Campaign</p>
@@ -242,8 +240,8 @@
 <section style="padding-top:0">
   <div class="wrap">
     <figure class="figure reveal">
-      <img src="assets/kv-4.webp" alt="EMF ACE Abu Dhabi key visual — desert, F1 car, camel, and skyline" loading="lazy">
-      <figcaption>The campaign key visual — F1, desert, and the Abu Dhabi skyline</figcaption>
+      <img src="assets/post-4.webp" alt="EMF ACE campaign key visual — F1 car, camel, and Abu Dhabi skyline at dusk" loading="lazy" style="max-width:620px;margin:0 auto">
+      <figcaption style="text-align:center">The campaign key visual — F1, desert, and the Abu Dhabi skyline</figcaption>
     </figure>
   </div>
 </section>
@@ -267,14 +265,16 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="type-card serif"><div class="tname">Display — Playfair Display</div><div class="tsample">Beyond Luxury</div></div>
-        <div class="type-card sans"><div class="tname">Body — Poppins</div><div class="tsample">Glorious Years</div></div>
+        <div class="type-card sans"><div class="tname">Body — Poppins</div><div class="tsample">11 Glorious Years</div></div>
       </div>
     </div>
 
-    <figure class="figure dark reveal" style="margin-top:48px">
-      <img src="assets/kv-2.webp" alt="EMF ACE brand banners and identity applications" loading="lazy">
-      <figcaption>Identity applied across event banners</figcaption>
-    </figure>
+    <div class="social-grid" style="margin-top:48px">
+      <img src="assets/post-1.webp" alt="ACE campaign post — the magic lamp teaser" loading="lazy">
+      <img src="assets/post-2.webp" alt="ACE campaign post — flying carpet" loading="lazy">
+      <img src="assets/post-3.webp" alt="ACE campaign post — opportunities beyond the dunes" loading="lazy">
+    </div>
+    <p style="font-family:var(--ui);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-dark);margin-top:14px">The identity, applied across the campaign</p>
   </div>
 </section>
 
@@ -298,17 +298,14 @@
   <div class="wrap">
     <div class="sec-eyebrow" style="color:var(--purple-deep)"><span class="num">04</span> The Campaign</div>
     <h2>A rollout that built anticipation, post by post.</h2>
-    <p class="body-lg" style="margin-top:22px">From teaser concepts — the magic lamp, the flying carpet, opportunities beyond the dunes — to countdowns, speaker reveals, sponsor welcomes, and registration milestones. Each post carried the same luxury language while telling its own part of the story.</p>
+    <p class="body-lg" style="margin-top:22px">The campaign moved in acts. Teasers set the mood — a magic lamp, a flying carpet, opportunities waiting beyond the dunes — each hinting at the event without naming it. Then the tempo picked up: a one-week countdown, an early-bird deadline, a "500+ registered" milestone, and the call for award nominations. Every post spoke the same luxury language while carrying its own moment in the story.</p>
     <div class="social-grid">
-      <img src="assets/post-1.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-2.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-3.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-4.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-5.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-6.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-7.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-8.webp" alt="ACE social post" loading="lazy">
-      <img src="assets/post-9.webp" alt="ACE social post" loading="lazy">
+      <img src="assets/post-5.webp" alt="ACE post — one week countdown" loading="lazy">
+      <img src="assets/post-6.webp" alt="ACE post — early bird registration closes" loading="lazy">
+      <img src="assets/post-7.webp" alt="ACE post — 500+ registered milestone" loading="lazy">
+      <img src="assets/post-8.webp" alt="ACE post — all eyes on gold, award nominations" loading="lazy">
+      <img src="assets/post-9.webp" alt="ACE post — Ritz-Carlton partner" loading="lazy">
+      <img src="assets/post-4.webp" alt="ACE post — event dates key visual" loading="lazy">
     </div>
   </div>
 </section>
@@ -325,11 +322,10 @@
         <p class="body-lg">The line-up demanded designs worthy of its names — from method-actor Nawazuddin Siddiqui to the Global Design Fusion panel, each speaker got a bespoke card in the ACE language. Luxury partners — the Ritz-Carlton, Emirates Palace — were integrated with the same care, their brands sitting inside ACE's world rather than beside it.</p>
       </div>
     </div>
-    <div class="social-grid" style="grid-template-columns:repeat(4,1fr)">
-      <img src="assets/speaker-nawaz.webp" alt="Nawazuddin Siddiqui speaker card" loading="lazy" style="aspect-ratio:0.8">
-      <img src="assets/post-10.webp" alt="Speaker card" loading="lazy" style="aspect-ratio:0.8">
-      <img src="assets/post-11.webp" alt="Speaker card" loading="lazy" style="aspect-ratio:0.8">
-      <img src="assets/kv-6.webp" alt="Sponsor integration" loading="lazy" style="aspect-ratio:0.8;object-fit:cover">
+    <div class="social-grid" style="grid-template-columns:repeat(3,1fr)">
+      <img src="assets/speaker-nawaz.webp" alt="Nawazuddin Siddiqui speaker card" loading="lazy" style="aspect-ratio:0.8;object-fit:cover">
+      <img src="assets/post-10.webp" alt="Speaker card — Global Design Fusion panel" loading="lazy" style="aspect-ratio:0.8;object-fit:cover">
+      <img src="assets/post-11.webp" alt="Guest of honour card — Maharaj Kumar Sahib" loading="lazy" style="aspect-ratio:0.8;object-fit:cover">
     </div>
   </div>
 </section>
@@ -342,14 +338,15 @@
     <p class="body-lg" style="margin-top:22px">Across three days at Abu Dhabi's most extraordinary venues, the identity came to life — chandelier installations spelling EMF, a gala dinner under a fireworks-lit dome, the ACE stage, and branded touchpoints down to the menu on every plate at Emirates Palace.</p>
 
     <div class="event-lead reveal">
-      <img src="assets/event-fireworks.webp" alt="EMF ACE gala under a fireworks-projection dome" loading="lazy">
+      <img src="assets/event-fireworks.webp" alt="EMF ACE gala under a fireworks-projection dome at Ferrari World" loading="lazy">
     </div>
     <div class="event-grid reveal">
-      <img class="wide" src="assets/event-gala.webp" alt="Gala dinner setup" loading="lazy">
+      <img src="assets/event-gala.webp" alt="Gala dinner in the Italian-village dome" loading="lazy">
+      <img src="assets/event-stage.webp" alt="The ACE main stage" loading="lazy">
       <img src="assets/event-chandelier.webp" alt="EMF chandelier installation" loading="lazy">
-      <img src="assets/event-stage.webp" alt="ACE main stage" loading="lazy">
-      <img src="assets/event-menu.webp" alt="ACE branded menu at Emirates Palace" loading="lazy">
-      <img class="wide" src="assets/event-palace.webp" alt="Emirates Palace lobby" loading="lazy">
+      <img src="assets/event-menu.webp" alt="ACE-branded menu at Emirates Palace" loading="lazy">
+      <img src="assets/event-palace.webp" alt="Emirates Palace lobby" loading="lazy">
+      <img src="assets/event-skyline.webp" alt="Abu Dhabi skyline at night" loading="lazy">
     </div>
   </div>
 </section>
@@ -359,11 +356,23 @@
   <div class="wrap">
     <div class="sec-eyebrow"><span class="num">07</span> Outcome</div>
     <h2>A milestone event, given a world to match.</h2>
-    <div class="stats">
-      <div class="stat"><div class="n">11</div><div class="l">Years of EMF Global, commemorated</div></div>
-      <div class="stat"><div class="n">500+</div><div class="l">Registrations driven through the campaign</div></div>
-      <div class="stat"><div class="n">3</div><div class="l">Days across Abu Dhabi's grandest venues</div></div>
-      <div class="stat"><div class="n">1</div><div class="l">Cohesive brand, from social to stage</div></div>
+    <div class="ledger">
+      <div class="ledger-row reveal">
+        <div class="lg-fig">11 years</div>
+        <div class="lg-desc">of EMF Global, given a commemorative identity that carried a decade-plus of legacy into one weekend.</div>
+      </div>
+      <div class="ledger-row reveal">
+        <div class="lg-fig">500+ registered</div>
+        <div class="lg-desc">a milestone the campaign celebrated in real time — from teaser to countdown to a gold "thank you" post.</div>
+      </div>
+      <div class="ledger-row reveal">
+        <div class="lg-fig">3 days</div>
+        <div class="lg-desc">across Emirates Palace, the Ritz-Carlton, and Ferrari World — the brand holding its own in each.</div>
+      </div>
+      <div class="ledger-row reveal">
+        <div class="lg-fig">One voice</div>
+        <div class="lg-desc">from a phone-screen teaser to a chandelier spelling EMF above a gala — every touchpoint unmistakably ACE.</div>
+      </div>
     </div>
     <p class="body-lg" style="margin-top:52px">Leading the design end to end meant every touchpoint — teaser post, speaker card, sponsor welcome, stage screen, gala menu — spoke the same language. The result was a brand that felt as premium as the event it carried, and a system built to scale across a campaign of that size.</p>
   </div>
