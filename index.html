@@ -141,15 +141,40 @@
     .bottom{flex-direction:column;align-items:flex-start;gap:20px}
   }
 
-  /* ---------- BELOW HERO (proof there's a page) ---------- */
-  .work{background:var(--wash);padding:90px 40px;transition:background .9s ease}
-  .work-inner{max-width:1100px;margin:0 auto}
-  .eyebrow{font-family:var(--ui);font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;margin-bottom:26px}
-  .row{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:26px 0;border-top:1px solid rgba(255,255,255,.14)}
-  .row h2{font-family:var(--display);font-weight:700;font-size:clamp(22px,3vw,32px)}
-  .row p{opacity:.7;font-size:15px;max-width:44ch;margin-top:6px}
-  .row .meta{font-family:var(--ui);font-size:13px;opacity:.55;white-space:nowrap}
-  @media(max-width:640px){.row{flex-direction:column;gap:8px}.work{padding:60px 22px}}
+  /* ---------- BELOW HERO: Jack&AI-style expanding accordion ---------- */
+  .work{background:var(--wash);padding:100px 40px 110px;transition:background .9s ease}
+  .work-inner{max-width:1160px;margin:0 auto}
+  .eyebrow{font-family:var(--ui);font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;margin-bottom:14px;color:#fff}
+  .work-head{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;color:#fff;margin-bottom:44px;max-width:20ch}
+
+  .acc{border-top:1px solid rgba(255,255,255,.16)}
+  .acc-row{display:block;border-bottom:1px solid rgba(255,255,255,.16);padding:22px 0;cursor:pointer;position:relative}
+  .acc-head{display:flex;align-items:center;gap:34px}
+  .acc-idx{font-family:var(--ui);font-size:15px;font-weight:500;color:rgba(255,255,255,.5);min-width:64px}
+  .acc-title{font-family:var(--display);font-weight:800;font-size:clamp(34px,6.5vw,86px);line-height:.98;letter-spacing:-.03em;color:#fff;transition:opacity .3s;text-transform:uppercase}
+  .acc-row:not(.active):hover .acc-title{opacity:.55}
+
+  .acc-panel{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+    max-height:0;overflow:hidden;opacity:0;
+    transition:max-height .6s cubic-bezier(.4,0,.2,1),opacity .5s ease,padding .5s ease;
+    padding:0 0 0 98px}
+  .acc-row.active .acc-panel{max-height:420px;opacity:1;padding:26px 0 18px 98px}
+  .acc-body{max-width:46ch}
+  .acc-body p{font-size:16px;line-height:1.62;color:rgba(255,255,255,.82)}
+  .acc-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .acc-tags span{font-family:var(--ui);font-size:12px;padding:6px 14px;border-radius:100px;border:1px solid rgba(255,255,255,.24);color:rgba(255,255,255,.78)}
+  .acc-link{display:inline-block;margin-top:22px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px}
+  .acc-num{font-family:var(--display);font-weight:800;font-size:clamp(120px,22vw,300px);line-height:.8;letter-spacing:-.04em;color:#f0c04a;text-align:right;justify-self:end;opacity:.92;transform:translateY(6px)}
+
+  .work-all{display:inline-block;margin-top:44px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:3px}
+  @media(max-width:760px){
+    .work{padding:70px 22px}
+    .acc-head{gap:16px}
+    .acc-idx{min-width:44px;font-size:13px}
+    .acc-panel{grid-template-columns:1fr;padding-left:0}
+    .acc-row.active .acc-panel{padding-left:0;max-height:600px}
+    .acc-num{display:none}
+  }
   :root{--sm-accent:#f0c04a;--sm-nib:#3a2f18;--sm-track:#8a8377}
   /* ---- HAND-DRAWN SCROLL PROGRESS: traveling marker ---- */
   .scroll-track{position:fixed;top:12vh;right:28px;height:76vh;width:30px;z-index:100;pointer-events:none}
@@ -233,22 +258,83 @@
 <section class="work" id="work">
   <div class="work-inner">
     <p class="eyebrow">Selected work</p>
-    <a class="row" href="/work/futee">
-      <div><h2>Futee</h2><p>A football matchmaking platform for Bangkok — research through UI.</p></div>
-      <span class="meta">UX · UI · Visual ↗</span>
-    </a>
-    <a class="row" href="/work/emf-ace">
-      <div><h2>EMF ACE</h2><p>Brand identity for a 1,000-attendee experiential conference in Abu Dhabi.</p></div>
-      <span class="meta">Brand · Events ↗</span>
-    </a>
-    <a class="row" href="#">
-      <div><h2>Into Yesterday</h2><p>A speculative immersive installation concept for Vivid Sydney.</p></div>
-      <span class="meta">Immersive ↗</span>
-    </a>
+    <h2 class="work-head">A few things worth walking through.</h2>
+
+    <div class="acc" id="acc">
+      <a class="acc-row active" href="/work/futee" data-n="01">
+        <div class="acc-head">
+          <span class="acc-idx">(001)</span>
+          <span class="acc-title">FUTEE</span>
+        </div>
+        <div class="acc-panel">
+          <div class="acc-body">
+            <p>A football matchmaking platform for Bangkok — research through UI. Create games, book grounds, rate teammates, and fill an empty spot in the lineup without a group chat full of maybes.</p>
+            <div class="acc-tags"><span>UX</span><span>UI</span><span>Visual</span></div>
+            <span class="acc-link">View case study →</span>
+          </div>
+          <div class="acc-num">01</div>
+        </div>
+      </a>
+
+      <a class="acc-row" href="/work/emf-ace" data-n="02">
+        <div class="acc-head">
+          <span class="acc-idx">(002)</span>
+          <span class="acc-title">EMF ACE</span>
+        </div>
+        <div class="acc-panel">
+          <div class="acc-body">
+            <p>The full event brand and campaign for EMF Global's flagship in Abu Dhabi — a desert-luxury world spanning identity, a social campaign, and a live event across the city's grandest venues.</p>
+            <div class="acc-tags"><span>Brand</span><span>Campaign</span><span>Art Direction</span></div>
+            <span class="acc-link">View case study →</span>
+          </div>
+          <div class="acc-num">02</div>
+        </div>
+      </a>
+
+      <a class="acc-row" href="/work/cseds" data-n="03">
+        <div class="acc-head">
+          <span class="acc-idx">(003)</span>
+          <span class="acc-title">CSEDS</span>
+        </div>
+        <div class="acc-panel">
+          <div class="acc-body">
+            <p>A digital home for a Sydney construction-products distributor — giving thirty years of engineering expertise a credible, engineering-grade website, designed and built in Framer.</p>
+            <div class="acc-tags"><span>Web Design</span><span>Framer</span><span>Content</span></div>
+            <span class="acc-link">View case study →</span>
+          </div>
+          <div class="acc-num">03</div>
+        </div>
+      </a>
+    </div>
+
+    <a class="work-all" href="/work">See all work →</a>
   </div>
 </section>
 
 <script>
+  // ---------- Work accordion (Jack&AI style) ----------
+  (function(){
+    const rows=[...document.querySelectorAll('.acc-row')];
+    rows.forEach(row=>{
+      const head=row.querySelector('.acc-head');
+      const link=row.querySelector('.acc-link');
+      // clicking the big title/head toggles expand (doesn't navigate)
+      head.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const wasActive=row.classList.contains('active');
+        rows.forEach(r=>r.classList.remove('active'));
+        if(!wasActive) row.classList.add('active');
+      });
+      // clicking the "View case study" link navigates
+      if(link){link.addEventListener('click',(e)=>{e.stopPropagation();window.location.href=row.getAttribute('href');});}
+    });
+    // prevent the row's own href from firing on head clicks (row is <a>)
+    rows.forEach(row=>row.addEventListener('click',(e)=>{
+      if(e.target.closest('.acc-link'))return; // let link work
+      e.preventDefault();
+    }));
+  })();
+
   // ---------- SCENES: time-of-day system ----------
   const SCENES = [
     {key:"morning", from:5,  to:11, label:"MORNING",     wash:"#3b3128", available:true},
