@@ -64,6 +64,21 @@
   .spread-card .sp-meta{font-family:var(--ui);font-size:13px;color:#b8b6ae}
   @media(max-width:720px){.spread-grid{grid-template-columns:1fr}}
 
+  /* ---- WORK BY DISCIPLINE (data-driven, primary view) ---- */
+  .disc-section{padding:60px 0;border-top:1px solid var(--line)}
+  .disc-section:first-of-type{border-top:none}
+  .disc-title{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em}
+  .disc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:32px}
+  @media(max-width:720px){.disc-grid{grid-template-columns:1fr}}
+  .disc-card{display:block}
+  .disc-media{border-radius:16px;overflow:hidden;background:var(--ink)}
+  .disc-media img{width:100%;aspect-ratio:16/10;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .disc-card:hover .disc-media img{transform:scale(1.04)}
+  .disc-info{display:flex;flex-direction:column;gap:4px;margin-top:14px}
+  .disc-cat{font-family:var(--ui);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-dark)}
+  .disc-name{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-.01em}
+  .disc-soon{font-family:var(--body);font-size:16px;color:var(--muted-dark);font-style:italic;margin-top:20px}
+
   .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:none}
   @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.stack-card{transition:none}html{scroll-behavior:auto}}
@@ -91,6 +106,11 @@
       <button data-view="spread">See all</button>
     </div>
   </div>
+</div>
+
+<!-- WORK BY DISCIPLINE — primary, data-driven view -->
+<div class="wrap">
+  <div id="workByDiscipline"></div>
 </div>
 
 <!-- STACK VIEW -->
@@ -127,7 +147,43 @@
 
 <!-- (editorial project list lives on the homepage, below the hero) -->
 
+<script src="/assets/projects.js"></script>
 <script>
+  // ---- Work by discipline: grouped, data-driven render ----
+  (function(){
+    const wrap = document.getElementById('workByDiscipline');
+    window.DISCIPLINES.forEach(disc => {
+      const inDisc = window.PROJECTS
+        .filter(p => p.disciplines.includes(disc))
+        .sort((a,b) => a.order - b.order);
+
+      const section = document.createElement('section');
+      section.className = 'disc-section';
+      section.innerHTML = `<h2 class="disc-title">${disc}</h2>`;
+
+      if (inDisc.length === 0) {
+        section.innerHTML += `<p class="disc-soon">New work coming soon.</p>`;
+      } else {
+        const grid = document.createElement('div');
+        grid.className = 'disc-grid';
+        inDisc.forEach(p => {
+          const a = document.createElement('a');
+          a.className = 'disc-card';
+          a.href = p.url;
+          a.innerHTML = `
+            <div class="disc-media"><img src="${p.thumb}" alt="${p.title}" loading="lazy"></div>
+            <div class="disc-info">
+              <span class="disc-cat">${p.category}</span>
+              <span class="disc-name">${p.title}</span>
+            </div>`;
+          grid.appendChild(a);
+        });
+        section.appendChild(grid);
+      }
+      wrap.appendChild(section);
+    });
+  })();
+
   // ---- View toggle ----
   const toggle=document.getElementById('toggle');
   const stackView=document.getElementById('stackView');

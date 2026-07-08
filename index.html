@@ -260,58 +260,39 @@
     <p class="eyebrow">Selected work</p>
     <h2 class="work-head">A few things worth walking through.</h2>
 
-    <div class="acc" id="acc">
-      <a class="acc-row active" href="/work/futee" data-n="01">
-        <div class="acc-head">
-          <span class="acc-idx">(001)</span>
-          <span class="acc-title">FUTEE</span>
-        </div>
-        <div class="acc-panel">
-          <div class="acc-body">
-            <p>A football matchmaking platform for Bangkok — research through UI. Create games, book grounds, rate teammates, and fill an empty spot in the lineup without a group chat full of maybes.</p>
-            <div class="acc-tags"><span>UX</span><span>UI</span><span>Visual</span></div>
-            <span class="acc-link">View case study →</span>
-          </div>
-          <div class="acc-num">01</div>
-        </div>
-      </a>
-
-      <a class="acc-row" href="/work/emf-ace" data-n="02">
-        <div class="acc-head">
-          <span class="acc-idx">(002)</span>
-          <span class="acc-title">EMF ACE</span>
-        </div>
-        <div class="acc-panel">
-          <div class="acc-body">
-            <p>The full event brand and campaign for EMF Global's flagship in Abu Dhabi — a desert-luxury world spanning identity, a social campaign, and a live event across the city's grandest venues.</p>
-            <div class="acc-tags"><span>Brand</span><span>Campaign</span><span>Art Direction</span></div>
-            <span class="acc-link">View case study →</span>
-          </div>
-          <div class="acc-num">02</div>
-        </div>
-      </a>
-
-      <a class="acc-row" href="/work/cseds" data-n="03">
-        <div class="acc-head">
-          <span class="acc-idx">(003)</span>
-          <span class="acc-title">CSEDS</span>
-        </div>
-        <div class="acc-panel">
-          <div class="acc-body">
-            <p>A digital home for a Sydney construction-products distributor — giving thirty years of engineering expertise a credible, engineering-grade website, designed and built in Framer.</p>
-            <div class="acc-tags"><span>Web Design</span><span>Framer</span><span>Content</span></div>
-            <span class="acc-link">View case study →</span>
-          </div>
-          <div class="acc-num">03</div>
-        </div>
-      </a>
-    </div>
+    <div class="acc" id="acc"></div>
 
     <a class="work-all" href="/work">See all work →</a>
   </div>
 </section>
 
+<script src="/assets/projects.js"></script>
 <script>
+  // ---------- Work accordion: render rows from window.PROJECTS ----------
+  (function(){
+    const acc=document.getElementById('acc');
+    const projects=[...window.PROJECTS].sort((a,b)=>a.order-b.order);
+    acc.innerHTML=projects.map((p,i)=>{
+      const n=String(p.order).padStart(2,'0');
+      const tags=p.tags.map(t=>`<span>${t}</span>`).join('');
+      return `
+      <a class="acc-row${i===0?' active':''}" href="${p.url}" data-n="${n}">
+        <div class="acc-head">
+          <span class="acc-idx">(${String(p.order).padStart(3,'0')})</span>
+          <span class="acc-title">${p.title.toUpperCase()}</span>
+        </div>
+        <div class="acc-panel">
+          <div class="acc-body">
+            <p>${p.description}</p>
+            <div class="acc-tags">${tags}</div>
+            <span class="acc-link">View case study →</span>
+          </div>
+          <div class="acc-num">${n}</div>
+        </div>
+      </a>`;
+    }).join('');
+  })();
+
   // ---------- Work accordion (Jack&AI style) ----------
   (function(){
     const rows=[...document.querySelectorAll('.acc-row')];
