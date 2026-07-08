@@ -7,7 +7,7 @@
 <meta name="description" content="Futee: a football matchmaking platform for Bangkok. Case study by Neel Parikh — UX, UI, and visual design.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#121212;
@@ -48,7 +48,8 @@
     padding:20px 32px;
     mix-blend-mode:difference;
   }
-  nav a{color:#fff;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.02em}
+  nav a{color:#fff}
+  nav .wordmark{font-family:var(--display);font-weight:700;font-size:17px}
   nav .navlinks{display:flex;gap:28px}
   nav .navlinks a{font-family:var(--ui);font-weight:500;font-size:14px;opacity:.85}
   .navlink{position:relative;padding-bottom:8px}
@@ -96,7 +97,7 @@
   .hero h1 .dot{color:var(--yellow)}
   .hero-lede{
     max-width:640px;
-    font-size:clamp(18px,2.4vw,22px);
+    font-size:clamp(17px,2vw,20px);
     color:#d8d7cf;
     margin-top:26px;
     line-height:1.5;
@@ -272,7 +273,7 @@
 
   /* stat row */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:52px}
-  .stat .n{font-family:var(--display);font-weight:700;font-size:clamp(40px,6vw,68px);letter-spacing:-.03em;line-height:1}
+  .stat .n{font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,68px);letter-spacing:-.03em;line-height:1}
   .stat .n .u{font-size:.5em;color:var(--yellow);margin-left:2px}
   .stat .l{font-size:14px;color:var(--muted-dark);margin-top:10px;max-width:22ch}
   .band .stat .l{color:var(--muted-dark)}
@@ -414,7 +415,7 @@
 </div>
 
 <nav>
-  <a href="/">Neel Parikh</a>
+  <a class="wordmark" href="/">Neel Parikh</a>
   <div class="navlinks">
     <a class="navlink" href="/work">Work
       <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M3,8 C22,4 45,11 63,7 C82,3 100,10 117,6"/></svg>

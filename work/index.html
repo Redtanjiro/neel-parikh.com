@@ -64,26 +64,6 @@
   .spread-card .sp-meta{font-family:var(--ui);font-size:13px;color:#b8b6ae}
   @media(max-width:720px){.spread-grid{grid-template-columns:1fr}}
 
-  /* ---- JACK & AI EDITORIAL LIST (below) ---- */
-  .editorial{padding:100px 0}
-  .editorial .lead{font-family:var(--ui);font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px}
-  .editorial h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4vw,46px);text-align:center;letter-spacing:-.02em;margin-bottom:60px}
-  .ed-row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:56px 0;border-top:1px solid var(--line)}
-  .ed-row:last-child{border-bottom:1px solid var(--line)}
-  .ed-row.flip .ed-media{order:2}
-  .ed-media{overflow:hidden;border-radius:18px}
-  .ed-media img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
-  .ed-row:hover .ed-media img{transform:scale(1.05)}
-  .ed-num{font-family:var(--ui);font-size:13px;letter-spacing:.1em;color:var(--muted-dark);margin-bottom:14px}
-  .ed-title{font-family:var(--display);font-weight:800;font-size:clamp(34px,4.5vw,56px);line-height:.98;letter-spacing:-.03em;margin-bottom:14px}
-  .ed-desc{font-size:16px;color:#4a4942;line-height:1.6;max-width:42ch;margin-bottom:22px}
-  .ed-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-  .ed-tags span{font-family:var(--ui);font-size:12px;padding:6px 14px;border-radius:100px;border:1px solid var(--line);color:var(--muted)}
-  .ed-link{font-family:var(--ui);font-size:15px;font-weight:500;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
-  .ed-link::after{content:"→";transition:transform .2s}
-  .ed-row:hover .ed-link::after{transform:translateX(5px)}
-  @media(max-width:760px){.ed-row,.ed-row.flip .ed-media{grid-template-columns:1fr;order:0;gap:24px}.ed-media{order:-1!important}}
-
   .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:none}
   @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.stack-card{transition:none}html{scroll-behavior:auto}}
