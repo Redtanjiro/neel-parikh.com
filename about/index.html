@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Neel Parikh</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@500;600&family=Caveat:wght@600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ui:'Inter',sans-serif;--display:'Bricolage Grotesque',sans-serif;
+    --body:'DM Sans',sans-serif;--hand:'Caveat',cursive;--serif:'Fraunces',serif;
+    --paper:#f4f0e6;--paper-line:rgba(120,100,70,.14);--ink:#2e2618;
+    --tab-about:#e8b84a;--tab-journey:#c98b6b;--tab-toolkit:#9db08a;--tab-beyond:#8aa0c0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--body);background:#2a241c;overflow:hidden;height:100vh}
+
+  /* camera / painting zoom */
+  .scene{position:fixed;inset:0;overflow:hidden}
+  .painting{position:absolute;inset:0;background:url('assets/hero-morning.webp') center/cover;transform-origin:80% 42%;transform:scale(1);transition:transform 1.6s cubic-bezier(.65,0,.2,1);will-change:transform}
+  body.zoomed .painting{transform:scale(4.5)}
+
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:22px 40px;mix-blend-mode:difference}
+  nav a{color:#fff;font-family:var(--ui);font-size:14px}
+  nav .wordmark{font-family:var(--display);font-weight:700;font-size:17px}
+  nav .links{display:flex;gap:26px}
+  nav .links a{cursor:pointer;opacity:.85}
+  nav .links a.active{opacity:1;font-weight:600}
+  .back{position:fixed;top:22px;left:40px;z-index:45;font-family:var(--ui);font-size:14px;color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s ease .3s;mix-blend-mode:difference}
+  body.zoomed .back{opacity:1;pointer-events:auto}
+
+  .hero-copy{position:fixed;left:40px;bottom:44px;z-index:20;color:#fff;transition:opacity .5s ease}
+  body.zoomed .hero-copy{opacity:0;pointer-events:none}
+  .hero-copy h1{font-family:var(--display);font-weight:700;font-size:clamp(24px,3vw,36px);line-height:1.1;max-width:16ch;text-shadow:0 2px 30px rgba(0,0,0,.5)}
+  .hint{position:fixed;right:40px;bottom:46px;z-index:20;color:rgba(255,255,255,.7);font-family:var(--ui);font-size:13px;transition:opacity .5s}
+  body.zoomed .hint{opacity:0}
+
+  /* ---- THE JOURNAL ---- */
+  .journal{
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.94);
+    z-index:25;width:min(1040px,92vw);height:min(680px,86vh);
+    opacity:0;pointer-events:none;
+    transition:opacity .6s ease .85s,transform .7s cubic-bezier(.5,0,.2,1) .85s;
+    display:flex;
+    filter:drop-shadow(0 40px 70px rgba(0,0,0,.5));
+  }
+  body.zoomed .journal{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+
+  /* two pages */
+  .page{position:relative;height:100%;background:var(--paper);overflow:hidden}
+  .page.left{width:52%;border-radius:6px 0 0 6px;
+    background-image:repeating-linear-gradient(transparent 0 33px,var(--paper-line) 33px 34px);
+    padding:56px 44px 40px}
+  .page.right{width:48%;border-radius:0 6px 6px 0;
+    background-image:linear-gradient(var(--paper-line) 1px,transparent 1px),linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);
+    background-size:26px 26px;padding:44px}
+  .page.left::after{content:"";position:absolute;top:0;right:0;width:22px;height:100%;background:linear-gradient(90deg,transparent,rgba(60,45,25,.1));pointer-events:none}
+  .spine{width:2px;height:100%;background:linear-gradient(180deg,rgba(60,45,25,.25),rgba(60,45,25,.1));flex-shrink:0}
+
+  /* binder holes */
+  .holes{position:absolute;left:8px;top:0;height:100%;display:flex;flex-direction:column;justify-content:space-around;padding:40px 0;z-index:2}
+  .holes span{width:11px;height:11px;border-radius:50%;background:#2a241c22;box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}
+
+  /* tabs — clean index-tab style (ref): solid active, dashed ghost inactive */
+  .tabs{position:absolute;right:-34px;top:56px;display:flex;flex-direction:column;gap:8px;z-index:6}
+  .tab{
+    width:36px;padding:18px 0;border-radius:0 10px 10px 0;cursor:pointer;
+    font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    writing-mode:vertical-rl;text-align:center;
+    background:transparent;border:1.5px dashed;
+    transition:all .25s ease;
+  }
+  /* inactive = ghosted: dashed border in accent, faint tint, muted text */
+  .tab[data-t="about"]{border-color:rgba(240,192,74,.55);color:rgba(150,120,40,.65);background:rgba(240,192,74,.06)}
+  .tab[data-t="journey"]{border-color:rgba(107,63,160,.5);color:rgba(107,63,160,.6);background:rgba(107,63,160,.05)}
+  .tab[data-t="toolkit"]{border-color:rgba(74,90,106,.5);color:rgba(74,90,106,.65);background:rgba(74,90,106,.05)}
+  .tab[data-t="beyond"]{border-color:rgba(232,84,58,.5);color:rgba(200,70,45,.62);background:rgba(232,84,58,.05)}
+  .tab:hover{width:40px}
+  /* active = solid filled, rounded, white text, no dash */
+  .tab.active{width:44px;border-style:solid;font-weight:700}
+  .tab.active[data-t="about"]{background:#f0c04a;border-color:#f0c04a;color:#3a2f10}
+  .tab.active[data-t="journey"]{background:#6b3fa0;border-color:#6b3fa0;color:#fff}
+  .tab.active[data-t="toolkit"]{background:#4a5a6a;border-color:#4a5a6a;color:#fff}
+  .tab.active[data-t="beyond"]{background:#e8543a;border-color:#e8543a;color:#fff}
+
+  /* left page content */
+  .crumb{font-family:var(--ui);font-size:12px;letter-spacing:.08em;color:#8a7a5c;margin-bottom:20px}
+  .page-title{font-family:var(--serif);font-weight:500;font-size:clamp(34px,4vw,52px);line-height:1.0;color:var(--ink);margin-bottom:26px}
+  .page-body{font-family:var(--body);font-size:15px;line-height:2.06rem;color:#4a4030;max-width:42ch}
+  .page-body p+p{margin-top:16px}
+  .sign{font-family:var(--hand);font-size:26px;color:#7a5c2e;margin-top:24px;transform:rotate(-2deg)}
+  .anno{font-family:var(--hand);font-size:20px;color:#b06a4a;position:absolute}
+
+  /* right page objects (placeholder scattered cards) */
+  .obj{position:absolute;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.05)}
+  .obj.photo{width:150px;height:120px;padding:8px 8px 26px;background:#fdfdfb}
+  .obj.photo .ph{width:100%;height:100%;background:linear-gradient(135deg,#c9b89a,#a89578)}
+  .obj.note{width:130px;padding:14px;background:#fef8dc;font-family:var(--hand);font-size:18px;color:#5a4a2a;line-height:1.2}
+  .obj.stamp{width:90px;height:110px;background:#fff;padding:8px}
+  .obj.stamp .ph{width:100%;height:100%;background:linear-gradient(135deg,#e8b84a,#c98b6b)}
+
+  .tab-content{display:none}
+  .tab-content.active{display:block;animation:fade .4s ease}
+  .right-content{display:none;position:absolute;inset:44px}
+  .right-content.active{display:block;animation:fade .5s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  @media(max-width:820px){
+    .journal{flex-direction:column;height:auto;max-height:86vh;overflow-y:auto;width:88vw}
+    .page{width:100%!important;border-radius:6px}
+    .page.right{min-height:280px}
+    .spine{display:none}
+    .tabs{right:auto;left:0;top:-34px;flex-direction:row;writing-mode:horizontal-tb}
+    .tab{writing-mode:horizontal-tb;width:auto;padding:8px 14px;border-radius:8px 8px 0 0}
+    .tab:hover,.tab.active{width:auto}
+  }
+  @media(prefers-reduced-motion:reduce){.painting,.journal{transition:none}}
+</style>
+</head>
+<body>
+  <div class="scene"><div class="painting"></div></div>
+
+  <nav>
+    <a class="wordmark" href="/">Neel Parikh</a>
+    <div class="links"><a href="/work">Work</a><a id="aboutBtn" class="active">About</a><a href="mailto:neelparikh7@gmail.com">Contact</a></div>
+  </nav>
+  <div class="back" id="backBtn">← Back to the room</div>
+
+  <div class="hero-copy"><h1>Interaction &amp; immersive designer, Sydney.</h1></div>
+  <div class="hint">Click "About" to open my journal →</div>
+
+  <div class="journal">
+    <div class="page left">
+      <div class="holes"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="crumb">neel parikh / the journal</div>
+
+      <div class="tab-content active" data-c="about">
+        <div class="page-title">A little<br>about me.</div>
+        <div class="page-body">
+          <p>I'm Neel — an interaction &amp; immersive designer based in Sydney, finishing my Master of Design at UNSW.</p>
+          <p>I like building things that feel made by a person: hand-painted interfaces, small warm interactions, brand worlds you can walk around in.</p>
+        </div>
+        <div class="sign">— Neel</div>
+      </div>
+
+      <div class="tab-content" data-c="journey">
+        <div class="page-title">The<br>journey.</div>
+        <div class="page-body">
+          <p>Bachelor of Design at Anant National University in India, then design lead at Media Mushroom — brand and events for clients across India and the Gulf.</p>
+          <p>Now in Sydney for my Master's, working across product, brand, and immersive design.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-c="toolkit">
+        <div class="page-title">The<br>toolkit.</div>
+        <div class="page-body">
+          <p>Figma, the Adobe suite, Framer, Procreate for the hand-drawn bits. TouchDesigner and p5.js for immersive and generative work.</p>
+          <p>And AI tools woven through it all — as a collaborator, not a crutch.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-c="beyond">
+        <div class="page-title">Beyond<br>the desk.</div>
+        <div class="page-body">
+          <p>Tennis on weekends, film photography, illustration, and a steady diet of anime. Always learning a bit of a new language.</p>
+          <p>The stuff away from the screen usually finds its way back into the work.</p>
+        </div>
+      </div>
+
+      <!-- (tabs moved to outer right edge of the spread) -->
+    </div>
+
+    <div class="spine"></div>
+
+    <div class="page right">
+      <div class="right-content active" data-r="about">
+        <div class="obj photo" style="top:20px;left:30px;transform:rotate(-5deg)"><div class="ph"></div></div>
+        <div class="obj note" style="top:150px;left:150px;transform:rotate(4deg)">a real person made this ✎</div>
+        <div class="obj stamp" style="top:250px;left:40px;transform:rotate(-8deg)"><div class="ph"></div></div>
+      </div>
+      <div class="right-content" data-r="journey">
+        <div class="obj note" style="top:30px;left:40px;transform:rotate(-3deg)">India → Sydney ✈</div>
+        <div class="obj photo" style="top:120px;left:120px;transform:rotate(6deg)"><div class="ph"></div></div>
+      </div>
+      <div class="right-content" data-r="toolkit">
+        <div class="obj stamp" style="top:30px;left:40px;transform:rotate(-6deg)"><div class="ph"></div></div>
+        <div class="obj stamp" style="top:60px;left:150px;transform:rotate(5deg)"><div class="ph"></div></div>
+        <div class="obj note" style="top:200px;left:80px;transform:rotate(-2deg)">Procreate + code</div>
+      </div>
+      <div class="right-content" data-r="beyond">
+        <div class="obj photo" style="top:20px;left:40px;transform:rotate(-4deg)"><div class="ph"></div></div>
+        <div class="obj note" style="top:170px;left:130px;transform:rotate(3deg)">🎾 · 🎞 · anime</div>
+      </div>
+    </div>
+
+    <!-- tabs stick out from the outer right edge of the whole spread -->
+    <div class="tabs">
+      <div class="tab active" data-t="about">About</div>
+      <div class="tab" data-t="journey">Journey</div>
+      <div class="tab" data-t="toolkit">Toolkit</div>
+      <div class="tab" data-t="beyond">Beyond</div>
+    </div>
+  </div>
+
+<script>
+  const aboutBtn=document.getElementById('aboutBtn'),backBtn=document.getElementById('backBtn');
+  aboutBtn.addEventListener('click',()=>{document.body.classList.add('zoomed');aboutBtn.classList.add('active')});
+  backBtn.addEventListener('click',()=>{document.body.classList.remove('zoomed');aboutBtn.classList.remove('active')});
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      const key=t.dataset.t;
+      document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.dataset.c===key));
+      document.querySelectorAll('.right-content').forEach(c=>c.classList.toggle('active',c.dataset.r===key));
+    });
+  });
+</script>
+</body>
+</html>
