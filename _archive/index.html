@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neel Parikh — Interaction &amp; Immersive Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Bricolage Grotesque',sans-serif;
+    --body:'DM Sans',sans-serif;
+    --ui:'Inter',sans-serif;
+    --wash:#2c2834;         /* set from active scene */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--body);background:var(--wash);color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .9s ease}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;height:100vh;min-height:600px;overflow:hidden}
+  .scene{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease}
+  .scene.active{opacity:1}
+
+  /* dim veil — dims the whole illustration when a discipline is active */
+  .veil{position:absolute;inset:0;background:rgba(8,7,12,0);transition:background .5s ease;pointer-events:none;z-index:2}
+  .hero.lit .veil{background:rgba(8,7,12,.62)}
+
+  /* ambient glow that breathes FROM the painting's own light (window + lamp) */
+  .glow{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(30% 40% at 15% 46%, rgba(255,196,110,.34), transparent 66%),
+      radial-gradient(24% 30% at 38% 36%, rgba(255,224,160,.20), transparent 70%);
+    mix-blend-mode:screen;
+    animation:breathe 8.5s ease-in-out infinite;
+    will-change:opacity,transform;
+  }
+  @keyframes breathe{
+    0%,100%{opacity:.72;transform:scale(1)}
+    50%{opacity:1;transform:scale(1.045)}
+  }
+  .glow{transition:opacity .5s ease}
+  .hero.lit .glow{opacity:.35 !important;animation-play-state:paused}
+  @media(prefers-reduced-motion:reduce){
+    .glow{animation:none;opacity:.85}
+    .scene{transition:none}
+    .navlink svg path{transition:none}
+    .disc svg path{transition:none}
+  }
+
+  /* (spotlight cone removed — active discipline simply lights up while the scene dims) */
+
+  /* UI overlay */
+  .hero-ui{position:relative;z-index:5;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:26px 40px 40px}
+  /* scrims so text reads over any part of the painting */
+  .scrim-top{position:absolute;top:0;left:0;right:0;height:140px;background:linear-gradient(180deg,rgba(20,14,8,.45),transparent);pointer-events:none;z-index:4}
+  .scrim-bottom{position:absolute;bottom:0;left:0;right:0;height:240px;background:linear-gradient(0deg,rgba(20,14,8,.52),transparent);pointer-events:none;z-index:4}
+
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .wordmark{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.01em}
+  .nav{display:flex;gap:26px;font-family:var(--ui);font-size:14px}
+  .nav a{opacity:.82;transition:opacity .2s}
+  .nav a:hover{opacity:1}
+  .navlink{position:relative;padding-bottom:8px}
+  .navlink svg{position:absolute;left:-6%;bottom:-2px;width:112%;height:14px;overflow:visible;pointer-events:none}
+  .navlink svg path{
+    stroke:#f0c04a;stroke-width:2.4;fill:none;stroke-linecap:round;
+    stroke-dasharray:200;stroke-dashoffset:200;
+    transition:stroke-dashoffset .42s cubic-bezier(.6,.1,.3,1);
+  }
+  .navlink:hover svg path,.navlink:focus svg path{stroke-dashoffset:0}
+  .navlink.active{color:#fff;font-weight:600} /* active = colour only, no mark */
+
+  .bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+  .tagline h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,40px);line-height:1.08;letter-spacing:-.02em;max-width:16ch;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+  .tagline p{margin-top:12px;font-size:15px;opacity:.82;max-width:38ch}
+
+  .time-chip{
+    position:relative;
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--ui);font-size:13px;font-weight:500;letter-spacing:.06em;
+    padding:10px 16px;border-radius:16px;border:none;
+    background:rgba(20,18,26,.5);
+    backdrop-filter:blur(8px);cursor:pointer;color:#fff;white-space:nowrap;
+    transition:background .2s;
+  }
+  .time-chip:hover{background:rgba(20,18,26,.7)}
+  .time-chip .dot{width:8px;height:8px;border-radius:50%;background:#ffd27a;box-shadow:0 0 10px #ffd27a}
+  .chip-sketch{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .chip-sketch path{stroke:#f0ebe0;stroke-width:2;fill:none;stroke-linecap:round;opacity:.8}
+
+  /* ---------- DISCIPLINE SPOTLIGHT (desktop only) ---------- */
+  .disciplines{
+    position:absolute;top:50%;right:44px;transform:translateY(-50%);
+    z-index:6;display:flex;flex-direction:column;gap:2px;align-items:flex-end;
+    text-align:right;
+  }
+  .disc-label{
+    font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.24em;
+    text-transform:uppercase;color:rgba(40,30,20,.55);margin-bottom:16px;
+  }
+  .disc{
+    position:relative;
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(30px,3.6vw,50px);line-height:1.12;letter-spacing:-.02em;
+    color:rgba(38,28,18,.42);
+    cursor:pointer;background:none;border:none;text-align:right;
+    padding:2px 0;transition:color .35s ease,transform .35s ease,text-shadow .35s ease;
+    transform-origin:right center;
+  }
+  .disc svg{position:absolute;left:-8px;top:-6px;width:calc(100% + 16px);height:calc(100% + 12px);overflow:visible;pointer-events:none}
+  .disc svg path{
+    stroke:#f0c04a;stroke-width:2.6;fill:none;stroke-linecap:round;
+    stroke-dasharray:520;stroke-dashoffset:520;
+    transition:stroke-dashoffset .55s cubic-bezier(.5,.1,.3,1);
+  }
+  .disc:hover svg path,.disc:focus svg path{stroke-dashoffset:0}
+  .disc:hover{color:rgba(38,28,18,.72)}
+  .disc.active{
+    color:#fff;
+    text-shadow:0 0 40px rgba(255,190,100,1),0 0 16px rgba(255,160,70,.85),0 2px 14px rgba(60,30,0,.5);
+    transform:scale(1.06);
+  }
+  /* when the hero is lit, non-active words recede so the lit one stands alone */
+  .hero.lit .disc{color:rgba(255,255,255,.16)}
+  .hero.lit .disc.active{color:#fff}
+  .hero.lit .disc-label,.hero.lit .disc-hint{color:rgba(255,255,255,.4)}
+  .disc-hint{
+    font-family:var(--ui);font-size:12px;color:rgba(40,30,20,.5);margin-top:18px;letter-spacing:.03em;
+    max-width:22ch;text-align:right;line-height:1.5;
+  }
+
+  /* hide discipline list on smaller screens; keep clean scroll hero */
+  @media(max-width:900px){
+    .disciplines{display:none}
+    .hero.lit .veil{background:rgba(8,7,12,0)}
+    .hero-ui{padding:22px 22px 30px}
+    .bottom{flex-direction:column;align-items:flex-start;gap:20px}
+  }
+
+  /* ---------- BELOW HERO: Jack&AI-style expanding accordion ---------- */
+  .work{background:var(--wash);padding:100px 40px 110px;transition:background .9s ease}
+  .work-inner{max-width:1160px;margin:0 auto}
+  .eyebrow{font-family:var(--ui);font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.55;margin-bottom:14px;color:#fff}
+  .work-head{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;color:#fff;margin-bottom:44px;max-width:20ch}
+
+  .acc{border-top:1px solid rgba(255,255,255,.16)}
+  .acc-row{display:block;border-bottom:1px solid rgba(255,255,255,.16);padding:22px 0;cursor:pointer;position:relative}
+  .acc-head{display:flex;align-items:center;gap:34px}
+  .acc-idx{font-family:var(--ui);font-size:15px;font-weight:500;color:rgba(255,255,255,.5);min-width:64px}
+  .acc-title{font-family:var(--display);font-weight:800;font-size:clamp(34px,6.5vw,86px);line-height:.98;letter-spacing:-.03em;color:#fff;transition:opacity .3s;text-transform:uppercase}
+  .acc-row:not(.active):hover .acc-title{opacity:.55}
+
+  .acc-panel{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+    max-height:0;overflow:hidden;opacity:0;
+    transition:max-height .6s cubic-bezier(.4,0,.2,1),opacity .5s ease,padding .5s ease;
+    padding:0 0 0 98px}
+  .acc-row.active .acc-panel{max-height:420px;opacity:1;padding:26px 0 18px 98px}
+  .acc-body{max-width:46ch}
+  .acc-body p{font-size:16px;line-height:1.62;color:rgba(255,255,255,.82)}
+  .acc-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .acc-tags span{font-family:var(--ui);font-size:12px;padding:6px 14px;border-radius:100px;border:1px solid rgba(255,255,255,.24);color:rgba(255,255,255,.78)}
+  .acc-link{display:inline-block;margin-top:22px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px}
+  .acc-num{font-family:var(--display);font-weight:800;font-size:clamp(120px,22vw,300px);line-height:.8;letter-spacing:-.04em;color:#f0c04a;text-align:right;justify-self:end;opacity:.92;transform:translateY(6px)}
+
+  .work-all{display:inline-block;margin-top:44px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:3px}
+  @media(max-width:760px){
+    .work{padding:70px 22px}
+    .acc-head{gap:16px}
+    .acc-idx{min-width:44px;font-size:13px}
+    .acc-panel{grid-template-columns:1fr;padding-left:0}
+    .acc-row.active .acc-panel{padding-left:0;max-height:600px}
+    .acc-num{display:none}
+  }
+  :root{--sm-accent:#f0c04a;--sm-nib:#3a2f18;--sm-track:#8a8377}
+  /* ---- HAND-DRAWN SCROLL PROGRESS: traveling marker ---- */
+  .scroll-track{position:fixed;top:12vh;right:28px;height:76vh;width:30px;z-index:100;pointer-events:none}
+  .scroll-track .track{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .scroll-track .track path{stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;opacity:.28;stroke-dasharray:3 6;color:var(--sm-track,#8a8377)}
+  .scroll-track .trail{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .scroll-track .trail path{stroke:var(--sm-accent,#f0c04a);stroke-width:2.4;fill:none;stroke-linecap:round}
+  .scroll-track .marker{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);width:32px;height:32px;transition:top .08s linear}
+  .scroll-track .marker svg{width:100%;height:100%;overflow:visible}
+  .scroll-track .marker .nib{fill:var(--sm-accent,#f0c04a);stroke:var(--sm-nib,#3a2f18);stroke-width:1.5}
+  .scroll-track .marker .spark path{stroke:var(--sm-nib,#3a2f18);stroke-width:2;fill:none;stroke-linecap:round;opacity:.6}
+  @media(max-width:820px){.scroll-track{display:none}}
+  @media(prefers-reduced-motion:reduce){.scroll-track .marker{transition:none}}
+</style>
+</head>
+<body>
+<div class="scroll-track" aria-hidden="true">
+  <svg class="track" viewBox="0 0 30 600" preserveAspectRatio="none"><path d="M15,4 C12,80 18,150 14,220 C11,290 17,360 14,430 C12,500 16,560 15,596"/></svg>
+  <svg class="trail" viewBox="0 0 30 600" preserveAspectRatio="none"><path id="smTrail" d="M15,4 C12,80 18,150 14,220 C11,290 17,360 14,430 C12,500 16,560 15,596"/></svg>
+  <div class="marker" id="smMarker"><svg viewBox="0 0 34 34"><path class="nib" d="M17,4 C24,5 29,11 28,18 C27,25 21,30 15,29 C8,28 4,22 6,15 C7,9 11,4 17,4 Z" transform="rotate(-8 17 17)"/><g class="spark"><path d="M17,13 L17,21 M13,17 L21,17"/></g></svg></div>
+</div>
+
+<header class="hero" id="hero">
+  <div class="scene" data-scene="morning"></div>
+  <div class="scene" data-scene="noon"></div>
+  <div class="scene" data-scene="sunset"></div>
+  <div class="scene" data-scene="night"></div>
+
+  <div class="glow"></div>
+  <div class="veil"></div>
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+
+  <!-- desktop discipline spotlight -->
+  <div class="disciplines" id="disciplines">
+    <span class="disc-label">What I do</span>
+    <button class="disc" data-x="40%" data-y="66%" data-blurb="Flows, IA, and interfaces that get out of the way.">UI/UX
+      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M40,10 C90,2 175,6 188,32 C196,54 150,64 96,64 C42,64 6,56 8,34 C10,16 34,10 60,9"/></svg>
+    </button>
+    <button class="disc" data-x="15%" data-y="46%" data-blurb="Hand-illustration and identity, from Procreate up.">Visual
+      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M44,9 C100,3 180,8 190,34 C197,56 140,65 92,63 C40,61 8,54 9,32 C10,14 38,9 66,10"/></svg>
+    </button>
+    <button class="disc" data-x="38%" data-y="34%" data-blurb="TouchDesigner &amp; p5.js — spatial, real-time work.">Immersive
+      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M38,11 C95,1 178,7 189,31 C197,55 148,66 94,64 C44,62 7,55 8,33 C9,15 36,10 62,10"/></svg>
+    </button>
+    <button class="disc" data-x="16%" data-y="60%" data-blurb="Brand systems &amp; events, from EMF ACE to launch.">Brand
+      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M42,10 C98,4 176,9 188,33 C196,55 144,64 90,62 C42,60 8,53 10,31 C11,15 36,10 64,11"/></svg>
+    </button>
+    <span class="disc-hint" id="discHint">Hover a discipline — the light finds it.</span>
+  </div>
+
+  <div class="hero-ui">
+    <div class="top">
+      <a class="wordmark" href="/">Neel Parikh</a>
+      <nav class="nav">
+        <a class="navlink" href="/work">Work
+          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M3,8 C22,4 45,11 63,7 C82,3 100,10 117,6"/></svg>
+        </a>
+        <a class="navlink" href="/about">About
+          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M4,7 C20,11 44,4 62,8 C84,12 102,5 116,8"/></svg>
+        </a>
+        <a class="navlink" href="mailto:neelparikh7@gmail.com">Contact
+          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M3,9 C24,5 46,10 64,6 C80,3 101,9 117,7"/></svg>
+        </a>
+      </nav>
+    </div>
+    <div class="bottom">
+      <div class="tagline">
+        <h1>Interaction &amp; immersive designer, Sydney.</h1>
+        <p>This scene is hand-painted — and it follows your clock.</p>
+      </div>
+      <button class="time-chip" id="timeChip">
+        <svg viewBox="0 0 160 44" preserveAspectRatio="none" class="chip-sketch"><path d="M12,3 C50,1 110,2 150,4 C157,14 157,30 152,40 C110,42 50,42 10,40 C4,30 4,14 8,5"/></svg>
+        <span class="dot"></span>
+        <span id="chipText">--:-- · LOADING</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="work" id="work">
+  <div class="work-inner">
+    <p class="eyebrow">Selected work</p>
+    <h2 class="work-head">A few things worth walking through.</h2>
+
+    <div class="acc" id="acc"></div>
+
+    <a class="work-all" href="/work">See all work →</a>
+  </div>
+</section>
+
+<script src="/assets/projects.js"></script>
+<script>
+  // ---------- Work accordion: render rows from window.PROJECTS ----------
+  (function(){
+    const acc=document.getElementById('acc');
+    const projects=[...window.PROJECTS].sort((a,b)=>a.order-b.order);
+    acc.innerHTML=projects.map((p,i)=>{
+      const n=String(p.order).padStart(2,'0');
+      const tags=p.tags.map(t=>`<span>${t}</span>`).join('');
+      return `
+      <a class="acc-row${i===0?' active':''}" href="${p.url}" data-n="${n}">
+        <div class="acc-head">
+          <span class="acc-idx">(${String(p.order).padStart(3,'0')})</span>
+          <span class="acc-title">${p.title.toUpperCase()}</span>
+        </div>
+        <div class="acc-panel">
+          <div class="acc-body">
+            <p>${p.description}</p>
+            <div class="acc-tags">${tags}</div>
+            <span class="acc-link">View case study →</span>
+          </div>
+          <div class="acc-num">${n}</div>
+        </div>
+      </a>`;
+    }).join('');
+  })();
+
+  // ---------- Work accordion (Jack&AI style) ----------
+  (function(){
+    const rows=[...document.querySelectorAll('.acc-row')];
+    rows.forEach(row=>{
+      const head=row.querySelector('.acc-head');
+      const link=row.querySelector('.acc-link');
+      // clicking the big title/head toggles expand (doesn't navigate)
+      head.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const wasActive=row.classList.contains('active');
+        rows.forEach(r=>r.classList.remove('active'));
+        if(!wasActive) row.classList.add('active');
+      });
+      // clicking the "View case study" link navigates
+      if(link){link.addEventListener('click',(e)=>{e.stopPropagation();window.location.href=row.getAttribute('href');});}
+    });
+    // prevent the row's own href from firing on head clicks (row is <a>)
+    rows.forEach(row=>row.addEventListener('click',(e)=>{
+      if(e.target.closest('.acc-link'))return; // let link work
+      e.preventDefault();
+    }));
+  })();
+
+  // ---------- SCENES: time-of-day system ----------
+  const SCENES = [
+    {key:"morning", from:5,  to:11, label:"MORNING",     wash:"#3b3128", available:true},
+    {key:"noon",    from:11, to:16, label:"MIDDAY",      wash:"#4a4033", available:true},
+    {key:"sunset",  from:16, to:19, label:"GOLDEN HOUR", wash:"#3b3128", available:true},
+    {key:"night",   from:19, to:24, label:"NIGHT",       wash:"#4a4033", available:true},
+  ];
+  const nightEarly = {from:0,to:5};
+
+  // preload backgrounds
+  document.querySelectorAll('.scene').forEach(el=>{
+    const k = el.dataset.scene;
+    el.style.backgroundImage = `image-set(url('assets/hero-${k}.webp') 1x, url('assets/hero-${k}.webp') 2x)`;
+    el.style.backgroundImage = `url('assets/hero-${k}.webp')`;
+  });
+
+  function sceneForHour(h){
+    if(h>=nightEarly.from && h<nightEarly.to) return SCENES.find(s=>s.key==='night');
+    return SCENES.find(s=> h>=s.from && h<s.to) || SCENES[0];
+  }
+  const scenes = [...document.querySelectorAll('.scene')];
+  const chipText = document.getElementById('chipText');
+  let idx = 0;
+
+  function applyScene(s){
+    scenes.forEach(el=>el.classList.toggle('active', el.dataset.scene===s.key));
+    document.documentElement.style.setProperty('--wash', s.wash);
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    chipText.textContent = `${hh}:${mm} · ${s.label}`;
+  }
+  // init to local time
+  const startScene = sceneForHour(new Date().getHours());
+  idx = SCENES.indexOf(startScene);
+  applyScene(startScene);
+
+  // chip cycles through scenes
+  document.getElementById('timeChip').addEventListener('click',()=>{
+    idx = (idx+1)%SCENES.length;
+    applyScene(SCENES[idx]);
+  });
+
+  // ---------- DISCIPLINE SPOTLIGHT ----------
+  const hero = document.getElementById('hero');
+  const discs = [...document.querySelectorAll('.disc')];
+  const hint = document.getElementById('discHint');
+  const root = document.documentElement;
+  let lockedDisc = null;
+
+  function lightOn(btn){
+    hero.classList.add('lit');
+    discs.forEach(d=>d.classList.toggle('active', d===btn));
+    hint.textContent = btn.dataset.blurb;
+  }
+  function lightOff(){
+    if(lockedDisc){ lightOn(lockedDisc); return; }
+    hero.classList.remove('lit');
+    discs.forEach(d=>d.classList.remove('active'));
+    hint.textContent = "Hover a discipline — the light finds it.";
+  }
+  discs.forEach(btn=>{
+    btn.addEventListener('mouseenter',()=>lightOn(btn));
+    btn.addEventListener('mouseleave',lightOff);
+    btn.addEventListener('click',()=>{
+      lockedDisc = (lockedDisc===btn)?null:btn;
+      lockedDisc?lightOn(btn):lightOff();
+    });
+    btn.addEventListener('focus',()=>lightOn(btn));
+    btn.addEventListener('blur',lightOff);
+  });
+</script>
+<script>
+(function(){
+  var marker=document.getElementById('smMarker'),trail=document.getElementById('smTrail');
+  if(!marker||!trail)return;
+  var len=trail.getTotalLength();trail.style.strokeDasharray=len;trail.style.strokeDashoffset=len;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,ticking=false;
+  function upd(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var p=max>0?Math.max(0,Math.min(1,window.scrollY/max)):0;
+    marker.style.top=(p*100)+'%';
+    trail.style.strokeDashoffset=len*(1-p);
+    if(!reduce)marker.style.transform='translate(-50%,-50%) rotate('+(p*40-8)+'deg)';
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(upd);ticking=true;}},{passive:true});
+  window.addEventListener('resize',upd,{passive:true});upd();
+})();
+</script>
+</body>
+</html>

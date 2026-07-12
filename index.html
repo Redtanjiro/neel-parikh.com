@@ -2,408 +2,896 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neel Parikh — Interaction &amp; Immersive Designer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neel Parikh — Interaction & Immersive Designer</title>
+<meta name="description" content="Neel Parikh is an interaction & immersive designer based in Sydney.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --display:'Bricolage Grotesque',sans-serif;
-    --body:'DM Sans',sans-serif;
-    --ui:'Inter',sans-serif;
-    --wash:#2c2834;         /* set from active scene */
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:var(--body);background:var(--wash);color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .9s ease}
-  a{color:inherit;text-decoration:none}
-  img{display:block}
+  :root {
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --ui: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
 
-  /* ---------- HERO ---------- */
-  .hero{position:relative;height:100vh;min-height:600px;overflow:hidden}
-  .scene{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease}
-  .scene.active{opacity:1}
-
-  /* dim veil — dims the whole illustration when a discipline is active */
-  .veil{position:absolute;inset:0;background:rgba(8,7,12,0);transition:background .5s ease;pointer-events:none;z-index:2}
-  .hero.lit .veil{background:rgba(8,7,12,.62)}
-
-  /* ambient glow that breathes FROM the painting's own light (window + lamp) */
-  .glow{
-    position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:
-      radial-gradient(30% 40% at 15% 46%, rgba(255,196,110,.34), transparent 66%),
-      radial-gradient(24% 30% at 38% 36%, rgba(255,224,160,.20), transparent 70%);
-    mix-blend-mode:screen;
-    animation:breathe 8.5s ease-in-out infinite;
-    will-change:opacity,transform;
-  }
-  @keyframes breathe{
-    0%,100%{opacity:.72;transform:scale(1)}
-    50%{opacity:1;transform:scale(1.045)}
-  }
-  .glow{transition:opacity .5s ease}
-  .hero.lit .glow{opacity:.35 !important;animation-play-state:paused}
-  @media(prefers-reduced-motion:reduce){
-    .glow{animation:none;opacity:.85}
-    .scene{transition:none}
-    .navlink svg path{transition:none}
-    .disc svg path{transition:none}
+    --amber: #e8a13a;
+    --ink: #141210;
+    --paper: #f4f1ea;
+    --line: rgba(20, 18, 16, 0.12);
   }
 
-  /* (spotlight cone removed — active discipline simply lights up while the scene dims) */
-
-  /* UI overlay */
-  .hero-ui{position:relative;z-index:5;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:26px 40px 40px}
-  /* scrims so text reads over any part of the painting */
-  .scrim-top{position:absolute;top:0;left:0;right:0;height:140px;background:linear-gradient(180deg,rgba(20,14,8,.45),transparent);pointer-events:none;z-index:4}
-  .scrim-bottom{position:absolute;bottom:0;left:0;right:0;height:240px;background:linear-gradient(0deg,rgba(20,14,8,.52),transparent);pointer-events:none;z-index:4}
-
-  .top{display:flex;align-items:center;justify-content:space-between}
-  .wordmark{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.01em}
-  .nav{display:flex;gap:26px;font-family:var(--ui);font-size:14px}
-  .nav a{opacity:.82;transition:opacity .2s}
-  .nav a:hover{opacity:1}
-  .navlink{position:relative;padding-bottom:8px}
-  .navlink svg{position:absolute;left:-6%;bottom:-2px;width:112%;height:14px;overflow:visible;pointer-events:none}
-  .navlink svg path{
-    stroke:#f0c04a;stroke-width:2.4;fill:none;stroke-linecap:round;
-    stroke-dasharray:200;stroke-dashoffset:200;
-    transition:stroke-dashoffset .42s cubic-bezier(.6,.1,.3,1);
-  }
-  .navlink:hover svg path,.navlink:focus svg path{stroke-dashoffset:0}
-  .navlink.active{color:#fff;font-weight:600} /* active = colour only, no mark */
-
-  .bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
-  .tagline h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,40px);line-height:1.08;letter-spacing:-.02em;max-width:16ch;text-shadow:0 2px 30px rgba(0,0,0,.4)}
-  .tagline p{margin-top:12px;font-size:15px;opacity:.82;max-width:38ch}
-
-  .time-chip{
-    position:relative;
-    display:inline-flex;align-items:center;gap:9px;
-    font-family:var(--ui);font-size:13px;font-weight:500;letter-spacing:.06em;
-    padding:10px 16px;border-radius:16px;border:none;
-    background:rgba(20,18,26,.5);
-    backdrop-filter:blur(8px);cursor:pointer;color:#fff;white-space:nowrap;
-    transition:background .2s;
-  }
-  .time-chip:hover{background:rgba(20,18,26,.7)}
-  .time-chip .dot{width:8px;height:8px;border-radius:50%;background:#ffd27a;box-shadow:0 0 10px #ffd27a}
-  .chip-sketch{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-  .chip-sketch path{stroke:#f0ebe0;stroke-width:2;fill:none;stroke-linecap:round;opacity:.8}
-
-  /* ---------- DISCIPLINE SPOTLIGHT (desktop only) ---------- */
-  .disciplines{
-    position:absolute;top:50%;right:44px;transform:translateY(-50%);
-    z-index:6;display:flex;flex-direction:column;gap:2px;align-items:flex-end;
-    text-align:right;
-  }
-  .disc-label{
-    font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.24em;
-    text-transform:uppercase;color:rgba(40,30,20,.55);margin-bottom:16px;
-  }
-  .disc{
-    position:relative;
-    font-family:var(--display);font-weight:700;
-    font-size:clamp(30px,3.6vw,50px);line-height:1.12;letter-spacing:-.02em;
-    color:rgba(38,28,18,.42);
-    cursor:pointer;background:none;border:none;text-align:right;
-    padding:2px 0;transition:color .35s ease,transform .35s ease,text-shadow .35s ease;
-    transform-origin:right center;
-  }
-  .disc svg{position:absolute;left:-8px;top:-6px;width:calc(100% + 16px);height:calc(100% + 12px);overflow:visible;pointer-events:none}
-  .disc svg path{
-    stroke:#f0c04a;stroke-width:2.6;fill:none;stroke-linecap:round;
-    stroke-dasharray:520;stroke-dashoffset:520;
-    transition:stroke-dashoffset .55s cubic-bezier(.5,.1,.3,1);
-  }
-  .disc:hover svg path,.disc:focus svg path{stroke-dashoffset:0}
-  .disc:hover{color:rgba(38,28,18,.72)}
-  .disc.active{
-    color:#fff;
-    text-shadow:0 0 40px rgba(255,190,100,1),0 0 16px rgba(255,160,70,.85),0 2px 14px rgba(60,30,0,.5);
-    transform:scale(1.06);
-  }
-  /* when the hero is lit, non-active words recede so the lit one stands alone */
-  .hero.lit .disc{color:rgba(255,255,255,.16)}
-  .hero.lit .disc.active{color:#fff}
-  .hero.lit .disc-label,.hero.lit .disc-hint{color:rgba(255,255,255,.4)}
-  .disc-hint{
-    font-family:var(--ui);font-size:12px;color:rgba(40,30,20,.5);margin-top:18px;letter-spacing:.03em;
-    max-width:22ch;text-align:right;line-height:1.5;
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
 
-  /* hide discipline list on smaller screens; keep clean scroll hero */
-  @media(max-width:900px){
-    .disciplines{display:none}
-    .hero.lit .veil{background:rgba(8,7,12,0)}
-    .hero-ui{padding:22px 22px 30px}
-    .bottom{flex-direction:column;align-items:flex-start;gap:20px}
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ---------- BELOW HERO: Jack&AI-style expanding accordion ---------- */
-  .work{background:var(--wash);padding:100px 40px 110px;transition:background .9s ease}
-  .work-inner{max-width:1160px;margin:0 auto}
-  .eyebrow{font-family:var(--ui);font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;opacity:.55;margin-bottom:14px;color:#fff}
-  .work-head{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;color:#fff;margin-bottom:44px;max-width:20ch}
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
 
-  .acc{border-top:1px solid rgba(255,255,255,.16)}
-  .acc-row{display:block;border-bottom:1px solid rgba(255,255,255,.16);padding:22px 0;cursor:pointer;position:relative}
-  .acc-head{display:flex;align-items:center;gap:34px}
-  .acc-idx{font-family:var(--ui);font-size:15px;font-weight:500;color:rgba(255,255,255,.5);min-width:64px}
-  .acc-title{font-family:var(--display);font-weight:800;font-size:clamp(34px,6.5vw,86px);line-height:.98;letter-spacing:-.03em;color:#fff;transition:opacity .3s;text-transform:uppercase}
-  .acc-row:not(.active):hover .acc-title{opacity:.55}
-
-  .acc-panel{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
-    max-height:0;overflow:hidden;opacity:0;
-    transition:max-height .6s cubic-bezier(.4,0,.2,1),opacity .5s ease,padding .5s ease;
-    padding:0 0 0 98px}
-  .acc-row.active .acc-panel{max-height:420px;opacity:1;padding:26px 0 18px 98px}
-  .acc-body{max-width:46ch}
-  .acc-body p{font-size:16px;line-height:1.62;color:rgba(255,255,255,.82)}
-  .acc-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
-  .acc-tags span{font-family:var(--ui);font-size:12px;padding:6px 14px;border-radius:100px;border:1px solid rgba(255,255,255,.24);color:rgba(255,255,255,.78)}
-  .acc-link{display:inline-block;margin-top:22px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px}
-  .acc-num{font-family:var(--display);font-weight:800;font-size:clamp(120px,22vw,300px);line-height:.8;letter-spacing:-.04em;color:#f0c04a;text-align:right;justify-self:end;opacity:.92;transform:translateY(6px)}
-
-  .work-all{display:inline-block;margin-top:44px;font-family:var(--ui);font-size:15px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:3px}
-  @media(max-width:760px){
-    .work{padding:70px 22px}
-    .acc-head{gap:16px}
-    .acc-idx{min-width:44px;font-size:13px}
-    .acc-panel{grid-template-columns:1fr;padding-left:0}
-    .acc-row.active .acc-panel{padding-left:0;max-height:600px}
-    .acc-num{display:none}
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
-  :root{--sm-accent:#f0c04a;--sm-nib:#3a2f18;--sm-track:#8a8377}
-  /* ---- HAND-DRAWN SCROLL PROGRESS: traveling marker ---- */
-  .scroll-track{position:fixed;top:12vh;right:28px;height:76vh;width:30px;z-index:100;pointer-events:none}
-  .scroll-track .track{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-  .scroll-track .track path{stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;opacity:.28;stroke-dasharray:3 6;color:var(--sm-track,#8a8377)}
-  .scroll-track .trail{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-  .scroll-track .trail path{stroke:var(--sm-accent,#f0c04a);stroke-width:2.4;fill:none;stroke-linecap:round}
-  .scroll-track .marker{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);width:32px;height:32px;transition:top .08s linear}
-  .scroll-track .marker svg{width:100%;height:100%;overflow:visible}
-  .scroll-track .marker .nib{fill:var(--sm-accent,#f0c04a);stroke:var(--sm-nib,#3a2f18);stroke-width:1.5}
-  .scroll-track .marker .spark path{stroke:var(--sm-nib,#3a2f18);stroke-width:2;fill:none;stroke-linecap:round;opacity:.6}
-  @media(max-width:820px){.scroll-track{display:none}}
-  @media(prefers-reduced-motion:reduce){.scroll-track .marker{transition:none}}
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+
+  /* ============ NAV ============ */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px clamp(20px, 5vw, 56px);
+    font-family: var(--ui);
+    transition: background-color .35s ease, box-shadow .35s ease;
+  }
+
+  .site-nav a {
+    text-decoration: none;
+    color: #fff;
+    text-shadow: 0 1px 10px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.6);
+    transition: color .25s ease;
+  }
+
+  .site-nav.is-scrolled {
+    background: rgba(244, 241, 234, 0.82);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .site-nav.is-scrolled a {
+    color: var(--ink);
+    text-shadow: none;
+  }
+
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: clamp(22px, 3vw, 40px);
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 500;
+    padding-bottom: 6px;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--amber) !important;
+  }
+
+  .nav-underline {
+    position: absolute;
+    left: -4%;
+    bottom: -3px;
+    width: 108%;
+    height: 14px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .nav-underline path {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .5s ease, opacity .12s ease;
+  }
+  .nav-link:hover .nav-underline path,
+  .nav-link:focus-visible .nav-underline path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  .nav-link--work .nav-underline { transform: rotate(-0.6deg) scaleY(1); }
+  .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
+  .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-underline path { transition: none; }
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .hero-scenes { position: absolute; inset: 0; }
+  .hero-scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .hero-scene.is-active { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-scene { transition: none; }
+  }
+
+  .hero-dim {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    transition: opacity .5s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero.is-spotlighting .hero-dim { opacity: 0.45; }
+
+  .hero-copy {
+    position: absolute;
+    left: clamp(20px, 5vw, 56px);
+    bottom: clamp(28px, 5vw, 56px);
+    z-index: 2;
+    max-width: 460px;
+    color: #fff;
+  }
+  .hero-copy h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.15;
+    margin: 0 0 10px;
+    text-shadow: 0 2px 18px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.6);
+  }
+  .hero-copy p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.92;
+    text-shadow: 0 2px 14px rgba(0,0,0,.5);
+  }
+
+  .hero-disciplines {
+    position: absolute;
+    right: clamp(20px, 5vw, 56px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    text-align: right;
+    max-width: 90vw;
+  }
+
+  .disciplines-eyebrow {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #fff;
+    opacity: 0.7;
+    margin-bottom: 14px;
+    text-shadow: 0 1px 8px rgba(0,0,0,.5);
+  }
+
+  .disciplines-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .discipline-word {
+    position: relative;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(34px, 5vw, 72px);
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: rgba(255,255,255,0.55);
+    padding: 4px 10px;
+    transition: color .25s ease;
+    text-shadow: 0 2px 16px rgba(0,0,0,.35);
+  }
+  .discipline-word:hover,
+  .discipline-word:focus-visible {
+    color: var(--amber);
+    text-shadow: none;
+  }
+
+  .word-ring {
+    position: absolute;
+    inset: -22% -6%;
+    width: 112%;
+    height: 144%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .word-ring path {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .65s ease, opacity .1s ease;
+    transform-origin: center;
+  }
+  .discipline-word:hover .word-ring path,
+  .discipline-word:focus-visible .word-ring path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    animation: ring-wobble 3.6s ease-in-out .65s infinite;
+  }
+  @keyframes ring-wobble {
+    0%, 100% { transform: rotate(-0.5deg) scale(1); }
+    50% { transform: rotate(0.6deg) scale(1.012); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .word-ring path { transition: opacity .12s ease; animation: none !important; }
+    .discipline-word:hover .word-ring path,
+    .discipline-word:focus-visible .word-ring path { stroke-dashoffset: 0; }
+  }
+
+  .discipline-caption {
+    margin: 14px 0 0;
+    min-height: 20px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .3s ease, transform .3s ease;
+    text-shadow: 0 1px 10px rgba(0,0,0,.5);
+  }
+  .discipline-caption.is-visible {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+
+  .time-chip {
+    position: absolute;
+    right: clamp(20px, 5vw, 56px);
+    bottom: clamp(24px, 4vw, 40px);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+  .time-chip-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--amber);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .time-chip-dot { animation: none; }
+  }
+  .time-chip-label { opacity: 0.85; }
+  .time-chip-time { opacity: 0.95; }
+
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #fff;
+    opacity: 0.6;
+    font-size: 18px;
+    text-decoration: none;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue { animation: none; }
+  }
+
+  /* ============ CHOSEN WORK ============ */
+  .chosen-work {
+    background: var(--paper);
+    padding: clamp(80px, 12vw, 140px) clamp(20px, 5vw, 56px) clamp(60px, 8vw, 100px);
+  }
+  .section-inner { max-width: 1040px; margin: 0 auto; }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 52px);
+    letter-spacing: -0.02em;
+    margin: 0 0 40px;
+  }
+
+  .filter-chip {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ui);
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(232, 161, 58, 0.14);
+    color: #8a5a12;
+    border: 1px solid rgba(232, 161, 58, 0.4);
+    border-radius: 999px;
+    padding: 7px 8px 7px 16px;
+    margin-bottom: 28px;
+  }
+  .filter-chip.is-visible { display: inline-flex; }
+  .filter-chip button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 13px;
+  }
+  .filter-chip button:hover { background: rgba(232, 161, 58, 0.25); }
+
+  .accordion { border-top: 1px solid var(--line); }
+  .accordion-row { border-bottom: 1px solid var(--line); }
+  .accordion-row.is-hidden { display: none; }
+
+  .accordion-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 26px 4px;
+    text-align: left;
+  }
+  .row-num {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--amber);
+    min-width: 34px;
+  }
+  .row-title {
+    flex: 1;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(24px, 3.4vw, 38px);
+    letter-spacing: -0.01em;
+  }
+  .row-toggle {
+    font-family: var(--ui);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    transition: transform .3s ease;
+    color: var(--ink);
+  }
+  .accordion-row.is-open .row-toggle { transform: rotate(45deg); }
+
+  .accordion-panel {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding: 0 4px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .45s ease, padding .45s ease;
+  }
+  .accordion-row.is-open .accordion-panel {
+    max-height: 220px;
+    padding: 0 4px 36px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .accordion-panel { transition: none; }
+  }
+  .panel-desc {
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 0 0 14px;
+  }
+  .panel-link {
+    display: inline-block;
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .panel-giant {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: clamp(48px, 9vw, 130px);
+    line-height: 0.8;
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    display: none;
+    padding: 40px 4px;
+    font-family: var(--body);
+    font-size: 16px;
+    color: rgba(20,18,16,0.55);
+  }
+  .empty-state.is-visible { display: block; }
+
+  .see-all {
+    display: inline-block;
+    margin-top: 40px;
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+  }
+
+  /* ============ ALL WORK ============ */
+  .all-work {
+    background: var(--ink);
+    color: var(--paper);
+    padding: clamp(70px, 10vw, 120px) clamp(20px, 5vw, 56px) clamp(90px, 12vw, 140px);
+  }
+  .all-work .eyebrow { color: var(--amber); }
+  .all-work .section-title { color: var(--paper); }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 2vw, 28px);
+  }
+
+  .work-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    aspect-ratio: 16 / 10;
+    padding: 22px;
+    text-decoration: none;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--card-accent) 12%, var(--ink));
+    border: 1px solid color-mix(in srgb, var(--card-accent) 30%, transparent);
+    transition: background-color .3s ease, border-color .3s ease;
+  }
+  .work-card:hover,
+  .work-card:focus-visible {
+    background: color-mix(in srgb, var(--card-accent) 22%, var(--ink));
+    border-color: color-mix(in srgb, var(--card-accent) 60%, transparent);
+  }
+  .work-card-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 32px);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    color: var(--paper);
+    transition: color .3s ease;
+  }
+  .work-card:hover .work-card-title,
+  .work-card:focus-visible .work-card-title {
+    color: var(--card-accent);
+  }
+  .work-card-disciplines {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .work-card-disciplines span {
+    font-family: var(--ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--card-accent);
+    border: 1px solid color-mix(in srgb, var(--card-accent) 45%, transparent);
+  }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 820px) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 40px;
+      min-height: auto;
+    }
+    .hero-scene { object-fit: contain; }
+    .hero-copy, .hero-disciplines, .time-chip {
+      position: static;
+      transform: none;
+      right: auto; left: auto; bottom: auto; top: auto;
+      max-width: 100%;
+      z-index: 2;
+    }
+    .hero-copy { text-align: center; margin-bottom: 28px; }
+    .hero-copy h1 { font-size: clamp(26px, 7.5vw, 34px); }
+    .hero-disciplines { text-align: center; margin-bottom: 28px; }
+    .disciplines-list { align-items: center; }
+    .discipline-word { font-size: clamp(30px, 9vw, 46px); }
+    .scroll-cue { display: none; }
+    .work-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
-<div class="scroll-track" aria-hidden="true">
-  <svg class="track" viewBox="0 0 30 600" preserveAspectRatio="none"><path d="M15,4 C12,80 18,150 14,220 C11,290 17,360 14,430 C12,500 16,560 15,596"/></svg>
-  <svg class="trail" viewBox="0 0 30 600" preserveAspectRatio="none"><path id="smTrail" d="M15,4 C12,80 18,150 14,220 C11,290 17,360 14,430 C12,500 16,560 15,596"/></svg>
-  <div class="marker" id="smMarker"><svg viewBox="0 0 34 34"><path class="nib" d="M17,4 C24,5 29,11 28,18 C27,25 21,30 15,29 C8,28 4,22 6,15 C7,9 11,4 17,4 Z" transform="rotate(-8 17 17)"/><g class="spark"><path d="M17,13 L17,21 M13,17 L21,17"/></g></svg></div>
-</div>
 
-<header class="hero" id="hero">
-  <div class="scene" data-scene="morning"></div>
-  <div class="scene" data-scene="noon"></div>
-  <div class="scene" data-scene="sunset"></div>
-  <div class="scene" data-scene="night"></div>
-
-  <div class="glow"></div>
-  <div class="veil"></div>
-  <div class="scrim-top"></div>
-  <div class="scrim-bottom"></div>
-
-  <!-- desktop discipline spotlight -->
-  <div class="disciplines" id="disciplines">
-    <span class="disc-label">What I do</span>
-    <button class="disc" data-x="40%" data-y="66%" data-blurb="Flows, IA, and interfaces that get out of the way.">UI/UX
-      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M40,10 C90,2 175,6 188,32 C196,54 150,64 96,64 C42,64 6,56 8,34 C10,16 34,10 60,9"/></svg>
-    </button>
-    <button class="disc" data-x="15%" data-y="46%" data-blurb="Hand-illustration and identity, from Procreate up.">Visual
-      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M44,9 C100,3 180,8 190,34 C197,56 140,65 92,63 C40,61 8,54 9,32 C10,14 38,9 66,10"/></svg>
-    </button>
-    <button class="disc" data-x="38%" data-y="34%" data-blurb="TouchDesigner &amp; p5.js — spatial, real-time work.">Immersive
-      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M38,11 C95,1 178,7 189,31 C197,55 148,66 94,64 C44,62 7,55 8,33 C9,15 36,10 62,10"/></svg>
-    </button>
-    <button class="disc" data-x="16%" data-y="60%" data-blurb="Brand systems &amp; events, from EMF ACE to launch.">Brand
-      <svg viewBox="0 0 200 70" preserveAspectRatio="none"><path d="M42,10 C98,4 176,9 188,33 C196,55 144,64 90,62 C42,60 8,53 10,31 C11,15 36,10 64,11"/></svg>
-    </button>
-    <span class="disc-hint" id="discHint">Hover a discipline — the light finds it.</span>
-  </div>
-
-  <div class="hero-ui">
-    <div class="top">
-      <a class="wordmark" href="/">Neel Parikh</a>
-      <nav class="nav">
-        <a class="navlink" href="/work">Work
-          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M3,8 C22,4 45,11 63,7 C82,3 100,10 117,6"/></svg>
-        </a>
-        <a class="navlink" href="/about">About
-          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M4,7 C20,11 44,4 62,8 C84,12 102,5 116,8"/></svg>
-        </a>
-        <a class="navlink" href="mailto:neelparikh7@gmail.com">Contact
-          <svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M3,9 C24,5 46,10 64,6 C80,3 101,9 117,7"/></svg>
-        </a>
-      </nav>
-    </div>
-    <div class="bottom">
-      <div class="tagline">
-        <h1>Interaction &amp; immersive designer, Sydney.</h1>
-        <p>This scene is hand-painted — and it follows your clock.</p>
-      </div>
-      <button class="time-chip" id="timeChip">
-        <svg viewBox="0 0 160 44" preserveAspectRatio="none" class="chip-sketch"><path d="M12,3 C50,1 110,2 150,4 C157,14 157,30 152,40 C110,42 50,42 10,40 C4,30 4,14 8,5"/></svg>
-        <span class="dot"></span>
-        <span id="chipText">--:-- · LOADING</span>
-      </button>
-    </div>
-  </div>
+<header class="site-nav" id="site-nav">
+  <a href="#hero" class="wordmark">Neel Parikh</a>
+  <ul class="nav-links">
+    <li>
+      <a href="#chosen-work" class="nav-link nav-link--work">
+        Work
+        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
+        </svg>
+      </a>
+    </li>
+    <li>
+      <a href="/about.html" class="nav-link nav-link--about">
+        About
+        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
+        </svg>
+      </a>
+    </li>
+    <li>
+      <a href="/contact.html" class="nav-link nav-link--contact">
+        Contact
+        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+        </svg>
+      </a>
+    </li>
+  </ul>
 </header>
 
-<section class="work" id="work">
-  <div class="work-inner">
-    <p class="eyebrow">Selected work</p>
-    <h2 class="work-head">A few things worth walking through.</h2>
+<section class="hero" id="hero">
+  <div class="hero-scenes">
+    <img class="hero-scene" data-scene="morning" alt=""
+         src="/assets/hero/hero-morning.webp"
+         srcset="/assets/hero/hero-morning-sm.webp 1280w, /assets/hero/hero-morning.webp 2560w"
+         sizes="100vw">
+    <img class="hero-scene" data-scene="midday" alt=""
+         src="/assets/hero/hero-midday.webp"
+         srcset="/assets/hero/hero-midday-sm.webp 1280w, /assets/hero/hero-midday.webp 2560w"
+         sizes="100vw">
+    <img class="hero-scene" data-scene="golden" alt=""
+         src="/assets/hero/hero-golden.webp"
+         srcset="/assets/hero/hero-golden-sm.webp 1280w, /assets/hero/hero-golden.webp 2560w"
+         sizes="100vw">
+    <img class="hero-scene" data-scene="night" alt=""
+         src="/assets/hero/hero-night.webp"
+         srcset="/assets/hero/hero-night-sm.webp 1280w, /assets/hero/hero-night.webp 2560w"
+         sizes="100vw">
+  </div>
+  <div class="hero-dim"></div>
 
-    <div class="acc" id="acc"></div>
+  <div class="hero-copy">
+    <h1>Interaction &amp; immersive designer, Sydney.</h1>
+    <p>This scene is hand-painted — and it follows your clock.</p>
+  </div>
 
-    <a class="work-all" href="/work">See all work →</a>
+  <div class="hero-disciplines">
+    <span class="disciplines-eyebrow">WHAT I DO</span>
+    <nav class="disciplines-list" aria-label="Design disciplines">
+      <button class="discipline-word" data-discipline="UI/UX" type="button">
+        UI/UX
+        <svg class="word-ring" viewBox="0 0 250 205" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M143.71 18.6419C143.507 18.6419 131.933 18.72 113.618 18.9541C97.9525 19.1544 81.73 27.3412 71.954 34.5881C66.4336 38.6803 63.6076 44.0281 61.2651 48.1439C58.1425 53.6301 53.6505 69.7491 48.233 92.24C44.2825 108.641 44.7116 124.02 44.8949 136.982C45.0217 145.949 53.317 160.877 59.1392 170.22C63.556 177.307 74.9342 181.769 85.8906 185.129C93.6333 187.504 106.333 189.316 117.727 190.628C129.121 191.94 138.959 192.204 150.721 190.961C176.048 188.285 191.189 183.546 194.27 182.28C200.855 179.574 214.37 163.749 224.047 148.011C229.857 138.565 230.317 126.328 231.304 116.138C232.379 105.046 231.08 97.3502 230.133 93.8223C229.102 89.9846 223.259 80.638 208.859 62.2631C199.871 50.7951 184.695 37.2948 175.778 29.0166C158.56 13.0329 147.244 10.2228 138.64 9.20529C124.681 7.55445 112.767 9.5306 106.081 11.1799C96.2744 13.5993 83.4583 20.165 70.4061 27.7518C60.1974 33.6858 50.4399 45.8149 40.854 58.7251C36.6864 64.3379 35.808 66.416 34.9562 69.0315C33.7009 72.886 33.3146 88.3646 33.1896 108.889C33.1344 117.943 35.1577 122.893 39.4924 131.455C45.908 144.127 53.7133 153.417 60.7181 159.52C71.1054 168.57 82.566 173.417 93.3623 176.903C100.452 179.191 111.27 180.969 122.241 182.111C144.038 184.38 158.12 182.717 165.218 180.124C175.963 176.199 184.784 169.028 190.723 164.262C195.295 160.593 198.53 156.252 202.28 150.266C207.529 141.89 212.239 127.125 216.913 107.811C221.906 87.1748 219.922 73.6706 219.534 70.0649C218.44 59.8928 210.577 48.283 196.65 33.0592C182.255 17.3225 173.3 15.9734 162.783 13.0203C150.725 9.63451 139.384 10.6901 133.87 10.9359C129.906 11.1126 118.557 15.0747 102.199 21.2946C85.5233 27.6358 80.0395 36.7229 73.363 48.5608C70.0698 54.3997 68.2777 69.5901 66.413 91.0504C65.0302 106.965 66.7129 116.638 68.4632 123.338C70.7157 131.961 75.6105 140.156 80.7187 147.335C85.9001 154.618 95.1979 161.336 107.924 169.253C123.254 178.79 136.939 182.633 144.626 184.382C160.218 187.93 172.145 185.195 179.526 182.795C187.315 180.262 195.747 170.778 203.513 160.565C207.576 155.223 209.305 146.137 211.348 132.462C214.276 112.864 212.609 99.3756 211.188 94.7207C208.801 86.8983 199.243 72.0517 187.183 54.3124C179.31 42.7326 168.977 33.9421 156.848 24.3707C136.05 12.0333 124.765 7.91902 118.973 7.13715C115.434 6.84434 110.678 6.76262 103.887 7.1441" />
+        </svg>
+      </button>
+      <button class="discipline-word" data-discipline="Visual" type="button">
+        Visual
+        <svg class="word-ring" viewBox="0 0 250 205" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M143.71 18.6419C143.507 18.6419 131.933 18.72 113.618 18.9541C97.9525 19.1544 81.73 27.3412 71.954 34.5881C66.4336 38.6803 63.6076 44.0281 61.2651 48.1439C58.1425 53.6301 53.6505 69.7491 48.233 92.24C44.2825 108.641 44.7116 124.02 44.8949 136.982C45.0217 145.949 53.317 160.877 59.1392 170.22C63.556 177.307 74.9342 181.769 85.8906 185.129C93.6333 187.504 106.333 189.316 117.727 190.628C129.121 191.94 138.959 192.204 150.721 190.961C176.048 188.285 191.189 183.546 194.27 182.28C200.855 179.574 214.37 163.749 224.047 148.011C229.857 138.565 230.317 126.328 231.304 116.138C232.379 105.046 231.08 97.3502 230.133 93.8223C229.102 89.9846 223.259 80.638 208.859 62.2631C199.871 50.7951 184.695 37.2948 175.778 29.0166C158.56 13.0329 147.244 10.2228 138.64 9.20529C124.681 7.55445 112.767 9.5306 106.081 11.1799C96.2744 13.5993 83.4583 20.165 70.4061 27.7518C60.1974 33.6858 50.4399 45.8149 40.854 58.7251C36.6864 64.3379 35.808 66.416 34.9562 69.0315C33.7009 72.886 33.3146 88.3646 33.1896 108.889C33.1344 117.943 35.1577 122.893 39.4924 131.455C45.908 144.127 53.7133 153.417 60.7181 159.52C71.1054 168.57 82.566 173.417 93.3623 176.903C100.452 179.191 111.27 180.969 122.241 182.111C144.038 184.38 158.12 182.717 165.218 180.124C175.963 176.199 184.784 169.028 190.723 164.262C195.295 160.593 198.53 156.252 202.28 150.266C207.529 141.89 212.239 127.125 216.913 107.811C221.906 87.1748 219.922 73.6706 219.534 70.0649C218.44 59.8928 210.577 48.283 196.65 33.0592C182.255 17.3225 173.3 15.9734 162.783 13.0203C150.725 9.63451 139.384 10.6901 133.87 10.9359C129.906 11.1126 118.557 15.0747 102.199 21.2946C85.5233 27.6358 80.0395 36.7229 73.363 48.5608C70.0698 54.3997 68.2777 69.5901 66.413 91.0504C65.0302 106.965 66.7129 116.638 68.4632 123.338C70.7157 131.961 75.6105 140.156 80.7187 147.335C85.9001 154.618 95.1979 161.336 107.924 169.253C123.254 178.79 136.939 182.633 144.626 184.382C160.218 187.93 172.145 185.195 179.526 182.795C187.315 180.262 195.747 170.778 203.513 160.565C207.576 155.223 209.305 146.137 211.348 132.462C214.276 112.864 212.609 99.3756 211.188 94.7207C208.801 86.8983 199.243 72.0517 187.183 54.3124C179.31 42.7326 168.977 33.9421 156.848 24.3707C136.05 12.0333 124.765 7.91902 118.973 7.13715C115.434 6.84434 110.678 6.76262 103.887 7.1441" />
+        </svg>
+      </button>
+      <button class="discipline-word" data-discipline="Immersive" type="button">
+        Immersive
+        <svg class="word-ring" viewBox="0 0 250 205" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M143.71 18.6419C143.507 18.6419 131.933 18.72 113.618 18.9541C97.9525 19.1544 81.73 27.3412 71.954 34.5881C66.4336 38.6803 63.6076 44.0281 61.2651 48.1439C58.1425 53.6301 53.6505 69.7491 48.233 92.24C44.2825 108.641 44.7116 124.02 44.8949 136.982C45.0217 145.949 53.317 160.877 59.1392 170.22C63.556 177.307 74.9342 181.769 85.8906 185.129C93.6333 187.504 106.333 189.316 117.727 190.628C129.121 191.94 138.959 192.204 150.721 190.961C176.048 188.285 191.189 183.546 194.27 182.28C200.855 179.574 214.37 163.749 224.047 148.011C229.857 138.565 230.317 126.328 231.304 116.138C232.379 105.046 231.08 97.3502 230.133 93.8223C229.102 89.9846 223.259 80.638 208.859 62.2631C199.871 50.7951 184.695 37.2948 175.778 29.0166C158.56 13.0329 147.244 10.2228 138.64 9.20529C124.681 7.55445 112.767 9.5306 106.081 11.1799C96.2744 13.5993 83.4583 20.165 70.4061 27.7518C60.1974 33.6858 50.4399 45.8149 40.854 58.7251C36.6864 64.3379 35.808 66.416 34.9562 69.0315C33.7009 72.886 33.3146 88.3646 33.1896 108.889C33.1344 117.943 35.1577 122.893 39.4924 131.455C45.908 144.127 53.7133 153.417 60.7181 159.52C71.1054 168.57 82.566 173.417 93.3623 176.903C100.452 179.191 111.27 180.969 122.241 182.111C144.038 184.38 158.12 182.717 165.218 180.124C175.963 176.199 184.784 169.028 190.723 164.262C195.295 160.593 198.53 156.252 202.28 150.266C207.529 141.89 212.239 127.125 216.913 107.811C221.906 87.1748 219.922 73.6706 219.534 70.0649C218.44 59.8928 210.577 48.283 196.65 33.0592C182.255 17.3225 173.3 15.9734 162.783 13.0203C150.725 9.63451 139.384 10.6901 133.87 10.9359C129.906 11.1126 118.557 15.0747 102.199 21.2946C85.5233 27.6358 80.0395 36.7229 73.363 48.5608C70.0698 54.3997 68.2777 69.5901 66.413 91.0504C65.0302 106.965 66.7129 116.638 68.4632 123.338C70.7157 131.961 75.6105 140.156 80.7187 147.335C85.9001 154.618 95.1979 161.336 107.924 169.253C123.254 178.79 136.939 182.633 144.626 184.382C160.218 187.93 172.145 185.195 179.526 182.795C187.315 180.262 195.747 170.778 203.513 160.565C207.576 155.223 209.305 146.137 211.348 132.462C214.276 112.864 212.609 99.3756 211.188 94.7207C208.801 86.8983 199.243 72.0517 187.183 54.3124C179.31 42.7326 168.977 33.9421 156.848 24.3707C136.05 12.0333 124.765 7.91902 118.973 7.13715C115.434 6.84434 110.678 6.76262 103.887 7.1441" />
+        </svg>
+      </button>
+      <button class="discipline-word" data-discipline="Brand" type="button">
+        Brand
+        <svg class="word-ring" viewBox="0 0 250 205" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M143.71 18.6419C143.507 18.6419 131.933 18.72 113.618 18.9541C97.9525 19.1544 81.73 27.3412 71.954 34.5881C66.4336 38.6803 63.6076 44.0281 61.2651 48.1439C58.1425 53.6301 53.6505 69.7491 48.233 92.24C44.2825 108.641 44.7116 124.02 44.8949 136.982C45.0217 145.949 53.317 160.877 59.1392 170.22C63.556 177.307 74.9342 181.769 85.8906 185.129C93.6333 187.504 106.333 189.316 117.727 190.628C129.121 191.94 138.959 192.204 150.721 190.961C176.048 188.285 191.189 183.546 194.27 182.28C200.855 179.574 214.37 163.749 224.047 148.011C229.857 138.565 230.317 126.328 231.304 116.138C232.379 105.046 231.08 97.3502 230.133 93.8223C229.102 89.9846 223.259 80.638 208.859 62.2631C199.871 50.7951 184.695 37.2948 175.778 29.0166C158.56 13.0329 147.244 10.2228 138.64 9.20529C124.681 7.55445 112.767 9.5306 106.081 11.1799C96.2744 13.5993 83.4583 20.165 70.4061 27.7518C60.1974 33.6858 50.4399 45.8149 40.854 58.7251C36.6864 64.3379 35.808 66.416 34.9562 69.0315C33.7009 72.886 33.3146 88.3646 33.1896 108.889C33.1344 117.943 35.1577 122.893 39.4924 131.455C45.908 144.127 53.7133 153.417 60.7181 159.52C71.1054 168.57 82.566 173.417 93.3623 176.903C100.452 179.191 111.27 180.969 122.241 182.111C144.038 184.38 158.12 182.717 165.218 180.124C175.963 176.199 184.784 169.028 190.723 164.262C195.295 160.593 198.53 156.252 202.28 150.266C207.529 141.89 212.239 127.125 216.913 107.811C221.906 87.1748 219.922 73.6706 219.534 70.0649C218.44 59.8928 210.577 48.283 196.65 33.0592C182.255 17.3225 173.3 15.9734 162.783 13.0203C150.725 9.63451 139.384 10.6901 133.87 10.9359C129.906 11.1126 118.557 15.0747 102.199 21.2946C85.5233 27.6358 80.0395 36.7229 73.363 48.5608C70.0698 54.3997 68.2777 69.5901 66.413 91.0504C65.0302 106.965 66.7129 116.638 68.4632 123.338C70.7157 131.961 75.6105 140.156 80.7187 147.335C85.9001 154.618 95.1979 161.336 107.924 169.253C123.254 178.79 136.939 182.633 144.626 184.382C160.218 187.93 172.145 185.195 179.526 182.795C187.315 180.262 195.747 170.778 203.513 160.565C207.576 155.223 209.305 146.137 211.348 132.462C214.276 112.864 212.609 99.3756 211.188 94.7207C208.801 86.8983 199.243 72.0517 187.183 54.3124C179.31 42.7326 168.977 33.9421 156.848 24.3707C136.05 12.0333 124.765 7.91902 118.973 7.13715C115.434 6.84434 110.678 6.76262 103.887 7.1441" />
+        </svg>
+      </button>
+    </nav>
+    <p class="discipline-caption" id="discipline-caption" aria-live="polite"></p>
+  </div>
+
+  <div class="time-chip">
+    <span class="time-chip-dot" aria-hidden="true"></span>
+    <span class="time-chip-label" id="time-chip-label">MORNING</span>
+    <span class="time-chip-time" id="time-chip-time">--:--</span>
+  </div>
+
+  <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
+</section>
+
+<section class="chosen-work" id="chosen-work">
+  <div class="section-inner">
+    <span class="eyebrow">SELECTED PROJECTS</span>
+    <h2 class="section-title">Chosen Work</h2>
+
+    <div class="filter-chip" id="filter-chip">
+      <span id="filter-chip-label">Showing: UI/UX</span>
+      <button id="filter-chip-dismiss" aria-label="Clear filter" type="button">✕</button>
+    </div>
+
+    <div class="accordion" id="accordion"></div>
+    <p class="empty-state" id="chosen-empty">New work landing here soon.</p>
+
+    <a href="#all-work" class="see-all">See all work ↓</a>
+  </div>
+</section>
+
+<section class="all-work" id="all-work">
+  <div class="section-inner">
+    <span class="eyebrow">EVERYTHING ELSE</span>
+    <h2 class="section-title">All Work</h2>
+    <div class="work-grid" id="work-grid"></div>
   </div>
 </section>
 
 <script src="/assets/projects.js"></script>
 <script>
-  // ---------- Work accordion: render rows from window.PROJECTS ----------
-  (function(){
-    const acc=document.getElementById('acc');
-    const projects=[...window.PROJECTS].sort((a,b)=>a.order-b.order);
-    acc.innerHTML=projects.map((p,i)=>{
-      const n=String(p.order).padStart(2,'0');
-      const tags=p.tags.map(t=>`<span>${t}</span>`).join('');
-      return `
-      <a class="acc-row${i===0?' active':''}" href="${p.url}" data-n="${n}">
-        <div class="acc-head">
-          <span class="acc-idx">(${String(p.order).padStart(3,'0')})</span>
-          <span class="acc-title">${p.title.toUpperCase()}</span>
-        </div>
-        <div class="acc-panel">
-          <div class="acc-body">
-            <p>${p.description}</p>
-            <div class="acc-tags">${tags}</div>
-            <span class="acc-link">View case study →</span>
-          </div>
-          <div class="acc-num">${n}</div>
-        </div>
-      </a>`;
-    }).join('');
-  })();
+(function () {
+  'use strict';
 
-  // ---------- Work accordion (Jack&AI style) ----------
-  (function(){
-    const rows=[...document.querySelectorAll('.acc-row')];
-    rows.forEach(row=>{
-      const head=row.querySelector('.acc-head');
-      const link=row.querySelector('.acc-link');
-      // clicking the big title/head toggles expand (doesn't navigate)
-      head.addEventListener('click',(e)=>{
-        e.preventDefault();
-        const wasActive=row.classList.contains('active');
-        rows.forEach(r=>r.classList.remove('active'));
-        if(!wasActive) row.classList.add('active');
+  /* ---------- nav scroll state ---------- */
+  var nav = document.getElementById('site-nav');
+  var heroEl = document.getElementById('hero');
+  function updateNavState() {
+    var threshold = heroEl.offsetHeight - 80;
+    nav.classList.toggle('is-scrolled', window.scrollY > threshold);
+  }
+  window.addEventListener('scroll', updateNavState, { passive: true });
+  updateNavState();
+
+  /* ---------- hero time-of-day scene swap ---------- */
+  var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
+  var sceneEls = document.querySelectorAll('.hero-scene');
+  var labelEl = document.getElementById('time-chip-label');
+  var timeEl = document.getElementById('time-chip-time');
+
+  function getScene(hour) {
+    if (hour >= 5 && hour < 11) return 'morning';
+    if (hour >= 11 && hour < 16) return 'midday';
+    if (hour >= 16 && hour < 19) return 'golden';
+    return 'night';
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  var currentScene = null;
+  function updateHeroTime() {
+    var now = new Date();
+    var hour = now.getHours();
+    var scene = getScene(hour);
+
+    if (scene !== currentScene) {
+      currentScene = scene;
+      sceneEls.forEach(function (el) {
+        el.classList.toggle('is-active', el.dataset.scene === scene);
       });
-      // clicking the "View case study" link navigates
-      if(link){link.addEventListener('click',(e)=>{e.stopPropagation();window.location.href=row.getAttribute('href');});}
+      labelEl.textContent = SCENE_LABELS[scene];
+    }
+    timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  }
+  updateHeroTime();
+  setInterval(updateHeroTime, 1000);
+
+  /* ---------- discipline hover: dim + caption ---------- */
+  var CAPTIONS = {
+    'UI/UX': 'Flows, IA, and interfaces that get out of the way.',
+    'Visual': 'Type, colour, and image doing the talking.',
+    'Immersive': 'Interaction beyond the rectangle — TouchDesigner, p5.js, physical space.',
+    'Brand': 'Identity systems people recognise at a glance.'
+  };
+  var hero = document.querySelector('.hero');
+  var captionEl = document.getElementById('discipline-caption');
+  var disciplineButtons = document.querySelectorAll('.discipline-word');
+
+  disciplineButtons.forEach(function (btn) {
+    var d = btn.dataset.discipline;
+    function activate() {
+      hero.classList.add('is-spotlighting');
+      captionEl.textContent = CAPTIONS[d];
+      captionEl.classList.add('is-visible');
+    }
+    function deactivate() {
+      hero.classList.remove('is-spotlighting');
+      captionEl.classList.remove('is-visible');
+    }
+    btn.addEventListener('mouseenter', activate);
+    btn.addEventListener('mouseleave', deactivate);
+    btn.addEventListener('focus', activate);
+    btn.addEventListener('blur', deactivate);
+
+    btn.addEventListener('click', function () {
+      applyFilter(d);
+      document.getElementById('chosen-work').scrollIntoView({ behavior: 'smooth' });
     });
-    // prevent the row's own href from firing on head clicks (row is <a>)
-    rows.forEach(row=>row.addEventListener('click',(e)=>{
-      if(e.target.closest('.acc-link'))return; // let link work
-      e.preventDefault();
-    }));
-  })();
-
-  // ---------- SCENES: time-of-day system ----------
-  const SCENES = [
-    {key:"morning", from:5,  to:11, label:"MORNING",     wash:"#3b3128", available:true},
-    {key:"noon",    from:11, to:16, label:"MIDDAY",      wash:"#4a4033", available:true},
-    {key:"sunset",  from:16, to:19, label:"GOLDEN HOUR", wash:"#3b3128", available:true},
-    {key:"night",   from:19, to:24, label:"NIGHT",       wash:"#4a4033", available:true},
-  ];
-  const nightEarly = {from:0,to:5};
-
-  // preload backgrounds
-  document.querySelectorAll('.scene').forEach(el=>{
-    const k = el.dataset.scene;
-    el.style.backgroundImage = `image-set(url('assets/hero-${k}.webp') 1x, url('assets/hero-${k}.webp') 2x)`;
-    el.style.backgroundImage = `url('assets/hero-${k}.webp')`;
   });
 
-  function sceneForHour(h){
-    if(h>=nightEarly.from && h<nightEarly.to) return SCENES.find(s=>s.key==='night');
-    return SCENES.find(s=> h>=s.from && h<s.to) || SCENES[0];
-  }
-  const scenes = [...document.querySelectorAll('.scene')];
-  const chipText = document.getElementById('chipText');
-  let idx = 0;
+  /* ---------- Chosen Work accordion ---------- */
+  var accordionEl = document.getElementById('accordion');
+  var emptyEl = document.getElementById('chosen-empty');
+  var featured = window.PROJECTS.filter(function (p) { return p.featured; })
+    .sort(function (a, b) { return a.order - b.order; });
 
-  function applyScene(s){
-    scenes.forEach(el=>el.classList.toggle('active', el.dataset.scene===s.key));
-    document.documentElement.style.setProperty('--wash', s.wash);
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    chipText.textContent = `${hh}:${mm} · ${s.label}`;
-  }
-  // init to local time
-  const startScene = sceneForHour(new Date().getHours());
-  idx = SCENES.indexOf(startScene);
-  applyScene(startScene);
+  featured.forEach(function (project) {
+    var row = document.createElement('div');
+    row.className = 'accordion-row';
+    row.dataset.disciplines = project.disciplines.join(',');
 
-  // chip cycles through scenes
-  document.getElementById('timeChip').addEventListener('click',()=>{
-    idx = (idx+1)%SCENES.length;
-    applyScene(SCENES[idx]);
-  });
+    var num = pad2(project.order);
 
-  // ---------- DISCIPLINE SPOTLIGHT ----------
-  const hero = document.getElementById('hero');
-  const discs = [...document.querySelectorAll('.disc')];
-  const hint = document.getElementById('discHint');
-  const root = document.documentElement;
-  let lockedDisc = null;
+    row.innerHTML =
+      '<button class="accordion-trigger" aria-expanded="false" type="button">' +
+        '<span class="row-num">' + num + '</span>' +
+        '<span class="row-title">' + project.title + '</span>' +
+        '<span class="row-toggle" aria-hidden="true">+</span>' +
+      '</button>' +
+      '<div class="accordion-panel">' +
+        '<div>' +
+          '<p class="panel-desc">' + project.description + '</p>' +
+          '<a class="panel-link" href="/work/' + project.slug + '.html" style="color:' + project.accent + '">View case study →</a>' +
+        '</div>' +
+        '<span class="panel-giant" style="color:' + project.accent + '">' + num + '</span>' +
+      '</div>';
 
-  function lightOn(btn){
-    hero.classList.add('lit');
-    discs.forEach(d=>d.classList.toggle('active', d===btn));
-    hint.textContent = btn.dataset.blurb;
-  }
-  function lightOff(){
-    if(lockedDisc){ lightOn(lockedDisc); return; }
-    hero.classList.remove('lit');
-    discs.forEach(d=>d.classList.remove('active'));
-    hint.textContent = "Hover a discipline — the light finds it.";
-  }
-  discs.forEach(btn=>{
-    btn.addEventListener('mouseenter',()=>lightOn(btn));
-    btn.addEventListener('mouseleave',lightOff);
-    btn.addEventListener('click',()=>{
-      lockedDisc = (lockedDisc===btn)?null:btn;
-      lockedDisc?lightOn(btn):lightOff();
+    var trigger = row.querySelector('.accordion-trigger');
+    trigger.addEventListener('click', function () {
+      var isOpen = row.classList.contains('is-open');
+      accordionEl.querySelectorAll('.accordion-row.is-open').forEach(function (openRow) {
+        openRow.classList.remove('is-open');
+        openRow.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        row.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
     });
-    btn.addEventListener('focus',()=>lightOn(btn));
-    btn.addEventListener('blur',lightOff);
+
+    accordionEl.appendChild(row);
   });
-</script>
-<script>
-(function(){
-  var marker=document.getElementById('smMarker'),trail=document.getElementById('smTrail');
-  if(!marker||!trail)return;
-  var len=trail.getTotalLength();trail.style.strokeDasharray=len;trail.style.strokeDashoffset=len;
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,ticking=false;
-  function upd(){
-    var max=document.documentElement.scrollHeight-window.innerHeight;
-    var p=max>0?Math.max(0,Math.min(1,window.scrollY/max)):0;
-    marker.style.top=(p*100)+'%';
-    trail.style.strokeDashoffset=len*(1-p);
-    if(!reduce)marker.style.transform='translate(-50%,-50%) rotate('+(p*40-8)+'deg)';
-    ticking=false;
+
+  function pad2(n) { return n < 10 ? '00' + n : (n < 100 ? '0' + n : '' + n); }
+
+  /* ---------- discipline filter chip ---------- */
+  var filterChip = document.getElementById('filter-chip');
+  var filterChipLabel = document.getElementById('filter-chip-label');
+  var filterChipDismiss = document.getElementById('filter-chip-dismiss');
+  var currentFilter = null;
+
+  function applyFilter(discipline) {
+    currentFilter = discipline;
+    filterChipLabel.textContent = 'Showing: ' + discipline;
+    filterChip.classList.add('is-visible');
+
+    var visibleCount = 0;
+    accordionEl.querySelectorAll('.accordion-row').forEach(function (row) {
+      var matches = row.dataset.disciplines.split(',').indexOf(discipline) !== -1;
+      row.classList.toggle('is-hidden', !matches);
+      if (matches) visibleCount++;
+      if (!matches && row.classList.contains('is-open')) {
+        row.classList.remove('is-open');
+        row.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
+      }
+    });
+    emptyEl.classList.toggle('is-visible', visibleCount === 0);
   }
-  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(upd);ticking=true;}},{passive:true});
-  window.addEventListener('resize',upd,{passive:true});upd();
+
+  function clearFilter() {
+    currentFilter = null;
+    filterChip.classList.remove('is-visible');
+    accordionEl.querySelectorAll('.accordion-row').forEach(function (row) {
+      row.classList.remove('is-hidden');
+    });
+    emptyEl.classList.remove('is-visible');
+  }
+
+  filterChipDismiss.addEventListener('click', clearFilter);
+
+  /* ---------- All Work grid ---------- */
+  var gridEl = document.getElementById('work-grid');
+  var allSorted = window.PROJECTS.slice().sort(function (a, b) { return a.order - b.order; });
+
+  allSorted.forEach(function (project) {
+    var card = document.createElement('a');
+    card.className = 'work-card';
+    card.href = '/work/' + project.slug + '.html';
+    card.style.setProperty('--card-accent', project.accent);
+
+    var tags = project.disciplines.map(function (d) { return '<span>' + d + '</span>'; }).join('');
+
+    card.innerHTML =
+      '<h3 class="work-card-title">' + project.title + '</h3>' +
+      '<div class="work-card-disciplines">' + tags + '</div>';
+
+    gridEl.appendChild(card);
+  });
 })();
 </script>
 </body>

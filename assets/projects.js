@@ -1,23 +1,48 @@
-// assets/projects.js
+// Single source of truth for project data — read by both
+// Chosen Work (featured only) and All Work (everything).
+// Add a project = append one object; it appears in the right places automatically.
+
+window.DISCIPLINES = ["UI/UX", "Visual", "Immersive", "Brand"];
+
 window.PROJECTS = [
-  { slug:"futee", title:"Futee", category:"Product Design",
-    disciplines:["UI/UX","Visual"],
-    description:"A football matchmaking platform for Bangkok — research through UI. Create games, book grounds, and fill the lineup without a group chat full of maybes.",
-    tags:["UX","UI","Visual"], cover:"/work/assets/cover-futee.webp",
-    url:"/work/futee", accent:"#f2e338", year:2024, order:1 },
-
-  { slug:"emf-ace", title:"EMF ACE", category:"Brand & Campaign",
-    disciplines:["Brand","Visual"],
-    description:"The full event brand and campaign for EMF Global's flagship in Abu Dhabi — a desert-luxury world spanning identity, a social campaign, and a live event across the city's grandest venues.",
-    tags:["Brand","Campaign","Art Direction"], cover:"/work/assets/cover-emf.webp",
-    url:"/work/emf-ace", accent:"#e0b45c", year:2024, order:2 },
-
-  { slug:"cseds", title:"CSEDS", category:"Web Design & Build",
-    disciplines:["UI/UX"],
-    description:"A digital home for a Sydney construction-products distributor — giving thirty years of engineering expertise a credible, engineering-grade website, designed and built in Framer.",
-    tags:["Web Design","Framer","Content"], cover:"/work/assets/cover-cseds.webp",
-    url:"/work/cseds", accent:"#e8543a", year:2024, order:3 }
+  {
+    slug: "futee",
+    order: 1,
+    title: "Futee",
+    category: "Product Design",
+    disciplines: ["UI/UX", "Visual"],
+    description: "A football-culture-first product design system for a grassroots matchmaking app.",
+    accent: "#f2e338",
+    featured: true
+  },
+  {
+    slug: "emf-ace",
+    order: 2,
+    title: "EMF ACE",
+    category: "Brand & Campaign",
+    disciplines: ["Visual", "Brand"],
+    description: "Brand and campaign system for an Abu Dhabi entertainment industry showcase.",
+    accent: "#8a5cf6",
+    featured: true
+  },
+  {
+    slug: "cseds",
+    order: 3,
+    title: "CSEDS",
+    category: "Web Design & Build",
+    disciplines: ["UI/UX"],
+    description: "Full site design and build for a civil/structural engineering distributor.",
+    accent: "#3a6ea8",
+    featured: true
+  },
+  {
+    slug: "yourturn",
+    order: 4,
+    title: "Yourturn",
+    category: "Brand & Onboarding",
+    disciplines: ["Brand", "UI/UX"],
+    description: "Brand guidelines and onboarding flow for a recruitment platform.",
+    accent: "#e07a3f",
+    featured: false
+  }
 ];
-
-// The four disciplines, in the same order as the homepage hero
-window.DISCIPLINES = ["UI/UX","Visual","Immersive","Brand"];

@@ -23,12 +23,14 @@
   /* nav */
   nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:22px 40px;mix-blend-mode:difference}
   nav a{color:#fff;font-family:var(--ui);font-size:14px}
-  nav .wordmark{font-family:var(--display);font-weight:700;font-size:17px}
+  nav .wordmark{font-family:var(--display);font-weight:700;font-size:17px;transition:opacity .3s ease}
+  body.zoomed nav .wordmark{opacity:0;pointer-events:none}
   nav .links{display:flex;gap:26px}
   nav .links a{cursor:pointer;opacity:.85}
   nav .links a.active{opacity:1;font-weight:600}
   .back{position:fixed;top:22px;left:40px;z-index:45;font-family:var(--ui);font-size:14px;color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s ease .3s;mix-blend-mode:difference}
   body.zoomed .back{opacity:1;pointer-events:auto}
+  @media(max-width:820px){nav .links{display:none}}
 
   .hero-copy{position:fixed;left:40px;bottom:44px;z-index:20;color:#fff;transition:opacity .5s ease}
   body.zoomed .hero-copy{opacity:0;pointer-events:none}
