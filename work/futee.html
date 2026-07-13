@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Futee — Neel Parikh</title>
+<meta name="description" content="Futee: a football matchmaking platform for Bangkok. Case study by Neel Parikh — product design, UI, prototyping.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --ui: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+
+    /* site-wide tokens (nav + footer reuse these) */
+    --amber: #e8a13a;
+    --ink: #141210;
+    --paper: #f4f1ea;
+    --line: rgba(20, 18, 16, 0.12);
+
+    /* Futee world tokens */
+    --pitch: #0F7126;
+    --pitch-deep: #0a5019;
+    --floodlight: #f2e338;
+    --chalk: #f4f5f0;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--pitch);
+    color: var(--chalk);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--floodlight);
+    outline-offset: 3px;
+  }
+
+  /* ============ NAV (shared, site-wide) ============ */
+  .site-nav {
+    position: fixed;
+    top: 20px; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    font-family: var(--ui);
+    transition: top .45s cubic-bezier(.16,1,.3,1);
+  }
+  .site-nav.shrunk { top: 12px; }
+
+  .nav-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    max-width: 760px;
+    width: calc(100% - 40px);
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1),
+                padding .45s cubic-bezier(.16,1,.3,1),
+                gap .45s cubic-bezier(.16,1,.3,1),
+                background-color .45s ease;
+  }
+  .shrunk .nav-pill {
+    max-width: 440px;
+    padding: 8px 20px;
+    gap: 18px;
+    background: rgba(20, 18, 16, 0.5);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .nav-brand-expanded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    max-width: 220px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .nav-brand-expanded { max-width: 0; opacity: 0; }
+
+  .nav-sprite {
+    height: 30px;
+    width: auto;
+    flex: none;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    transform-origin: bottom center;
+    animation: sprite-bob 3.2s ease-in-out infinite;
+  }
+  .shrunk .nav-sprite { animation: none; }
+  @keyframes sprite-bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-2px) rotate(1.5deg); }
+  }
+
+  .wordmark-full {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .wordmark-compact {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .wordmark-compact {
+    max-width: 40px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1) .1s, opacity .3s ease .15s;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    list-style: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding-bottom: 6px;
+    transition: color .25s ease, font-size .3s ease;
+  }
+  .shrunk .nav-link { font-size: 12px; }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--amber) !important;
+  }
+
+  .nav-underline {
+    position: absolute;
+    left: -4%;
+    bottom: -3px;
+    width: 108%;
+    height: 14px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .nav-underline path {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .5s ease, opacity .12s ease;
+  }
+  .nav-link:hover .nav-underline path,
+  .nav-link:focus-visible .nav-underline path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  .nav-link--work .nav-underline { transform: rotate(-0.6deg) scaleY(1); }
+  .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
+  .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
+
+  .nav-clock {
+    flex: none;
+    overflow: hidden;
+    max-width: 160px;
+    opacity: 1;
+    margin-left: 22px;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease, margin-left .45s ease;
+  }
+  .shrunk .nav-clock { max-width: 0; opacity: 0; margin-left: 0; }
+
+  .nav-clock-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .nav-clock-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex: none;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .nav-pill, .nav-brand-expanded, .wordmark-compact,
+    .nav-link, .nav-clock, .nav-underline path { transition: none; }
+    .nav-sprite, .nav-clock-dot { animation: none; }
+  }
+
+  /* ============ CASE STUDY SHELL ============ */
+  .fc-section {
+    padding: clamp(64px, 9vw, 110px) clamp(20px, 5vw, 56px);
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .fc-eyebrow-dark {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--floodlight);
+    margin-bottom: 14px;
+  }
+  .fc-h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    max-width: 18ch;
+    margin: 0 0 22px;
+  }
+  .fc-body-lg {
+    font-family: var(--body);
+    font-size: clamp(16px, 1.6vw, 18px);
+    line-height: 1.65;
+    color: rgba(244, 245, 240, 0.82);
+    max-width: 62ch;
+    margin: 0 0 16px;
+  }
+
+  /* ============ STICKY SECTION NAV ============ */
+  .fc-secnav {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .fc-secnav a {
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(244, 245, 240, 0.45);
+    text-decoration: none;
+    text-align: right;
+    transition: color .2s ease;
+  }
+  .fc-secnav a:hover,
+  .fc-secnav a:focus-visible {
+    color: var(--floodlight);
+  }
+  @media (max-width: 1180px) {
+    .fc-secnav { display: none; }
+  }
+
+  /* ============ HERO ============ */
+  .fc-hero {
+    padding: clamp(120px, 16vw, 180px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 72px);
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: end;
+  }
+  .fc-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--floodlight);
+    margin-bottom: 18px;
+  }
+  .fc-title {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(56px, 10vw, 128px);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--chalk);
+  }
+  .fc-dot { color: var(--floodlight); }
+  .fc-lede {
+    font-family: var(--body);
+    font-size: clamp(16px, 1.8vw, 19px);
+    line-height: 1.55;
+    color: rgba(244, 245, 240, 0.85);
+    max-width: 46ch;
+    margin: 20px 0 0;
+  }
+  .fc-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 28px;
+    margin: 40px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(244, 245, 240, 0.16);
+  }
+  .fc-meta div { margin: 0; }
+  .fc-meta dt {
+    font-family: var(--ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(244, 245, 240, 0.5);
+    margin-bottom: 6px;
+  }
+  .fc-meta dd {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--chalk);
+    margin: 0;
+  }
+  .fc-hero-art {
+    width: 100%;
+  }
+  .fc-hero-art img { width: 100%; height: auto; }
+  @media (max-width: 820px) {
+    .fc-hero { grid-template-columns: 1fr; }
+    .fc-hero-art { max-width: 280px; margin: 0 auto; }
+    .fc-meta { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============ IMPACT / STATS ============ */
+  .fc-impact { max-width: 1000px; }
+  .fc-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 44px;
+  }
+  .fc-stat {
+    border-top: 2px solid var(--floodlight);
+    padding-top: 16px;
+  }
+  .fc-stat-num {
+    display: block;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(36px, 4.4vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--chalk);
+  }
+  .fc-stat-suffix { color: var(--floodlight); }
+  .fc-stat-label {
+    display: block;
+    font-family: var(--ui);
+    font-size: 13px;
+    color: rgba(244, 245, 240, 0.6);
+    margin-top: 10px;
+    max-width: 20ch;
+  }
+  @media (max-width: 720px) {
+    .fc-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============ PROBLEM ============ */
+  .fc-problem-list {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .fc-problem-list li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(244, 245, 240, 0.14);
+  }
+  .fc-problem-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .fc-problem-num {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--floodlight);
+  }
+  .fc-problem-list h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(18px, 2.2vw, 22px);
+    margin: 0 0 8px;
+    color: var(--chalk);
+  }
+  .fc-problem-list p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(244, 245, 240, 0.75);
+    margin: 0;
+    max-width: 56ch;
+  }
+  @media (max-width: 600px) {
+    .fc-problem-list li { grid-template-columns: 1fr; }
+  }
+
+  /* ============ QUIZ ============ */
+  .fc-quiz { max-width: 760px; }
+  .fc-chat {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(244, 245, 240, 0.12);
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 32px);
+  }
+  .fc-chat-bubble {
+    position: relative;
+    background: var(--chalk);
+    color: var(--ink);
+    border-radius: 14px;
+    padding: 14px 18px;
+    max-width: 78%;
+  }
+  .fc-chat-name {
+    display: block;
+    font-family: var(--ui);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(20, 18, 16, 0.5);
+    margin-bottom: 3px;
+  }
+  .fc-chat-bubble p {
+    font-family: var(--body);
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .fc-chat-seen {
+    display: block;
+    font-family: var(--ui);
+    font-size: 11px;
+    color: rgba(20, 18, 16, 0.4);
+    margin-top: 6px;
+  }
+  .fc-hotspot {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+  }
+  .fc-hotspot summary {
+    list-style: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--floodlight);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transition: transform .2s ease, background-color .2s ease;
+  }
+  .fc-hotspot summary::-webkit-details-marker { display: none; }
+  .fc-hotspot summary:hover,
+  .fc-hotspot summary:focus-visible {
+    transform: scale(1.12);
+  }
+  .fc-hotspot[open] summary {
+    background: var(--pitch);
+    color: var(--floodlight);
+  }
+  .fc-hotspot-reveal {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: var(--pitch-deep);
+    color: var(--chalk);
+    border-radius: 10px;
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 320px;
+  }
+  .fc-hotspot-reveal strong { color: var(--floodlight); }
+  .fc-quiz-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .fc-reveal-all {
+    font-family: var(--ui);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--floodlight);
+    border: 1px solid rgba(242, 227, 56, 0.4);
+    border-radius: 999px;
+    padding: 8px 18px;
+  }
+  .fc-reveal-all:hover { background: rgba(242, 227, 56, 0.1); }
+  .fc-quiz-resolve {
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--chalk);
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(244, 245, 240, 0.16);
+  }
+
+  /* ============ PROCESS / FRAMING ============ */
+  .fc-process {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    position: relative;
+  }
+  .fc-process::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: rgba(244, 245, 240, 0.16);
+  }
+  .fc-process-fill {
+    position: absolute;
+    left: 27px;
+    top: 8px;
+    width: 2px;
+    height: 0;
+    background: var(--floodlight);
+    transition: height 1.1s cubic-bezier(.16,1,.3,1);
+  }
+  .fc-process.is-drawn .fc-process-fill { height: var(--fc-process-height, 0); }
+  @media (prefers-reduced-motion: reduce) {
+    .fc-process-fill { transition: none; height: var(--fc-process-height, 0) !important; }
+  }
+  .fc-process li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    padding-bottom: 32px;
+  }
+  .fc-process li:last-child { padding-bottom: 0; }
+  .fc-process-num {
+    position: relative;
+    z-index: 1;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--floodlight);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fc-process h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(17px, 2vw, 20px);
+    margin: 4px 0 8px;
+    color: var(--chalk);
+  }
+  .fc-process p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(244, 245, 240, 0.75);
+    margin: 0;
+    max-width: 54ch;
+  }
+
+  /* ============ KILLED ============ */
+  .fc-killed { max-width: 760px; }
+  .fc-killed-callout {
+    margin-top: 28px;
+    padding: 22px 26px;
+    background: rgba(242, 227, 56, 0.08);
+    border-left: 3px solid var(--floodlight);
+    border-radius: 4px;
+  }
+  .fc-killed-callout p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--chalk);
+    margin: 0;
+  }
+  .fc-killed-callout strong { color: var(--floodlight); }
+
+  /* ============ SOLUTION ============ */
+  .fc-solution { max-width: 900px; }
+  .fc-figure { margin: 40px 0 0; }
+  .fc-frame {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(244, 245, 240, 0.14);
+    background: #0c0c0c;
+  }
+  .fc-frame img { width: 100%; }
+  .fc-frame--phone { max-width: 390px; margin: 0 auto; }
+  .fc-figure figcaption {
+    font-family: var(--ui);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: rgba(244, 245, 240, 0.55);
+    margin-top: 12px;
+  }
+  .fc-solution-note {
+    margin-top: 22px;
+    font-style: normal;
+  }
+
+  .fc-arrow {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+  }
+  .fc-arrow path {
+    stroke: var(--floodlight);
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1s ease;
+  }
+  .fc-arrow.is-drawn path { stroke-dashoffset: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .fc-arrow path { transition: none; stroke-dashoffset: 0; }
+  }
+  .fc-arrow-label {
+    position: absolute;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--floodlight);
+    background: rgba(15, 113, 38, 0.9);
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* ============ TIMER ============ */
+  .fc-timer-section { max-width: 1000px; }
+  .fc-timer-stage { height: 280vh; position: relative; margin-top: 20px; }
+  .fc-timer-sticky {
+    position: sticky;
+    top: 120px;
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+  }
+  .fc-timer-track {
+    position: relative;
+    width: 12px;
+    height: 60vh;
+    max-height: 460px;
+    margin: 0 auto;
+    background: rgba(244, 245, 240, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .fc-timer-fill {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 0%;
+    background: var(--floodlight);
+    border-radius: 999px;
+  }
+  .fc-timer-readout {
+    position: absolute;
+    left: 50%;
+    bottom: -34px;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--floodlight);
+    white-space: nowrap;
+  }
+  .fc-timer-beats {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(90px, 20vh, 160px);
+  }
+  .fc-timer-beat {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(20px, 2.6vw, 28px);
+    line-height: 1.25;
+    color: rgba(244, 245, 240, 0.32);
+    max-width: 22ch;
+    margin: 0;
+    transition: color .4s ease;
+  }
+  .fc-timer-beat.is-active { color: var(--chalk); }
+  @media (prefers-reduced-motion: reduce) {
+    .fc-timer-beat { transition: none; }
+  }
+
+  @media (max-width: 820px) {
+    .fc-timer-stage { height: auto; }
+    .fc-timer-sticky {
+      position: static;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .fc-timer-track {
+      width: 100%;
+      height: 12px;
+      max-height: none;
+    }
+    .fc-timer-fill { left: 0; bottom: 0; top: 0; height: 100%; width: 0%; }
+    .fc-timer-readout { left: auto; right: 0; bottom: -28px; transform: none; }
+    .fc-timer-beats { flex-direction: column; gap: 20px; }
+  }
+
+  /* ============ REFLECTION ============ */
+  .fc-placeholder-box {
+    margin-top: 8px;
+    padding: 22px 26px;
+    border: 1px dashed rgba(244, 245, 240, 0.35);
+    border-radius: 8px;
+  }
+  .fc-placeholder-box p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(244, 245, 240, 0.6);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ============ PAGENAV ============ */
+  .fc-pagenav {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 34px clamp(20px, 5vw, 56px) 0;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(244, 245, 240, 0.16);
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .fc-pagenav a { color: rgba(244, 245, 240, 0.6); text-decoration: none; }
+  .fc-pagenav a:hover { color: var(--floodlight); }
+
+  /* ============ FOOTER (shared, site-wide) ============ */
+  .site-footer {
+    background: var(--ink);
+    padding: clamp(70px, 10vw, 110px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 64px);
+    margin-top: clamp(64px, 9vw, 110px);
+  }
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+  .footer-pills {
+    --fall-distance: -50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px 24px;
+    padding-bottom: clamp(40px, 6vw, 56px);
+  }
+
+  .footer-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 2.6vw, 30px) clamp(34px, 4.4vw, 50px);
+    color: var(--paper);
+    font-family: var(--ui);
+    font-size: clamp(18px, 2.4vw, 26px);
+    font-weight: 500;
+    text-decoration: none;
+    opacity: 1;
+    transform: rotate(var(--rot, 0deg));
+    transition: transform .2s ease, color .2s ease;
+  }
+  .footer-pill-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .footer-pill-shape path {
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.5);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    transition: stroke .2s ease;
+  }
+  .footer-pill-label { position: relative; z-index: 1; white-space: nowrap; }
+
+  .footer-pill:hover,
+  .footer-pill:focus-visible {
+    transform: translateY(-3px) rotate(var(--rot, 0deg));
+    color: var(--amber);
+  }
+  .footer-pill:hover .footer-pill-shape path,
+  .footer-pill:focus-visible .footer-pill-shape path {
+    stroke: var(--amber);
+  }
+  .footer-pill--accent { color: var(--amber); }
+  .footer-pill--accent .footer-pill-shape path { stroke: var(--amber); }
+
+  .footer-pills.pending .footer-pill {
+    opacity: 0;
+    transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg));
+  }
+  .footer-pills.dropped .footer-pill {
+    animation: pill-drop .7s cubic-bezier(.34, 1.56, .64, 1) both;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes pill-drop {
+    0% { opacity: 0; transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg)); }
+    100% { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-pills.pending .footer-pill,
+    .footer-pills.dropped .footer-pill {
+      opacity: 1;
+      transform: rotate(var(--rot, 0deg));
+      animation: none;
+    }
+    .footer-pill { transition: none; }
+  }
+
+  .footer-floor { width: 100%; height: 20px; }
+  .footer-floor svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .footer-floor path {
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.22);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (max-width: 820px) {
+    .site-nav, .site-nav.shrunk { top: 12px; }
+    .nav-pill { width: calc(100% - 24px); padding: 10px 12px; gap: 14px; }
+    .shrunk .nav-pill { max-width: 300px; }
+    .wordmark-full { font-size: 15px; }
+    .nav-sprite { height: 24px; }
+    .nav-links { gap: 14px; }
+    .nav-link { font-size: 11px; }
+    .shrunk .nav-link { font-size: 11px; }
+    .nav-clock { display: none; }
+
+    .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
+    .footer-pill { padding: 16px 26px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="site-nav">
+  <div class="nav-pill">
+    <a href="#hero" class="nav-brand" aria-label="Neel Parikh — back to top">
+      <span class="nav-brand-expanded" aria-hidden="true">
+        <img class="nav-sprite" src="/assets/sprite/neel-mug.png" alt="" aria-hidden="true">
+        <span class="wordmark-full">Neel Parikh</span>
+      </span>
+      <span class="wordmark-compact" aria-hidden="true">NP</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a href="/index.html#chosen-work" class="nav-link nav-link--work">
+          Work
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/about.html" class="nav-link nav-link--about">
+          About
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/contact.html" class="nav-link nav-link--contact">
+          Contact
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-clock">
+      <span class="nav-clock-inner">
+        <span class="nav-clock-dot" aria-hidden="true"></span>
+        <span id="nav-clock-label">MORNING</span>
+        <span id="nav-clock-time">--:--</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<nav class="fc-secnav" aria-label="Case study sections">
+  <a href="#impact">Impact</a>
+  <a href="#problem">Problem</a>
+  <a href="#quiz">The quiz</a>
+  <a href="#framing">Framing</a>
+  <a href="#killed">What I killed</a>
+  <a href="#solution">Solution</a>
+  <a href="#timer">The timer</a>
+  <a href="#reflection">Reflection</a>
+</nav>
+
+<!-- 1. HERO -->
+<section class="fc-hero" id="hero">
+  <div>
+    <p class="fc-eyebrow">Case study — Product design</p>
+    <h1 class="fc-title">Futee<span class="fc-dot">.</span></h1>
+    <p class="fc-lede">A football matchmaking platform for Bangkok, built so a Sunday morning game doesn't live or die in a group chat full of "maybes."</p>
+    <dl class="fc-meta">
+      <div><dt>Role</dt><dd>Product design, UI, prototyping</dd></div>
+      <div><dt>Timeline</dt><dd>~3 months</dd></div>
+      <div><dt>Team</dt><dd>Solo — client project</dd></div>
+      <div><dt>Platform</dt><dd>iOS &amp; responsive web</dd></div>
+      <div><dt>Tools</dt><dd>Figma</dd></div>
+    </dl>
+  </div>
+  <div class="fc-hero-art">
+    <img src="/work/futee/assets/hero-illustration.png" alt="Hand-drawn illustration of a footballer mid-kick, wearing an orange number 8 kit and lime cleats, next to a star-patterned ball" width="2000" height="1125">
+  </div>
+</section>
+
+<!-- 2. IMPACT -->
+<section class="fc-section fc-impact" id="impact">
+  <span class="fc-eyebrow-dark">Outcome, first</span>
+  <h2 class="fc-h2">What shipped, honestly</h2>
+  <p class="fc-body-lg">Futee is a Figma prototype, not a live product — so here's what's real. No invented conversion rate, no activation percentage that was never measured. Just what actually got made.</p>
+  <div class="fc-stats" id="fcStats">
+    <div class="fc-stat" data-target="150">
+      <span class="fc-stat-num"><span class="fc-stat-count">0</span><span class="fc-stat-suffix">+</span></span>
+      <span class="fc-stat-label">Grounds bookable, each with its own filters</span>
+    </div>
+    <div class="fc-stat" data-target="3">
+      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
+      <span class="fc-stat-label">Months, start to shipped prototype</span>
+    </div>
+    <div class="fc-stat" data-target="5">
+      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
+      <span class="fc-stat-label">Research-to-build phases, none skipped</span>
+    </div>
+    <div class="fc-stat" data-target="2">
+      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
+      <span class="fc-stat-label">Platforms, one design system — iOS and responsive web</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3. THE PROBLEM -->
+<section class="fc-section" id="problem">
+  <span class="fc-eyebrow-dark">The problem</span>
+  <h2 class="fc-h2">Getting eleven players to actually show up was the whole problem.</h2>
+  <p class="fc-body-lg">Bangkok has plenty of five-a-side pitches and no shortage of people who want a game. What it didn't have was a reliable way to get the right people, at the right skill level, in the same place at the same time.</p>
+  <ol class="fc-problem-list">
+    <li>
+      <span class="fc-problem-num">01</span>
+      <div>
+        <h3>Turnout — every game started as a group-chat chase</h3>
+        <p>Getting to eleven confirmed players meant pinging the same five people who hadn't replied, over and over, until kickoff.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-problem-num">02</span>
+      <div>
+        <h3>Skill — nobody knew who could actually play</h3>
+        <p>A "yes" in a group chat tells you nothing about whether someone can hold a position or is turning up in jeans. Game quality was a coin flip.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-problem-num">03</span>
+      <div>
+        <h3>Reliability — "yes" wasn't a commitment</h3>
+        <p>People said yes and didn't show. There was no visible cost to flaking, and no way to tell in advance who was likely to.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- 4. THE QUIZ -->
+<section class="fc-section fc-quiz" id="quiz">
+  <span class="fc-eyebrow-dark">Before you keep reading</span>
+  <h2 class="fc-h2">Three things are broken in this chat. Can you spot them?</h2>
+  <p class="fc-body-lg">This is the real shape of how games got organised before Futee — a group chat, the night before a Sunday match. Take a second. No cheating.</p>
+
+  <div class="fc-chat" aria-label="Annotated example of a pre-Futee group chat, with three hidden problems">
+    <div class="fc-chat-bubble">
+      <span class="fc-chat-name">Dao</span>
+      <p>Game's on for Sunday 9am, who's in?</p>
+    </div>
+    <div class="fc-chat-bubble">
+      <span class="fc-chat-name">Big Vic</span>
+      <p>in, I'm actually really good trust me ⚽️</p>
+      <details class="fc-hotspot" data-n="1">
+        <summary aria-label="Reveal friction 1 of 3">?</summary>
+        <div class="fc-hotspot-reveal">
+          <strong>Skill is a guess.</strong> No rating, no history — you're taking Vic's word for it.
+        </div>
+      </details>
+    </div>
+    <div class="fc-chat-bubble">
+      <span class="fc-chat-name">Zoe</span>
+      <p>might be able to make it? 🤷</p>
+      <details class="fc-hotspot" data-n="2">
+        <summary aria-label="Reveal friction 2 of 3">?</summary>
+        <div class="fc-hotspot-reveal">
+          <strong>"Maybe" isn't a headcount.</strong> Half the chat is still unconfirmed the night before.
+        </div>
+      </details>
+    </div>
+    <div class="fc-chat-bubble">
+      <span class="fc-chat-name">Nut</span>
+      <p>yeah I'm in!</p>
+      <span class="fc-chat-seen">Read 8:52am · no reply since</span>
+      <details class="fc-hotspot" data-n="3">
+        <summary aria-label="Reveal friction 3 of 3">?</summary>
+        <div class="fc-hotspot-reveal">
+          <strong>"Yes" isn't a commitment.</strong> Nut confirmed and went quiet. He's a coin flip to show.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="fc-quiz-controls">
+    <button class="fc-reveal-all" id="fcRevealAll" type="button">Reveal all three</button>
+  </div>
+
+  <p class="fc-quiz-resolve">Turnout. Skill. Reliability. Same three problems, every week — which is exactly what Futee was built to solve.</p>
+</section>
+
+<!-- 5. HOW I FRAMED IT -->
+<section class="fc-section" id="framing">
+  <span class="fc-eyebrow-dark">How I framed it</span>
+  <h2 class="fc-h2">I couldn't assume anything about how Bangkok organises football.</h2>
+  <p class="fc-body-lg">This wasn't my city or my group chats. Every assumption I'd bring from Sydney was a guess, so the process moved deliberately from listening to building — each phase feeding the next.</p>
+
+  <ol class="fc-process" id="fcProcess">
+    <div class="fc-process-fill" id="fcProcessFill"></div>
+    <li>
+      <span class="fc-process-num">01</span>
+      <div>
+        <h3>Listening to the brief behind the brief</h3>
+        <p>The stated ask was booking and creating games. The real ask, once I dug in, was matchmaking — Futee as the first sport on a platform meant to grow into many.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-process-num">02</span>
+      <div>
+        <h3>Absorbing what already existed</h3>
+        <p>Stakeholder analysis, competitor booking and matchmaking apps, and the patterns already shaping how people find games online.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-process-num">03</span>
+      <div>
+        <h3>Localising instead of assuming</h3>
+        <p>Conversations aimed squarely at the Thai market and audience — not a place to import Sydney assumptions about how people organise a kickabout.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-process-num">04</span>
+      <div>
+        <h3>Framing two very different users</h3>
+        <p>The person creating a game and the person joining one needed different things, so I mapped each as its own persona and journey instead of one blended user.</p>
+      </div>
+    </li>
+    <li>
+      <span class="fc-process-num">05</span>
+      <div>
+        <h3>Making it real</h3>
+        <p>Wireframes, the UI system, and the prototyped flows that make up Futee today.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- 6. WHAT I KILLED -->
+<section class="fc-section fc-killed" id="killed">
+  <span class="fc-eyebrow-dark">What I killed</span>
+  <h2 class="fc-h2">I killed the onboarding twice before it felt like football.</h2>
+  <p class="fc-body-lg">Early onboarding and login went through more than one direction before anything shipped. The versions that read as "another app" got cut — not because they looked bad, but because they asked footballers to learn a new visual language before they'd even created a match.</p>
+  <p class="fc-body-lg">What shipped instead borrows deliberately from FIFA's own menus and login screens. Every user Futee is built for has already spent hundreds of hours in that visual language — the card layouts, the badges, the way a "create" action is presented. There was nothing left to teach.</p>
+  <div class="fc-killed-callout">
+    <p><strong>The trade-off:</strong> a more "original" visual identity would have looked better in a portfolio. It also would have cost every new user a few extra seconds figuring out where things are. For a product that lives or dies on whether people bother opening it before a Sunday game, familiarity won.</p>
+  </div>
+</section>
+
+<!-- 7. THE SOLUTION -->
+<section class="fc-section fc-solution" id="solution">
+  <span class="fc-eyebrow-dark">The solution</span>
+  <h2 class="fc-h2">The system that replaced the group chat</h2>
+  <p class="fc-body-lg">One place to create and customise a game, book from 150+ grounds, and invite players with visible ratings — so a match is set up to be worth showing up for.</p>
+
+  <figure class="fc-figure">
+    <div class="fc-frame fc-frame--phone">
+      <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
+    </div>
+    <figcaption>Overview — the home screen. Every number on it is real product copy, not placeholder.</figcaption>
+  </figure>
+
+  <p class="fc-body-lg fc-solution-note">This is where turnout gets solved structurally: Create Game and Find Game are two distinct paths, not one generic "browse" screen, because creating a game and joining one are different jobs with different anxieties.</p>
+
+  <figure class="fc-figure">
+    <div class="fc-frame fc-frame--phone" id="fcCreateGameFrame">
+      <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy">
+      <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:6%; top:83%;" aria-hidden="true">
+        <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
+      </svg>
+      <span class="fc-arrow-label" style="left:6%; top:93%;">sorted by rating</span>
+    </div>
+    <figcaption>Create Game — date, venue, and filters. Results sort by rating first.</figcaption>
+  </figure>
+
+  <p class="fc-body-lg fc-solution-note">This is the skill and reliability problem, solved structurally rather than with a badge: pitches are rated and sorted by rating by default, and the same rating pattern carries over to players once you're choosing who to invite.</p>
+</section>
+
+<!-- 8. THE TIMER -->
+<section class="fc-section fc-timer-section" id="timer">
+  <span class="fc-eyebrow-dark">How this project actually moved</span>
+  <h2 class="fc-h2">Ninety minutes, start to finish</h2>
+  <div class="fc-timer-stage" id="fcTimerStage">
+    <div class="fc-timer-sticky">
+      <div>
+        <div class="fc-timer-track">
+          <div class="fc-timer-fill" id="fcTimerFill"></div>
+        </div>
+        <div class="fc-timer-readout" id="fcTimerReadout">00′</div>
+      </div>
+      <div class="fc-timer-beats">
+        <p class="fc-timer-beat" data-at="8">Kickoff — the brief lands, bigger than it first looks</p>
+        <p class="fc-timer-beat" data-at="45">Half-time — research reframes the whole product</p>
+        <p class="fc-timer-beat" data-at="88">Full time — 150+ grounds, one system, shipped</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. WHAT I'D DO DIFFERENTLY -->
+<section class="fc-section" id="reflection">
+  <span class="fc-eyebrow-dark">What I'd do differently</span>
+  <h2 class="fc-h2">Reflection — in Neel's words</h2>
+  <div class="fc-placeholder-box">
+    <p>Placeholder — replace before this goes live. This is the section reviewers read to gauge self-awareness, so it needs to sound like you talking: a decision you'd revisit, something you got wrong, or a real number you wish you'd tracked from the start.</p>
+  </div>
+</section>
+
+<!-- 10. NEXT -->
+<div class="fc-pagenav">
+  <a href="/index.html">← Neel Parikh</a>
+  <a href="/work.html">See all work →</a>
+</div>
+
+<footer class="site-footer" id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-pills" id="footer-pills"></div>
+    <div class="footer-floor" aria-hidden="true">
+      <svg viewBox="0 62 469 38" preserveAspectRatio="none">
+        <path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" />
+      </svg>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- nav pill shrink/expand on scroll ---------- */
+  var nav = document.getElementById('site-nav');
+  var lastY = window.scrollY;
+  var ticking = false;
+  var TOP_ZONE = 80;
+  var THRESHOLD = 6;
+
+  function updateNavShrink() {
+    var y = window.scrollY;
+    if (y < TOP_ZONE) {
+      nav.classList.remove('shrunk');
+      lastY = y;
+    } else if (Math.abs(y - lastY) > THRESHOLD) {
+      nav.classList.toggle('shrunk', y > lastY);
+      lastY = y;
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(updateNavShrink);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  /* ---------- nav clock (no hero scene-swap on this page) ---------- */
+  var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
+  var labelEl = document.getElementById('nav-clock-label');
+  var timeEl = document.getElementById('nav-clock-time');
+
+  function getScene(hour) {
+    if (hour >= 5 && hour < 11) return 'morning';
+    if (hour >= 11 && hour < 16) return 'midday';
+    if (hour >= 16 && hour < 19) return 'golden';
+    return 'night';
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function updateClock() {
+    var now = new Date();
+    labelEl.textContent = SCENE_LABELS[getScene(now.getHours())];
+    timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  /* ---------- counting stat block ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var statEls = document.querySelectorAll('.fc-stat');
+
+  function animateCount(el) {
+    var target = Number(el.dataset.target);
+    var countEl = el.querySelector('.fc-stat-count');
+    if (reduceMotion) {
+      countEl.textContent = target;
+      return;
+    }
+    var start = null;
+    var duration = 900;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min(1, (ts - start) / duration);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      countEl.textContent = Math.round(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var statObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    statEls.forEach(function (el) { statObserver.observe(el); });
+  } else {
+    statEls.forEach(animateCount);
+  }
+
+  /* ---------- quiz: reveal all ---------- */
+  var revealAllBtn = document.getElementById('fcRevealAll');
+  var hotspots = document.querySelectorAll('.fc-hotspot');
+  if (revealAllBtn) {
+    revealAllBtn.addEventListener('click', function () {
+      hotspots.forEach(function (d) { d.open = true; });
+    });
+  }
+
+  /* ---------- process timeline draw-in ---------- */
+  var processEl = document.getElementById('fcProcess');
+  var processFillEl = document.getElementById('fcProcessFill');
+  if (processEl && processFillEl) {
+    var fullHeight = processEl.getBoundingClientRect().height - 16;
+    processEl.style.setProperty('--fc-process-height', fullHeight + 'px');
+    if ('IntersectionObserver' in window) {
+      var processObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            processEl.classList.add('is-drawn');
+            processObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      processObserver.observe(processEl);
+    } else {
+      processEl.classList.add('is-drawn');
+    }
+  }
+
+  /* ---------- solution arrow draw-in ---------- */
+  var arrowEl = document.getElementById('fcArrow');
+  if (arrowEl && 'IntersectionObserver' in window) {
+    var arrowObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          arrowEl.classList.add('is-drawn');
+          arrowObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.6 });
+    arrowObserver.observe(arrowEl);
+  } else if (arrowEl) {
+    arrowEl.classList.add('is-drawn');
+  }
+
+  /* ---------- match timer: 00' -> 90' on scroll ---------- */
+  var timerStage = document.getElementById('fcTimerStage');
+  var timerFill = document.getElementById('fcTimerFill');
+  var timerReadout = document.getElementById('fcTimerReadout');
+  var timerBeats = document.querySelectorAll('.fc-timer-beat');
+
+  if (timerStage && timerFill && timerReadout) {
+    if (reduceMotion) {
+      timerFill.style.height = '100%';
+      timerFill.style.width = '100%';
+      timerReadout.textContent = "90′";
+      timerBeats.forEach(function (b) { b.classList.add('is-active'); });
+    } else {
+      var timerTicking = false;
+      function updateTimer() {
+        var rect = timerStage.getBoundingClientRect();
+        var vh = window.innerHeight;
+        var total = timerStage.offsetHeight - vh;
+        var progress = total > 0 ? Math.max(0, Math.min(1, (0 - rect.top) / total)) : 0;
+        var minute = Math.round(progress * 90);
+
+        timerFill.style.height = (progress * 100) + '%';
+        timerFill.style.width = (progress * 100) + '%';
+        timerReadout.textContent = pad2Min(minute) + '′';
+
+        timerBeats.forEach(function (b) {
+          var at = Number(b.dataset.at);
+          b.classList.toggle('is-active', minute >= at);
+        });
+        timerTicking = false;
+      }
+      function pad2Min(n) { return n < 10 ? '0' + n : '' + n; }
+      window.addEventListener('scroll', function () {
+        if (!timerTicking) {
+          requestAnimationFrame(updateTimer);
+          timerTicking = true;
+        }
+      }, { passive: true });
+      window.addEventListener('resize', updateTimer, { passive: true });
+      updateTimer();
+    }
+  }
+
+  /* ---------- Footer pills ---------- */
+  var PILLS = [
+    { label: 'Email', url: 'mailto:neelparikh7@gmail.com' },
+    { label: 'LinkedIn', url: 'https://linkedin.com/in/neel-parikh-413b16169/' },
+    { label: 'Instagram', url: '#' }, // TODO: Neel to supply Instagram URL
+    { label: 'GitHub', url: 'https://github.com/Redtanjiro' },
+    { label: 'Résumé', url: '/assets/files/neel-parikh-cv.pdf', download: true },
+    { label: 'Say hi', url: 'mailto:neelparikh7@gmail.com?subject=Hey%20Neel', accent: true }
+  ];
+  var PILL_ROTATIONS = [-3, 2, -2.5, 3, -2, 2.5];
+  var PILL_STAGGER_MS = 100;
+  var PILL_SHAPES = [
+    'M76.7874 16.2182C76.7676 16.2182 76.7477 16.2182 72.653 16.3587C68.5582 16.4992 60.3891 16.7801 55.0636 17.0685C49.7381 17.3568 47.5036 17.6439 45.0377 17.792C39.9491 18.0976 36.4777 17.9651 34.9519 18.1006C33.3926 18.2391 29.9118 19.8732 25.5993 21.9204C22.7442 23.2757 21.9852 24.9076 20.8313 27.004C18.8633 30.5799 18.7729 32.2198 18.3184 34.208C17.5275 37.6676 18.2543 41.4872 19.548 44.6925C21.122 48.5925 22.3134 49.8813 23.1844 50.6958C24.2795 51.7199 25.9985 52.4629 29.3257 54.2533C31.1813 55.2518 33.8645 55.4632 38.5905 55.7782C41.9967 56.0053 47.4677 56.0365 56.1253 56.3051C64.7829 56.5738 76.466 56.9941 82.6954 57.1796C89.3446 57.3776 90.3041 57.1582 91.329 57.015C94.3867 56.5876 98.2784 56.0423 100.428 55.1111C103.352 53.8438 105.34 51.2614 106.603 50.2042C107.612 49.3588 108.319 47.789 108.887 46.0273C109.852 43.0334 111.386 37.9322 111.867 35.338C112.332 32.8255 111.598 28.8356 110.622 26.5131C109.576 24.0245 107.79 22.4884 106.781 21.7764C105.31 20.7386 102.747 19.9547 99.6034 19.0171C97.9571 18.5261 96.1364 18.2569 93.6375 18.0181C88.0118 17.4806 84.3809 17.4385 83.5339 17.2657C81.1482 16.779 78.8265 16.2537 77.678 15.9158C77.4109 15.8409 77.1518 15.7923 76.8406 15.7672C76.5293 15.7422 76.1738 15.7422 75.8074 15.7422',
+    'M67.4355 17.7327C67.3971 17.7327 64.6152 17.6838 58.6774 17.3591C55.4945 17.1851 51.9963 16.5824 48.0994 16.3049C44.2025 16.0275 40.0204 15.9888 37.2847 16.1032C31.7428 16.335 29.9583 17.9868 26.8338 20.5645C25.7522 21.4568 25.1133 22.5433 24.4123 23.6584C23.822 24.5974 22.4968 28.1258 20.6415 33.0988C19.0926 37.2504 19.8218 39.6392 20.8827 42.4012C21.8628 44.9528 24.085 47.4894 25.9523 49.5174C26.9351 50.5848 28.4301 51.4773 31.7137 52.9054C33.7855 53.8065 36.9012 54.5084 44.0398 55.3011C51.1784 56.0938 62.302 56.8135 71.9448 56.938C81.5877 57.0625 89.4129 56.5701 93.7467 56.2491C99.7157 55.8071 102.94 53.75 105.112 52.2878C106.601 51.2852 108.657 46.7875 109.644 44.043C111.019 40.2225 109.751 36.3623 108.791 33.5944C107.522 29.9392 105.856 27.4901 104.433 26.1588C101.425 23.3424 98.6552 21.5077 96.9232 20.7114C95.7541 20.1738 93.901 19.5844 91.0583 19.0213C88.2155 18.4582 84.415 17.9951 80.0195 17.7425C75.6239 17.49 70.7485 17.4619 65.7253 17.433',
+    'M54.9867 16.9128C54.9768 16.9128 54.9669 16.9128 52.0405 16.942C49.1141 16.9713 43.2715 17.0298 37.6997 17.44C32.128 17.8502 27.0041 18.6103 23.9537 19.1287C20.0611 19.7901 18.4125 20.6085 16.7247 21.7054C14.7976 22.9578 13.5196 24.8813 12.5524 26.4636C11.7137 27.8359 11.0702 30.8217 10.262 35.3897C9.4209 40.1434 9.71834 43.0853 9.91035 44.0755C10.5713 47.484 12.5173 50.1445 13.8284 51.675C14.3872 52.3274 15.9828 53.0041 20.2932 54.3814C23.3825 55.3684 28.4384 56.4882 36.305 57.285C44.1717 58.0817 54.7306 58.4058 62.779 58.3171C70.8274 58.2284 76.0454 57.7171 81.3986 57.0771C86.7518 56.4371 92.0821 55.6838 96.0867 54.9C100.091 54.1162 102.609 53.3246 105.074 52.4491C109.91 50.7318 113.143 49.1032 114.829 47.8871C117.858 45.7024 118.867 43.7613 119.631 42.1307C120.922 39.3756 120.085 34.1726 119.317 31.1616C118.976 29.8244 118.25 28.4725 117.127 26.4605C114.076 20.9916 111.524 19.0811 108.111 16.9816C105.844 15.5875 102.44 15.1429 96.7225 14.788C92.9195 14.552 87.2621 14.7206 81.8968 14.8155C76.5316 14.9104 71.624 15.0589 68.326 15.1303C63.489 15.235 60.4645 15.5207 57.8 16.1157C56.5729 16.3708 55.5996 16.531 54.9442 16.6421C54.2888 16.7532 53.9808 16.8103 52.9748 16.8962'
+  ];
+
+  var pillsEl = document.getElementById('footer-pills');
+  PILLS.forEach(function (pill, i) {
+    var a = document.createElement('a');
+    a.className = 'footer-pill' + (pill.accent ? ' footer-pill--accent' : '');
+    a.href = pill.url;
+    a.style.setProperty('--rot', PILL_ROTATIONS[i % PILL_ROTATIONS.length] + 'deg');
+    a.style.setProperty('--delay', (i * PILL_STAGGER_MS) + 'ms');
+    if (pill.download) a.setAttribute('download', '');
+    a.innerHTML =
+      '<svg class="footer-pill-shape" viewBox="0 0 130 73" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="' + PILL_SHAPES[i % PILL_SHAPES.length] + '" />' +
+      '</svg>' +
+      '<span class="footer-pill-label">' + pill.label + '</span>';
+    pillsEl.appendChild(a);
+  });
+
+  pillsEl.classList.add('pending');
+  if ('IntersectionObserver' in window) {
+    var footerObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          pillsEl.classList.remove('pending');
+          pillsEl.classList.add('dropped');
+          footerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    footerObserver.observe(pillsEl);
+  } else {
+    pillsEl.classList.remove('pending');
+  }
+})();
+</script>
+</body>
+</html>
