@@ -22,7 +22,7 @@
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
   }
@@ -55,54 +55,123 @@
   /* ============ NAV ============ */
   .site-nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 20px; left: 0; right: 0;
     z-index: 100;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 26px clamp(20px, 5vw, 56px);
+    justify-content: center;
+    pointer-events: none;
     font-family: var(--ui);
-    transition: background-color .35s ease, box-shadow .35s ease;
+    transition: top .45s cubic-bezier(.16,1,.3,1);
+  }
+  .site-nav.shrunk { top: 12px; }
+
+  .nav-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    max-width: 760px;
+    width: calc(100% - 40px);
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1),
+                padding .45s cubic-bezier(.16,1,.3,1),
+                gap .45s cubic-bezier(.16,1,.3,1),
+                background-color .45s ease;
+  }
+  .shrunk .nav-pill {
+    max-width: 440px;
+    padding: 8px 20px;
+    gap: 18px;
+    background: rgba(20, 18, 16, 0.5);
   }
 
-  .site-nav a {
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;
     text-decoration: none;
     color: #fff;
-    text-shadow: 0 1px 10px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.6);
-    transition: color .25s ease;
   }
 
-  .site-nav.is-scrolled {
-    background: rgba(244, 241, 234, 0.82);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 1px 0 var(--line);
+  .nav-brand-expanded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    max-width: 220px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
   }
-  .site-nav.is-scrolled a {
-    color: var(--ink);
-    text-shadow: none;
+  .shrunk .nav-brand-expanded { max-width: 0; opacity: 0; }
+
+  .nav-sprite {
+    height: 30px;
+    width: auto;
+    flex: none;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    transform-origin: bottom center;
+    animation: sprite-bob 3.2s ease-in-out infinite;
+  }
+  .shrunk .nav-sprite { animation: none; }
+  @keyframes sprite-bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-2px) rotate(1.5deg); }
   }
 
-  .wordmark {
+  .wordmark-full {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 16px;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .wordmark-compact {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .wordmark-compact {
+    max-width: 40px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1) .1s, opacity .3s ease .15s;
   }
 
   .nav-links {
     display: flex;
-    gap: clamp(22px, 3vw, 40px);
+    align-items: center;
+    gap: 22px;
     list-style: none;
-    margin: 0; padding: 0;
+    margin: 0 0 0 auto;
+    padding: 0;
   }
 
   .nav-link {
     position: relative;
     display: inline-block;
-    font-size: 15px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 13px;
     font-weight: 500;
     padding-bottom: 6px;
+    transition: color .25s ease, font-size .3s ease;
   }
+  .shrunk .nav-link { font-size: 12px; }
 
   .nav-link:hover,
   .nav-link:focus-visible {
@@ -137,8 +206,50 @@
   .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
   .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
 
+  .nav-clock {
+    flex: none;
+    overflow: hidden;
+    max-width: 160px;
+    opacity: 1;
+    margin-left: 22px;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease, margin-left .45s ease;
+  }
+  .shrunk .nav-clock { max-width: 0; opacity: 0; margin-left: 0; }
+
+  .nav-clock-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .nav-clock-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex: none;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .site-nav,
+    .nav-pill,
+    .nav-brand-expanded,
+    .wordmark-compact,
+    .nav-link,
+    .nav-clock,
     .nav-underline path { transition: none; }
+    .nav-sprite,
+    .nav-clock-dot { animation: none; }
   }
 
   /* ============ HERO ============ */
@@ -147,6 +258,7 @@
     min-height: 100vh;
     overflow: hidden;
     background: var(--ink);
+    padding-top: 110px;
   }
 
   .hero-scenes { position: absolute; inset: 0; }
@@ -298,40 +410,6 @@
     opacity: 0.85;
     transform: translateY(0);
   }
-
-  .time-chip {
-    position: absolute;
-    right: clamp(20px, 5vw, 56px);
-    bottom: clamp(24px, 4vw, 40px);
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: rgba(20, 18, 16, 0.45);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    font-family: var(--mono);
-    font-size: 12px;
-    color: #fff;
-    letter-spacing: 0.03em;
-  }
-  .time-chip-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--amber);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.75); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .time-chip-dot { animation: none; }
-  }
-  .time-chip-label { opacity: 0.85; }
-  .time-chip-time { opacity: 0.95; }
 
   .scroll-cue {
     position: absolute;
@@ -569,11 +647,11 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 100px 20px 40px;
+      padding: 110px 20px 40px;
       min-height: auto;
     }
     .hero-scene { object-fit: contain; }
-    .hero-copy, .hero-disciplines, .time-chip {
+    .hero-copy, .hero-disciplines {
       position: static;
       transform: none;
       right: auto; left: auto; bottom: auto; top: auto;
@@ -587,39 +665,71 @@
     .discipline-word { font-size: clamp(30px, 9vw, 46px); }
     .scroll-cue { display: none; }
     .work-grid { grid-template-columns: 1fr; }
+
+    .site-nav,
+    .site-nav.shrunk { top: 12px; }
+    .nav-pill {
+      width: calc(100% - 24px);
+      padding: 10px 12px;
+      gap: 14px;
+    }
+    .shrunk .nav-pill { max-width: 300px; }
+    .wordmark-full { font-size: 15px; }
+    .nav-sprite { height: 24px; }
+    .nav-links { gap: 14px; }
+    .nav-link { font-size: 11px; }
+    .shrunk .nav-link { font-size: 11px; }
+    .nav-clock { display: none; }
   }
 </style>
 </head>
 <body>
 
 <header class="site-nav" id="site-nav">
-  <a href="#hero" class="wordmark">Neel Parikh</a>
-  <ul class="nav-links">
-    <li>
-      <a href="#chosen-work" class="nav-link nav-link--work">
-        Work
-        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-          <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
-        </svg>
-      </a>
-    </li>
-    <li>
-      <a href="/about.html" class="nav-link nav-link--about">
-        About
-        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-          <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
-        </svg>
-      </a>
-    </li>
-    <li>
-      <a href="/contact.html" class="nav-link nav-link--contact">
-        Contact
-        <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-          <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
-        </svg>
-      </a>
-    </li>
-  </ul>
+  <div class="nav-pill">
+    <a href="#hero" class="nav-brand" aria-label="Neel Parikh — back to top">
+      <span class="nav-brand-expanded" aria-hidden="true">
+        <img class="nav-sprite" src="/assets/sprite/neel-mug.png" alt="" aria-hidden="true">
+        <span class="wordmark-full">Neel Parikh</span>
+      </span>
+      <span class="wordmark-compact" aria-hidden="true">NP</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a href="#chosen-work" class="nav-link nav-link--work">
+          Work
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/about.html" class="nav-link nav-link--about">
+          About
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/contact.html" class="nav-link nav-link--contact">
+          Contact
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-clock">
+      <span class="nav-clock-inner">
+        <span class="nav-clock-dot" aria-hidden="true"></span>
+        <span id="nav-clock-label">MORNING</span>
+        <span id="nav-clock-time">--:--</span>
+      </span>
+    </div>
+  </div>
 </header>
 
 <section class="hero" id="hero">
@@ -679,12 +789,6 @@
     <p class="discipline-caption" id="discipline-caption" aria-live="polite"></p>
   </div>
 
-  <div class="time-chip">
-    <span class="time-chip-dot" aria-hidden="true"></span>
-    <span class="time-chip-label" id="time-chip-label">MORNING</span>
-    <span class="time-chip-time" id="time-chip-time">--:--</span>
-  </div>
-
   <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
 </section>
 
@@ -718,21 +822,37 @@
 (function () {
   'use strict';
 
-  /* ---------- nav scroll state ---------- */
+  /* ---------- nav pill shrink/expand on scroll ---------- */
   var nav = document.getElementById('site-nav');
-  var heroEl = document.getElementById('hero');
-  function updateNavState() {
-    var threshold = heroEl.offsetHeight - 80;
-    nav.classList.toggle('is-scrolled', window.scrollY > threshold);
-  }
-  window.addEventListener('scroll', updateNavState, { passive: true });
-  updateNavState();
+  var lastY = window.scrollY;
+  var ticking = false;
+  var TOP_ZONE = 80;
+  var THRESHOLD = 6;
 
-  /* ---------- hero time-of-day scene swap ---------- */
+  function updateNavShrink() {
+    var y = window.scrollY;
+    if (y < TOP_ZONE) {
+      nav.classList.remove('shrunk');
+      lastY = y;
+    } else if (Math.abs(y - lastY) > THRESHOLD) {
+      nav.classList.toggle('shrunk', y > lastY);
+      lastY = y;
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(updateNavShrink);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  /* ---------- hero time-of-day scene swap + nav clock ---------- */
   var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
   var sceneEls = document.querySelectorAll('.hero-scene');
-  var labelEl = document.getElementById('time-chip-label');
-  var timeEl = document.getElementById('time-chip-time');
+  var labelEl = document.getElementById('nav-clock-label');
+  var timeEl = document.getElementById('nav-clock-time');
 
   function getScene(hour) {
     if (hour >= 5 && hour < 11) return 'morning';
@@ -759,7 +879,7 @@
     timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
   }
   updateHeroTime();
-  setInterval(updateHeroTime, 1000);
+  setInterval(updateHeroTime, 30000);
 
   /* ---------- discipline hover: dim + caption ---------- */
   var CAPTIONS = {
