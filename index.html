@@ -728,15 +728,15 @@
     background: var(--ink);
     padding: clamp(70px, 10vw, 110px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 64px);
   }
-  .footer-inner { max-width: 900px; margin: 0 auto; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
 
   .footer-pills {
     --fall-distance: -50px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px 14px;
-    padding-bottom: clamp(32px, 5vw, 48px);
+    gap: 28px 24px;
+    padding-bottom: clamp(40px, 6vw, 56px);
   }
 
   .footer-pill {
@@ -744,10 +744,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 15px 26px;
+    padding: clamp(20px, 2.6vw, 30px) clamp(34px, 4.4vw, 50px);
     color: var(--paper);
     font-family: var(--ui);
-    font-size: 14px;
+    font-size: clamp(18px, 2.4vw, 26px);
     font-weight: 500;
     text-decoration: none;
     opacity: 1;
@@ -864,8 +864,8 @@
     .shrunk .nav-link { font-size: 11px; }
     .nav-clock { display: none; }
 
-    .footer-pills { --fall-distance: -24px; gap: 12px 10px; }
-    .footer-pill { padding: 10px 18px; font-size: 13px; }
+    .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
+    .footer-pill { padding: 16px 26px; font-size: 16px; }
   }
 </style>
 </head>
