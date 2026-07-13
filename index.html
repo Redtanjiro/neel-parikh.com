@@ -480,9 +480,18 @@
   }
   .filter-chip button:hover { background: rgba(232, 161, 58, 0.25); }
 
-  .accordion { border-top: 1px solid var(--line); }
-  .accordion-row { border-bottom: 1px solid var(--line); }
   .accordion-row.is-hidden { display: none; }
+
+  .row-divider { width: 100%; height: 16px; }
+  .row-divider svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .row-divider path {
+    fill: none;
+    stroke: rgba(20, 18, 16, 0.3);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
 
   .accordion-trigger {
     width: 100%;
@@ -606,26 +615,6 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-  .process-timeline.is-drawn .timeline-path--1 {
-    transition: stroke-dashoffset 1s ease;
-    stroke-dashoffset: 0;
-  }
-  .process-timeline.is-drawn .timeline-path--2 {
-    transition: stroke-dashoffset .8s ease .85s;
-    stroke-dashoffset: 0;
-  }
-  .process-timeline.is-drawn .timeline-path--3 {
-    transition: stroke-dashoffset .6s ease 1.55s;
-    stroke-dashoffset: 0;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .timeline-path {
-      stroke-dashoffset: 0 !important;
-      transition: none !important;
-    }
   }
 
   .timeline-nodes { position: absolute; inset: 0; }
@@ -636,29 +625,9 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    border: 1.5px solid rgba(20, 18, 16, 0.28);
+    border: none;
     background: transparent;
     cursor: pointer;
-    transition: border-color .2s ease;
-  }
-  .timeline-node::after {
-    content: '';
-    position: absolute;
-    inset: 7px;
-    border-radius: 50%;
-    background: rgba(20, 18, 16, 0.22);
-    transition: background-color .2s ease, transform .2s ease;
-  }
-  .timeline-node:hover,
-  .timeline-node:focus-visible,
-  .timeline-node.is-active {
-    border-color: var(--amber);
-  }
-  .timeline-node:hover::after,
-  .timeline-node:focus-visible::after,
-  .timeline-node.is-active::after {
-    background: var(--amber);
-    transform: scale(1.2);
   }
 
   .timeline-node-label {
@@ -666,8 +635,9 @@
     left: 50%;
     transform: translateX(-50%);
     font-family: var(--mono);
+    font-weight: 500;
     font-size: 11px;
-    color: rgba(20, 18, 16, 0.4);
+    color: rgba(20, 18, 16, 0.45);
     white-space: nowrap;
     transition: color .2s ease;
   }
@@ -677,6 +647,7 @@
   .timeline-node:focus-visible .timeline-node-label,
   .timeline-node.is-active .timeline-node-label {
     color: var(--amber);
+    font-weight: 700;
   }
 
   .process-panel {
@@ -1037,6 +1008,13 @@
   var featured = window.PROJECTS.filter(function (p) { return p.featured; })
     .sort(function (a, b) { return a.order - b.order; });
 
+  var DIVIDER_SVG = '<svg viewBox="0 50 259 30" preserveAspectRatio="none">' +
+    '<path d="M12.1834 65.6579C12.1834 65.7067 12.1834 65.7554 34.0842 65.7903C55.985 65.8252 99.7865 65.8447 134.16 64.6056C168.534 63.3665 192.153 60.8683 208.659 59.5146C225.166 58.161 233.844 58.0277 242.785 57.8904" />' +
+    '<path d="M13.8288 72.9863C13.9458 72.9863 14.0628 72.9863 26.4697 72.9863C38.8766 72.9863 63.5699 72.9863 77.6056 72.8319C91.6413 72.6775 94.2712 72.3687 118.517 71.1384C142.762 69.9082 188.543 67.7659 235.712 65.5587" />' +
+    '</svg>';
+
+  accordionEl.insertAdjacentHTML('beforeend', '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>');
+
   featured.forEach(function (project) {
     var row = document.createElement('div');
     row.className = 'accordion-row';
@@ -1056,18 +1034,37 @@
           '<a class="panel-link" href="/work/' + project.slug + '.html" style="color:' + project.accent + '">View case study →</a>' +
         '</div>' +
         '<span class="panel-giant" style="color:' + project.accent + '">' + num + '</span>' +
-      '</div>';
+      '</div>' +
+      '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>';
 
     var trigger = row.querySelector('.accordion-trigger');
-    trigger.addEventListener('click', function () {
-      var isOpen = row.classList.contains('is-open');
-      accordionEl.querySelectorAll('.accordion-row.is-open').forEach(function (openRow) {
-        openRow.classList.remove('is-open');
-        openRow.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
+
+    function openRow() {
+      accordionEl.querySelectorAll('.accordion-row.is-open').forEach(function (openRowEl) {
+        if (openRowEl !== row) {
+          openRowEl.classList.remove('is-open');
+          openRowEl.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
+        }
       });
-      if (!isOpen) {
-        row.classList.add('is-open');
-        trigger.setAttribute('aria-expanded', 'true');
+      row.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    function closeRow() {
+      row.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    row.addEventListener('mouseenter', openRow);
+    row.addEventListener('mouseleave', closeRow);
+    row.addEventListener('focusin', openRow);
+    row.addEventListener('focusout', function (e) {
+      if (!row.contains(e.relatedTarget)) closeRow();
+    });
+    trigger.addEventListener('click', function () {
+      if (row.classList.contains('is-open')) {
+        closeRow();
+      } else {
+        openRow();
       }
     });
 
@@ -1201,21 +1198,6 @@
     document.querySelectorAll('.process-panel-item').forEach(function (p) {
       p.classList.toggle('is-active', Number(p.dataset.node) === n);
     });
-  }
-
-  var timelineEl = document.getElementById('process-timeline');
-  if ('IntersectionObserver' in window) {
-    var timelineObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          timelineEl.classList.add('is-drawn');
-          timelineObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.3 });
-    timelineObserver.observe(timelineEl);
-  } else {
-    timelineEl.classList.add('is-drawn');
   }
 })();
 </script>
