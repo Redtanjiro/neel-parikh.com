@@ -734,6 +734,7 @@
     --fall-distance: -50px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 16px 14px;
     padding-bottom: clamp(32px, 5vw, 48px);
   }
@@ -744,7 +745,7 @@
     align-items: center;
     justify-content: center;
     padding: 15px 26px;
-    color: var(--ink);
+    color: var(--paper);
     font-family: var(--ui);
     font-size: 14px;
     font-weight: 500;
@@ -761,8 +762,8 @@
     z-index: 0;
   }
   .footer-pill-shape path {
-    fill: var(--paper);
-    stroke: rgba(20, 18, 16, 0.5);
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.5);
     stroke-width: 2;
     vector-effect: non-scaling-stroke;
     transition: stroke .2s ease;
@@ -778,17 +779,11 @@
   .footer-pill:focus-visible .footer-pill-shape path {
     stroke: var(--amber);
   }
+  .footer-pill--accent {
+    color: var(--amber);
+  }
   .footer-pill--accent .footer-pill-shape path {
-    fill: var(--amber);
-    stroke: rgba(20, 18, 16, 0.35);
-  }
-  .footer-pill--accent:hover,
-  .footer-pill--accent:focus-visible {
-    color: var(--ink);
-  }
-  .footer-pill--accent:hover .footer-pill-shape path,
-  .footer-pill--accent:focus-visible .footer-pill-shape path {
-    stroke: var(--ink);
+    stroke: var(--amber);
   }
 
   .footer-pills.pending .footer-pill {
