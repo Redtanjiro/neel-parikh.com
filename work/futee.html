@@ -478,46 +478,49 @@
 
   /* ============ QUIZ ============ */
   .fc-quiz { max-width: 760px; }
-  .fc-chat {
-    margin-top: 40px;
+  .fc-quiz-figure { margin-top: 36px; max-width: 320px; }
+  .fc-quiz-spots {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    background: rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(244, 245, 240, 0.12);
-    border-radius: 20px;
-    padding: clamp(20px, 4vw, 32px);
-  }
-  .fc-chat-bubble {
-    position: relative;
-    background: var(--chalk);
-    color: var(--ink);
-    border-radius: 14px;
-    padding: 14px 18px;
-    max-width: 78%;
-  }
-  .fc-chat-name {
-    display: block;
-    font-family: var(--ui);
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(20, 18, 16, 0.5);
-    margin-bottom: 3px;
-  }
-  .fc-chat-bubble p {
-    font-family: var(--body);
-    font-size: 15px;
-    margin: 0;
-    line-height: 1.4;
-  }
-  .fc-chat-seen {
-    display: block;
-    font-family: var(--ui);
-    font-size: 11px;
-    color: rgba(20, 18, 16, 0.4);
-    margin-top: 6px;
+    gap: 10px;
   }
   .fc-hotspot { margin-top: 8px; }
+  .fc-hotspot.fc-hotspot--inline {
+    margin-top: 0;
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(244, 245, 240, 0.12);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .fc-hotspot.fc-hotspot--inline summary {
+    position: static;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--chalk);
+    font-family: var(--ui);
+    font-weight: 600;
+    font-size: 14px;
+    justify-content: flex-start;
+    padding: 12px 14px;
+    box-shadow: none;
+  }
+  .fc-hotspot.fc-hotspot--inline summary:hover,
+  .fc-hotspot.fc-hotspot--inline summary:focus-visible {
+    transform: none;
+    background: rgba(244, 245, 240, 0.06);
+  }
+  .fc-hotspot.fc-hotspot--inline[open] summary {
+    background: rgba(242, 227, 56, 0.1);
+    color: var(--floodlight);
+  }
+  .fc-hotspot.fc-hotspot--inline .fc-hotspot-reveal {
+    margin: 0 10px 10px;
+  }
   .fc-hotspot summary {
     position: absolute;
     top: -10px;
@@ -584,6 +587,15 @@
   }
 
   /* ============ PROCESS / FRAMING ============ */
+  .fc-personas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 44px 0 28px;
+  }
+  @media (max-width: 640px) {
+    .fc-personas { grid-template-columns: 1fr; }
+  }
   .fc-process {
     list-style: none;
     margin: 40px 0 0;
@@ -667,6 +679,16 @@
     margin: 0;
   }
   .fc-killed-callout strong { color: var(--floodlight); }
+  .fc-killed-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 36px;
+  }
+  .fc-killed-compare .fc-frame--phone { max-width: 100%; }
+  @media (max-width: 640px) {
+    .fc-killed-compare { grid-template-columns: 1fr; max-width: 280px; margin-left: auto; margin-right: auto; }
+  }
 
   /* ============ SOLUTION ============ */
   .fc-solution { max-width: 900px; }
@@ -801,21 +823,6 @@
     .fc-timer-beats { flex-direction: column; gap: 20px; }
   }
 
-  /* ============ REFLECTION ============ */
-  .fc-placeholder-box {
-    margin-top: 8px;
-    padding: 22px 26px;
-    border: 1px dashed rgba(244, 245, 240, 0.35);
-    border-radius: 8px;
-  }
-  .fc-placeholder-box p {
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: rgba(244, 245, 240, 0.6);
-    margin: 0;
-    font-style: italic;
-  }
 
   /* ============ PAGENAV ============ */
   .fc-pagenav {
@@ -1008,10 +1015,10 @@
     <h1 class="fc-title">Futee<span class="fc-dot">.</span></h1>
     <p class="fc-lede">A football matchmaking platform for Bangkok, built so a Sunday morning game doesn't live or die in a group chat full of "maybes."</p>
     <dl class="fc-meta">
-      <div><dt>Role</dt><dd>Product design, UI, prototyping</dd></div>
+      <div><dt>Role</dt><dd>Product design, UX research, prototyping</dd></div>
       <div><dt>Timeline</dt><dd>~3 months</dd></div>
-      <div><dt>Team</dt><dd>Solo — client project</dd></div>
-      <div><dt>Platform</dt><dd>iOS &amp; responsive web</dd></div>
+      <div><dt>Team</dt><dd>2 designers, weekly sprints</dd></div>
+      <div><dt>Platform</dt><dd>Web &amp; mobile (responsive)</dd></div>
       <div><dt>Tools</dt><dd>Figma</dd></div>
     </dl>
   </div>
@@ -1024,23 +1031,23 @@
 <section class="fc-section fc-impact" id="impact">
   <span class="fc-eyebrow-dark">Outcome, first</span>
   <h2 class="fc-h2">What shipped, honestly</h2>
-  <p class="fc-body-lg">Futee is a Figma prototype, not a live product — so here's what's real. No invented conversion rate, no activation percentage that was never measured. Just what actually got made.</p>
+  <p class="fc-body-lg">Futee is a Figma prototype, not a live product — so here's what's real. No invented conversion rate, no activation percentage that was never measured. Just the research and the work that produced it.</p>
   <div class="fc-stats" id="fcStats">
-    <div class="fc-stat" data-target="150">
-      <span class="fc-stat-num"><span class="fc-stat-count">0</span><span class="fc-stat-suffix">+</span></span>
-      <span class="fc-stat-label">Grounds bookable, each with its own filters</span>
-    </div>
-    <div class="fc-stat" data-target="3">
+    <div class="fc-stat" data-target="18">
       <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Months, start to shipped prototype</span>
+      <span class="fc-stat-label">Grassroots players interviewed to build the personas</span>
     </div>
-    <div class="fc-stat" data-target="5">
+    <div class="fc-stat" data-target="20">
       <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Research-to-build phases, none skipped</span>
+      <span class="fc-stat-label">Dashboard wireframe iterations across 3 sprint weeks</span>
+    </div>
+    <div class="fc-stat" data-target="8">
+      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
+      <span class="fc-stat-label">Problems mapped directly to features, 4 per persona</span>
     </div>
     <div class="fc-stat" data-target="2">
       <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Platforms, one design system — iOS and responsive web</span>
+      <span class="fc-stat-label">Languages shipped — Thai and English, not an afterthought</span>
     </div>
   </div>
 </section>
@@ -1050,8 +1057,8 @@
 <!-- 3. THE PROBLEM -->
 <section class="fc-section" id="problem">
   <span class="fc-eyebrow-dark">The problem</span>
-  <h2 class="fc-h2">Getting eleven players to actually show up was the whole problem.</h2>
-  <p class="fc-body-lg">Bangkok has plenty of five-a-side pitches and no shortage of people who want a game. What it didn't have was a reliable way to get the right people, at the right skill level, in the same place at the same time.</p>
+  <h2 class="fc-h2">A 47-year-old who wants to find a game fast, and an 18-year-old who wants to build one — same app, opposite jobs.</h2>
+  <p class="fc-body-lg">Eighteen interviews with grassroots players in Bangkok collapsed into two personas who wanted almost nothing in common. Chai, 47, married, working full time, wants to open the app, find a game, and play — minimum friction, minimum decisions. Chatri, 18, a student with time to spare, wants to create games, invite people, and build a football network. One wants speed. The other wants to build something. A product that treats "create" and "find" as equally important, by default, under-serves both.</p>
   <ol class="fc-problem-list">
     <li>
       <span class="fc-problem-num">01</span>
@@ -1075,6 +1082,12 @@
       </div>
     </li>
   </ol>
+  <figure class="fc-figure">
+    <div class="fc-frame">
+      <img src="/work/futee/assets/problem-grid.png" alt="Research board titled 'Major problems inverse with features', splitting eight pain points across two rows: four for the game creator (finding players, matchmaking features, finding a game by availability, building contacts) and four for the player (post-game ratings, booking a pitch with a referee, open games nearby, direct invites)" loading="lazy">
+    </div>
+    <figcaption>Every problem mapped to the feature that answered it — game creator (top row), player (bottom row).</figcaption>
+  </figure>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
@@ -1082,52 +1095,48 @@
 <!-- 4. THE QUIZ -->
 <section class="fc-section fc-quiz" id="quiz">
   <span class="fc-eyebrow-dark">Before you keep reading</span>
-  <h2 class="fc-h2">Three things are broken in this chat. Can you spot them?</h2>
-  <p class="fc-body-lg">This is the real shape of how games got organised before Futee — a group chat, the night before a Sunday match. Take a second. No cheating.</p>
+  <h2 class="fc-h2">We killed this. Can you see why?</h2>
+  <p class="fc-body-lg">This is a real early mobile concept — screenshotted straight out of the Figma file, selection handles and all. It didn't ship. Take a second before you scroll past the pins. No cheating.</p>
 
-  <div class="fc-chat" aria-label="Annotated example of a pre-Futee group chat, with three hidden problems">
-    <div class="fc-chat-bubble">
-      <span class="fc-chat-name">Dao</span>
-      <p>Game's on for Sunday 9am, who's in?</p>
+  <figure class="fc-figure fc-quiz-figure">
+    <div class="fc-frame fc-frame--phone">
+      <img src="/work/futee/assets/killed-wireframe.png" alt="Early Futee mobile concept in navy and orange: six full-width stacked blocks reading Menu Bar, Banners, Create a game / Find a game, Directory, Coaches, and News, with no visual hierarchy between them" loading="lazy">
     </div>
-    <div class="fc-chat-bubble">
-      <span class="fc-chat-name">Big Vic</span>
-      <p>in, I'm actually really good trust me ⚽️</p>
-      <details class="fc-hotspot" data-n="1">
-        <summary aria-label="Reveal friction 1 of 3">?</summary>
+    <figcaption>The first mobile concept, before it got killed.</figcaption>
+  </figure>
+
+  <ul class="fc-quiz-spots">
+    <li>
+      <details class="fc-hotspot fc-hotspot--inline" data-n="1">
+        <summary aria-label="Reveal friction 1 of 3">1 — Six stacked blocks</summary>
         <div class="fc-hotspot-reveal">
-          <strong>Skill is a guess.</strong> No rating, no history — you're taking Vic's word for it.
+          <strong>No hierarchy.</strong> Menu Bar, Banners, Create/Find, Directory, Coaches, News — six full-width blocks, all the same size, all shouting at once. Nothing tells the eye where to look first.
         </div>
       </details>
-    </div>
-    <div class="fc-chat-bubble">
-      <span class="fc-chat-name">Zoe</span>
-      <p>might be able to make it? 🤷</p>
-      <details class="fc-hotspot" data-n="2">
-        <summary aria-label="Reveal friction 2 of 3">?</summary>
+    </li>
+    <li>
+      <details class="fc-hotspot fc-hotspot--inline" data-n="2">
+        <summary aria-label="Reveal friction 2 of 3">2 — "Create a game" / "Find a game"</summary>
         <div class="fc-hotspot-reveal">
-          <strong>"Maybe" isn't a headcount.</strong> Half the chat is still unconfirmed the night before.
+          <strong>Equal weight, opposite jobs.</strong> Identical size, identical colour — but Chai wants to find a game fast, and Chatri wants to create one and build a network. Treating them the same serves neither.
         </div>
       </details>
-    </div>
-    <div class="fc-chat-bubble">
-      <span class="fc-chat-name">Nut</span>
-      <p>yeah I'm in!</p>
-      <span class="fc-chat-seen">Read 8:52am · no reply since</span>
-      <details class="fc-hotspot" data-n="3">
-        <summary aria-label="Reveal friction 3 of 3">?</summary>
+    </li>
+    <li>
+      <details class="fc-hotspot fc-hotspot--inline" data-n="3">
+        <summary aria-label="Reveal friction 3 of 3">3 — The whole screen</summary>
         <div class="fc-hotspot-reveal">
-          <strong>"Yes" isn't a commitment.</strong> Nut confirmed and went quiet. He's a coin flip to show.
+          <strong>No search, anywhere.</strong> Despite search being the one thing both personas needed before anything else.
         </div>
       </details>
-    </div>
-  </div>
+    </li>
+  </ul>
 
   <div class="fc-quiz-controls">
     <button class="fc-reveal-all" id="fcRevealAll" type="button">Reveal all three</button>
   </div>
 
-  <p class="fc-quiz-resolve">Turnout. Skill. Reliability. Same three problems, every week — which is exactly what Futee was built to solve.</p>
+  <p class="fc-quiz-resolve">Six equal-weight blocks and no search — for two personas who wanted opposite things from this screen. That's what killed it. What replaced it is next.</p>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
@@ -1135,8 +1144,8 @@
 <!-- 5. HOW I FRAMED IT -->
 <section class="fc-section" id="framing">
   <span class="fc-eyebrow-dark">How I framed it</span>
-  <h2 class="fc-h2">I couldn't assume anything about how Bangkok organises football.</h2>
-  <p class="fc-body-lg">This wasn't my city or my group chats. Every assumption I'd bring from Sydney was a guess, so the process moved deliberately from listening to building — each phase feeding the next.</p>
+  <h2 class="fc-h2">Two personas who wanted the same app to do opposite jobs.</h2>
+  <p class="fc-body-lg">This wasn't my city or my group chats. Every assumption I'd bring from Sydney was a guess, so the process moved deliberately from listening to building — 18 interviews with grassroots players in Bangkok before a single wireframe, each phase feeding the next.</p>
 
   <ol class="fc-process" id="fcProcess">
     <div class="fc-process-fill" id="fcProcessFill"></div>
@@ -1172,10 +1181,29 @@
       <span class="fc-process-num">05</span>
       <div>
         <h3>Making it real</h3>
-        <p>Wireframes, the UI system, and the prototyped flows that make up Futee today.</p>
+        <p>20 wireframe iterations, the UI system, and the prototyped flows that make up Futee today.</p>
       </div>
     </li>
   </ol>
+
+  <div class="fc-personas">
+    <figure class="fc-figure">
+      <div class="fc-frame">
+        <img src="/work/futee/assets/persona-chai.png" alt="Persona card for Chai Charoen, 47, working professional, married, based in Bangkok. Goals: find games easily whenever he wants, play regularly without spending much time deciding. Pain points: not able to find games quickly due to lack of contacts, lack of time to organise a game himself." loading="lazy">
+      </div>
+      <figcaption>Chai, 47 — working professional, married. Time-poor. Wants to find and play, not organise.</figcaption>
+    </figure>
+    <figure class="fc-figure">
+      <div class="fc-frame">
+        <img src="/work/futee/assets/persona-chatri.png" alt="Persona card for Chatri Wang, 18, student, single, based in Bangkok. Goals: find new and efficient players to play with, create new contacts in the local football community, be part of a regular team. Pain points: looking for a pitch to play at, finding punctual players, having to manually write stats down." loading="lazy">
+      </div>
+      <figcaption>Chatri, 18 — student. Time-rich. Wants to create games and build a network.</figcaption>
+    </figure>
+  </div>
+
+  <p class="fc-body-lg">Their journey maps diverge in the same place they diverge in real life. Chai's mood dips at "Choose" — hunting for a venue that suits everyone — and recovers once the game's actually up. Chatri's dips at "Apply," waiting to hear whether an organiser accepts him, and peaks once he's on the pitch. Two different anxieties, at two different steps, inside what looks like one shared flow.</p>
+
+  <p class="fc-body-lg">The constraint that never shows up in a portfolio screenshot: Futee ships bilingual, Thai and English, with a toggle live on the dashboard, search, and matchmaking screens. Writing copy and laying out information density that both languages could carry — for two personas with very different patience for reading — shaped more decisions than any single feature did.</p>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
@@ -1183,11 +1211,25 @@
 <!-- 6. WHAT I KILLED -->
 <section class="fc-section fc-killed" id="killed">
   <span class="fc-eyebrow-dark">What I killed</span>
-  <h2 class="fc-h2">I killed the onboarding twice before it felt like football.</h2>
-  <p class="fc-body-lg">Early onboarding and login went through more than one direction before anything shipped. The versions that read as "another app" got cut — not because they looked bad, but because they asked footballers to learn a new visual language before they'd even created a match.</p>
-  <p class="fc-body-lg">What shipped instead borrows deliberately from FIFA's own menus and login screens. Every user Futee is built for has already spent hundreds of hours in that visual language — the card layouts, the badges, the way a "create" action is presented. There was nothing left to teach.</p>
+  <h2 class="fc-h2">Six equal blocks became a nav bar, a search bar, and a card grid.</h2>
+  <p class="fc-body-lg">The block layout was appealing for an obvious reason: big tap targets, bold colour, nothing to misread. But it made a decision it hadn't earned — that "Create a game" and "Find a game" deserved identical visual weight. Once the personas existed as two real people with opposite goals instead of one blended "user," that decision stopped holding up. Chai doesn't want six blocks to scan through before he can find a game. Chatri doesn't want "Create" buried at the same size as everything else he'll never touch.</p>
+  <p class="fc-body-lg">Navy and orange got replaced with black and yellow, and the six-block stack became a conventional top nav, a real search bar, and a card grid sorted by rating — the pattern that carries through the rest of the product.</p>
+  <div class="fc-killed-compare">
+    <figure class="fc-figure">
+      <div class="fc-frame fc-frame--phone">
+        <img src="/work/futee/assets/killed-wireframe.png" alt="Killed concept: navy and orange, six equal-weight stacked blocks" loading="lazy">
+      </div>
+      <figcaption>Before — six blocks, no priority.</figcaption>
+    </figure>
+    <figure class="fc-figure">
+      <div class="fc-frame fc-frame--phone">
+        <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped design: black top navigation with Game, Coaches and Directory links, a search bar, and a matchmaking screen with a TH/ENG language toggle and a list of open games with real venue names" loading="lazy">
+      </div>
+      <figcaption>After — top nav, search first, everything else follows.</figcaption>
+    </figure>
+  </div>
   <div class="fc-killed-callout">
-    <p><strong>The trade-off:</strong> a more "original" visual identity would have looked better in a portfolio. It also would have cost every new user a few extra seconds figuring out where things are. For a product that lives or dies on whether people bother opening it before a Sunday game, familiarity won.</p>
+    <p><strong>The trade-off:</strong> the block layout would have made for a bolder portfolio screenshot. It also would have made Chai hunt through five other people's priorities to do the one thing he opened the app for. For a product that lives or dies on whether people bother opening it before a Sunday game, that trade wasn't close.</p>
   </div>
 </section>
 
@@ -1220,6 +1262,22 @@
   </figure>
 
   <p class="fc-body-lg fc-solution-note">This is the skill and reliability problem, solved structurally rather than with a badge: pitches are rated and sorted by rating by default, and the same rating pattern carries over to players once you're choosing who to invite.</p>
+
+  <figure class="fc-figure">
+    <div class="fc-frame">
+      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard, desktop and mobile, with real stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
+    </div>
+    <figcaption>The dashboard. 28, 8.1/10 and 12 are the real numbers built into the file — not filler stats.</figcaption>
+  </figure>
+
+  <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard, the search results, and the matchmaking screen — every screen dense enough that language actually changes how much fits on it.</p>
+
+  <figure class="fc-figure">
+    <div class="fc-frame">
+      <img src="/work/futee/assets/solution-search.png" alt="Detailed search system with ALL, PLAYERS and PITCHES tabs, recent searches, and live results showing a player's real win percentage and a pitch's available timeslots" loading="lazy">
+    </div>
+    <figcaption>Search — split into All, Players and Pitches, because "find a game" and "find a person" are different searches wearing one search bar.</figcaption>
+  </figure>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
@@ -1250,10 +1308,24 @@
 <!-- 9. WHAT I'D DO DIFFERENTLY -->
 <section class="fc-section" id="reflection">
   <span class="fc-eyebrow-dark">What I'd do differently</span>
-  <h2 class="fc-h2">Reflection — in Neel's words</h2>
-  <div class="fc-placeholder-box">
-    <p>Placeholder — replace before this goes live. This is the section reviewers read to gauge self-awareness, so it needs to sound like you talking: a decision you'd revisit, something you got wrong, or a real number you wish you'd tracked from the start.</p>
+  <h2 class="fc-h2">The same screen disagrees with itself, across breakpoints, and nobody caught it until now.</h2>
+  <p class="fc-body-lg">Onboarding asks what position you play twice — once on desktop, once on mobile. The copy doesn't match:</p>
+  <div class="fc-killed-compare">
+    <figure class="fc-figure">
+      <div class="fc-frame">
+        <img src="/work/futee/assets/reflection-desktop.png" alt="Desktop onboarding screen: 'What Position do you Play? You can Choose upto two position you play the best in, you can change it later'" loading="lazy">
+      </div>
+      <figcaption>Desktop — "up to two" positions.</figcaption>
+    </figure>
+    <figure class="fc-figure">
+      <div class="fc-frame">
+        <img src="/work/futee/assets/reflection-mobile.png" alt="Mobile onboarding screen: 'What Position do you Play? Choose one position you play the best in, you can change it later'" loading="lazy">
+      </div>
+      <figcaption>Mobile — "one" position.</figcaption>
+    </figure>
   </div>
+  <p class="fc-body-lg" style="margin-top:32px;">Neither version is wrong on its own. Together, they're a bug — the same form field asking a different question depending on what device you're holding. I found it going back through the file for this write-up, not during the project, which is the real problem: we reviewed each platform's designs separately against the persona and the flow, but never diffed the same screen's copy across breakpoints against each other. It's a small inconsistency, but it's exactly the kind that erodes trust in a form — a user filling this out on both devices would reasonably wonder which one is correct.</p>
+  <p class="fc-body-lg">What I'd change: a copy pass that's explicitly cross-device, not per-device — reading every string next to its counterpart on the other breakpoint before calling a flow done, not just checking it reads well in isolation.</p>
 </section>
 
 <!-- 10. NEXT -->
