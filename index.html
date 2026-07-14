@@ -209,12 +209,23 @@
   .nav-clock {
     flex: none;
     overflow: hidden;
-    max-width: 160px;
+    max-width: 320px;
     opacity: 1;
     margin-left: 22px;
     transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease, margin-left .45s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 999px;
   }
   .shrunk .nav-clock { max-width: 0; opacity: 0; margin-left: 0; }
+  .nav-clock:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
 
   .nav-clock-inner {
     display: flex;
@@ -227,7 +238,10 @@
     font-size: 11px;
     letter-spacing: 0.02em;
     white-space: nowrap;
+    transition: background-color .2s ease;
   }
+  .nav-clock:hover .nav-clock-inner { background: rgba(255, 255, 255, 0.26); }
+  .nav-clock-sep { opacity: 0.45; }
   .nav-clock-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
@@ -239,6 +253,27 @@
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.4; transform: scale(0.75); }
   }
+
+  .hero-clock-reset {
+    display: inline-block;
+    margin-top: 12px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--amber);
+    cursor: pointer;
+    text-shadow: 0 1px 8px rgba(0,0,0,.5);
+  }
+  .hero-clock-reset[hidden] { display: none; }
+  .hero-clock-reset:hover,
+  .hero-clock-reset:focus-visible { text-decoration: underline; }
+  .hero-clock-reset:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  .hero-clock-mobile { display: none; }
 
   @media (prefers-reduced-motion: reduce) {
     .site-nav,
@@ -844,6 +879,27 @@
     .discipline-word { font-size: clamp(30px, 9vw, 46px); }
     .scroll-cue { display: none; }
 
+    .hero-clock-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 28px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: none;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .hero-clock-mobile:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+
     .process-timeline { display: none; }
     .process-cards { margin-top: 0; max-width: 100%; }
     .process-card { opacity: 1 !important; }
@@ -908,13 +964,16 @@
       </li>
     </ul>
 
-    <div class="nav-clock">
+    <button class="nav-clock js-clock-trigger" type="button" title="See somewhere else" aria-label="See what time it is somewhere else right now">
       <span class="nav-clock-inner">
-        <span class="nav-clock-dot" aria-hidden="true"></span>
-        <span id="nav-clock-label">MORNING</span>
-        <span id="nav-clock-time">--:--</span>
+        <span class="nav-clock-dot js-clock-dot" aria-hidden="true"></span>
+        <span class="js-clock-city">--</span>
+        <span class="nav-clock-sep" aria-hidden="true">·</span>
+        <span class="js-clock-time">--:--</span>
+        <span class="nav-clock-sep" aria-hidden="true">·</span>
+        <span class="js-clock-label">MORNING</span>
       </span>
-    </div>
+    </button>
   </div>
 </header>
 
@@ -941,7 +1000,8 @@
 
   <div class="hero-copy">
     <h1>Interaction &amp; immersive designer, Sydney.</h1>
-    <p>This scene is hand-painted — and it follows your clock.</p>
+    <p id="hero-clock-copy">This scene is hand-painted — and it follows your clock.</p>
+    <button class="hero-clock-reset" id="hero-clock-reset" type="button" hidden>↺ back to your time</button>
   </div>
 
   <div class="hero-disciplines">
@@ -974,6 +1034,15 @@
     </nav>
     <p class="discipline-caption" id="discipline-caption" aria-live="polite"></p>
   </div>
+
+  <button class="hero-clock-mobile js-clock-trigger" type="button" aria-label="See what time it is somewhere else right now">
+    <span class="nav-clock-dot js-clock-dot" aria-hidden="true"></span>
+    <span class="js-clock-city">--</span>
+    <span class="nav-clock-sep" aria-hidden="true">·</span>
+    <span class="js-clock-time">--:--</span>
+    <span class="nav-clock-sep" aria-hidden="true">·</span>
+    <span class="js-clock-label">MORNING</span>
+  </button>
 
   <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
 </section>
@@ -1064,11 +1133,94 @@
     }
   }, { passive: true });
 
-  /* ---------- hero time-of-day scene swap + nav clock ---------- */
+  /* ---------- hero time-of-day scene swap + clickable "somewhere it's..." clock ---------- */
+  var SCENES = ['morning', 'midday', 'golden', 'night'];
   var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
+  var SCENE_PHRASE = { morning: 'morning', midday: 'midday', golden: 'golden hour', night: 'night' };
+
+  // Spread across every UTC offset (incl. the half/45-minute ones) so no
+  // three-hour band — golden hour is the narrowest — can ever come up empty.
+  var CITY_POOL = [
+    { name: 'Pago Pago', tz: 'Pacific/Pago_Pago' },
+    { name: 'Honolulu', tz: 'Pacific/Honolulu' },
+    { name: 'Anchorage', tz: 'America/Anchorage' },
+    { name: 'Los Angeles', tz: 'America/Los_Angeles' },
+    { name: 'Vancouver', tz: 'America/Vancouver' },
+    { name: 'Denver', tz: 'America/Denver' },
+    { name: 'Phoenix', tz: 'America/Phoenix' },
+    { name: 'Chicago', tz: 'America/Chicago' },
+    { name: 'Mexico City', tz: 'America/Mexico_City' },
+    { name: 'New York', tz: 'America/New_York' },
+    { name: 'Toronto', tz: 'America/Toronto' },
+    { name: 'Lima', tz: 'America/Lima' },
+    { name: 'Bogotá', tz: 'America/Bogota' },
+    { name: 'Halifax', tz: 'America/Halifax' },
+    { name: 'Santiago', tz: 'America/Santiago' },
+    { name: 'Caracas', tz: 'America/Caracas' },
+    { name: 'São Paulo', tz: 'America/Sao_Paulo' },
+    { name: 'Buenos Aires', tz: 'America/Argentina/Buenos_Aires' },
+    { name: 'Montevideo', tz: 'America/Montevideo' },
+    { name: 'Fernando de Noronha', tz: 'America/Noronha' },
+    { name: 'Azores', tz: 'Atlantic/Azores' },
+    { name: 'London', tz: 'Europe/London' },
+    { name: 'Lisbon', tz: 'Europe/Lisbon' },
+    { name: 'Reykjavík', tz: 'Atlantic/Reykjavik' },
+    { name: 'Accra', tz: 'Africa/Accra' },
+    { name: 'Paris', tz: 'Europe/Paris' },
+    { name: 'Berlin', tz: 'Europe/Berlin' },
+    { name: 'Madrid', tz: 'Europe/Madrid' },
+    { name: 'Rome', tz: 'Europe/Rome' },
+    { name: 'Lagos', tz: 'Africa/Lagos' },
+    { name: 'Cairo', tz: 'Africa/Cairo' },
+    { name: 'Johannesburg', tz: 'Africa/Johannesburg' },
+    { name: 'Athens', tz: 'Europe/Athens' },
+    { name: 'Helsinki', tz: 'Europe/Helsinki' },
+    { name: 'Nairobi', tz: 'Africa/Nairobi' },
+    { name: 'Moscow', tz: 'Europe/Moscow' },
+    { name: 'Istanbul', tz: 'Europe/Istanbul' },
+    { name: 'Riyadh', tz: 'Asia/Riyadh' },
+    { name: 'Tehran', tz: 'Asia/Tehran' },
+    { name: 'Dubai', tz: 'Asia/Dubai' },
+    { name: 'Abu Dhabi', tz: 'Asia/Dubai' },
+    { name: 'Baku', tz: 'Asia/Baku' },
+    { name: 'Kabul', tz: 'Asia/Kabul' },
+    { name: 'Karachi', tz: 'Asia/Karachi' },
+    { name: 'Tashkent', tz: 'Asia/Tashkent' },
+    { name: 'Ahmedabad', tz: 'Asia/Kolkata' },
+    { name: 'Mumbai', tz: 'Asia/Kolkata' },
+    { name: 'Kathmandu', tz: 'Asia/Kathmandu' },
+    { name: 'Dhaka', tz: 'Asia/Dhaka' },
+    { name: 'Almaty', tz: 'Asia/Almaty' },
+    { name: 'Yangon', tz: 'Asia/Yangon' },
+    { name: 'Bangkok', tz: 'Asia/Bangkok' },
+    { name: 'Jakarta', tz: 'Asia/Jakarta' },
+    { name: 'Ho Chi Minh City', tz: 'Asia/Ho_Chi_Minh' },
+    { name: 'Singapore', tz: 'Asia/Singapore' },
+    { name: 'Beijing', tz: 'Asia/Shanghai' },
+    { name: 'Hong Kong', tz: 'Asia/Hong_Kong' },
+    { name: 'Manila', tz: 'Asia/Manila' },
+    { name: 'Perth', tz: 'Australia/Perth' },
+    { name: 'Tokyo', tz: 'Asia/Tokyo' },
+    { name: 'Seoul', tz: 'Asia/Seoul' },
+    { name: 'Adelaide', tz: 'Australia/Adelaide' },
+    { name: 'Sydney', tz: 'Australia/Sydney' },
+    { name: 'Melbourne', tz: 'Australia/Melbourne' },
+    { name: 'Brisbane', tz: 'Australia/Brisbane' },
+    { name: 'Guam', tz: 'Pacific/Guam' },
+    { name: 'Nouméa', tz: 'Pacific/Noumea' },
+    { name: 'Auckland', tz: 'Pacific/Auckland' },
+    { name: 'Fiji', tz: 'Pacific/Fiji' },
+    { name: 'Nukuʻalofa', tz: 'Pacific/Tongatapu' }
+  ];
+
   var sceneEls = document.querySelectorAll('.hero-scene');
-  var labelEl = document.getElementById('nav-clock-label');
-  var timeEl = document.getElementById('nav-clock-time');
+  var cityEls = document.querySelectorAll('.js-clock-city');
+  var timeEls = document.querySelectorAll('.js-clock-time');
+  var labelEls = document.querySelectorAll('.js-clock-label');
+  var triggerBtns = document.querySelectorAll('.js-clock-trigger');
+  var resetBtn = document.getElementById('hero-clock-reset');
+  var copyEl = document.getElementById('hero-clock-copy');
+  var DEFAULT_COPY = copyEl ? copyEl.textContent : '';
 
   function getScene(hour) {
     if (hour >= 5 && hour < 11) return 'morning';
@@ -1079,23 +1231,100 @@
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-  var currentScene = null;
-  function updateHeroTime() {
-    var now = new Date();
-    var hour = now.getHours();
-    var scene = getScene(hour);
-
-    if (scene !== currentScene) {
-      currentScene = scene;
-      sceneEls.forEach(function (el) {
-        el.classList.toggle('is-active', el.dataset.scene === scene);
-      });
-      labelEl.textContent = SCENE_LABELS[scene];
-    }
-    timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  function tzParts(tz, date) {
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hourCycle: 'h23', hour: 'numeric', minute: 'numeric'
+    }).formatToParts(date);
+    var hour = 0, minute = 0;
+    parts.forEach(function (p) {
+      if (p.type === 'hour') hour = parseInt(p.value, 10);
+      if (p.type === 'minute') minute = parseInt(p.value, 10);
+    });
+    return { hour: hour, minute: minute };
   }
-  updateHeroTime();
-  setInterval(updateHeroTime, 30000);
+
+  function cityNameFromTz(tz) {
+    var seg = tz.split('/');
+    return seg[seg.length - 1].replace(/_/g, ' ');
+  }
+
+  var visitorTz = (function () {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+    catch (e) { return 'UTC'; }
+  })();
+  var visitorCity = cityNameFromTz(visitorTz).toUpperCase();
+
+  var travelling = false;
+  var travelIndex = -1;
+  var lastCity = null;
+
+  function render(scene, cityName, hour, minute) {
+    sceneEls.forEach(function (el) {
+      el.classList.toggle('is-active', el.dataset.scene === scene);
+    });
+    labelEls.forEach(function (el) { el.textContent = SCENE_LABELS[scene]; });
+    cityEls.forEach(function (el) { el.textContent = cityName; });
+    timeEls.forEach(function (el) { el.textContent = pad(hour) + ':' + pad(minute); });
+  }
+
+  function updateTrueTime() {
+    if (travelling) return;
+    var now = new Date();
+    render(getScene(now.getHours()), visitorCity, now.getHours(), now.getMinutes());
+  }
+
+  function pickCityForScene(scene) {
+    var now = new Date();
+    var qualifying = CITY_POOL.filter(function (c) {
+      return getScene(tzParts(c.tz, now).hour) === scene;
+    });
+    var candidates = qualifying.filter(function (c) { return c.name !== lastCity; });
+    if (!candidates.length) candidates = qualifying; // guard: exclusion emptied a tiny qualifying set
+    if (!candidates.length) return null; // guard: band genuinely empty (shouldn't happen with this pool)
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  function showTravelled(scene, attemptsLeft) {
+    var city = pickCityForScene(scene);
+    if (!city) {
+      if (attemptsLeft <= 0) return; // extreme guard: every band somehow empty
+      showTravelled(SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length], attemptsLeft - 1);
+      return;
+    }
+    lastCity = city.name;
+    var parts = tzParts(city.tz, new Date());
+    render(scene, city.name.toUpperCase(), parts.hour, parts.minute);
+    if (copyEl) {
+      copyEl.textContent = 'It’s ' + SCENE_PHRASE[scene] + ' in ' + city.name + ' right now — ' +
+        pad(parts.hour) + ':' + pad(parts.minute) + ', same light, different window.';
+    }
+    if (resetBtn) resetBtn.hidden = false;
+  }
+
+  function backToTrueTime() {
+    travelling = false;
+    travelIndex = -1;
+    lastCity = null;
+    if (copyEl) copyEl.textContent = DEFAULT_COPY;
+    if (resetBtn) resetBtn.hidden = true;
+    updateTrueTime();
+  }
+
+  function cycle() {
+    var trueScene = getScene(new Date().getHours());
+    if (!travelling) {
+      travelling = true;
+      travelIndex = SCENES.indexOf(trueScene);
+    }
+    travelIndex = (travelIndex + 1) % SCENES.length;
+    showTravelled(SCENES[travelIndex], SCENES.length);
+  }
+
+  triggerBtns.forEach(function (btn) { btn.addEventListener('click', cycle); });
+  if (resetBtn) resetBtn.addEventListener('click', backToTrueTime);
+
+  updateTrueTime();
+  setInterval(updateTrueTime, 30000);
 
   /* ---------- discipline hover: dim + caption ---------- */
   var CAPTIONS = {
