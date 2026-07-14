@@ -29,7 +29,7 @@
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 140px; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
   }
@@ -258,6 +258,7 @@
     padding: clamp(48px, 6vw, 76px) clamp(20px, 5vw, 56px);
     max-width: 880px;
     margin: 0 auto;
+    scroll-margin-top: 140px;
   }
   .fc-divider { width: 100%; max-width: 880px; height: 20px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); box-sizing: border-box; }
   .fc-divider svg { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -478,7 +479,7 @@
 
   /* ============ QUIZ ============ */
   .fc-quiz { max-width: 760px; }
-  .fc-quiz-figure { margin-top: 36px; max-width: 320px; }
+  .fc-quiz-figure { margin-top: 36px; max-width: 240px; }
   .fc-quiz-spots {
     list-style: none;
     margin: 32px 0 0;
@@ -663,7 +664,7 @@
   }
 
   /* ============ KILLED ============ */
-  .fc-killed { max-width: 760px; }
+  .fc-killed { max-width: 880px; }
   .fc-killed-callout {
     margin-top: 28px;
     padding: 22px 26px;
@@ -691,8 +692,19 @@
   }
 
   /* ============ SOLUTION ============ */
-  .fc-solution { max-width: 900px; }
+  .fc-solution { max-width: 1040px; }
   .fc-figure { margin: 40px 0 0; }
+  .fc-solution-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .fc-solution-pair .fc-figure { margin-top: 0; }
+  .fc-solution-pair .fc-frame--phone { max-width: 100%; }
+  @media (max-width: 640px) {
+    .fc-solution-pair { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; }
+  }
   .fc-frame {
     position: relative;
     border-radius: 16px;
@@ -1223,9 +1235,9 @@
     </figure>
     <figure class="fc-figure">
       <div class="fc-frame fc-frame--phone">
-        <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped design: black top navigation with Game, Coaches and Directory links, a search bar, and a matchmaking screen with a TH/ENG language toggle and a list of open games with real venue names" loading="lazy">
+        <img src="/work/futee/assets/solution-nav-mobile.png" alt="Shipped mobile home screen: a slim black top bar with notification, search and profile icons, an Upcoming Games dropdown, and stat cards including Games Created 12, replacing the six-block stack" loading="lazy">
       </div>
-      <figcaption>After — top nav, search first, everything else follows.</figcaption>
+      <figcaption>After — one nav bar, then content, on the same mobile screen.</figcaption>
     </figure>
   </div>
   <div class="fc-killed-callout">
@@ -1241,42 +1253,41 @@
   <h2 class="fc-h2">The system that replaced the group chat</h2>
   <p class="fc-body-lg">One place to create and customise a game, book from 150+ grounds, and invite players with visible ratings — so a match is set up to be worth showing up for.</p>
 
-  <figure class="fc-figure">
-    <div class="fc-frame fc-frame--phone">
-      <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
-    </div>
-    <figcaption>Overview — the home screen. Every number on it is real product copy, not placeholder.</figcaption>
-  </figure>
+  <div class="fc-solution-pair">
+    <figure class="fc-figure">
+      <div class="fc-frame fc-frame--phone">
+        <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
+      </div>
+      <figcaption>Overview — the home screen. Every number on it is real product copy, not placeholder.</figcaption>
+    </figure>
+    <figure class="fc-figure">
+      <div class="fc-frame fc-frame--phone" id="fcCreateGameFrame">
+        <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy">
+        <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:6%; top:83%;" aria-hidden="true">
+          <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
+        </svg>
+        <span class="fc-arrow-label" style="left:6%; top:93%;">sorted by rating</span>
+      </div>
+      <figcaption>Create Game — date, venue, and filters. Results sort by rating first.</figcaption>
+    </figure>
+  </div>
 
-  <p class="fc-body-lg fc-solution-note">This is where turnout gets solved structurally: Create Game and Find Game are two distinct paths, not one generic "browse" screen, because creating a game and joining one are different jobs with different anxieties.</p>
-
-  <figure class="fc-figure">
-    <div class="fc-frame fc-frame--phone" id="fcCreateGameFrame">
-      <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy">
-      <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:6%; top:83%;" aria-hidden="true">
-        <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
-      </svg>
-      <span class="fc-arrow-label" style="left:6%; top:93%;">sorted by rating</span>
-    </div>
-    <figcaption>Create Game — date, venue, and filters. Results sort by rating first.</figcaption>
-  </figure>
-
-  <p class="fc-body-lg fc-solution-note">This is the skill and reliability problem, solved structurally rather than with a badge: pitches are rated and sorted by rating by default, and the same rating pattern carries over to players once you're choosing who to invite.</p>
+  <p class="fc-body-lg fc-solution-note">Turnout, skill and reliability all get solved structurally, not with a badge: Create Game and Find Game are separate paths, and pitches — like players, once you're choosing who to invite — are rated and sorted by rating by default.</p>
 
   <figure class="fc-figure">
     <div class="fc-frame">
-      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard, desktop and mobile, with real stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
+      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with real stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
     </div>
     <figcaption>The dashboard. 28, 8.1/10 and 12 are the real numbers built into the file — not filler stats.</figcaption>
   </figure>
 
-  <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard, the search results, and the matchmaking screen — every screen dense enough that language actually changes how much fits on it.</p>
+  <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard and the matchmaking screen — both dense enough that language actually changes how much fits on them.</p>
 
   <figure class="fc-figure">
     <div class="fc-frame">
-      <img src="/work/futee/assets/solution-search.png" alt="Detailed search system with ALL, PLAYERS and PITCHES tabs, recent searches, and live results showing a player's real win percentage and a pitch's available timeslots" loading="lazy">
+      <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped matchmaking screen: a boosted Polo Football Park venue card, a date picker, and a list of three open games with real venue names, all sorted for the reader in one pass" loading="lazy">
     </div>
-    <figcaption>Search — split into All, Players and Pitches, because "find a game" and "find a person" are different searches wearing one search bar.</figcaption>
+    <figcaption>Matchmaking — one screen to pick a date, a venue, and an open game.</figcaption>
   </figure>
 </section>
 
