@@ -305,8 +305,29 @@
     transform: translateY(-50%);
     z-index: 40;
     display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .fc-secnav-track {
+    position: relative;
+    width: 2px;
+    align-self: stretch;
+    background: rgba(244, 245, 240, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .fc-secnav-progress {
+    position: absolute;
+    inset: 0;
+    background: var(--floodlight);
+    border-radius: 2px;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  .fc-secnav-links {
+    display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 24px;
   }
   .fc-secnav a {
     font-family: var(--ui);
@@ -1067,14 +1088,17 @@
 </header>
 
 <nav class="fc-secnav" aria-label="Case study sections">
-  <a href="#impact">Impact</a>
-  <a href="#problem">Problem</a>
-  <a href="#quiz">The quiz</a>
-  <a href="#framing">Framing</a>
-  <a href="#killed">What I killed</a>
-  <a href="#solution">Solution</a>
-  <a href="#timer">The timer</a>
-  <a href="#reflection">Reflection</a>
+  <div class="fc-secnav-track" aria-hidden="true"><span class="fc-secnav-progress" id="fcSecnavProgress"></span></div>
+  <div class="fc-secnav-links">
+    <a href="#impact">Impact</a>
+    <a href="#problem">Problem</a>
+    <a href="#quiz">The quiz</a>
+    <a href="#framing">Framing</a>
+    <a href="#killed">What I killed</a>
+    <a href="#solution">Solution</a>
+    <a href="#timer">The timer</a>
+    <a href="#reflection">Reflection</a>
+  </div>
 </nav>
 
 <!-- 1. HERO -->
@@ -1509,6 +1533,20 @@
       var section = document.getElementById(id);
       if (section) secnavObserver.observe(section);
     });
+  }
+
+  /* ---------- section nav scroll progress ---------- */
+  var secnavProgress = document.getElementById('fcSecnavProgress');
+  if (secnavProgress) {
+    var updateSecnavProgress = function () {
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - doc.clientHeight;
+      var pct = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      secnavProgress.style.transform = 'scaleY(' + pct.toFixed(3) + ')';
+    };
+    window.addEventListener('scroll', updateSecnavProgress, { passive: true });
+    window.addEventListener('resize', updateSecnavProgress);
+    updateSecnavProgress();
   }
 
   /* ---------- counting stat block ---------- */

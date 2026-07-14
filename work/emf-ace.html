@@ -305,8 +305,29 @@
     transform: translateY(-50%);
     z-index: 40;
     display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .ea-secnav-track {
+    position: relative;
+    width: 2px;
+    align-self: stretch;
+    background: rgba(232, 217, 195, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .ea-secnav-progress {
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    border-radius: 2px;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  .ea-secnav-links {
+    display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 24px;
   }
   .ea-secnav a {
     font-family: var(--ui);
@@ -694,12 +715,15 @@
 </header>
 
 <nav class="ea-secnav" aria-label="Case study sections">
-  <a href="#impact">Impact</a>
-  <a href="#constraint">The constraint</a>
-  <a href="#sequence">Sequence</a>
-  <a href="#killed">What I killed</a>
-  <a href="#panel">The panel</a>
-  <a href="#reflection">Reflection</a>
+  <div class="ea-secnav-track" aria-hidden="true"><span class="ea-secnav-progress" id="eaSecnavProgress"></span></div>
+  <div class="ea-secnav-links">
+    <a href="#impact">Impact</a>
+    <a href="#constraint">The constraint</a>
+    <a href="#sequence">Sequence</a>
+    <a href="#killed">What I killed</a>
+    <a href="#panel">The panel</a>
+    <a href="#reflection">Reflection</a>
+  </div>
 </nav>
 
 <!-- 1. HERO -->
@@ -944,6 +968,20 @@
       var section = document.getElementById(id);
       if (section) secnavObserver.observe(section);
     });
+  }
+
+  /* ---------- section nav scroll progress ---------- */
+  var secnavProgress = document.getElementById('eaSecnavProgress');
+  if (secnavProgress) {
+    var updateSecnavProgress = function () {
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - doc.clientHeight;
+      var pct = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      secnavProgress.style.transform = 'scaleY(' + pct.toFixed(3) + ')';
+    };
+    window.addEventListener('scroll', updateSecnavProgress, { passive: true });
+    window.addEventListener('resize', updateSecnavProgress);
+    updateSecnavProgress();
   }
 
   /* ---------- counting stat block ---------- */
