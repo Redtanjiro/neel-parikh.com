@@ -728,6 +728,61 @@
     font-style: normal;
   }
 
+  /* ---------- solution: featured interaction moment ---------- */
+  .fc-solution-feature {
+    margin-top: 56px;
+    padding: 32px;
+    background: rgba(242, 227, 56, 0.06);
+    border-left: 3px solid var(--floodlight);
+    border-radius: 4px;
+  }
+  .fc-solution-feature .fc-eyebrow-dark { margin-bottom: 8px; }
+  .fc-solution-feature-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    margin-top: 28px;
+    align-items: start;
+  }
+  .fc-solution-feature-grid .fc-figure { margin-top: 0; }
+  .fc-solution-feature-grid .fc-frame--phone { max-width: 300px; margin: 0 auto; }
+  @media (max-width: 780px) {
+    .fc-solution-feature-grid { grid-template-columns: 1fr; }
+    .fc-solution-feature-grid .fc-frame--phone { max-width: 260px; }
+  }
+
+  /* ---------- solution: tall-page scroll preview ---------- */
+  .fc-scroll-preview {
+    position: relative;
+    max-height: 460px;
+    overflow: hidden;
+  }
+  .fc-scroll-preview img { width: 100%; display: block; }
+  .fc-scroll-preview::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 160px;
+    background: linear-gradient(to bottom, rgba(12, 12, 12, 0), #0c0c0c 88%);
+    pointer-events: none;
+  }
+  .fc-scroll-preview-tag {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    font-family: var(--ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--chalk);
+    background: rgba(20, 18, 16, 0.55);
+    border: 1px solid rgba(244, 245, 240, 0.2);
+    border-radius: 999px;
+    padding: 6px 12px;
+    z-index: 1;
+  }
+
   .fc-arrow {
     position: absolute;
     width: 60px;
@@ -1276,11 +1331,30 @@
 
   <p class="fc-body-lg fc-solution-note">Turnout, skill and reliability all get solved structurally, not with a badge: Create Game and Find Game are separate paths, and pitches — like players, once you're choosing who to invite — are rated and sorted by rating by default.</p>
 
+  <div class="fc-solution-feature">
+    <span class="fc-eyebrow-dark">Post-game: dividing players into teams</span>
+    <p class="fc-body-lg">This is the piece that does the most work. A game gets 12 confirmations, but only 10 people actually show up — so the organiser first confirms who's here, then the app splits whoever's left into even teams and lets them re-shuffle by hand before kickoff. It's the one screen that has to react to reality instead of a plan.</p>
+    <div class="fc-solution-feature-grid">
+      <figure class="fc-figure">
+        <div class="fc-frame">
+          <img src="/work/futee/assets/solution-teams-desktop.png" alt="Divide Players Into Teams panel: Confirmed Players 10, 2 Teams = 5 Players per Team, a Re-Shuffle Teams link, and TEAM A / TEAM B columns with drag handles and six named players each" loading="lazy">
+        </div>
+        <figcaption>Once attendance is confirmed, the app auto-splits into even teams — re-shuffle if the balance feels off.</figcaption>
+      </figure>
+      <figure class="fc-figure">
+        <div class="fc-frame fc-frame--phone">
+          <img src="/work/futee/assets/solution-teams-mobile.png" alt="Mobile attendance checklist, 'Confirm players who Showed Up (10/12)', expanded with 11 named players, two of them — Busaba and Charoenrasamee — left unchecked as no-shows" loading="lazy">
+        </div>
+        <figcaption>Confirming attendance first: Busaba and Charoenrasamee are left unchecked — real no-shows, not a hypothetical.</figcaption>
+      </figure>
+    </div>
+  </div>
+
   <figure class="fc-figure">
     <div class="fc-frame">
-      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with real stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
+      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with mock stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
     </div>
-    <figcaption>The dashboard. 28, 8.1/10 and 12 are the real numbers built into the file — not filler stats.</figcaption>
+    <figcaption>The dashboard. 28, 8.1/10 and 12 are mock data baked into the Figma file for the screenshot — not measured outcomes.</figcaption>
   </figure>
 
   <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard and the matchmaking screen — both dense enough that language actually changes how much fits on them.</p>
@@ -1290,6 +1364,14 @@
       <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped matchmaking screen: a boosted Polo Football Park venue card, a date picker, and a list of three open games with real venue names, all sorted for the reader in one pass" loading="lazy">
     </div>
     <figcaption>Matchmaking — one screen to pick a date, a venue, and an open game.</figcaption>
+  </figure>
+
+  <figure class="fc-figure">
+    <div class="fc-frame fc-scroll-preview">
+      <img src="/work/futee/assets/solution-findgame-preview.png" alt="Top of the full Find Game page: top nav, a Top Rated Pitches venue banner, date and venue filters with radius and price sliders, and the first row of a 15-result grid sorted by highest rating" loading="lazy">
+      <span class="fc-scroll-preview-tag">page continues below</span>
+    </div>
+    <figcaption>Find Game, full length — date, venue, radius and price filters, then 15 results sorted by rating.</figcaption>
   </figure>
 </section>
 
