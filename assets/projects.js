@@ -21,8 +21,8 @@ window.PROJECTS = [
     title: "EMF ACE",
     category: "Brand & Campaign",
     disciplines: ["Visual", "Brand"],
-    description: "Brand and campaign system for an Abu Dhabi entertainment industry showcase.",
-    accent: "#8a5cf6",
+    description: "A campaign content system for an Abu Dhabi wedding-industry showcase, built inside an existing 11-year brand.",
+    accent: "#d4af37",
     featured: true
   },
   {
