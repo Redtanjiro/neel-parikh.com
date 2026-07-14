@@ -66,6 +66,7 @@
   .site-nav.shrunk { top: 12px; }
 
   .nav-pill {
+    position: relative;
     pointer-events: auto;
     display: flex;
     align-items: center;
@@ -322,6 +323,94 @@
     z-index: 1;
   }
   .hero.is-spotlighting .hero-dim { opacity: 0.45; }
+
+  .hero-annotation {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    color: var(--amber);
+    font-family: var(--ui);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 10px rgba(0,0,0,.6);
+  }
+  .hero-annotation--me {
+    left: 49%;
+    top: 36%;
+  }
+  .hero-annotation--me .hero-annotation-arrow {
+    left: -40px;
+    top: 20px;
+    width: 100px;
+    height: 100px;
+    transform: scaleX(-1) rotate(28deg);
+  }
+  .hero-annotation-arrow {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    overflow: visible;
+  }
+  .hero-annotation-arrow path {
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset 1s ease .6s, opacity .2s ease .6s;
+  }
+  .hero.is-annotated .hero-annotation-arrow path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-annotation-arrow path { transition: none; opacity: 1; stroke-dashoffset: 0; }
+  }
+  @media (max-width: 1024px) {
+    .hero-annotation { display: none; }
+  }
+
+  .nav-clock-hint {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    color: var(--amber);
+    font-family: var(--ui);
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .3s ease .8s;
+    pointer-events: none;
+  }
+  .nav-pill.is-hint-visible .nav-clock-hint { opacity: 1; }
+  .nav-clock-hint-arrow {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    transform: rotate(-100deg) scaleX(-1);
+    margin-top: -8px;
+  }
+  .nav-clock-hint-arrow path {
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (max-width: 1024px) {
+    .nav-clock-hint { display: none; }
+  }
 
   .hero-copy {
     position: absolute;
@@ -974,6 +1063,13 @@
         <span class="js-clock-label">MORNING</span>
       </span>
     </button>
+    <span class="nav-clock-hint" id="nav-clock-hint">
+      <svg class="nav-clock-hint-arrow" viewBox="0 0 100 100" aria-hidden="true">
+        <path pathLength="1" d="M31.7355 28.2558C33.1055 27.2535 38.5279 24.5693 46.6783 23.3327C54.3386 22.1704 60.7699 25.7184 68.1102 30.7509C73.3126 34.3176 76.8817 47.2192 78.8614 58.2143C80.3513 66.4891 76.0682 73.4152 72.3344 79.0162C67.7933 85.8282 59.5715 85.7925 52.8637 86.5562C39.7003 88.0547 32.0503 83.2024 27.6095 78.9226C24.0523 71.1362 23.1569 60.4023 24.2561 52.2549C24.9601 49.9455 26.1739 46.418 28.719 40.8809" />
+        <path pathLength="1" d="M29.5612 40.6759C29.5499 40.6759 29.2934 40.7722 28.6926 41.0812C27.8411 41.5192 25.8097 43.6836 23.2305 46.3734C22.1292 47.5218 21.4866 48.0285 20.9695 48.6643C20.8012 48.8713 21.0139 48.9673 23.0322 49.362C25.0506 49.7567 28.9168 50.4788 31.0374 50.897C33.1581 51.3151 33.4161 51.4074 33.2003 50.949C32.4633 49.3832 31.0688 47.4369 30.264 45.7247C29.9592 45.0122 29.8647 44.6168 29.7921 43.8348C29.7195 43.0527 29.6717 41.8958 29.5108 40.4327" />
+      </svg>
+      try it
+    </span>
   </div>
 </header>
 
@@ -997,6 +1093,14 @@
          sizes="100vw">
   </div>
   <div class="hero-dim"></div>
+
+  <div class="hero-annotation hero-annotation--me" aria-hidden="true">
+    <svg class="hero-annotation-arrow" viewBox="0 0 100 100">
+      <path pathLength="1" d="M31.7355 28.2558C33.1055 27.2535 38.5279 24.5693 46.6783 23.3327C54.3386 22.1704 60.7699 25.7184 68.1102 30.7509C73.3126 34.3176 76.8817 47.2192 78.8614 58.2143C80.3513 66.4891 76.0682 73.4152 72.3344 79.0162C67.7933 85.8282 59.5715 85.7925 52.8637 86.5562C39.7003 88.0547 32.0503 83.2024 27.6095 78.9226C24.0523 71.1362 23.1569 60.4023 24.2561 52.2549C24.9601 49.9455 26.1739 46.418 28.719 40.8809" />
+      <path pathLength="1" d="M29.5612 40.6759C29.5499 40.6759 29.2934 40.7722 28.6926 41.0812C27.8411 41.5192 25.8097 43.6836 23.2305 46.3734C22.1292 47.5218 21.4866 48.0285 20.9695 48.6643C20.8012 48.8713 21.0139 48.9673 23.0322 49.362C25.0506 49.7567 28.9168 50.4788 31.0374 50.897C33.1581 51.3151 33.4161 51.4074 33.2003 50.949C32.4633 49.3832 31.0688 47.4369 30.264 45.7247C29.9592 45.0122 29.8647 44.6168 29.7921 43.8348C29.7195 43.0527 29.6717 41.8958 29.5108 40.4327" />
+    </svg>
+    hi, that's me
+  </div>
 
   <div class="hero-copy">
     <h1>Interaction &amp; immersive designer, Sydney.</h1>
@@ -1310,6 +1414,9 @@
     updateTrueTime();
   }
 
+  var navPillEl = document.querySelector('.nav-pill');
+  var navClockHint = document.getElementById('nav-clock-hint');
+
   function cycle() {
     var trueScene = getScene(new Date().getHours());
     if (!travelling) {
@@ -1318,6 +1425,7 @@
     }
     travelIndex = (travelIndex + 1) % SCENES.length;
     showTravelled(SCENES[travelIndex], SCENES.length);
+    if (navClockHint) navClockHint.remove();
   }
 
   triggerBtns.forEach(function (btn) { btn.addEventListener('click', cycle); });
@@ -1325,6 +1433,13 @@
 
   updateTrueTime();
   setInterval(updateTrueTime, 30000);
+
+  // Quiet, one-time nudge toward the two hand-drawn hero details.
+  var heroEl = document.querySelector('.hero');
+  setTimeout(function () {
+    if (heroEl) heroEl.classList.add('is-annotated');
+    if (navPillEl) navPillEl.classList.add('is-hint-visible');
+  }, 900);
 
   /* ---------- discipline hover: dim + caption ---------- */
   var CAPTIONS = {
