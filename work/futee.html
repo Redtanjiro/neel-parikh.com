@@ -479,7 +479,7 @@
 
   /* ============ QUIZ ============ */
   .fc-quiz { max-width: 760px; }
-  .fc-quiz-figure { margin-top: 36px; max-width: 240px; }
+  .fc-quiz-figure { margin-top: 36px; max-width: 260px; }
   .fc-quiz-spots {
     list-style: none;
     margin: 32px 0 0;
@@ -682,13 +682,14 @@
   .fc-killed-callout strong { color: var(--floodlight); }
   .fc-killed-compare {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, 260px);
+    justify-content: center;
+    gap: 32px;
     margin-top: 36px;
   }
-  .fc-killed-compare .fc-frame--phone { max-width: 100%; }
+  .fc-killed-compare .fc-frame--phone { max-width: 100%; margin: 0; }
   @media (max-width: 640px) {
-    .fc-killed-compare { grid-template-columns: 1fr; max-width: 280px; margin-left: auto; margin-right: auto; }
+    .fc-killed-compare { grid-template-columns: 1fr; max-width: 260px; margin-left: auto; margin-right: auto; }
   }
 
   /* ============ SOLUTION ============ */
@@ -696,14 +697,15 @@
   .fc-figure { margin: 40px 0 0; }
   .fc-solution-pair {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    grid-template-columns: repeat(2, 260px);
+    justify-content: center;
+    gap: 32px;
     margin-top: 40px;
   }
   .fc-solution-pair .fc-figure { margin-top: 0; }
-  .fc-solution-pair .fc-frame--phone { max-width: 100%; }
+  .fc-solution-pair .fc-frame--phone { max-width: 100%; margin: 0; }
   @media (max-width: 640px) {
-    .fc-solution-pair { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; }
+    .fc-solution-pair { grid-template-columns: 1fr; max-width: 260px; margin-left: auto; margin-right: auto; }
   }
   .fc-frame {
     position: relative;
