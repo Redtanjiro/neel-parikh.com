@@ -774,36 +774,147 @@
     .fc-solution-feature-grid .fc-frame--phone { max-width: 260px; }
   }
 
-  /* ---------- solution: tall-page scroll preview ---------- */
-  .fc-scroll-preview {
-    position: relative;
-    max-height: 460px;
-    overflow: hidden;
+  /* ============ DEVICE MOCKUPS (reusable across case studies) ============ */
+  .device-enter {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.97);
+    transition: opacity .28s ease-out, transform .28s ease-out;
+    transition-delay: var(--enter-delay, 0ms);
   }
-  .fc-scroll-preview img { width: 100%; display: block; }
-  .fc-scroll-preview::after {
+  .device-enter.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  .device-parallax { will-change: transform; }
+
+  .device {
+    position: relative;
+    margin: 0 auto;
+    animation: device-float 8s ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+  @keyframes device-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -6px, 0); }
+  }
+
+  .device-screen {
+    position: relative;
+    overflow: hidden;
+    background: #0c0c0c;
+  }
+  .device-screen img {
+    display: block;
+    width: 100%;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+
+  /* ---- phone ---- */
+  .device-phone {
+    width: 210px;
+    padding: 11px;
+    background: #141210;
+    border-radius: 42px;
+    box-shadow: 0 30px 50px -20px rgba(0,0,0,.55), 0 12px 20px -10px rgba(0,0,0,.4);
+  }
+  .device-phone .device-screen {
+    aspect-ratio: 9 / 19.5;
+    border-radius: 30px;
+  }
+  .device-phone .device-notch {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34%;
+    height: 16px;
+    background: #141210;
+    border-radius: 0 0 12px 12px;
+    z-index: 2;
+  }
+  .device-phone .device-home {
+    position: absolute;
+    bottom: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(244, 245, 240, .5);
+    z-index: 2;
+  }
+  .device-phone .device-btn {
+    position: absolute;
+    background: #141210;
+    border-radius: 2px;
+  }
+  .device-phone .device-btn--vol1 { left: -2px; top: 26%; width: 2px; height: 24px; }
+  .device-phone .device-btn--vol2 { left: -2px; top: 36%; width: 2px; height: 24px; }
+  .device-phone .device-btn--power { right: -2px; top: 28%; width: 2px; height: 34px; }
+
+  @media (max-width: 420px) {
+    .device-phone {
+      width: 168px;
+      padding: 0;
+      border-radius: 10px;
+      box-shadow: none;
+      background: none;
+    }
+    .device-phone .device-screen { aspect-ratio: auto; border-radius: 10px; }
+    .device-phone .device-notch,
+    .device-phone .device-home,
+    .device-phone .device-btn { display: none; }
+  }
+
+  /* ---- laptop ---- */
+  .device-laptop { width: min(680px, 92vw); }
+  .device-laptop .device-bezel {
+    padding: 14px 14px 10px;
+    background: #141210;
+    border-radius: 14px 14px 4px 4px;
+    box-shadow: 0 40px 60px -24px rgba(0,0,0,.55), 0 16px 28px -12px rgba(0,0,0,.4);
+  }
+  .device-laptop .device-screen {
+    aspect-ratio: 16 / 10;
+    border-radius: 4px;
+  }
+  .device-laptop .device-base {
+    position: relative;
+    height: 14px;
+    margin: 0 -10px;
+    background: linear-gradient(180deg, #1c1a17, #100e0c);
+    border-radius: 0 0 10px 10px;
+  }
+  .device-laptop .device-base::after {
     content: "";
     position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 160px;
-    background: linear-gradient(to bottom, rgba(12, 12, 12, 0), #0c0c0c 88%);
-    pointer-events: none;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 5px;
+    background: #0c0b09;
+    border-radius: 0 0 6px 6px;
   }
-  .fc-scroll-preview-tag {
-    position: absolute;
-    right: 14px;
-    bottom: 14px;
-    font-family: var(--ui);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--chalk);
-    background: rgba(20, 18, 16, 0.55);
-    border: 1px solid rgba(244, 245, 240, 0.2);
-    border-radius: 999px;
-    padding: 6px 12px;
-    z-index: 1;
+
+  @media (max-width: 640px) {
+    .device-laptop .device-bezel { padding: 9px 9px 6px; border-radius: 10px 10px 3px 3px; }
+    .device-laptop .device-base { display: none; }
+  }
+
+  @media (max-width: 820px) {
+    .device { animation-duration: 5s; animation-name: device-float-sm; }
+  }
+  @keyframes device-float-sm {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -3px, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .device { animation: none; }
+    .device-enter { transition: opacity .28s ease-out; transform: none; }
+    .device-enter.is-in { transform: none; }
   }
 
   .fc-arrow {
@@ -837,6 +948,14 @@
     padding: 4px 10px;
     border-radius: 999px;
     white-space: nowrap;
+  }
+  .fc-arrow-group {
+    opacity: 0;
+    transition: opacity .4s ease;
+  }
+  .fc-arrow-group.is-revealed { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .fc-arrow-group { transition: none; opacity: 0; }
   }
 
   /* ============ TIMER ============ */
@@ -1338,20 +1457,44 @@
 
   <div class="fc-solution-pair">
     <figure class="fc-figure">
-      <div class="fc-frame fc-frame--phone">
-        <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
+      <div class="device-enter" style="--enter-delay:0ms">
+        <div class="device-parallax" data-depth="18">
+          <div class="device device-phone" style="--float-delay:0s">
+            <div class="device-notch"></div>
+            <div class="device-screen">
+              <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
+            </div>
+            <div class="device-home"></div>
+            <span class="device-btn device-btn--vol1"></span>
+            <span class="device-btn device-btn--vol2"></span>
+            <span class="device-btn device-btn--power"></span>
+          </div>
+        </div>
       </div>
       <figcaption>Overview — the home screen. Every number on it is real product copy, not placeholder.</figcaption>
     </figure>
     <figure class="fc-figure">
-      <div class="fc-frame fc-frame--phone" id="fcCreateGameFrame">
-        <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy">
-        <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:6%; top:83%;" aria-hidden="true">
-          <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
-        </svg>
-        <span class="fc-arrow-label" style="left:6%; top:93%;">sorted by rating</span>
+      <div class="device-enter" style="--enter-delay:140ms">
+        <div class="device-parallax" data-depth="-14">
+          <div class="device device-phone" id="fcCreateGameFrame" style="--float-delay:2.5s">
+            <div class="device-notch"></div>
+            <div class="device-screen">
+              <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy" data-scroll-inside>
+              <div class="fc-arrow-group" id="fcArrowGroup">
+                <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:8%; top:74%;" aria-hidden="true">
+                  <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
+                </svg>
+                <span class="fc-arrow-label" style="left:8%; top:84%;">sorted by rating</span>
+              </div>
+            </div>
+            <div class="device-home"></div>
+            <span class="device-btn device-btn--vol1"></span>
+            <span class="device-btn device-btn--vol2"></span>
+            <span class="device-btn device-btn--power"></span>
+          </div>
+        </div>
       </div>
-      <figcaption>Create Game — date, venue, and filters. Results sort by rating first.</figcaption>
+      <figcaption>Create Game — date, venue, and filters. Scroll to reveal the results, sorted by rating first.</figcaption>
     </figure>
   </div>
 
@@ -1377,27 +1520,47 @@
   </div>
 
   <figure class="fc-figure">
-    <div class="fc-frame">
-      <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with mock stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy">
+    <div class="device-enter">
+      <div class="device device-laptop" style="--float-delay:1s">
+        <div class="device-bezel">
+          <div class="device-screen">
+            <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with mock stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy" data-scroll-inside>
+          </div>
+        </div>
+        <div class="device-base"></div>
+      </div>
     </div>
-    <figcaption>The dashboard. 28, 8.1/10 and 12 are mock data baked into the Figma file for the screenshot — not measured outcomes.</figcaption>
+    <figcaption>The dashboard. Scroll to see the profile card below the fold. 28, 8.1/10 and 12 are mock data baked into the Figma file for the screenshot — not measured outcomes.</figcaption>
   </figure>
 
   <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard and the matchmaking screen — both dense enough that language actually changes how much fits on them.</p>
 
   <figure class="fc-figure">
-    <div class="fc-frame">
-      <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped matchmaking screen: a boosted Polo Football Park venue card, a date picker, and a list of three open games with real venue names, all sorted for the reader in one pass" loading="lazy">
+    <div class="device-enter">
+      <div class="device device-laptop" style="--float-delay:3.5s">
+        <div class="device-bezel">
+          <div class="device-screen">
+            <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped matchmaking screen: a boosted Polo Football Park venue card, a date picker, and a list of three open games with real venue names, all sorted for the reader in one pass" loading="lazy" data-scroll-inside>
+          </div>
+        </div>
+        <div class="device-base"></div>
+      </div>
     </div>
     <figcaption>Matchmaking — one screen to pick a date, a venue, and an open game.</figcaption>
   </figure>
 
   <figure class="fc-figure">
-    <div class="fc-frame fc-scroll-preview">
-      <img src="/work/futee/assets/solution-findgame-preview.png" alt="Top of the full Find Game page: top nav, a Top Rated Pitches venue banner, date and venue filters with radius and price sliders, and the first row of a 15-result grid sorted by highest rating" loading="lazy">
-      <span class="fc-scroll-preview-tag">page continues below</span>
+    <div class="device-enter">
+      <div class="device device-laptop" style="--float-delay:5s">
+        <div class="device-bezel">
+          <div class="device-screen">
+            <img src="/work/futee/assets/solution-findgame-full.png" alt="The full Find Game page: top nav, a Top Rated Pitches venue banner, date and venue filters with radius and price sliders, and a sortable grid of 15 pitch results" loading="lazy" data-scroll-inside>
+          </div>
+        </div>
+        <div class="device-base"></div>
+      </div>
     </div>
-    <figcaption>Find Game, full length — date, venue, radius and price filters, then 15 results sorted by rating.</figcaption>
+    <figcaption>Find Game, full length — scroll to see the filters and all 15 results, sorted by rating.</figcaption>
   </figure>
 </section>
 
@@ -1618,21 +1781,87 @@
     }
   }
 
-  /* ---------- solution arrow draw-in ---------- */
-  var arrowEl = document.getElementById('fcArrow');
-  if (arrowEl && 'IntersectionObserver' in window) {
-    var arrowObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
+  /* ---------- device mockups: entrance, parallax, scroll-inside ---------- */
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var enterEls = document.querySelectorAll('.device-enter');
+    if (enterEls.length) {
+      if ('IntersectionObserver' in window) {
+        var enterObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in');
+              enterObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        enterEls.forEach(function (el) { enterObserver.observe(el); });
+      } else {
+        enterEls.forEach(function (el) { el.classList.add('is-in'); });
+      }
+    }
+
+    var scrollImgs = Array.prototype.slice.call(document.querySelectorAll('img[data-scroll-inside]'));
+    var createGameImg = document.querySelector('#fcCreateGameFrame img[data-scroll-inside]');
+    var arrowGroup = document.getElementById('fcArrowGroup');
+    var arrowEl = document.getElementById('fcArrow');
+    var arrowRevealed = false;
+    var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('.device-parallax'));
+
+    if (reduceMotion) {
+      scrollImgs.forEach(function (img) { img.style.transform = 'translate3d(0,0,0)'; });
+      return;
+    }
+    if (!scrollImgs.length && !parallaxEls.length) return;
+
+    function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
+
+    function update() {
+      var viewportH = window.innerHeight;
+
+      scrollImgs.forEach(function (img) {
+        var screen = img.parentElement;
+        var travel = img.offsetHeight - screen.offsetHeight;
+        if (travel <= 0) { img.style.transform = 'translate3d(0,0,0)'; return; }
+        var rect = screen.getBoundingClientRect();
+        var raw = (viewportH - rect.top) / (viewportH + rect.height);
+        var progress = Math.min(1, Math.max(0, raw));
+        var eased = easeOutQuad(progress);
+        img.style.transform = 'translate3d(0,' + (-travel * eased).toFixed(1) + 'px,0)';
+
+        if (img === createGameImg && arrowGroup && !arrowRevealed && progress > 0.55) {
+          arrowGroup.classList.add('is-revealed');
           arrowEl.classList.add('is-drawn');
-          arrowObserver.unobserve(entry.target);
+          arrowRevealed = true;
         }
       });
-    }, { threshold: 0.6 });
-    arrowObserver.observe(arrowEl);
-  } else if (arrowEl) {
-    arrowEl.classList.add('is-drawn');
-  }
+
+      var isMobile = window.innerWidth <= 820;
+      parallaxEls.forEach(function (el) {
+        if (isMobile) { el.style.transform = 'translate3d(0,0,0)'; return; }
+        var depth = parseFloat(el.getAttribute('data-depth')) || 0;
+        var rect = el.getBoundingClientRect();
+        var centerOffset = (rect.top + rect.height / 2) - viewportH / 2;
+        var shift = (centerOffset / viewportH) * depth;
+        el.style.transform = 'translate3d(0,' + shift.toFixed(1) + 'px,0)';
+      });
+    }
+
+    var ticking = false;
+    var onScroll = function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () { update(); ticking = false; });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    scrollImgs.forEach(function (img) {
+      if (!img.complete) img.addEventListener('load', update);
+    });
+    update();
+  })();
 
   /* ---------- match timer: 00' -> 90' on scroll ---------- */
   var timerStage = document.getElementById('fcTimerStage');
