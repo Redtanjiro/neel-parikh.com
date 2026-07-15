@@ -588,15 +588,16 @@
   .cs-figure { margin: 40px 0 0; }
   .cs-solution-pair {
     display: grid;
-    grid-template-columns: repeat(2, 260px);
-    justify-content: center;
-    gap: 32px;
+    grid-template-columns: 1.5fr 1fr;
+    align-items: end;
+    gap: 40px;
     margin-top: 40px;
   }
-  .cs-solution-pair .cs-figure { margin-top: 0; }
-  .cs-solution-pair .cs-frame--phone { max-width: 100%; margin: 0; }
-  @media (max-width: 640px) {
-    .cs-solution-pair { grid-template-columns: 1fr; max-width: 260px; margin-left: auto; margin-right: auto; }
+  .cs-solution-pair .cs-figure { margin-top: 0; min-width: 0; }
+  .cs-solution-pair .device-laptop { width: 100%; }
+  .cs-solution-pair .device-phone { margin: 0 auto; }
+  @media (max-width: 780px) {
+    .cs-solution-pair { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; gap: 56px; }
   }
   .cs-frame {
     position: relative;
@@ -1146,7 +1147,7 @@
           <div class="device device-phone" style="--float-delay:2.5s">
             <div class="device-notch"></div>
             <div class="device-screen">
-              <img src="/work/cseds/assets/solution-landing-mobile.png" alt="Same CSEDS homepage on mobile: single-column hero with hamburger nav, stacked hero copy, and the same content reflowed for a narrow screen" loading="lazy" data-scroll-inside>
+              <img src="/work/cseds/assets/solution-landing-mobile-static.png" alt="Same CSEDS homepage on mobile: single-column hero with hamburger nav, stacked hero copy, and the same content reflowed for a narrow screen" loading="lazy">
             </div>
             <div class="device-home"></div>
             <span class="device-btn device-btn--vol1"></span>
@@ -1193,20 +1194,20 @@
     <figcaption>Livin Modular — one product page, full length. Scroll for the assembly detail and the FAQ.</figcaption>
   </figure>
 
-  <p class="cs-body-lg cs-solution-note">The software arm is the clearest evidence of what "two websites into one" actually meant: a separate site, with its own products, folded into the same navigation and the same visual system as the materials catalogue.</p>
+  <p class="cs-body-lg cs-solution-note">The software arm is the clearest evidence of what "two websites into one" actually meant: a separate site — aTENA, CivilGeo Suite and DeepExcavation, three engineering-software products — folded into the same navigation and the same visual system as the materials catalogue, not left as a bolted-on subdomain.</p>
 
   <figure class="cs-figure">
     <div class="device-enter">
       <div class="device device-laptop" style="--float-delay:6s">
         <div class="device-bezel">
           <div class="device-screen">
-            <img src="/work/cseds/assets/solution-software.png" alt="CSEDS software page, full length: 'From research-grade analysis to engineering practice' hero, and three software listings — aTENA, CivilGeo Suite, DeepExcavation — each with a features list" loading="lazy" data-scroll-inside>
+            <img src="/work/cseds/assets/solution-software-static.png" alt="CSEDS software page: 'From research-grade analysis to engineering practice' hero, with Software live in the same top nav as Products — the same visual system as the materials catalogue" loading="lazy">
           </div>
         </div>
         <div class="device-base"></div>
       </div>
     </div>
-    <figcaption>Software, full length — aTENA, CivilGeo Suite and DeepExcavation, the second site merged in.</figcaption>
+    <figcaption>Software — same nav, same system, a different catalogue underneath.</figcaption>
   </figure>
 </section>
 
