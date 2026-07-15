@@ -31,8 +31,8 @@ window.PROJECTS = [
     title: "CSEDS",
     category: "Web Design & Build",
     disciplines: ["UI/UX"],
-    description: "Full site design and build for a civil/structural engineering distributor.",
-    accent: "#3a6ea8",
+    description: "Consolidating two live websites into one for an Australian construction-materials distributor, on Framer.",
+    accent: "#b23324",
     featured: true
   },
   {
