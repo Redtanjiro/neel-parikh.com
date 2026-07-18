@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resources — Neel Parikh</title>
+<meta name="description" content="A pan-and-zoom taste-map of what Neel Parikh reads, finds inspiring, finds funny, and actually uses.">
+<link rel="icon" type="image/png" href="/assets/favicon/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --ui: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+
+    --amber: #e8a13a;
+    --ink: #141210;
+    --paper: #f4f1ea;
+    --line: rgba(20, 18, 16, 0.12);
+
+    --stamp-paper: #fbfaf5;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 110px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  /* ============ NAV (shared pattern, see /index.html) ============ */
+  .site-nav {
+    position: fixed;
+    top: 20px; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    font-family: var(--ui);
+    transition: top .45s cubic-bezier(.16,1,.3,1);
+  }
+  .site-nav.shrunk { top: 12px; }
+
+  .nav-pill {
+    position: relative;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    max-width: 760px;
+    width: calc(100% - 40px);
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1),
+                padding .45s cubic-bezier(.16,1,.3,1),
+                gap .45s cubic-bezier(.16,1,.3,1),
+                background-color .45s ease;
+  }
+  .shrunk .nav-pill {
+    max-width: 460px;
+    padding: 8px 20px;
+    gap: 18px;
+    background: rgba(20, 18, 16, 0.5);
+  }
+
+  .nav-brand { display: flex; align-items: center; gap: 10px; flex: none; text-decoration: none; color: #fff; }
+  .nav-brand-expanded {
+    display: flex; align-items: center; gap: 10px;
+    overflow: hidden; max-width: 220px; opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .nav-brand-expanded { max-width: 0; opacity: 0; }
+
+  .nav-sprite {
+    height: 30px; width: auto; flex: none;
+    image-rendering: crisp-edges; image-rendering: pixelated;
+    transform-origin: bottom center;
+    animation: sprite-bob 3.2s ease-in-out infinite;
+  }
+  .shrunk .nav-sprite { animation: none; }
+  @keyframes sprite-bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-2px) rotate(1.5deg); }
+  }
+
+  .wordmark-full { font-family: var(--display); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; white-space: nowrap; }
+  .wordmark-compact {
+    display: block; font-family: var(--display); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; max-width: 0; opacity: 0;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .wordmark-compact {
+    max-width: 40px; opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1) .1s, opacity .3s ease .15s;
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 20px; list-style: none; margin: 0 0 0 auto; padding: 0; }
+  .nav-link {
+    position: relative; display: inline-block; text-decoration: none; color: #fff;
+    font-size: 13px; font-weight: 500; padding-bottom: 6px;
+    transition: color .25s ease, font-size .3s ease;
+  }
+  .shrunk .nav-link { font-size: 12px; }
+  .nav-link:hover, .nav-link:focus-visible { color: var(--amber) !important; }
+  .nav-link[aria-current="page"] { color: var(--amber); }
+
+  .nav-underline {
+    position: absolute; left: -4%; bottom: -3px; width: 108%; height: 14px;
+    overflow: visible; pointer-events: none;
+  }
+  .nav-underline path {
+    stroke: var(--amber); fill: none; stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0;
+    transition: stroke-dashoffset .5s ease, opacity .12s ease;
+  }
+  .nav-link:hover .nav-underline path,
+  .nav-link:focus-visible .nav-underline path { stroke-dashoffset: 0; opacity: 1; }
+  .nav-link--work .nav-underline { transform: rotate(-0.6deg) scaleY(1); }
+  .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
+  .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
+  .nav-link--resources .nav-underline { transform: rotate(0.7deg) scaleY(1.05); }
+  .nav-link[aria-current="page"] .nav-underline path { stroke-dashoffset: 0; opacity: .6; }
+
+  .nav-clock {
+    flex: none; display: flex; align-items: center; gap: 6px;
+    margin-left: 6px; padding: 5px 10px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em; white-space: nowrap;
+  }
+  .nav-clock-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex: none; animation: pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .nav-pill, .nav-brand-expanded, .wordmark-compact,
+    .nav-link, .nav-underline path { transition: none; }
+    .nav-sprite, .nav-clock-dot { animation: none; }
+  }
+
+  /* ============ PAGE INTRO ============ */
+  .res-main { padding-top: 128px; }
+  .res-intro { max-width: 780px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px) clamp(28px, 4vw, 40px); }
+  .res-eyebrow {
+    font-family: var(--ui); font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--amber); margin: 0 0 10px;
+  }
+  .res-title {
+    font-family: var(--display); font-weight: 700; font-size: clamp(32px, 5vw, 48px);
+    letter-spacing: -0.02em; margin: 0 0 12px; line-height: 1.05;
+  }
+  .res-dot { color: var(--amber); }
+  .res-intro-copy { font-family: var(--body); font-size: clamp(15px, 1.6vw, 17px); line-height: 1.55; color: rgba(20,18,16,.72); max-width: 60ch; margin: 0; }
+
+  /* ============ CANVAS ============ */
+  .res-canvas-wrap {
+    position: relative;
+    margin: 0 clamp(20px, 5vw, 56px) clamp(56px, 8vw, 96px);
+    height: min(80vh, 760px);
+    min-height: 540px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 0 12px 40px rgba(20,18,16,.08);
+  }
+
+  .res-viewport {
+    position: relative;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+  }
+  .res-viewport.is-dragging { cursor: grabbing; }
+
+  .res-world {
+    position: absolute;
+    top: 0; left: 0;
+    width: 3000px; height: 2200px;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+  .res-world.is-jumping { transition: transform .5s cubic-bezier(.16,1,.3,1); }
+
+  .res-grid {
+    position: absolute; inset: 0; width: 3000px; height: 2200px;
+    background-image: radial-gradient(circle, rgba(20,18,16,.15) 1.4px, transparent 1.6px);
+    background-size: 30px 30px;
+    pointer-events: none;
+  }
+  .res-axis { position: absolute; background: var(--line); pointer-events: none; }
+  .res-axis--v { left: 1500px; top: 0; width: 1px; height: 2200px; }
+  .res-axis--h { left: 0; top: 1100px; width: 3000px; height: 1px; }
+
+  .res-quadlabel {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: var(--display); font-weight: 700;
+    font-size: 68px; letter-spacing: -0.01em; text-transform: uppercase;
+    color: var(--ink); opacity: .05;
+    pointer-events: none; user-select: none; white-space: nowrap;
+  }
+
+  /* ---- stamps ---- */
+  .res-stamp {
+    position: absolute;
+    width: 210px;
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+    padding: 9px;
+    background: var(--stamp-paper);
+    -webkit-mask:
+      linear-gradient(#000,#000),
+      radial-gradient(7px at left,   transparent 98%, #000) 0 0   / 1px 15px repeat-y,
+      radial-gradient(7px at right,  transparent 98%, #000) 100% 0/ 1px 15px repeat-y,
+      radial-gradient(7px at top,    transparent 98%, #000) 0 0   / 15px 1px repeat-x,
+      radial-gradient(7px at bottom, transparent 98%, #000) 0 100%/ 15px 1px repeat-x;
+    -webkit-mask-composite: source-over, destination-out, destination-out, destination-out, destination-out;
+    mask:
+      linear-gradient(#000,#000),
+      radial-gradient(7px at left,   transparent 98%, #000) 0 0   / 1px 15px repeat-y,
+      radial-gradient(7px at right,  transparent 98%, #000) 100% 0/ 1px 15px repeat-y,
+      radial-gradient(7px at top,    transparent 98%, #000) 0 0   / 15px 1px repeat-x,
+      radial-gradient(7px at bottom, transparent 98%, #000) 0 100%/ 15px 1px repeat-x;
+    mask-composite: add, subtract, subtract, subtract, subtract;
+    filter: drop-shadow(0 3px 7px rgba(20,18,16,.3));
+    transform: rotate(var(--rot, 0deg));
+    cursor: pointer;
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .res-stamp { transition: transform .25s ease, filter .25s ease; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .res-stamp:hover, .res-stamp:focus-visible {
+      filter: drop-shadow(0 10px 18px rgba(20,18,16,.34));
+    }
+    .res-stamp:hover .res-stamp-name, .res-stamp:focus-visible .res-stamp-name { color: var(--amber); }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .res-stamp:hover, .res-stamp:focus-visible { transform: rotate(0deg) translateY(-6px); }
+  }
+
+  .res-stamp-postmark {
+    position: absolute; top: -12px; right: -10px;
+    width: 66px; height: 66px;
+    pointer-events: none;
+    transform: rotate(var(--postmark-rot, -12deg));
+    opacity: .5;
+  }
+  .res-stamp-ring { position: absolute; border: 1px solid var(--ink); border-radius: 50%; }
+  .res-stamp-ring--outer { inset: 0; }
+  .res-stamp-ring--inner { inset: 7px; }
+  .res-stamp-postmark-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-family: var(--mono); font-size: 6.5px; letter-spacing: 0.03em;
+    line-height: 1.1; padding: 6px;
+  }
+
+  .res-stamp-inner {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .res-stamp-media { position: relative; width: 100%; height: 108px; border-radius: 2px; overflow: hidden; background: var(--line); }
+  .res-stamp-img { width: 100%; height: 100%; object-fit: cover; }
+  .res-stamp-fallback {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(20,18,16,.06);
+    font-family: var(--display); font-weight: 700; font-size: 30px;
+    color: rgba(20,18,16,.35);
+  }
+  .res-stamp-tag {
+    position: absolute; top: 6px; right: 6px;
+    background: var(--ink); color: var(--paper);
+    font-family: var(--ui); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .res-stamp-name { font-family: var(--display); font-weight: 600; font-size: 14px; line-height: 1.2; transition: color .2s ease; }
+  .res-stamp-note { font-family: var(--body); font-size: 12px; line-height: 1.4; color: rgba(20,18,16,.72); }
+  .res-stamp-divider { border-top: 1px dashed var(--line); margin: 1px 0; }
+  .res-stamp-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .res-stamp-quad { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: .02em; color: var(--amber); text-transform: uppercase; }
+  .res-stamp-host { font-family: var(--mono); font-size: 9px; color: rgba(20,18,16,.42); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---- minimap ---- */
+  .res-minimap {
+    position: absolute; left: 14px; bottom: 14px;
+    width: 150px; height: 110px;
+    background: rgba(244,241,234,.94);
+    border: 1px solid var(--line); border-radius: 8px;
+    overflow: hidden; cursor: pointer; z-index: 6;
+    box-shadow: 0 6px 18px rgba(20,18,16,.2);
+  }
+  .res-minimap-quad {
+    position: absolute; width: 50%; height: 50%;
+    font-family: var(--ui); font-size: 7px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .03em; color: rgba(20,18,16,.4);
+    padding: 4px 5px;
+  }
+  .res-minimap-quad--tl { left: 0; top: 0; }
+  .res-minimap-quad--tr { right: 0; top: 0; text-align: right; }
+  .res-minimap-quad--bl { left: 0; bottom: 0; }
+  .res-minimap-quad--br { right: 0; bottom: 0; text-align: right; }
+  .res-minimap::before, .res-minimap::after { content: ''; position: absolute; background: var(--line); }
+  .res-minimap::before { left: 50%; top: 0; width: 1px; height: 100%; }
+  .res-minimap::after { left: 0; top: 50%; width: 100%; height: 1px; }
+  .res-minimap-viewport {
+    position: absolute;
+    border: 1.5px solid var(--amber);
+    background: rgba(232,161,58,.16);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ---- controls ---- */
+  .res-controls { position: absolute; right: 14px; bottom: 14px; display: flex; gap: 8px; z-index: 6; }
+  .res-control-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    font-family: var(--ui); font-size: 17px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(20,18,16,.22);
+  }
+  .res-control-btn:hover { background: var(--amber); color: var(--ink); }
+  .res-control-btn--fit {
+    width: auto; padding: 0 14px; border-radius: 999px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+  }
+
+  .res-hint {
+    position: absolute; top: 14px; left: 14px; z-index: 6;
+    font-family: var(--ui); font-size: 11px; color: var(--ink);
+    background: rgba(244,241,234,.88);
+    padding: 5px 12px; border-radius: 999px;
+    pointer-events: none;
+    opacity: .7;
+    transition: opacity .5s ease;
+  }
+  .res-hint.is-hidden { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .res-stamp, .res-stamp-name, .res-hint { transition: none; }
+  }
+
+  /* ============ MOBILE BANNER + LIST (also the a11y path) ============ */
+  .res-mobile-banner {
+    display: none;
+    margin: 0 clamp(20px, 5vw, 56px) 20px;
+    padding: 12px 16px;
+    border: 1px dashed var(--amber);
+    border-radius: 10px;
+    font-family: var(--ui); font-size: 13px; line-height: 1.4;
+    color: rgba(20,18,16,.8);
+    background: rgba(232,161,58,.08);
+  }
+
+  .res-list { padding: 0 clamp(20px, 5vw, 56px) clamp(56px, 8vw, 96px); }
+  .res-list-group { margin-bottom: 36px; }
+  .res-list-group h2 {
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .res-list-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .res-list-item a {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 4px;
+    text-decoration: none; color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .res-list-item a:hover .res-list-name,
+  .res-list-item a:focus-visible .res-list-name { color: var(--amber); }
+  .res-list-thumb, .res-list-fallback {
+    flex: none; width: 52px; height: 52px; border-radius: 6px; object-fit: cover;
+    background: rgba(20,18,16,.06);
+  }
+  .res-list-fallback {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 18px; color: rgba(20,18,16,.35);
+  }
+  .res-list-text { min-width: 0; }
+  .res-list-name { display: block; font-family: var(--display); font-weight: 600; font-size: 15px; transition: color .2s ease; }
+  .res-list-note { display: block; font-family: var(--body); font-size: 13px; color: rgba(20,18,16,.65); margin-top: 2px; }
+  .res-list-tag {
+    flex: none; align-self: flex-start;
+    font-family: var(--ui); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+    color: rgba(20,18,16,.45); border: 1px solid var(--line); border-radius: 999px; padding: 3px 8px;
+    margin-left: auto;
+  }
+
+  @media (min-width: 821px) {
+    .res-list {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+      margin: -1px; padding: 0; border: 0;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .site-nav, .site-nav.shrunk { top: 12px; }
+    .nav-pill { width: calc(100% - 24px); padding: 10px 12px; gap: 14px; }
+    .shrunk .nav-pill { max-width: 320px; }
+    .wordmark-full { font-size: 15px; }
+    .nav-sprite { height: 24px; }
+    .nav-links { gap: 11px; }
+    .nav-link { font-size: 10.5px; }
+    .shrunk .nav-link { font-size: 10.5px; }
+    .nav-clock { display: none; }
+
+    .res-main { padding-top: 96px; }
+    .res-canvas-wrap { display: none; }
+    .res-mobile-banner { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="site-nav">
+  <div class="nav-pill">
+    <a href="/" class="nav-brand" aria-label="Neel Parikh — back to top">
+      <span class="nav-brand-expanded" aria-hidden="true">
+        <img class="nav-sprite" src="/assets/sprite/neel-mug.png" alt="" aria-hidden="true">
+        <span class="wordmark-full">Neel Parikh</span>
+      </span>
+      <span class="wordmark-compact" aria-hidden="true">NP</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a href="/index.html#chosen-work" class="nav-link nav-link--work">
+          Work
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/about.html" class="nav-link nav-link--about">
+          About
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/contact.html" class="nav-link nav-link--contact">
+          Contact
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/resources.html" class="nav-link nav-link--resources" aria-current="page">
+          Resources
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11.5C2 11.5 20 10 40 11.2C60 12.4 82 12 98 10.8" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-clock">
+      <span class="nav-clock-dot" aria-hidden="true"></span>
+      <span id="nav-clock-label">MORNING</span>
+      <span id="nav-clock-time">--:--</span>
+    </div>
+  </div>
+</header>
+
+<main class="res-main">
+  <div class="res-intro">
+    <p class="res-eyebrow">A taste-map, not a link-dump</p>
+    <h1 class="res-title">Resources<span class="res-dot">.</span></h1>
+    <p class="res-intro-copy">Where a stamp sits means something. Drag the map, scroll to zoom, and see what actually shaped the work — organised by what it is to me, not what it's for.</p>
+  </div>
+
+  <section class="res-canvas-wrap" id="resCanvasWrap" aria-hidden="true">
+    <div class="res-viewport" id="resViewport">
+      <div class="res-world" id="resWorld">
+        <div class="res-grid" aria-hidden="true"></div>
+        <div class="res-axis res-axis--v" aria-hidden="true"></div>
+        <div class="res-axis res-axis--h" aria-hidden="true"></div>
+        <!-- quadrant ghost labels + stamps injected by JS -->
+      </div>
+    </div>
+
+    <div class="res-hint" id="resHint">Drag to pan · scroll to zoom</div>
+
+    <div class="res-minimap" id="resMinimap">
+      <div class="res-minimap-quad res-minimap-quad--tl">Reading</div>
+      <div class="res-minimap-quad res-minimap-quad--tr">Inspiring</div>
+      <div class="res-minimap-quad res-minimap-quad--bl">Silly</div>
+      <div class="res-minimap-quad res-minimap-quad--br">Useful</div>
+      <div class="res-minimap-viewport" id="resMinimapViewport"></div>
+    </div>
+
+    <div class="res-controls">
+      <button class="res-control-btn" id="resZoomOut" type="button" tabindex="-1" aria-hidden="true">–</button>
+      <button class="res-control-btn" id="resZoomIn" type="button" tabindex="-1" aria-hidden="true">+</button>
+      <button class="res-control-btn res-control-btn--fit" id="resFitAll" type="button" tabindex="-1" aria-hidden="true">Fit all</button>
+    </div>
+  </section>
+
+  <p class="res-mobile-banner">This is a pan-and-zoom map on desktop — open it there for the full thing. Here's the same set, grouped:</p>
+
+  <section class="res-list" id="resList" aria-label="Resources, grouped by category"></section>
+</main>
+
+<footer class="site-footer" id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-pills" id="footer-pills"></div>
+    <div class="footer-floor" aria-hidden="true">
+      <svg viewBox="0 62 469 38" preserveAspectRatio="none">
+        <path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" />
+      </svg>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    padding: clamp(70px, 10vw, 110px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 64px);
+    margin-top: 0;
+  }
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
+  .footer-pills { --fall-distance: -50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 28px 24px; padding-bottom: clamp(40px, 6vw, 56px); }
+  .footer-pill {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    padding: clamp(20px, 2.6vw, 30px) clamp(34px, 4.4vw, 50px);
+    color: var(--paper); font-family: var(--ui); font-size: clamp(18px, 2.4vw, 26px); font-weight: 500;
+    text-decoration: none; opacity: 1; transform: rotate(var(--rot, 0deg));
+    transition: transform .2s ease, color .2s ease;
+  }
+  .footer-pill-shape { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .footer-pill-shape path { fill: none; stroke: rgba(244, 241, 234, 0.5); stroke-width: 2; vector-effect: non-scaling-stroke; transition: stroke .2s ease; }
+  .footer-pill-label { position: relative; z-index: 1; white-space: nowrap; }
+  .footer-pill:hover, .footer-pill:focus-visible { transform: translateY(-3px) rotate(var(--rot, 0deg)); color: var(--amber); }
+  .footer-pill:hover .footer-pill-shape path, .footer-pill:focus-visible .footer-pill-shape path { stroke: var(--amber); }
+  .footer-pill--accent { color: var(--amber); }
+  .footer-pill--accent .footer-pill-shape path { stroke: var(--amber); }
+  .footer-pills.pending .footer-pill { opacity: 0; transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg)); }
+  .footer-pills.dropped .footer-pill { animation: pill-drop .7s cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: var(--delay, 0ms); }
+  @keyframes pill-drop {
+    0% { opacity: 0; transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg)); }
+    100% { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-pills.pending .footer-pill, .footer-pills.dropped .footer-pill { opacity: 1; transform: rotate(var(--rot, 0deg)); animation: none; }
+    .footer-pill { transition: none; }
+  }
+  .footer-floor { width: 100%; height: 20px; }
+  .footer-floor svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .footer-floor path { fill: none; stroke: rgba(244, 241, 234, 0.22); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  @media (max-width: 820px) {
+    .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
+    .footer-pill { padding: 16px 26px; font-size: 16px; }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- nav pill shrink/expand on scroll ---------- */
+  var nav = document.getElementById('site-nav');
+  var lastY = window.scrollY;
+  var ticking = false;
+  var TOP_ZONE = 80;
+  var THRESHOLD = 6;
+  function updateNavShrink() {
+    var y = window.scrollY;
+    if (y < TOP_ZONE) { nav.classList.remove('shrunk'); lastY = y; }
+    else if (Math.abs(y - lastY) > THRESHOLD) { nav.classList.toggle('shrunk', y > lastY); lastY = y; }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { requestAnimationFrame(updateNavShrink); ticking = true; }
+  }, { passive: true });
+
+  /* ---------- nav clock ---------- */
+  var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
+  var labelEl = document.getElementById('nav-clock-label');
+  var timeEl = document.getElementById('nav-clock-time');
+  function getScene(hour) {
+    if (hour >= 5 && hour < 11) return 'morning';
+    if (hour >= 11 && hour < 16) return 'midday';
+    if (hour >= 16 && hour < 19) return 'golden';
+    return 'night';
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function updateClock() {
+    var now = new Date();
+    labelEl.textContent = SCENE_LABELS[getScene(now.getHours())];
+    timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  /* ---------- footer pills ---------- */
+  var PILLS = [
+    { label: 'Email', url: 'mailto:neelparikh7@gmail.com' },
+    { label: 'LinkedIn', url: 'https://linkedin.com/in/neel-parikh-413b16169/' },
+    { label: 'Instagram', url: '#' },
+    { label: 'GitHub', url: 'https://github.com/Redtanjiro' },
+    { label: 'Résumé', url: '/assets/files/neel-parikh-cv.pdf', download: true },
+    { label: 'Say hi', url: 'mailto:neelparikh7@gmail.com?subject=Hey%20Neel', accent: true }
+  ];
+  var PILL_ROTATIONS = [-3, 2, -2.5, 3, -2, 2.5];
+  var PILL_STAGGER_MS = 100;
+  var PILL_SHAPES = [
+    'M76.7874 16.2182C76.7676 16.2182 76.7477 16.2182 72.653 16.3587C68.5582 16.4992 60.3891 16.7801 55.0636 17.0685C49.7381 17.3568 47.5036 17.6439 45.0377 17.792C39.9491 18.0976 36.4777 17.9651 34.9519 18.1006C33.3926 18.2391 29.9118 19.8732 25.5993 21.9204C22.7442 23.2757 21.9852 24.9076 20.8313 27.004C18.8633 30.5799 18.7729 32.2198 18.3184 34.208C17.5275 37.6676 18.2543 41.4872 19.548 44.6925C21.122 48.5925 22.3134 49.8813 23.1844 50.6958C24.2795 51.7199 25.9985 52.4629 29.3257 54.2533C31.1813 55.2518 33.8645 55.4632 38.5905 55.7782C41.9967 56.0053 47.4677 56.0365 56.1253 56.3051C64.7829 56.5738 76.466 56.9941 82.6954 57.1796C89.3446 57.3776 90.3041 57.1582 91.329 57.015C94.3867 56.5876 98.2784 56.0423 100.428 55.1111C103.352 53.8438 105.34 51.2614 106.603 50.2042C107.612 49.3588 108.319 47.789 108.887 46.0273C109.852 43.0334 111.386 37.9322 111.867 35.338C112.332 32.8255 111.598 28.8356 110.622 26.5131C109.576 24.0245 107.79 22.4884 106.781 21.7764C105.31 20.7386 102.747 19.9547 99.6034 19.0171C97.9571 18.5261 96.1364 18.2569 93.6375 18.0181C88.0118 17.4806 84.3809 17.4385 83.5339 17.2657C81.1482 16.779 78.8265 16.2537 77.678 15.9158C77.4109 15.8409 77.1518 15.7923 76.8406 15.7672C76.5293 15.7422 76.1738 15.7422 75.8074 15.7422',
+    'M67.4355 17.7327C67.3971 17.7327 64.6152 17.6838 58.6774 17.3591C55.4945 17.1851 51.9963 16.5824 48.0994 16.3049C44.2025 16.0275 40.0204 15.9888 37.2847 16.1032C31.7428 16.335 29.9583 17.9868 26.8338 20.5645C25.7522 21.4568 25.1133 22.5433 24.4123 23.6584C23.822 24.5974 22.4968 28.1258 20.6415 33.0988C19.0926 37.2504 19.8218 39.6392 20.8827 42.4012C21.8628 44.9528 24.085 47.4894 25.9523 49.5174C26.9351 50.5848 28.4301 51.4773 31.7137 52.9054C33.7855 53.8065 36.9012 54.5084 44.0398 55.3011C51.1784 56.0938 62.302 56.8135 71.9448 56.938C81.5877 57.0625 89.4129 56.5701 93.7467 56.2491C99.7157 55.8071 102.94 53.75 105.112 52.2878C106.601 51.2852 108.657 46.7875 109.644 44.043C111.019 40.2225 109.751 36.3623 108.791 33.5944C107.522 29.9392 105.856 27.4901 104.433 26.1588C101.425 23.3424 98.6552 21.5077 96.9232 20.7114C95.7541 20.1738 93.901 19.5844 91.0583 19.0213C88.2155 18.4582 84.415 17.9951 80.0195 17.7425C75.6239 17.49 70.7485 17.4619 65.7253 17.433',
+    'M54.9867 16.9128C54.9768 16.9128 54.9669 16.9128 52.0405 16.942C49.1141 16.9713 43.2715 17.0298 37.6997 17.44C32.128 17.8502 27.0041 18.6103 23.9537 19.1287C20.0611 19.7901 18.4125 20.6085 16.7247 21.7054C14.7976 22.9578 13.5196 24.8813 12.5524 26.4636C11.7137 27.8359 11.0702 30.8217 10.262 35.3897C9.4209 40.1434 9.71834 43.0853 9.91035 44.0755C10.5713 47.484 12.5173 50.1445 13.8284 51.675C14.3872 52.3274 15.9828 53.0041 20.2932 54.3814C23.3825 55.3684 28.4384 56.4882 36.305 57.285C44.1717 58.0817 54.7306 58.4058 62.779 58.3171C70.8274 58.2284 76.0454 57.7171 81.3986 57.0771C86.7518 56.4371 92.0821 55.6838 96.0867 54.9C100.091 54.1162 102.609 53.3246 105.074 52.4491C109.91 50.7318 113.143 49.1032 114.829 47.8871C117.858 45.7024 118.867 43.7613 119.631 42.1307C120.922 39.3756 120.085 34.1726 119.317 31.1616C118.976 29.8244 118.25 28.4725 117.127 26.4605C114.076 20.9916 111.524 19.0811 108.111 16.9816C105.844 15.5875 102.44 15.1429 96.7225 14.788C92.9195 14.552 87.2621 14.7206 81.8968 14.8155C76.5316 14.9104 71.624 15.0589 68.326 15.1303C63.489 15.235 60.4645 15.5207 57.8 16.1157C56.5729 16.3708 55.5996 16.531 54.9442 16.6421C54.2888 16.7532 53.9808 16.8103 52.9748 16.8962'
+  ];
+  var pillsEl = document.getElementById('footer-pills');
+  PILLS.forEach(function (pill, i) {
+    var a = document.createElement('a');
+    a.className = 'footer-pill' + (pill.accent ? ' footer-pill--accent' : '');
+    a.href = pill.url;
+    a.style.setProperty('--rot', PILL_ROTATIONS[i % PILL_ROTATIONS.length] + 'deg');
+    a.style.setProperty('--delay', (i * PILL_STAGGER_MS) + 'ms');
+    if (pill.download) a.setAttribute('download', '');
+    a.innerHTML =
+      '<svg class="footer-pill-shape" viewBox="0 0 130 73" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="' + PILL_SHAPES[i % PILL_SHAPES.length] + '" />' +
+      '</svg>' +
+      '<span class="footer-pill-label">' + pill.label + '</span>';
+    pillsEl.appendChild(a);
+  });
+  pillsEl.classList.add('pending');
+  if ('IntersectionObserver' in window) {
+    var footerObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          pillsEl.classList.remove('pending');
+          pillsEl.classList.add('dropped');
+          footerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    footerObserver.observe(pillsEl);
+  } else {
+    pillsEl.classList.remove('pending');
+  }
+
+  /* =====================================================================
+     RESOURCES — quadrant canvas of stamps
+     Add an entry: append one object to RESOURCES. Nothing else to touch —
+     canvas layout, minimap and the mobile/a11y list are all generated
+     from this array.
+
+     NOTE: the entries below are PLACEHOLDERS (Neel to swap in real picks
+     — see BUILD-SPEC-RESOURCES.md §6, note is required and is the whole
+     point of the page). url/host point at example.com on purpose so the
+     placeholder links are inert but not broken.
+     ===================================================================== */
+  var RESOURCES = [
+    // Reading
+    { name: 'A Book Worth Naming', url: 'https://example.com', note: 'Placeholder — swap for the actual book and the one line on why it stuck.', tag: 'book', quadrant: 'reading', host: 'example.com', img: '' },
+    { name: 'A Newsletter You Open', url: 'https://example.com', note: 'Placeholder — the newsletter you actually read end to end.', tag: 'blog', quadrant: 'reading', host: 'example.com', img: '' },
+    { name: 'An Essay That Stuck', url: 'https://example.com', note: 'Placeholder — the piece that changed how you think about a problem.', tag: 'blog', quadrant: 'reading', host: 'example.com', img: '' },
+
+    // Inspiring
+    { name: 'A Portfolio You Admire', url: 'https://example.com', note: 'Placeholder — what specifically about their work, not just "it’s good".', tag: 'blog', quadrant: 'inspiring', host: 'example.com', img: '' },
+    { name: 'A Studio You Watch', url: 'https://example.com', note: 'Placeholder — the studio whose case studies you keep re-reading.', tag: 'blog', quadrant: 'inspiring', host: 'example.com', img: '' },
+    { name: 'Someone’s Process Log', url: 'https://example.com', note: 'Placeholder — a working method you’ve borrowed from.', tag: 'blog', quadrant: 'inspiring', host: 'example.com', img: '' },
+
+    // Silly
+    { name: 'A Dumb Little Game', url: 'https://example.com', note: 'Placeholder — the thing you open when your brain needs five minutes off.', tag: 'toy', quadrant: 'silly', host: 'example.com', img: '' },
+    { name: 'A Genuinely Pointless Site', url: 'https://example.com', note: 'Placeholder — no utility whatsoever, and that’s the point.', tag: 'toy', quadrant: 'silly', host: 'example.com', img: '' },
+    { name: 'An Account That Makes You Laugh', url: 'https://example.com', note: 'Placeholder — the one you’d actually admit to following.', tag: 'blog', quadrant: 'silly', host: 'example.com', img: '' },
+
+    // Useful
+    { name: 'A Tool You Open Daily', url: 'https://example.com', note: 'Placeholder — the tool that’s actually in your daily rotation.', tag: 'tool', quadrant: 'useful', host: 'example.com', img: '' },
+    { name: 'A Reference You Return To', url: 'https://example.com', note: 'Placeholder — where you go to check something you always forget.', tag: 'tool', quadrant: 'useful', host: 'example.com', img: '' },
+    { name: 'A Small Utility', url: 'https://example.com', note: 'Placeholder — does one thing, does it fast, no login wall.', tag: 'tool', quadrant: 'useful', host: 'example.com', img: '' }
+  ];
+
+  var QUADRANTS = [
+    { id: 'reading',   label: 'Reading',   cx: 980,  cy: 820 },
+    { id: 'inspiring', label: 'Inspiring', cx: 2020, cy: 820 },
+    { id: 'silly',     label: 'Silly',     cx: 980,  cy: 1380 },
+    { id: 'useful',    label: 'Useful',    cx: 2020, cy: 1380 }
+  ];
+  var QUADRANT_BY_ID = {};
+  QUADRANTS.forEach(function (q) { QUADRANT_BY_ID[q.id] = q; });
+
+  var WORLD_W = 3000, WORLD_H = 2200;
+  var POSTMARKS = ['NP · 2026', 'AIR MAIL', 'PAR AVION', 'SYDNEY, AU', 'VIA POST', 'FIRST CLASS'];
+
+  function seededRand(seed) {
+    var h = 0;
+    for (var i = 0; i < seed.length; i++) { h = (h * 31 + seed.charCodeAt(i)) | 0; }
+    h = Math.abs(h);
+    return (h % 10000) / 10000;
+  }
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+  function buildMedia(item) {
+    if (item.img) {
+      var wrap = document.createElement('div');
+      wrap.className = 'res-stamp-media';
+      var img = document.createElement('img');
+      img.className = 'res-stamp-img';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = '';
+      img.src = item.img;
+      img.addEventListener('error', function () {
+        wrap.innerHTML = '';
+        wrap.appendChild(buildFallbackTile(item));
+      });
+      wrap.appendChild(img);
+      return wrap;
+    }
+    var wrap2 = document.createElement('div');
+    wrap2.className = 'res-stamp-media';
+    wrap2.appendChild(buildFallbackTile(item));
+    return wrap2;
+  }
+  function buildFallbackTile(item) {
+    var tile = document.createElement('div');
+    tile.className = 'res-stamp-fallback';
+    tile.textContent = (item.name || '?').trim().charAt(0).toUpperCase();
+    return tile;
+  }
+
+  function buildStamp(item, index) {
+    var quad = QUADRANT_BY_ID[item.quadrant];
+    var rot = (seededRand(item.name + 'r') - 0.5) * 6;
+    var postmarkRot = -8 - seededRand(item.name + 'pr') * 10;
+    var postmarkText = POSTMARKS[Math.floor(seededRand(item.name + 'pt') * POSTMARKS.length) % POSTMARKS.length];
+
+    var a = document.createElement('a');
+    a.className = 'res-stamp';
+    a.href = item.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.tabIndex = -1;
+    a.style.setProperty('--rot', rot.toFixed(2) + 'deg');
+
+    var postmark = document.createElement('span');
+    postmark.className = 'res-stamp-postmark';
+    postmark.setAttribute('aria-hidden', 'true');
+    postmark.style.setProperty('--postmark-rot', postmarkRot.toFixed(1) + 'deg');
+    postmark.innerHTML =
+      '<span class="res-stamp-ring res-stamp-ring--outer"></span>' +
+      '<span class="res-stamp-ring res-stamp-ring--inner"></span>' +
+      '<span class="res-stamp-postmark-text">' + postmarkText + '</span>';
+    a.appendChild(postmark);
+
+    var inner = document.createElement('span');
+    inner.className = 'res-stamp-inner';
+    inner.style.display = 'flex';
+
+    var tag = document.createElement('span');
+    tag.className = 'res-stamp-tag';
+    tag.textContent = item.tag;
+    inner.appendChild(tag);
+
+    var media = buildMedia(item);
+    media.style.position = 'relative';
+    var tagAbs = tag;
+    tagAbs.style.position = 'absolute';
+    media.appendChild(tagAbs);
+    inner.appendChild(media);
+
+    var name = document.createElement('span');
+    name.className = 'res-stamp-name';
+    name.textContent = item.name;
+    inner.appendChild(name);
+
+    var note = document.createElement('span');
+    note.className = 'res-stamp-note';
+    note.textContent = item.note;
+    inner.appendChild(note);
+
+    var divider = document.createElement('span');
+    divider.className = 'res-stamp-divider';
+    divider.setAttribute('aria-hidden', 'true');
+    inner.appendChild(divider);
+
+    var meta = document.createElement('span');
+    meta.className = 'res-stamp-meta';
+    meta.innerHTML =
+      '<span class="res-stamp-quad">' + quad.label + '</span>' +
+      '<span class="res-stamp-host">' + item.host + '</span>';
+    inner.appendChild(meta);
+
+    a.appendChild(inner);
+    return a;
+  }
+
+  function layoutQuadrant(quad, items) {
+    var n = items.length;
+    var cols = Math.min(3, Math.max(1, Math.ceil(Math.sqrt(n))));
+    var rows = Math.ceil(n / cols);
+    var spacingX = 250, spacingY = 300;
+    var gridW = (cols - 1) * spacingX;
+    var gridH = (rows - 1) * spacingY;
+    var startX = quad.cx - gridW / 2;
+    var startY = quad.cy - gridH / 2;
+
+    items.forEach(function (item, i) {
+      var col = i % cols, row = Math.floor(i / cols);
+      var jitterX = (seededRand(item.name + 'x') - 0.5) * 36;
+      var jitterY = (seededRand(item.name + 'y') - 0.5) * 36;
+      item._x = startX + col * spacingX + jitterX;
+      item._y = startY + row * spacingY + jitterY;
+    });
+  }
+
+  var worldEl = document.getElementById('resWorld');
+  var viewportEl = document.getElementById('resViewport');
+  var minimapEl = document.getElementById('resMinimap');
+  var minimapViewportEl = document.getElementById('resMinimapViewport');
+  var hintEl = document.getElementById('resHint');
+  var listEl = document.getElementById('resList');
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // quadrant ghost labels
+  QUADRANTS.forEach(function (q) {
+    var label = document.createElement('div');
+    label.className = 'res-quadlabel';
+    label.textContent = q.label;
+    label.style.left = q.cx + 'px';
+    label.style.top = q.cy + 'px';
+    label.setAttribute('aria-hidden', 'true');
+    worldEl.appendChild(label);
+  });
+
+  // group + layout + render stamps
+  QUADRANTS.forEach(function (q) {
+    var items = RESOURCES.filter(function (r) { return r.quadrant === q.id; });
+    if (!items.length) return; // guard: never render an empty quadrant silently
+    layoutQuadrant(q, items);
+    items.forEach(function (item, i) {
+      var stamp = buildStamp(item, i);
+      stamp.style.left = item._x + 'px';
+      stamp.style.top = item._y + 'px';
+      worldEl.appendChild(stamp);
+    });
+  });
+
+  // mobile / a11y grouped list — built from the same data, in the same order
+  QUADRANTS.forEach(function (q) {
+    var items = RESOURCES.filter(function (r) { return r.quadrant === q.id; });
+    if (!items.length) return;
+    var group = document.createElement('div');
+    group.className = 'res-list-group';
+    var h2 = document.createElement('h2');
+    h2.textContent = q.label;
+    group.appendChild(h2);
+    var ul = document.createElement('ul');
+    items.forEach(function (item) {
+      var li = document.createElement('li');
+      li.className = 'res-list-item';
+      var a = document.createElement('a');
+      a.href = item.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      var thumbWrap;
+      if (item.img) {
+        var img = document.createElement('img');
+        img.className = 'res-list-thumb';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.alt = '';
+        img.src = item.img;
+        img.addEventListener('error', function () {
+          var fb = document.createElement('div');
+          fb.className = 'res-list-fallback';
+          fb.textContent = (item.name || '?').trim().charAt(0).toUpperCase();
+          img.replaceWith(fb);
+        });
+        thumbWrap = img;
+      } else {
+        thumbWrap = document.createElement('div');
+        thumbWrap.className = 'res-list-fallback';
+        thumbWrap.textContent = (item.name || '?').trim().charAt(0).toUpperCase();
+      }
+      a.appendChild(thumbWrap);
+      var textWrap = document.createElement('span');
+      textWrap.className = 'res-list-text';
+      textWrap.innerHTML =
+        '<span class="res-list-name">' + item.name + '</span>' +
+        '<span class="res-list-note">' + item.note + '</span>';
+      a.appendChild(textWrap);
+      var tagEl = document.createElement('span');
+      tagEl.className = 'res-list-tag';
+      tagEl.textContent = item.tag;
+      a.appendChild(tagEl);
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    group.appendChild(ul);
+    listEl.appendChild(group);
+  });
+
+  /* ---------- pan / zoom ---------- */
+  var MIN_SCALE = 0.35, MAX_SCALE = 2.4;
+  var scale = 0.92, tx = 0, ty = 0;
+  var MINI_SCALE = 150 / WORLD_W;
+
+  function applyTransform(animate) {
+    if (animate && !reducedMotion) {
+      worldEl.classList.add('is-jumping');
+    } else {
+      worldEl.classList.remove('is-jumping');
+    }
+    worldEl.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    updateMinimap();
+  }
+
+  function updateMinimap() {
+    var vw = viewportEl.clientWidth, vh = viewportEl.clientHeight;
+    var wx0 = -tx / scale, wy0 = -ty / scale;
+    var ww = vw / scale, wh = vh / scale;
+    minimapViewportEl.style.left = (wx0 * MINI_SCALE) + 'px';
+    minimapViewportEl.style.top = (wy0 * MINI_SCALE) + 'px';
+    minimapViewportEl.style.width = (ww * MINI_SCALE) + 'px';
+    minimapViewportEl.style.height = (wh * MINI_SCALE) + 'px';
+  }
+
+  function setTransform(newTx, newTy, newScale, animate) {
+    tx = newTx; ty = newTy; scale = clamp(newScale, MIN_SCALE, MAX_SCALE);
+    applyTransform(animate);
+  }
+
+  function centerOn(worldX, worldY, animate) {
+    var vw = viewportEl.clientWidth, vh = viewportEl.clientHeight;
+    setTransform(vw / 2 - worldX * scale, vh / 2 - worldY * scale, scale, animate);
+  }
+
+  function initView() {
+    var vw = viewportEl.clientWidth, vh = viewportEl.clientHeight;
+    scale = 0.92;
+    tx = vw / 2 - 1500 * scale;
+    ty = vh / 2 - 1100 * scale;
+    applyTransform(false);
+  }
+
+  var hintFaded = false;
+  function fadeHint() {
+    if (hintFaded) return;
+    hintFaded = true;
+    hintEl.classList.add('is-hidden');
+  }
+
+  // wheel zoom, toward cursor
+  viewportEl.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    fadeHint();
+    var rect = viewportEl.getBoundingClientRect();
+    var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    var zoomFactor = Math.exp(-e.deltaY * 0.0015);
+    var newScale = clamp(scale * zoomFactor, MIN_SCALE, MAX_SCALE);
+    var worldX = (mx - tx) / scale, worldY = (my - ty) / scale;
+    tx = mx - worldX * newScale;
+    ty = my - worldY * newScale;
+    scale = newScale;
+    applyTransform(false);
+  }, { passive: false });
+
+  // pointer drag pan + pan-vs-click guard
+  var dragging = false, moved = false, suppressNextClick = false;
+  var startX, startY, startTx, startTy, activePointerId = null;
+
+  viewportEl.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    dragging = true; moved = false;
+    startX = e.clientX; startY = e.clientY;
+    startTx = tx; startTy = ty;
+    activePointerId = e.pointerId;
+    viewportEl.setPointerCapture(e.pointerId);
+    viewportEl.classList.add('is-dragging');
+  });
+
+  viewportEl.addEventListener('pointermove', function (e) {
+    if (!dragging || e.pointerId !== activePointerId) return;
+    var dx = e.clientX - startX, dy = e.clientY - startY;
+    if (!moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) { moved = true; fadeHint(); }
+    if (moved) {
+      tx = startTx + dx; ty = startTy + dy;
+      applyTransform(false);
+    }
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    viewportEl.classList.remove('is-dragging');
+    if (moved) suppressNextClick = true;
+  }
+  viewportEl.addEventListener('pointerup', endDrag);
+  viewportEl.addEventListener('pointercancel', endDrag);
+
+  // capture-phase click guard: swallow the click a drag would otherwise fire on a stamp link
+  viewportEl.addEventListener('click', function (e) {
+    if (suppressNextClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      suppressNextClick = false;
+    }
+  }, true);
+
+  /* ---------- minimap click-to-jump ---------- */
+  minimapEl.addEventListener('click', function (e) {
+    var rect = minimapEl.getBoundingClientRect();
+    var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    centerOn(mx / MINI_SCALE, my / MINI_SCALE, true);
+  });
+
+  /* ---------- controls ---------- */
+  function zoomByFactor(factor) {
+    var vw = viewportEl.clientWidth, vh = viewportEl.clientHeight;
+    var worldX = (vw / 2 - tx) / scale, worldY = (vh / 2 - ty) / scale;
+    var newScale = clamp(scale * factor, MIN_SCALE, MAX_SCALE);
+    setTransform(vw / 2 - worldX * newScale, vh / 2 - worldY * newScale, newScale, true);
+  }
+  document.getElementById('resZoomIn').addEventListener('click', function () { zoomByFactor(1.3); });
+  document.getElementById('resZoomOut').addEventListener('click', function () { zoomByFactor(1 / 1.3); });
+  document.getElementById('resFitAll').addEventListener('click', function () {
+    var vw = viewportEl.clientWidth, vh = viewportEl.clientHeight;
+    var pad = 60;
+    var s = Math.min((vw - pad * 2) / WORLD_W, (vh - pad * 2) / WORLD_H, MAX_SCALE);
+    setTransform(vw / 2 - 1500 * s, vh / 2 - 1100 * s, s, true);
+  });
+
+  initView();
+  window.addEventListener('resize', function () { updateMinimap(); });
+})();
+</script>
+</body>
+</html>

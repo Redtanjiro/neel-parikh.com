@@ -214,6 +214,7 @@
   .nav-link--work .nav-underline { transform: rotate(-0.6deg) scaleY(1); }
   .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
   .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
+  .nav-link--resources .nav-underline { transform: rotate(0.7deg) scaleY(1.05); }
 
   .nav-clock {
     flex: none;
@@ -654,12 +655,12 @@
   @media (max-width: 820px) {
     .site-nav, .site-nav.shrunk { top: 12px; }
     .nav-pill { width: calc(100% - 24px); padding: 10px 12px; gap: 14px; }
-    .shrunk .nav-pill { max-width: 300px; }
+    .shrunk .nav-pill { max-width: 320px; }
     .wordmark-full { font-size: 15px; }
     .nav-sprite { height: 24px; }
-    .nav-links { gap: 14px; }
-    .nav-link { font-size: 11px; }
-    .shrunk .nav-link { font-size: 11px; }
+    .nav-links { gap: 11px; }
+    .nav-link { font-size: 10.5px; }
+    .shrunk .nav-link { font-size: 10.5px; }
     .nav-clock { display: none; }
 
     .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
@@ -701,6 +702,14 @@
           Contact
           <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
             <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/resources.html" class="nav-link nav-link--resources">
+          Resources
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11.5C2 11.5 20 10 40 11.2C60 12.4 82 12 98 10.8" />
           </svg>
         </a>
       </li>
