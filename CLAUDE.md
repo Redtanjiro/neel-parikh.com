@@ -22,14 +22,9 @@ Project constants for **neel-parikh.com**. Read this before touching anything.
 
 ## 🔴 Current priority
 
-**Fix the live Futee case study.** See `FIX-SPEC-FUTEE.md`.
+None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-SPEC-FUTEE-MOVES.md` (2026-07-19), which superseded the old nine-section page and its `FIX-SPEC-FUTEE.md` punch list — the Figma-chrome screenshots, the broken before/after compare, and the uncleared nav-pill offset all went away with the sections that had them. The Move 3 "night-play" screen and both Move 4 assets (coach card, rating list) are built as real HTML/CSS, not screenshots — see the spec for why.
 
-Three problems, in order:
-1. **Images are Figma canvas screenshots** — visible selection handles, blue bounding boxes, `iPhone 12 Pro Max – 1` frame labels baked in. Needs clean re-export from Figma. **Most damaging issue on the site.**
-2. **Nav pill covers section headings** — `scroll-padding-top` not clearing the pill's expanded height on this page.
-3. **Before/after images are broken** — the "after" is an unreadable thumbnail of a whole board. Must be one-screen-vs-one-screen, equal size, both legible.
-
-**Do not rewrite the Futee copy.** It's the strongest writing on the site.
+**The locked copy in `BUILD-SPEC-FUTEE-MOVES.md` is Neel's, reproduced verbatim.** Don't paraphrase it on future edits.
 
 ---
 
@@ -74,7 +69,7 @@ Three problems, in order:
 
 4. **Never let the clock exist in two places.** Duplicate `id="clock"` / `id="time-label"` is invalid HTML and `getElementById` silently returns only the first — breaking the clock outright. It lives in the nav pill. Nowhere else.
 
-5. **`scroll-padding-top` on `html` is required, sized to the pill's EXPANDED height.** The nav pill is `position: fixed`, so anchor jumps land underneath it. **This is currently broken on `/work/futee.html`.**
+5. **`scroll-padding-top` on `html` is required, sized to the pill's EXPANDED height.** The nav pill is `position: fixed`, so anchor jumps land underneath it.
 
 6. **Hero illustrations are 16:9 landscape.** On a portrait phone, `background-size: cover` crops so hard the viewport fills with blank wall. Use `contain` on mobile.
 
@@ -85,6 +80,8 @@ Three problems, in order:
 9. **Never fabricate a metric.** Futee was a Figma prototype with no conversion rate. A fake number dies in the interview when someone asks "how did you measure that?"
 
 10. **CSS `mask`/`mask-composite` multi-layer order matters — get it backwards and the element goes fully invisible, not "unmasked."** For the perforated-edge (postage-stamp) technique on `/resources.html`: the solid base layer (`linear-gradient(#000,#000)`) must be listed **first**, with the 4 perforation gradients listed after using `mask-composite: add, subtract, subtract, subtract, subtract` (matching order for `-webkit-mask-composite`). Listing the solid layer *last* (the order most CSS-tricks writeups show) renders as a fully transparent element in Chromium — not a square card, not a broken corner, just nothing, with no console error. If a masked element vanishes, suspect layer order before anything else.
+
+11. **Not a code trap — a verification-tool quirk.** The Claude Code Browser pane's screenshot capture is unreliable at some `window.scrollTo()` positions on tall pages: it can return a blank frame, or a frame mid-way through a CSS transition (translucent/washed-out), even though `getComputedStyle`, bounding rects, and `elementFromPoint` all report the page is correct. Reproduces on already-shipped pages too (confirmed on `/work/cseds.html`), so it isn't something to "fix" in page CSS. When a screenshot looks broken: re-screenshot the same scroll position without re-scrolling (rules out a mid-transition snapshot), and cross-check with `get_page_text` / computed-style JS calls before concluding the page itself is broken. Same root cause also affects native `<img loading="lazy">`: it doesn't reliably fetch after a synthetic `scrollTo()` jump on a very tall page (confirmed on `/work/futee.html` past ~4000px), even though the image loads instantly on direct navigation or once it's within the initial eager-load margin. Don't remove `loading="lazy"` from real page code to work around this — it's correct for real users on a multi-MB below-the-fold image; only strip it temporarily, in a live JS console, to visually confirm a mockup during verification.
 
 ---
 
@@ -97,8 +94,10 @@ Three problems, in order:
 | `BUILD-SPEC-WORK.md` | Chosen Work — hover-expand rows | Current |
 | `BUILD-SPEC-PROCESS.md` | My Process section + All Work → `/work.html` | Current |
 | `BUILD-SPEC-FOOTER.md` | Falling contact pills (CSS, **no Matter.js**) | Current |
-| `BUILD-SPEC-FUTEE.md` | The Futee case study — reference template | Built |
-| `FIX-SPEC-FUTEE.md` | Fixes to the live Futee page | 🔴 **Do this first** |
+| `BUILD-SPEC-FUTEE.md` | The Futee case study — original nine-section template | ⛔ Superseded by `BUILD-SPEC-FUTEE-MOVES.md` |
+| `FIX-SPEC-FUTEE.md` | Fixes to the old nine-section Futee page | ⛔ Moot — that page no longer exists |
+| `BUILD-SPEC-FUTEE-MOVES.md` | Futee rebuilt as a four-move argument, locked copy | Built |
+| `BUILD-SPEC-FUTEE-MOCKUPS.md` | Addendum — scroll-inside/parallax device mockups on Moves 3 & 4 only | Built |
 | `BUILD-SPEC-HERO-CLOCK.md` | Clickable clock — "it's night in Lisbon right now" | Not built |
 | `BUILD-SPEC-RESOURCES.md` | `/resources.html` — pan/zoom quadrant canvas of stamps | Built, placeholder data |
 
@@ -113,7 +112,7 @@ Three problems, in order:
 /work.html         All Work        (not built — linked from "See all work")
 /about.html        About           (not built)
 /contact.html      Contact         (not built)
-/work/futee.html   Case study      ✅ LIVE — needs fixes
+/work/futee.html   Case study      ✅ LIVE — four-move rebuild
 /work/emf-ace.html Case study      ✅ LIVE
 /work/cseds.html   Case study      ✅ LIVE
 /resources.html    Quadrant canvas of stamps  ✅ LIVE — placeholder data, see below

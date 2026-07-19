@@ -426,311 +426,278 @@
     .fc-meta { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* ============ IMPACT / STATS ============ */
-  .fc-impact { max-width: 1000px; }
-  .fc-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 44px;
+  /* ============ CASCADE LIST (Move 3 consequences, Move 4 sides) ============ */
+  .fc-cascade {
+    list-style: none;
+    margin: 30px 0 0;
+    padding: 0;
+    max-width: 64ch;
   }
-  .fc-stat {
-    border-top: 2px solid var(--floodlight);
-    padding-top: 16px;
+  .fc-cascade li {
+    position: relative;
+    padding: 2px 0 26px 30px;
+    border-left: 2px solid rgba(242, 227, 56, 0.35);
   }
-  .fc-stat-num {
+  .fc-cascade li:last-child { padding-bottom: 2px; border-left-color: transparent; }
+  .fc-cascade li::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--floodlight);
+  }
+  .fc-cascade p {
+    font-family: var(--body);
+    font-size: clamp(15px, 1.6vw, 17px);
+    line-height: 1.6;
+    color: rgba(244, 245, 240, 0.85);
+    margin: 0;
+  }
+  .fc-cascade strong { color: var(--chalk); }
+
+  /* ============ MOVE 3: NIGHT-PLAY SCREEN (built HTML/CSS — no clean export exists) ============ */
+  .fc-nightscreen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--chalk);
+    color: var(--ink);
+    font-family: var(--ui);
+  }
+  .fc-nightscreen-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #141210;
+    color: var(--chalk);
+    padding: 16px 16px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+  .fc-nightscreen-bar-dot { color: var(--floodlight); }
+  .fc-nightscreen-venue {
+    position: relative;
+    height: 118px;
+    margin: 12px 14px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0a1520 0%, #0e2a1a 55%, #123a1f 100%);
+  }
+  .fc-nightscreen-venue::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(9px 9px at 14% 22%, rgba(242, 227, 56, 0.95), transparent 72%),
+      radial-gradient(9px 9px at 86% 22%, rgba(242, 227, 56, 0.95), transparent 72%),
+      radial-gradient(80px 34px at 50% 105%, rgba(242, 227, 56, 0.16), transparent);
+  }
+  .fc-nightscreen-badge {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: var(--floodlight);
+    color: #141210;
+    font-family: var(--ui);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .fc-nightscreen-venue-name {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+  }
+  .fc-nightscreen-body { padding: 14px 16px 16px; flex: 1; }
+  .fc-nightscreen-label {
+    font-family: var(--ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(20, 18, 16, 0.48);
+    margin-bottom: 8px;
+  }
+  .fc-nightscreen-dates { display: flex; gap: 6px; margin-bottom: 16px; }
+  .fc-nightscreen-date {
+    flex: 1;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 7px 3px;
+    border-radius: 8px;
+    background: rgba(20, 18, 16, 0.055);
+  }
+  .fc-nightscreen-date--sel { background: var(--floodlight); font-weight: 700; }
+  .fc-nightscreen-slots { display: flex; flex-wrap: wrap; gap: 8px; position: relative; }
+  .fc-nightscreen-slot {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 11px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.05);
+    color: rgba(20, 18, 16, 0.38);
+  }
+  .fc-nightscreen-slot--on { background: #141210; color: var(--floodlight); font-weight: 700; }
+
+  /* ============ MOVE 4: FIFA-STYLE COACH CARD (interactive) ============ */
+  .fc-coach-card-wrap { perspective: 900px; margin: 0 auto; }
+  .fc-coach-card {
+    position: relative;
+    width: 210px;
+    aspect-ratio: 3 / 4.1;
+    margin: 0 auto;
+    border-radius: 16px;
+    padding: 3px;
+    background: linear-gradient(155deg, var(--floodlight), #a9860a 45%, var(--floodlight));
+    box-shadow: 0 22px 40px -18px rgba(0, 0, 0, 0.6);
+    transform: rotateX(var(--tiltX, 0deg)) rotateY(var(--tiltY, 0deg));
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-style: preserve-3d;
+    cursor: default;
+  }
+  .fc-coach-card.is-tilting { transition: transform 0.08s linear; }
+  .fc-coach-card-inner {
+    height: 100%;
+    border-radius: 14px;
+    background: linear-gradient(165deg, #0d431a, var(--pitch-deep) 60%, #062810);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--chalk);
+  }
+  .fc-coach-card-tier {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--floodlight);
+  }
+  .fc-coach-card-portrait {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    margin: 12px 0 8px;
+    background: radial-gradient(circle at 35% 30%, #2c2c2c, #0b0b0b);
+    border: 2px solid var(--floodlight);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--floodlight);
+  }
+  .fc-coach-card-name { font-family: var(--display); font-weight: 700; font-size: 16px; }
+  .fc-coach-card-role {
+    font-family: var(--ui);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(244, 245, 240, 0.6);
+    margin-top: 3px;
+  }
+  .fc-coach-card-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid rgba(244, 245, 240, 0.15);
+    width: 100%;
+    justify-content: center;
+  }
+  .fc-coach-card-stat-num {
     display: block;
     font-family: var(--display);
     font-weight: 800;
-    font-size: clamp(36px, 4.4vw, 56px);
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: var(--chalk);
+    font-size: 15px;
+    color: var(--floodlight);
   }
-  .fc-stat-suffix { color: var(--floodlight); }
-  .fc-stat-label {
+  .fc-coach-card-stat-label {
     display: block;
     font-family: var(--ui);
-    font-size: 13px;
-    color: rgba(244, 245, 240, 0.6);
-    margin-top: 10px;
-    max-width: 20ch;
+    font-size: 7.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(244, 245, 240, 0.55);
+    margin-top: 2px;
   }
-  @media (max-width: 720px) {
-    .fc-stats { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  /* ============ PROBLEM ============ */
-  .fc-problem-list {
-    list-style: none;
-    margin: 40px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-  }
-  .fc-problem-list li {
-    display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 16px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid rgba(244, 245, 240, 0.14);
-  }
-  .fc-problem-list li:last-child { border-bottom: none; padding-bottom: 0; }
-  .fc-problem-num {
-    font-family: var(--mono);
-    font-size: 15px;
-    color: var(--floodlight);
-  }
-  .fc-problem-list h3 {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(18px, 2.2vw, 22px);
-    margin: 0 0 8px;
-    color: var(--chalk);
-  }
-  .fc-problem-list p {
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: rgba(244, 245, 240, 0.75);
-    margin: 0;
-    max-width: 56ch;
-  }
-  @media (max-width: 600px) {
-    .fc-problem-list li { grid-template-columns: 1fr; }
+  @media (prefers-reduced-motion: reduce) {
+    .fc-coach-card { transition: none; }
   }
 
-  /* ============ QUIZ ============ */
-  .fc-quiz { max-width: 760px; }
-  .fc-quiz-figure { margin-top: 36px; max-width: 260px; }
-  .fc-quiz-spots {
-    list-style: none;
-    margin: 32px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .fc-hotspot { margin-top: 8px; }
-  .fc-hotspot.fc-hotspot--inline {
-    margin-top: 0;
-    background: rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(244, 245, 240, 0.12);
-    border-radius: 12px;
-    padding: 4px;
-  }
-  .fc-hotspot.fc-hotspot--inline summary {
-    position: static;
-    width: auto;
-    height: auto;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--chalk);
-    font-family: var(--ui);
-    font-weight: 600;
-    font-size: 14px;
-    justify-content: flex-start;
-    padding: 12px 14px;
-    box-shadow: none;
-  }
-  .fc-hotspot.fc-hotspot--inline summary:hover,
-  .fc-hotspot.fc-hotspot--inline summary:focus-visible {
-    transform: none;
-    background: rgba(244, 245, 240, 0.06);
-  }
-  .fc-hotspot.fc-hotspot--inline[open] summary {
-    background: rgba(242, 227, 56, 0.1);
-    color: var(--floodlight);
-  }
-  .fc-hotspot.fc-hotspot--inline .fc-hotspot-reveal {
-    margin: 0 10px 10px;
-  }
-  .fc-hotspot summary {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    list-style: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--floodlight);
+  /* ============ MOVE 4: RATING / SHOW-NO-SHOW LIST ============ */
+  .fc-rating-ui {
+    background: var(--chalk);
+    border-radius: 14px;
+    overflow: hidden;
     color: var(--ink);
+    font-family: var(--ui);
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .fc-rating-ui-head {
+    background: #141210;
+    color: var(--chalk);
+    padding: 12px 16px;
     font-family: var(--mono);
-    font-weight: 700;
-    font-size: 14px;
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .fc-rating-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    transition: transform .2s ease, background-color .2s ease;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(20, 18, 16, 0.08);
   }
-  .fc-hotspot summary::-webkit-details-marker { display: none; }
-  .fc-hotspot summary:hover,
-  .fc-hotspot summary:focus-visible {
-    transform: scale(1.12);
-  }
-  .fc-hotspot[open] summary {
-    background: var(--pitch);
-    color: var(--floodlight);
-  }
-  .fc-hotspot-reveal {
-    margin-top: 10px;
-    padding: 12px 16px;
-    background: var(--pitch-deep);
-    color: var(--chalk);
-    border-radius: 10px;
-    font-family: var(--body);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  .fc-hotspot-reveal strong { color: var(--floodlight); }
-  .fc-quiz-controls {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .fc-reveal-all {
-    font-family: var(--ui);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--floodlight);
-    border: 1px solid rgba(242, 227, 56, 0.4);
-    border-radius: 999px;
-    padding: 8px 18px;
-  }
-  .fc-reveal-all:hover { background: rgba(242, 227, 56, 0.1); }
-  .fc-quiz-resolve {
-    font-family: var(--body);
-    font-size: 17px;
-    line-height: 1.6;
-    color: var(--chalk);
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(244, 245, 240, 0.16);
-  }
-
-  /* ============ PROCESS / FRAMING ============ */
-  .fc-personas {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin: 44px 0 28px;
-  }
-  @media (max-width: 640px) {
-    .fc-personas { grid-template-columns: 1fr; }
-  }
-  .fc-process {
-    list-style: none;
-    margin: 40px 0 0;
-    padding: 0;
-    position: relative;
-  }
-  .fc-process::before {
-    content: '';
-    position: absolute;
-    left: 27px;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
-    background: rgba(244, 245, 240, 0.16);
-  }
-  .fc-process-fill {
-    position: absolute;
-    left: 27px;
-    top: 8px;
-    width: 2px;
-    height: 0;
-    background: var(--floodlight);
-    transition: height 1.1s cubic-bezier(.16,1,.3,1);
-  }
-  .fc-process.is-drawn .fc-process-fill { height: var(--fc-process-height, 0); }
-  @media (prefers-reduced-motion: reduce) {
-    .fc-process-fill { transition: none; height: var(--fc-process-height, 0) !important; }
-  }
-  .fc-process li {
-    position: relative;
-    display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 16px;
-    padding-bottom: 32px;
-  }
-  .fc-process li:last-child { padding-bottom: 0; }
-  .fc-process-num {
-    position: relative;
-    z-index: 1;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--ink);
-    background: var(--floodlight);
+  .fc-rating-row:last-child { border-bottom: none; }
+  .fc-rating-avatar {
+    flex: none;
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    background: rgba(20, 18, 16, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .fc-process h3 {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(17px, 2vw, 20px);
-    margin: 4px 0 8px;
-    color: var(--chalk);
+    font-size: 12px;
+    color: rgba(20, 18, 16, 0.5);
   }
-  .fc-process p {
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: rgba(244, 245, 240, 0.75);
-    margin: 0;
-    max-width: 54ch;
+  .fc-rating-name { flex: 1; font-family: var(--ui); font-weight: 600; font-size: 12.5px; }
+  .fc-rating-status {
+    font-family: var(--ui);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
   }
+  .fc-rating-status--show { background: rgba(15, 113, 38, 0.12); color: var(--pitch); }
+  .fc-rating-status--no { background: rgba(20, 18, 16, 0.08); color: rgba(20, 18, 16, 0.42); }
+  .fc-rating-stars { font-family: var(--mono); font-size: 10.5px; color: rgba(20, 18, 16, 0.65); white-space: nowrap; }
+  .fc-rating-stars strong { color: #a9860a; }
 
-  /* ============ KILLED ============ */
-  .fc-killed { max-width: 880px; }
-  .fc-killed-callout {
-    margin-top: 28px;
-    padding: 22px 26px;
-    background: rgba(242, 227, 56, 0.08);
-    border-left: 3px solid var(--floodlight);
-    border-radius: 4px;
-  }
-  .fc-killed-callout p {
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--chalk);
-    margin: 0;
-  }
-  .fc-killed-callout strong { color: var(--floodlight); }
-  .fc-killed-compare {
-    display: grid;
-    grid-template-columns: repeat(2, 260px);
-    justify-content: center;
-    gap: 32px;
-    margin-top: 36px;
-  }
-  .fc-killed-compare .fc-frame--phone { max-width: 100%; margin: 0; }
-  @media (max-width: 640px) {
-    .fc-killed-compare { grid-template-columns: 1fr; max-width: 260px; margin-left: auto; margin-right: auto; }
-  }
-
-  /* ============ SOLUTION ============ */
-  .fc-solution { max-width: 1040px; }
+  /* ============ FIGURE / FRAME (generic, reused throughout) ============ */
   .fc-figure { margin: 40px 0 0; }
-  .fc-solution-pair {
-    display: grid;
-    grid-template-columns: repeat(2, 260px);
-    justify-content: center;
-    gap: 32px;
-    margin-top: 40px;
-  }
-  .fc-solution-pair .fc-figure { margin-top: 0; }
-  .fc-solution-pair .fc-frame--phone { max-width: 100%; margin: 0; }
-  @media (max-width: 640px) {
-    .fc-solution-pair { grid-template-columns: 1fr; max-width: 260px; margin-left: auto; margin-right: auto; }
-  }
   .fc-frame {
     position: relative;
     border-radius: 16px;
@@ -740,39 +707,13 @@
   }
   .fc-frame img { width: 100%; }
   .fc-frame--phone { max-width: 390px; margin: 0 auto; }
+  .fc-move3-frame { width: 250px; }
   .fc-figure figcaption {
     font-family: var(--ui);
     font-size: 12px;
     letter-spacing: 0.04em;
     color: rgba(244, 245, 240, 0.55);
     margin-top: 12px;
-  }
-  .fc-solution-note {
-    margin-top: 22px;
-    font-style: normal;
-  }
-
-  /* ---------- solution: featured interaction moment ---------- */
-  .fc-solution-feature {
-    margin-top: 56px;
-    padding: 32px;
-    background: rgba(242, 227, 56, 0.06);
-    border-left: 3px solid var(--floodlight);
-    border-radius: 4px;
-  }
-  .fc-solution-feature .fc-eyebrow-dark { margin-bottom: 8px; }
-  .fc-solution-feature-grid {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 32px;
-    margin-top: 28px;
-    align-items: start;
-  }
-  .fc-solution-feature-grid .fc-figure { margin-top: 0; }
-  .fc-solution-feature-grid .fc-frame--phone { max-width: 300px; margin: 0 auto; }
-  @media (max-width: 780px) {
-    .fc-solution-feature-grid { grid-template-columns: 1fr; }
-    .fc-solution-feature-grid .fc-frame--phone { max-width: 260px; }
   }
 
   /* ============ DEVICE MOCKUPS (reusable across case studies) ============ */
@@ -917,124 +858,6 @@
     .device-enter { transition: opacity .28s ease-out; transform: none; }
     .device-enter.is-in { transform: none; }
   }
-
-  .fc-arrow {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    pointer-events: none;
-  }
-  .fc-arrow path {
-    stroke: var(--floodlight);
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 1s ease;
-  }
-  .fc-arrow.is-drawn path { stroke-dashoffset: 0; }
-  @media (prefers-reduced-motion: reduce) {
-    .fc-arrow path { transition: none; stroke-dashoffset: 0; }
-  }
-  .fc-arrow-label {
-    position: absolute;
-    font-family: var(--ui);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--floodlight);
-    background: rgba(15, 113, 38, 0.9);
-    padding: 4px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-  .fc-arrow-group {
-    opacity: 0;
-    transition: opacity .4s ease;
-  }
-  .fc-arrow-group.is-revealed { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) {
-    .fc-arrow-group { transition: none; opacity: 0; }
-  }
-
-  /* ============ TIMER ============ */
-  .fc-timer-section { max-width: 1000px; }
-  .fc-timer-stage { height: 280vh; position: relative; margin-top: 20px; }
-  .fc-timer-sticky {
-    position: sticky;
-    top: 120px;
-    display: grid;
-    grid-template-columns: 90px 1fr;
-    gap: clamp(24px, 4vw, 48px);
-    align-items: start;
-  }
-  .fc-timer-track {
-    position: relative;
-    width: 12px;
-    height: 60vh;
-    max-height: 460px;
-    margin: 0 auto;
-    background: rgba(244, 245, 240, 0.12);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .fc-timer-fill {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 0%;
-    background: var(--floodlight);
-    border-radius: 999px;
-  }
-  .fc-timer-readout {
-    position: absolute;
-    left: 50%;
-    bottom: -34px;
-    transform: translateX(-50%);
-    font-family: var(--mono);
-    font-size: 15px;
-    color: var(--floodlight);
-    white-space: nowrap;
-  }
-  .fc-timer-beats {
-    padding-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(90px, 20vh, 160px);
-  }
-  .fc-timer-beat {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(20px, 2.6vw, 28px);
-    line-height: 1.25;
-    color: rgba(244, 245, 240, 0.32);
-    max-width: 22ch;
-    margin: 0;
-    transition: color .4s ease;
-  }
-  .fc-timer-beat.is-active { color: var(--chalk); }
-  @media (prefers-reduced-motion: reduce) {
-    .fc-timer-beat { transition: none; }
-  }
-
-  @media (max-width: 820px) {
-    .fc-timer-stage { height: auto; }
-    .fc-timer-sticky {
-      position: static;
-      grid-template-columns: 1fr;
-      gap: 28px;
-    }
-    .fc-timer-track {
-      width: 100%;
-      height: 12px;
-      max-height: none;
-    }
-    .fc-timer-fill { left: 0; bottom: 0; top: 0; height: 100%; width: 0%; }
-    .fc-timer-readout { left: auto; right: 0; bottom: -28px; transform: none; }
-    .fc-timer-beats { flex-direction: column; gap: 20px; }
-  }
-
 
   /* ============ PAGENAV ============ */
   .fc-pagenav {
@@ -1220,14 +1043,9 @@
 <nav class="fc-secnav" aria-label="Case study sections">
   <div class="fc-secnav-track" aria-hidden="true"><span class="fc-secnav-progress" id="fcSecnavProgress"></span></div>
   <div class="fc-secnav-links">
-    <a href="#impact">Impact</a>
-    <a href="#problem">Problem</a>
-    <a href="#quiz">The quiz</a>
-    <a href="#framing">Framing</a>
-    <a href="#killed">What I killed</a>
-    <a href="#solution">Solution</a>
-    <a href="#timer">The timer</a>
-    <a href="#reflection">Reflection</a>
+    <a href="#frame">The frame</a>
+    <a href="#hard-call">The hard call</a>
+    <a href="#outcome">The outcome</a>
   </div>
 </nav>
 
@@ -1250,375 +1068,187 @@
   </div>
 </section>
 
-<!-- 2. IMPACT -->
-<section class="fc-section fc-impact" id="impact">
-  <span class="fc-eyebrow-dark">Outcome, first</span>
-  <h2 class="fc-h2">What shipped, honestly</h2>
-  <p class="fc-body-lg">Futee is a Figma prototype, not a live product — so here's what's real. No invented conversion rate, no activation percentage that was never measured. Just the research and the work that produced it.</p>
-  <div class="fc-stats" id="fcStats">
-    <div class="fc-stat" data-target="18">
-      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Grassroots players interviewed to build the personas</span>
-    </div>
-    <div class="fc-stat" data-target="20">
-      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Dashboard wireframe iterations across 3 sprint weeks</span>
-    </div>
-    <div class="fc-stat" data-target="8">
-      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Problems mapped directly to features, 4 per persona</span>
-    </div>
-    <div class="fc-stat" data-target="2">
-      <span class="fc-stat-num"><span class="fc-stat-count">0</span></span>
-      <span class="fc-stat-label">Languages shipped — Thai and English, not an afterthought</span>
-    </div>
-  </div>
+<!-- 2. THE FRAME -->
+<section class="fc-section" id="frame">
+  <span class="fc-eyebrow-dark">A booking product for grassroots football in Thailand</span>
+  <h2 class="fc-h2">We had no way to visit the place we were designing for.</h2>
+  <p class="fc-body-lg">Futee was a two-person project — my co-designer and I owned it end to end, no PM, no researcher, no local team. It's a booking product for grassroots football in Thailand: find a pitch, fill a game, with a coaching layer on top — and, underneath, a three-sided marketplace to hold together. We had about three months, two people, and no way to visit the place we were designing for.</p>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
 
-<!-- 3. THE PROBLEM -->
-<section class="fc-section" id="problem">
-  <span class="fc-eyebrow-dark">The problem</span>
-  <h2 class="fc-h2">A 47-year-old who wants to find a game fast, and an 18-year-old who wants to build one — same app, opposite jobs.</h2>
-  <p class="fc-body-lg">Eighteen interviews with grassroots players in Bangkok collapsed into two personas who wanted almost nothing in common. Chai, 47, married, working full time, wants to open the app, find a game, and play — minimum friction, minimum decisions. Chatri, 18, a student with time to spare, wants to create games, invite people, and build a football network. One wants speed. The other wants to build something. A product that treats "create" and "find" as equally important, by default, under-serves both.</p>
-  <ol class="fc-problem-list">
-    <li>
-      <span class="fc-problem-num">01</span>
-      <div>
-        <h3>Turnout — every game started as a group-chat chase</h3>
-        <p>Getting to eleven confirmed players meant pinging the same five people who hadn't replied, over and over, until kickoff.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-problem-num">02</span>
-      <div>
-        <h3>Skill — nobody knew who could actually play</h3>
-        <p>A "yes" in a group chat tells you nothing about whether someone can hold a position or is turning up in jeans. Game quality was a coin flip.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-problem-num">03</span>
-      <div>
-        <h3>Reliability — "yes" wasn't a commitment</h3>
-        <p>People said yes and didn't show. There was no visible cost to flaking, and no way to tell in advance who was likely to.</p>
-      </div>
-    </li>
-  </ol>
+<!-- 3. THE HARD CALL (the spine) -->
+<section class="fc-section" id="hard-call">
+  <span class="fc-eyebrow-dark">Designing for a country you can't visit</span>
+  <h2 class="fc-h2">Thailand is hot, so people play at night.</h2>
+  <p class="fc-body-lg">Designing for a country you can't visit forces you to find the truth some other way. We couldn't watch people book pitches in Bangkok, so we did the next best things: we talked to people who actually play football in Thailand, and we pulled apart the local booking apps they already used — reading how they handled time, price, and place, rather than importing assumptions from apps we knew.</p>
+  <p class="fc-body-lg">One thing reframed the entire product. Thailand is hot — so people play at night. In the cold-weather countries most booking apps are designed for, football is a daytime, weekend-morning activity, and the whole interface assumes it. Ours had to assume the inverse. That single fact wasn't a detail — it cascaded through every important decision on the page:</p>
+
   <figure class="fc-figure">
-    <div class="fc-frame">
-      <img src="/work/futee/assets/problem-grid.png" alt="Research board titled 'Major problems inverse with features', splitting eight pain points across two rows: four for the game creator (finding players, matchmaking features, finding a game by availability, building contacts) and four for the player (post-game ratings, booking a pitch with a referee, open games nearby, direct invites)" loading="lazy">
-    </div>
-    <figcaption>Every problem mapped to the feature that answered it — game creator (top row), player (bottom row).</figcaption>
-  </figure>
-</section>
-
-<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 4. THE QUIZ -->
-<section class="fc-section fc-quiz" id="quiz">
-  <span class="fc-eyebrow-dark">Before you keep reading</span>
-  <h2 class="fc-h2">We killed this. Can you see why?</h2>
-  <p class="fc-body-lg">This is a real early mobile concept — screenshotted straight out of the Figma file, selection handles and all. It didn't ship. Take a second before you scroll past the pins. No cheating.</p>
-
-  <figure class="fc-figure fc-quiz-figure">
-    <div class="fc-frame fc-frame--phone">
-      <img src="/work/futee/assets/killed-wireframe.png" alt="Early Futee mobile concept in navy and orange: six full-width stacked blocks reading Menu Bar, Banners, Create a game / Find a game, Directory, Coaches, and News, with no visual hierarchy between them" loading="lazy">
-    </div>
-    <figcaption>The first mobile concept, before it got killed.</figcaption>
-  </figure>
-
-  <ul class="fc-quiz-spots">
-    <li>
-      <details class="fc-hotspot fc-hotspot--inline" data-n="1">
-        <summary aria-label="Reveal friction 1 of 3">1 — Six stacked blocks</summary>
-        <div class="fc-hotspot-reveal">
-          <strong>No hierarchy.</strong> Menu Bar, Banners, Create/Find, Directory, Coaches, News — six full-width blocks, all the same size, all shouting at once. Nothing tells the eye where to look first.
-        </div>
-      </details>
-    </li>
-    <li>
-      <details class="fc-hotspot fc-hotspot--inline" data-n="2">
-        <summary aria-label="Reveal friction 2 of 3">2 — "Create a game" / "Find a game"</summary>
-        <div class="fc-hotspot-reveal">
-          <strong>Equal weight, opposite jobs.</strong> Identical size, identical colour — but Chai wants to find a game fast, and Chatri wants to create one and build a network. Treating them the same serves neither.
-        </div>
-      </details>
-    </li>
-    <li>
-      <details class="fc-hotspot fc-hotspot--inline" data-n="3">
-        <summary aria-label="Reveal friction 3 of 3">3 — The whole screen</summary>
-        <div class="fc-hotspot-reveal">
-          <strong>No search, anywhere.</strong> Despite search being the one thing both personas needed before anything else.
-        </div>
-      </details>
-    </li>
-  </ul>
-
-  <div class="fc-quiz-controls">
-    <button class="fc-reveal-all" id="fcRevealAll" type="button">Reveal all three</button>
-  </div>
-
-  <p class="fc-quiz-resolve">Six equal-weight blocks and no search — for two personas who wanted opposite things from this screen. That's what killed it. What replaced it is next.</p>
-</section>
-
-<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 5. HOW I FRAMED IT -->
-<section class="fc-section" id="framing">
-  <span class="fc-eyebrow-dark">How I framed it</span>
-  <h2 class="fc-h2">Two personas who wanted the same app to do opposite jobs.</h2>
-  <p class="fc-body-lg">This wasn't my city or my group chats. Every assumption I'd bring from Sydney was a guess, so the process moved deliberately from listening to building — 18 interviews with grassroots players in Bangkok before a single wireframe, each phase feeding the next.</p>
-
-  <ol class="fc-process" id="fcProcess">
-    <div class="fc-process-fill" id="fcProcessFill"></div>
-    <li>
-      <span class="fc-process-num">01</span>
-      <div>
-        <h3>Listening to the brief behind the brief</h3>
-        <p>The stated ask was booking and creating games. The real ask, once I dug in, was matchmaking — Futee as the first sport on a platform meant to grow into many.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-process-num">02</span>
-      <div>
-        <h3>Absorbing what already existed</h3>
-        <p>Stakeholder analysis, competitor booking and matchmaking apps, and the patterns already shaping how people find games online.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-process-num">03</span>
-      <div>
-        <h3>Localising instead of assuming</h3>
-        <p>Conversations aimed squarely at the Thai market and audience — not a place to import Sydney assumptions about how people organise a kickabout.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-process-num">04</span>
-      <div>
-        <h3>Framing two very different users</h3>
-        <p>The person creating a game and the person joining one needed different things, so I mapped each as its own persona and journey instead of one blended user.</p>
-      </div>
-    </li>
-    <li>
-      <span class="fc-process-num">05</span>
-      <div>
-        <h3>Making it real</h3>
-        <p>20 wireframe iterations, the UI system, and the prototyped flows that make up Futee today.</p>
-      </div>
-    </li>
-  </ol>
-
-  <div class="fc-personas">
-    <figure class="fc-figure">
-      <div class="fc-frame">
-        <img src="/work/futee/assets/persona-chai.png" alt="Persona card for Chai Charoen, 47, working professional, married, based in Bangkok. Goals: find games easily whenever he wants, play regularly without spending much time deciding. Pain points: not able to find games quickly due to lack of contacts, lack of time to organise a game himself." loading="lazy">
-      </div>
-      <figcaption>Chai, 47 — working professional, married. Time-poor. Wants to find and play, not organise.</figcaption>
-    </figure>
-    <figure class="fc-figure">
-      <div class="fc-frame">
-        <img src="/work/futee/assets/persona-chatri.png" alt="Persona card for Chatri Wang, 18, student, single, based in Bangkok. Goals: find new and efficient players to play with, create new contacts in the local football community, be part of a regular team. Pain points: looking for a pitch to play at, finding punctual players, having to manually write stats down." loading="lazy">
-      </div>
-      <figcaption>Chatri, 18 — student. Time-rich. Wants to create games and build a network.</figcaption>
-    </figure>
-  </div>
-
-  <p class="fc-body-lg">Their journey maps diverge in the same place they diverge in real life. Chai's mood dips at "Choose" — hunting for a venue that suits everyone — and recovers once the game's actually up. Chatri's dips at "Apply," waiting to hear whether an organiser accepts him, and peaks once he's on the pitch. Two different anxieties, at two different steps, inside what looks like one shared flow.</p>
-
-  <p class="fc-body-lg">The constraint that never shows up in a portfolio screenshot: Futee ships bilingual, Thai and English, with a toggle live on the dashboard, search, and matchmaking screens. Writing copy and laying out information density that both languages could carry — for two personas with very different patience for reading — shaped more decisions than any single feature did.</p>
-</section>
-
-<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 6. WHAT I KILLED -->
-<section class="fc-section fc-killed" id="killed">
-  <span class="fc-eyebrow-dark">What I killed</span>
-  <h2 class="fc-h2">Six equal blocks became a nav bar, a search bar, and a card grid.</h2>
-  <p class="fc-body-lg">The block layout was appealing for an obvious reason: big tap targets, bold colour, nothing to misread. But it made a decision it hadn't earned — that "Create a game" and "Find a game" deserved identical visual weight. Once the personas existed as two real people with opposite goals instead of one blended "user," that decision stopped holding up. Chai doesn't want six blocks to scan through before he can find a game. Chatri doesn't want "Create" buried at the same size as everything else he'll never touch.</p>
-  <p class="fc-body-lg">Navy and orange got replaced with black and yellow, and the six-block stack became a conventional top nav, a real search bar, and a card grid sorted by rating — the pattern that carries through the rest of the product.</p>
-  <div class="fc-killed-compare">
-    <figure class="fc-figure">
-      <div class="fc-frame fc-frame--phone">
-        <img src="/work/futee/assets/killed-wireframe.png" alt="Killed concept: navy and orange, six equal-weight stacked blocks" loading="lazy">
-      </div>
-      <figcaption>Before — six blocks, no priority.</figcaption>
-    </figure>
-    <figure class="fc-figure">
-      <div class="fc-frame fc-frame--phone">
-        <img src="/work/futee/assets/solution-nav-mobile.png" alt="Shipped mobile home screen: a slim black top bar with notification, search and profile icons, an Upcoming Games dropdown, and stat cards including Games Created 12, replacing the six-block stack" loading="lazy">
-      </div>
-      <figcaption>After — one nav bar, then content, on the same mobile screen.</figcaption>
-    </figure>
-  </div>
-  <div class="fc-killed-callout">
-    <p><strong>The trade-off:</strong> the block layout would have made for a bolder portfolio screenshot. It also would have made Chai hunt through five other people's priorities to do the one thing he opened the app for. For a product that lives or dies on whether people bother opening it before a Sunday game, that trade wasn't close.</p>
-  </div>
-</section>
-
-<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 7. THE SOLUTION -->
-<section class="fc-section fc-solution" id="solution">
-  <span class="fc-eyebrow-dark">The solution</span>
-  <h2 class="fc-h2">The system that replaced the group chat</h2>
-  <p class="fc-body-lg">One place to create and customise a game, book from 150+ grounds, and invite players with visible ratings — so a match is set up to be worth showing up for.</p>
-
-  <div class="fc-solution-pair">
-    <figure class="fc-figure">
-      <div class="device-enter" style="--enter-delay:0ms">
-        <div class="device-parallax" data-depth="18">
-          <div class="device device-phone" style="--float-delay:0s">
-            <div class="device-notch"></div>
-            <div class="device-screen">
-              <img src="/work/futee/assets/screen-overview.png" alt="Futee app overview screen showing a Games Created counter, a boosted venue card for Polo Football Park, and Create Game and Find Game actions advertising 200+ pitches and 150+ ongoing games" loading="lazy">
-            </div>
-            <div class="device-home"></div>
-            <span class="device-btn device-btn--vol1"></span>
-            <span class="device-btn device-btn--vol2"></span>
-            <span class="device-btn device-btn--power"></span>
-          </div>
-        </div>
-      </div>
-      <figcaption>Overview — the home screen. Every number on it is real product copy, not placeholder.</figcaption>
-    </figure>
-    <figure class="fc-figure">
-      <div class="device-enter" style="--enter-delay:140ms">
-        <div class="device-parallax" data-depth="-14">
-          <div class="device device-phone" id="fcCreateGameFrame" style="--float-delay:2.5s">
-            <div class="device-notch"></div>
-            <div class="device-screen">
-              <img src="/work/futee/assets/screen-create-game.png" alt="Futee create-game flow: a date selector defaulting to today, a venue search with a real Bangkok address and a custom-address option, radius and price filters, and a results grid showing 15 pitches sorted by highest rating" loading="lazy" data-scroll-inside>
-              <div class="fc-arrow-group" id="fcArrowGroup">
-                <svg class="fc-arrow" id="fcArrow" viewBox="0 0 100 100" style="left:8%; top:74%;" aria-hidden="true">
-                  <path d="M85.6133 37.1588C84.5986 36.9638 76.9657 34.0181 69.3154 31.5609C62.5991 29.4036 54.7241 29.6213 48.9507 29.7995C40.6702 30.055 34.2927 35.3609 30.2344 39.6777C28.2135 42.6704 26.2639 46.2546 24.6827 50.0147C23.9771 51.8951 23.4679 53.7191 22.9096 55.7958" />
-                </svg>
-                <span class="fc-arrow-label" style="left:8%; top:84%;">sorted by rating</span>
+    <div class="device-enter">
+      <div class="device-parallax" data-depth="14">
+        <div class="device device-phone fc-move3-frame" style="--float-delay:0s">
+          <div class="device-notch"></div>
+          <div class="device-screen">
+            <div class="fc-nightscreen">
+              <div class="fc-nightscreen-bar">
+                <span>FUTEE</span>
+                <span class="fc-nightscreen-bar-dot">●</span>
+              </div>
+              <div class="fc-nightscreen-venue">
+                <span class="fc-nightscreen-badge">Boosted</span>
+                <span class="fc-nightscreen-venue-name">Polo Football Park</span>
+              </div>
+              <div class="fc-nightscreen-body">
+                <div class="fc-nightscreen-label">Select date</div>
+                <div class="fc-nightscreen-dates">
+                  <span class="fc-nightscreen-date fc-nightscreen-date--sel">TODAY</span>
+                  <span class="fc-nightscreen-date">TOM</span>
+                  <span class="fc-nightscreen-date">WED</span>
+                  <span class="fc-nightscreen-date">THU</span>
+                </div>
+                <div class="fc-nightscreen-label">Select time — evening slots shown first</div>
+                <div class="fc-nightscreen-slots">
+                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">7:00 PM</span>
+                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">8:00 PM</span>
+                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">9:00 PM</span>
+                  <span class="fc-nightscreen-slot">10:00 AM</span>
+                  <span class="fc-nightscreen-slot">2:00 PM</span>
+                </div>
               </div>
             </div>
-            <div class="device-home"></div>
-            <span class="device-btn device-btn--vol1"></span>
-            <span class="device-btn device-btn--vol2"></span>
-            <span class="device-btn device-btn--power"></span>
           </div>
+          <div class="device-home"></div>
+          <span class="device-btn device-btn--vol1"></span>
+          <span class="device-btn device-btn--vol2"></span>
+          <span class="device-btn device-btn--power"></span>
         </div>
       </div>
-      <figcaption>Create Game — date, venue, and filters. Scroll to reveal the results, sorted by rating first.</figcaption>
-    </figure>
-  </div>
-
-  <p class="fc-body-lg fc-solution-note">Turnout, skill and reliability all get solved structurally, not with a badge: Create Game and Find Game are separate paths, and pitches — like players, once you're choosing who to invite — are rated and sorted by rating by default.</p>
-
-  <div class="fc-solution-feature">
-    <span class="fc-eyebrow-dark">Post-game: dividing players into teams</span>
-    <p class="fc-body-lg">This is the piece that does the most work. A game gets 12 confirmations, but only 10 people actually show up — so the organiser first confirms who's here, then the app splits whoever's left into even teams and lets them re-shuffle by hand before kickoff. It's the one screen that has to react to reality instead of a plan.</p>
-    <div class="fc-solution-feature-grid">
-      <figure class="fc-figure">
-        <div class="fc-frame">
-          <img src="/work/futee/assets/solution-teams-desktop.png" alt="Divide Players Into Teams panel: Confirmed Players 10, 2 Teams = 5 Players per Team, a Re-Shuffle Teams link, and TEAM A / TEAM B columns with drag handles and six named players each" loading="lazy">
-        </div>
-        <figcaption>Once attendance is confirmed, the app auto-splits into even teams — re-shuffle if the balance feels off.</figcaption>
-      </figure>
-      <figure class="fc-figure">
-        <div class="fc-frame fc-frame--phone">
-          <img src="/work/futee/assets/solution-teams-mobile.png" alt="Mobile attendance checklist, 'Confirm players who Showed Up (10/12)', expanded with 11 named players, two of them — Busaba and Charoenrasamee — left unchecked as no-shows" loading="lazy">
-        </div>
-        <figcaption>Confirming attendance first: Busaba and Charoenrasamee are left unchecked — real no-shows, not a hypothetical.</figcaption>
-      </figure>
     </div>
-  </div>
-
-  <figure class="fc-figure">
-    <div class="device-enter">
-      <div class="device device-laptop" style="--float-delay:1s">
-        <div class="device-bezel">
-          <div class="device-screen">
-            <img src="/work/futee/assets/solution-dashboard.png" alt="Refined dashboard with mock stat cards: Game Participated in 28, Your Average Rating 8.1 out of 10, Games Created 12, alongside a TH/ENG language toggle and quick links to Create Game and Find Game" loading="lazy" data-scroll-inside>
-          </div>
-        </div>
-        <div class="device-base"></div>
-      </div>
-    </div>
-    <figcaption>The dashboard. Scroll to see the profile card below the fold. 28, 8.1/10 and 12 are mock data baked into the Figma file for the screenshot — not measured outcomes.</figcaption>
-  </figure>
-
-  <p class="fc-body-lg fc-solution-note">This is also where the bilingual constraint is most visible: the TH/ENG toggle sits on the dashboard and the matchmaking screen — both dense enough that language actually changes how much fits on them.</p>
-
-  <figure class="fc-figure">
-    <div class="device-enter">
-      <div class="device device-laptop" style="--float-delay:3.5s">
-        <div class="device-bezel">
-          <div class="device-screen">
-            <img src="/work/futee/assets/solution-matchmaking.png" alt="Shipped matchmaking screen: a boosted Polo Football Park venue card, a date picker, and a list of three open games with real venue names, all sorted for the reader in one pass" loading="lazy" data-scroll-inside>
-          </div>
-        </div>
-        <div class="device-base"></div>
-      </div>
-    </div>
-    <figcaption>Matchmaking — one screen to pick a date, a venue, and an open game.</figcaption>
+    <figcaption>Find Game, evening-first. Rebuilt in code for this write-up — the shipped screen's export didn't survive clean, but the evening-default behaviour it captures did ship.</figcaption>
   </figure>
 
   <figure class="fc-figure">
-    <div class="device-enter">
-      <div class="device device-laptop" style="--float-delay:5s">
-        <div class="device-bezel">
-          <div class="device-screen">
-            <img src="/work/futee/assets/solution-findgame-full.png" alt="The full Find Game page: top nav, a Top Rated Pitches venue banner, date and venue filters with radius and price sliders, and a sortable grid of 15 pitch results" loading="lazy" data-scroll-inside>
+    <div class="device-enter" style="--enter-delay:140ms">
+      <div class="device-parallax" data-depth="-10">
+        <div class="device device-laptop" style="--float-delay:2.5s">
+          <div class="device-bezel">
+            <div class="device-screen">
+              <img src="/work/futee/assets/solution-findgame-full.png" alt="The Find Game page, full length: Top Rated Pitches banner, date and venue filters, and the sortable results grid" loading="lazy" data-scroll-inside>
+            </div>
           </div>
+          <div class="device-base"></div>
         </div>
-        <div class="device-base"></div>
       </div>
     </div>
-    <figcaption>Find Game, full length — scroll to see the filters and all 15 results, sorted by rating.</figcaption>
+    <figcaption>Find Game, full length — the booking flow the evening default lives inside. Scroll to see the filters and the results, sorted by rating.</figcaption>
   </figure>
+
+  <ul class="fc-cascade">
+    <li><p>Default time slots opened in the evening, not the morning — the app should meet people when they actually play.</p></li>
+    <li><p>Availability surfaced night slots first, because a daytime-first list would bury the times that mattered and quietly tell users the app wasn't built for them.</p></li>
+    <li><p>Imagery and tone leaned into floodlights and night play — the product had to look like the game it was for, or it would read as a foreign app translated for a local market.</p></li>
+  </ul>
+
+  <p class="fc-body-lg" style="margin-top:28px;">None of that comes from a feature list. It comes from one correctly-read constraint about heat and daylight — and getting it wrong would have produced a perfectly functional app that no Thai player felt was theirs.</p>
 </section>
 
 <div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
 
-<!-- 8. THE TIMER -->
-<section class="fc-section fc-timer-section" id="timer">
-  <span class="fc-eyebrow-dark">How this project actually moved</span>
-  <h2 class="fc-h2">Ninety minutes, start to finish</h2>
-  <div class="fc-timer-stage" id="fcTimerStage">
-    <div class="fc-timer-sticky">
-      <div>
-        <div class="fc-timer-track">
-          <div class="fc-timer-fill" id="fcTimerFill"></div>
+<!-- 4. SECOND CONSTRAINT + HONEST OUTCOME -->
+<section class="fc-section" id="outcome">
+  <span class="fc-eyebrow-dark">A marketplace with three sides</span>
+  <h2 class="fc-h2">Three sides that each needed something different.</h2>
+  <p class="fc-body-lg">The harder structural problem was that Futee is a marketplace with three sides that each need something different — and one system had to serve all of them.</p>
+
+  <ul class="fc-cascade">
+    <li><p><strong>Coaches</strong> got FIFA-style player cards, matched to real AFC coaching qualifications — turning a credential into something you'd actually want to browse.</p></li>
+    <li><p><strong>Pitch owners</strong> got a deliberately simple booking back-end — the side of the market most likely to walk away if the tool felt like work.</p></li>
+    <li><p><strong>Players</strong> got a public rating system — show / no-show reliability, plus a 1–5 star score for how accurately they'd described their own ability — because the real thing that breaks pickup 11-a-side isn't finding a pitch, it's trusting that ten strangers will turn up and be roughly who they said they were.</p></li>
+  </ul>
+
+  <figure class="fc-figure">
+    <div class="device-enter" style="--enter-delay:0ms">
+      <div class="device-parallax" data-depth="12">
+        <div class="fc-coach-card-wrap device" style="--float-delay:0s">
+          <div class="fc-coach-card" id="fcCoachCard">
+            <div class="fc-coach-card-inner">
+              <span class="fc-coach-card-tier">AFC C LICENSE</span>
+              <div class="fc-coach-card-portrait">AC</div>
+              <span class="fc-coach-card-name">Coach Anurak</span>
+              <span class="fc-coach-card-role">Youth development</span>
+              <div class="fc-coach-card-stats">
+                <div>
+                  <span class="fc-coach-card-stat-num">42</span>
+                  <span class="fc-coach-card-stat-label">Sessions</span>
+                </div>
+                <div>
+                  <span class="fc-coach-card-stat-num">4.8</span>
+                  <span class="fc-coach-card-stat-label">Rating</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="fc-timer-readout" id="fcTimerReadout">00′</div>
-      </div>
-      <div class="fc-timer-beats">
-        <p class="fc-timer-beat" data-at="8">Kickoff — the brief lands, bigger than it first looks</p>
-        <p class="fc-timer-beat" data-at="45">Half-time — research reframes the whole product</p>
-        <p class="fc-timer-beat" data-at="88">Full time — 150+ grounds, one system, shipped</p>
       </div>
     </div>
-  </div>
-</section>
+    <figcaption>Coaches — an interactive card, tilts on hover. Rebuilt in code for this write-up; name and stats are illustrative.</figcaption>
+  </figure>
 
-<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
+  <figure class="fc-figure">
+    <div class="device-enter" style="--enter-delay:140ms">
+      <div class="device-parallax" data-depth="-14">
+        <div class="device device-laptop" style="--float-delay:2s">
+          <div class="device-bezel">
+            <div class="device-screen">
+              <img src="/work/futee/assets/create-game-confirm-full.png" alt="Create Game flow, full length: a booked-game confirmation with a share link, a publish-visibility dropdown (private match, public match, free public match), and the pitch results below" loading="lazy" data-scroll-inside>
+            </div>
+          </div>
+          <div class="device-base"></div>
+        </div>
+      </div>
+    </div>
+    <figcaption>Pitch owners — the booking flow, confirmed in one screen with one small decision (how to publish the match). The same simplicity is what the owner-side back-end had to carry through.</figcaption>
+  </figure>
 
-<!-- 9. WHAT I'D DO DIFFERENTLY -->
-<section class="fc-section" id="reflection">
-  <span class="fc-eyebrow-dark">What I'd do differently</span>
-  <h2 class="fc-h2">The same screen disagrees with itself, across breakpoints, and nobody caught it until now.</h2>
-  <p class="fc-body-lg">Onboarding asks what position you play twice — once on desktop, once on mobile. The copy doesn't match:</p>
-  <div class="fc-killed-compare">
-    <figure class="fc-figure">
-      <div class="fc-frame">
-        <img src="/work/futee/assets/reflection-desktop.png" alt="Desktop onboarding screen: 'What Position do you Play? You can Choose upto two position you play the best in, you can change it later'" loading="lazy">
+  <figure class="fc-figure">
+    <div class="device-enter" style="--enter-delay:280ms">
+      <div class="device-parallax" data-depth="10">
+        <div class="fc-frame device" style="max-width:280px; margin:0 auto; padding:10px; --float-delay:4s;">
+          <div class="fc-rating-ui">
+            <div class="fc-rating-ui-head">Reliability — last game</div>
+            <div class="fc-rating-row">
+              <span class="fc-rating-avatar">C</span>
+              <span class="fc-rating-name">Chatmanee</span>
+              <span class="fc-rating-status fc-rating-status--show">Showed</span>
+              <span class="fc-rating-stars">★ <strong>4.8</strong></span>
+            </div>
+            <div class="fc-rating-row">
+              <span class="fc-rating-avatar">A</span>
+              <span class="fc-rating-name">Anchali</span>
+              <span class="fc-rating-status fc-rating-status--show">Showed</span>
+              <span class="fc-rating-stars">★ <strong>4.5</strong></span>
+            </div>
+            <div class="fc-rating-row">
+              <span class="fc-rating-avatar">B</span>
+              <span class="fc-rating-name">Busaba</span>
+              <span class="fc-rating-status fc-rating-status--no">No-show</span>
+              <span class="fc-rating-stars">★ <strong>3.2</strong></span>
+            </div>
+            <div class="fc-rating-row">
+              <span class="fc-rating-avatar">K</span>
+              <span class="fc-rating-name">Kriang Sak</span>
+              <span class="fc-rating-status fc-rating-status--show">Showed</span>
+              <span class="fc-rating-stars">★ <strong>4.9</strong></span>
+            </div>
+          </div>
+        </div>
       </div>
-      <figcaption>Desktop — "up to two" positions.</figcaption>
-    </figure>
-    <figure class="fc-figure">
-      <div class="fc-frame">
-        <img src="/work/futee/assets/reflection-mobile.png" alt="Mobile onboarding screen: 'What Position do you Play? Choose one position you play the best in, you can change it later'" loading="lazy">
-      </div>
-      <figcaption>Mobile — "one" position.</figcaption>
-    </figure>
-  </div>
-  <p class="fc-body-lg" style="margin-top:32px;">Neither version is wrong on its own. Together, they're a bug — the same form field asking a different question depending on what device you're holding. I found it going back through the file for this write-up, not during the project, which is the real problem: we reviewed each platform's designs separately against the persona and the flow, but never diffed the same screen's copy across breakpoints against each other. It's a small inconsistency, but it's exactly the kind that erodes trust in a form — a user filling this out on both devices would reasonably wonder which one is correct.</p>
-  <p class="fc-body-lg">What I'd change: a copy pass that's explicitly cross-device, not per-device — reading every string next to its counterpart on the other breakpoint before calling a flow done, not just checking it reads well in isolation.</p>
+    </div>
+    <figcaption>Players — show/no-show plus a 1–5 self-described-ability score, public on the profile. Rebuilt in code for this write-up; names and scores are illustrative.</figcaption>
+  </figure>
+
+  <p class="fc-body-lg" style="margin-top:36px;">It shipped. It ran live and booked real games. Then the pitch owners took it in-house — which is the honest ending, and not a disappointing one: a model gets absorbed like that precisely because it works. The thing we'd designed was worth owning.</p>
 </section>
 
 <!-- 10. NEXT -->
@@ -1723,73 +1353,6 @@
     updateSecnavProgress();
   }
 
-  /* ---------- counting stat block ---------- */
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var statEls = document.querySelectorAll('.fc-stat');
-
-  function animateCount(el) {
-    var target = Number(el.dataset.target);
-    var countEl = el.querySelector('.fc-stat-count');
-    if (reduceMotion) {
-      countEl.textContent = target;
-      return;
-    }
-    var start = null;
-    var duration = 900;
-    function step(ts) {
-      if (!start) start = ts;
-      var progress = Math.min(1, (ts - start) / duration);
-      var eased = 1 - Math.pow(1 - progress, 3);
-      countEl.textContent = Math.round(eased * target);
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  if ('IntersectionObserver' in window) {
-    var statObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          animateCount(entry.target);
-          statObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.4 });
-    statEls.forEach(function (el) { statObserver.observe(el); });
-  } else {
-    statEls.forEach(animateCount);
-  }
-
-  /* ---------- quiz: reveal all ---------- */
-  var revealAllBtn = document.getElementById('fcRevealAll');
-  var hotspots = document.querySelectorAll('.fc-hotspot');
-  if (revealAllBtn) {
-    revealAllBtn.addEventListener('click', function () {
-      hotspots.forEach(function (d) { d.open = true; });
-    });
-  }
-
-  /* ---------- process timeline draw-in ---------- */
-  var processEl = document.getElementById('fcProcess');
-  var processFillEl = document.getElementById('fcProcessFill');
-  if (processEl && processFillEl) {
-    var fullHeight = processEl.getBoundingClientRect().height - 16;
-    processEl.style.setProperty('--fc-process-height', fullHeight + 'px');
-    if ('IntersectionObserver' in window) {
-      var processObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            processEl.classList.add('is-drawn');
-            processObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.2 });
-      processObserver.observe(processEl);
-    } else {
-      processEl.classList.add('is-drawn');
-    }
-  }
-
   /* ---------- device mockups: entrance, parallax, scroll-inside ---------- */
   (function () {
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1812,10 +1375,6 @@
     }
 
     var scrollImgs = Array.prototype.slice.call(document.querySelectorAll('img[data-scroll-inside]'));
-    var createGameImg = document.querySelector('#fcCreateGameFrame img[data-scroll-inside]');
-    var arrowGroup = document.getElementById('fcArrowGroup');
-    var arrowEl = document.getElementById('fcArrow');
-    var arrowRevealed = false;
     var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('.device-parallax'));
 
     if (reduceMotion) {
@@ -1838,12 +1397,6 @@
         var progress = Math.min(1, Math.max(0, raw));
         var eased = easeOutQuad(progress);
         img.style.transform = 'translate3d(0,' + (-travel * eased).toFixed(1) + 'px,0)';
-
-        if (img === createGameImg && arrowGroup && !arrowRevealed && progress > 0.55) {
-          arrowGroup.classList.add('is-revealed');
-          arrowEl.classList.add('is-drawn');
-          arrowRevealed = true;
-        }
       });
 
       var isMobile = window.innerWidth <= 820;
@@ -1872,47 +1425,23 @@
     update();
   })();
 
-  /* ---------- match timer: 00' -> 90' on scroll ---------- */
-  var timerStage = document.getElementById('fcTimerStage');
-  var timerFill = document.getElementById('fcTimerFill');
-  var timerReadout = document.getElementById('fcTimerReadout');
-  var timerBeats = document.querySelectorAll('.fc-timer-beat');
-
-  if (timerStage && timerFill && timerReadout) {
-    if (reduceMotion) {
-      timerFill.style.height = '100%';
-      timerFill.style.width = '100%';
-      timerReadout.textContent = "90′";
-      timerBeats.forEach(function (b) { b.classList.add('is-active'); });
-    } else {
-      var timerTicking = false;
-      function updateTimer() {
-        var rect = timerStage.getBoundingClientRect();
-        var vh = window.innerHeight;
-        var total = timerStage.offsetHeight - vh;
-        var progress = total > 0 ? Math.max(0, Math.min(1, (0 - rect.top) / total)) : 0;
-        var minute = Math.round(progress * 90);
-
-        timerFill.style.height = (progress * 100) + '%';
-        timerFill.style.width = (progress * 100) + '%';
-        timerReadout.textContent = pad2Min(minute) + '′';
-
-        timerBeats.forEach(function (b) {
-          var at = Number(b.dataset.at);
-          b.classList.toggle('is-active', minute >= at);
-        });
-        timerTicking = false;
-      }
-      function pad2Min(n) { return n < 10 ? '0' + n : '' + n; }
-      window.addEventListener('scroll', function () {
-        if (!timerTicking) {
-          requestAnimationFrame(updateTimer);
-          timerTicking = true;
-        }
-      }, { passive: true });
-      window.addEventListener('resize', updateTimer, { passive: true });
-      updateTimer();
-    }
+  /* ---------- coach card: hover-tilt (mouse/trackpad only, motion-safe) ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coachCard = document.getElementById('fcCoachCard');
+  if (coachCard && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    coachCard.addEventListener('mousemove', function (e) {
+      var rect = coachCard.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width - 0.5;
+      var py = (e.clientY - rect.top) / rect.height - 0.5;
+      coachCard.style.setProperty('--tiltY', (px * 18).toFixed(2) + 'deg');
+      coachCard.style.setProperty('--tiltX', (py * -18).toFixed(2) + 'deg');
+      coachCard.classList.add('is-tilting');
+    });
+    coachCard.addEventListener('mouseleave', function () {
+      coachCard.style.setProperty('--tiltY', '0deg');
+      coachCard.style.setProperty('--tiltX', '0deg');
+      coachCard.classList.remove('is-tilting');
+    });
   }
 
   /* ---------- Footer pills ---------- */
