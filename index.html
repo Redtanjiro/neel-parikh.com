@@ -316,6 +316,22 @@
     .hero-scene { transition: none; }
   }
 
+  .hero-poses { position: absolute; inset: 0; pointer-events: none; }
+  .hero-pose {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .hero-pose.is-active { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-pose { transition: none; }
+  }
+
   .hero-dim {
     position: absolute;
     inset: 0;
@@ -492,6 +508,135 @@
     font-size: clamp(32px, 5vw, 52px);
     letter-spacing: -0.02em;
     margin: 0 0 40px;
+  }
+
+  .hero-about-wrap {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    padding: clamp(60px, 9vw, 100px) clamp(20px, 5vw, 56px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 64px);
+    align-items: start;
+  }
+
+  .hero-illustration {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    width: min(100%, 380px);
+    aspect-ratio: 828 / 858;
+  }
+
+  .pose-scrub {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pose-scrub { display: none; }
+  }
+  @media (max-width: 820px) {
+    .pose-scrub { display: none; }
+  }
+  .hero-illustration .hero-poses { position: absolute; inset: 0; pointer-events: none; }
+  .hero-illustration .hero-pose {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .hero-illustration .hero-pose.is-active { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-illustration .hero-pose { transition: none; }
+  }
+
+  .about-copy p {
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 20px;
+  }
+  .about-copy .is-placeholder {
+    color: rgba(20, 18, 16, 0.45);
+    font-style: italic;
+  }
+  .about-credential {
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 28px;
+    padding-left: 14px;
+    border-left: 2px solid var(--amber);
+  }
+  .about-resume {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .about-resume-link {
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--amber);
+    padding-bottom: 2px;
+  }
+  .about-resume-link:hover,
+  .about-resume-link:focus-visible { color: var(--amber); }
+  .about-work-rights {
+    font-family: var(--ui);
+    font-size: 13px;
+    color: rgba(20, 18, 16, 0.6);
+  }
+
+  .about-stack-label {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .tool-row {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .tool-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .tool-icon {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    color: var(--ink);
+  }
+  .tool-item:hover .tool-icon { color: var(--amber); }
+  .tool-label {
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  @media (max-width: 820px) {
+    .hero-about-wrap { grid-template-columns: 1fr; }
+    .hero-illustration { display: none; }
   }
 
   .filter-chip {
@@ -880,7 +1025,7 @@
       border-radius: 10px;
       overflow: hidden;
     }
-    .hero-scene { object-fit: cover; object-position: 30% 46%; }
+    .hero-scene, .hero-pose { object-fit: cover; object-position: 30% 46%; }
     .hero-dim { display: none; }
     .hero-copy, .hero-disciplines {
       position: static;
@@ -968,7 +1113,7 @@
         </a>
       </li>
       <li>
-        <a href="/about.html" class="nav-link nav-link--about">
+        <a href="#about" class="nav-link nav-link--about">
           About
           <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
             <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
@@ -1024,6 +1169,17 @@
          src="/assets/hero/hero-night.webp"
          srcset="/assets/hero/hero-night-sm.webp 1280w, /assets/hero/hero-night.webp 2560w"
          sizes="100vw">
+
+    <div class="hero-poses" aria-hidden="true">
+      <img class="hero-pose is-active" data-pose="working" alt=""
+           src="/assets/hero/hero-pose-working.webp"
+           srcset="/assets/hero/hero-pose-working-sm.webp 1280w, /assets/hero/hero-pose-working.webp 2560w"
+           sizes="100vw">
+      <img class="hero-pose" data-pose="reading" alt=""
+           src="/assets/hero/hero-pose-reading.webp"
+           srcset="/assets/hero/hero-pose-reading-sm.webp 1280w, /assets/hero/hero-pose-reading.webp 2560w"
+           sizes="100vw">
+    </div>
   </div>
   <div class="hero-dim"></div>
 
@@ -1074,6 +1230,72 @@
   </button>
 
   <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
+</section>
+
+<div class="pose-scrub" id="pose-scrub" aria-hidden="true"></div>
+
+<section class="hero-about-wrap" id="about">
+  <div class="hero-illustration" id="hero-illustration" aria-hidden="true">
+    <div class="hero-poses">
+      <img class="hero-pose is-active" data-pose="working" alt=""
+           src="/assets/hero/hero-pose-working-crop.webp"
+           srcset="/assets/hero/hero-pose-working-crop-sm.webp 414w, /assets/hero/hero-pose-working-crop.webp 828w"
+           sizes="380px">
+      <img class="hero-pose" data-pose="reading" alt=""
+           src="/assets/hero/hero-pose-reading-crop.webp"
+           srcset="/assets/hero/hero-pose-reading-crop-sm.webp 414w, /assets/hero/hero-pose-reading-crop.webp 828w"
+           sizes="380px">
+    </div>
+  </div>
+
+  <div class="about-content" id="about-content">
+    <span class="eyebrow">ABOUT</span>
+    <div class="about-copy">
+      <!-- ABOUT COPY GOES HERE — Neel writes this, not Claude. -->
+      <p class="is-placeholder">Placeholder — Neel to write a short about-me paragraph here.</p>
+    </div>
+    <p class="about-credential">~4 years in industry — Design Lead at Media Mushroom — before an MDes at UNSW.</p>
+    <div class="about-resume">
+      <a href="/assets/files/neel-parikh-cv.pdf" class="about-resume-link" target="_blank" rel="noopener">Résumé (PDF) ↗</a>
+      <!-- WORK RIGHTS LINE GOES HERE — Neel to confirm exact wording (citizen / PR / visa status). -->
+      <span class="about-work-rights is-placeholder">Placeholder — work rights line.</span>
+    </div>
+
+    <div class="about-stack">
+      <span class="about-stack-label">TOOLS</span>
+      <div class="tool-row">
+        <div class="tool-item">
+          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M14 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M9 14h5a5 5 0 1 1 0 10H9V14Z" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M9 14a5 5 0 1 0 0 10V14Z" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+          <span class="tool-label">Figma</span>
+        </div>
+        <div class="tool-item">
+          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M6 23L14 5L22 23" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10.2 15H17.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span class="tool-label">Adobe</span>
+        </div>
+        <div class="tool-item">
+          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M23 5L11 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="9" cy="19" r="2.6" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M7.4 21.8C6.8 22.6 6.8 23.6 7.6 24.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span class="tool-label">Procreate</span>
+        </div>
+        <div class="tool-item">
+          <svg class="tool-icon" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
+            <path d="M14 2C14 8.5 14.5 12.5 15.5 13.5C16.5 14.5 20.5 15 27 15C20.5 15 16.5 15.5 15.5 16.5C14.5 17.5 14 21.5 14 28C14 21.5 13.5 17.5 12.5 16.5C11.5 15.5 7.5 15 1 15C7.5 15 11.5 14.5 12.5 13.5C13.5 12.5 14 8.5 14 2Z"/>
+          </svg>
+          <span class="tool-label">Claude</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="chosen-work" id="chosen-work">
@@ -1387,6 +1609,141 @@
       document.getElementById('chosen-work').scrollIntoView({ behavior: 'smooth' });
     });
   });
+
+  /* ---------- hero pose layer: cursor-zone driven, decoupled from time-of-day ---------- */
+  var HERO_POSES = ['working', 'reading'];
+  var ZONE_COUNT = 3;
+  var poseEls = document.querySelectorAll('.hero-pose');
+  var currentPoseZone = 0;
+
+  function setPoseZone(zoneIndex) {
+    if (zoneIndex === currentPoseZone) return;
+    currentPoseZone = zoneIndex;
+    var poseName = HERO_POSES[zoneIndex % HERO_POSES.length];
+    poseEls.forEach(function (el) {
+      el.classList.toggle('is-active', el.dataset.pose === poseName);
+    });
+  }
+
+  var supportsHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+  if (supportsHover) {
+    hero.addEventListener('mousemove', function (e) {
+      var rect = hero.getBoundingClientRect();
+      var xRatio = (e.clientX - rect.left) / rect.width;
+      var zoneIndex = Math.min(ZONE_COUNT - 1, Math.max(0, Math.floor(xRatio * ZONE_COUNT)));
+      setPoseZone(zoneIndex);
+    });
+  }
+
+  /* ---------- hero-to-about pose scrub: single element shrinks from full hero cover
+     down to the small About crop as the visitor scrolls, then hands off to the
+     sticky landing spot (#hero-illustration) built in BUILD-SPEC-ABOUT.md ---------- */
+  (function () {
+    var scrub = document.getElementById('pose-scrub');
+    var illo = document.getElementById('hero-illustration');
+    var aboutContent = document.getElementById('about-content');
+    var heroPoseEls = document.querySelectorAll('.hero .hero-poses .hero-pose');
+    var illoPoseEls = illo ? illo.querySelectorAll('.hero-pose') : [];
+    if (!scrub || !illo || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var FULL_SRC = {
+      working: '/assets/hero/hero-pose-working.webp',
+      reading: '/assets/hero/hero-pose-reading.webp'
+    };
+    var CROP_FRAC = { x0: 1064 / 3840, y0: 873 / 2160, x1: 2306 / 3840, y1: 1 };
+    var IMG_ASPECT = 3840 / 2160;
+    var ZONE_PX = 500;
+
+    var heroHeightPx = 0;
+    var landingRect = null;
+    var mqNarrow = window.matchMedia('(max-width: 820px)');
+
+    function measure() {
+      heroHeightPx = hero.offsetHeight;
+      var r = illo.getBoundingClientRect();
+      landingRect = { left: r.left, width: r.width, top: 100, height: r.width * (858 / 828) };
+    }
+
+    function coverFrac(boxAspect) {
+      if (boxAspect > IMG_ASPECT) {
+        var vh = IMG_ASPECT / boxAspect;
+        return { x0: 0, x1: 1, y0: (1 - vh) / 2, y1: 1 - (1 - vh) / 2 };
+      }
+      var vw = boxAspect / IMG_ASPECT;
+      return { x0: (1 - vw) / 2, x1: 1 - (1 - vw) / 2, y0: 0, y1: 1 };
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function update() {
+      if (mqNarrow.matches) {
+        scrub.style.opacity = '0';
+        illoPoseEls.forEach(function (el) { el.style.opacity = ''; });
+        aboutContent.style.opacity = '';
+        aboutContent.style.transform = '';
+        return;
+      }
+
+      var scrollY = window.scrollY;
+      var zoneStart = heroHeightPx - ZONE_PX;
+      var zoneEnd = heroHeightPx;
+      var progress = (scrollY - zoneStart) / (zoneEnd - zoneStart);
+      progress = Math.max(0, Math.min(1, progress));
+
+      // About's own copy/credential/tools rise and fade in on the same
+      // progress value as the pose — the whole section arrives together.
+      aboutContent.style.opacity = String(progress);
+      aboutContent.style.transform = 'translateY(' + ((1 - progress) * 24) + 'px)';
+
+      // the landing pose only appears once the shrink has actually finished —
+      // otherwise it's fully opaque and visible the moment About peeks into
+      // view from the bottom of the viewport, long before the scrub kicks in.
+      var landed = scrollY >= zoneEnd;
+      illoPoseEls.forEach(function (el) { el.style.opacity = landed ? '' : '0'; });
+
+      if (progress <= 0 || progress >= 1) {
+        scrub.style.opacity = '0';
+        heroPoseEls.forEach(function (el) { el.style.opacity = ''; });
+        return;
+      }
+
+      heroPoseEls.forEach(function (el) { el.style.opacity = '0'; });
+
+      var rectA = { left: 0, top: -zoneStart, width: window.innerWidth, height: heroHeightPx };
+      var rectB = landingRect;
+
+      var left = lerp(rectA.left, rectB.left, progress);
+      var top = lerp(rectA.top, rectB.top, progress);
+      var width = lerp(rectA.width, rectB.width, progress);
+      var height = lerp(rectA.height, rectB.height, progress);
+
+      var fracA = coverFrac(rectA.width / rectA.height);
+      var x0 = lerp(fracA.x0, CROP_FRAC.x0, progress);
+      var y0 = lerp(fracA.y0, CROP_FRAC.y0, progress);
+      var x1 = lerp(fracA.x1, CROP_FRAC.x1, progress);
+      var y1 = lerp(fracA.y1, CROP_FRAC.y1, progress);
+      var wFrac = x1 - x0, hFrac = y1 - y0;
+
+      var bgW = width / wFrac;
+      var bgH = height / hFrac;
+      var bgX = -(x0 * bgW);
+      var bgY = -(y0 * bgH);
+
+      scrub.style.backgroundImage = 'url(' + FULL_SRC[HERO_POSES[currentPoseZone % HERO_POSES.length]] + ')';
+      scrub.style.left = left + 'px';
+      scrub.style.top = top + 'px';
+      scrub.style.width = width + 'px';
+      scrub.style.height = height + 'px';
+      scrub.style.backgroundSize = bgW + 'px ' + bgH + 'px';
+      scrub.style.backgroundPosition = bgX + 'px ' + bgY + 'px';
+      scrub.style.opacity = '1';
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', function () { measure(); update(); });
+    measure();
+    update();
+  })();
 
   /* ---------- Chosen Work accordion ---------- */
   var accordionEl = document.getElementById('accordion');

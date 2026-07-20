@@ -22,7 +22,13 @@ Project constants for **neel-parikh.com**. Read this before touching anything.
 
 ## 🔴 Current priority
 
-None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-SPEC-FUTEE-MOVES.md` (2026-07-19), which superseded the old nine-section page and its `FIX-SPEC-FUTEE.md` punch list — the Figma-chrome screenshots, the broken before/after compare, and the uncleared nav-pill offset all went away with the sections that had them. The Move 3 "night-play" screen and both Move 4 assets (coach card, rating list) are built as real HTML/CSS, not screenshots — see the spec for why.
+Two placeholders on the homepage need Neel's own words before this is done — see `BUILD-SPEC-ABOUT.md`:
+1. The About-section blurb (`<!-- ABOUT COPY GOES HERE -->` in `index.html`).
+2. The AU work-rights line (`<!-- WORK RIGHTS LINE GOES HERE -->`) — don't guess at citizen/PR/visa status.
+
+The "~4 years in industry" credential line and the résumé link are both live now (`#about` section) — those two items from the earlier handoff are done.
+
+`/work/futee.html` was rebuilt to the four-move structure in `BUILD-SPEC-FUTEE-MOVES.md` (2026-07-19), which superseded the old nine-section page and its `FIX-SPEC-FUTEE.md` punch list — the Figma-chrome screenshots, the broken before/after compare, and the uncleared nav-pill offset all went away with the sections that had them. The Move 3 "night-play" screen and both Move 4 assets (coach card, rating list) are built as real HTML/CSS, not screenshots — see the spec for why.
 
 **The locked copy in `BUILD-SPEC-FUTEE-MOVES.md` is Neel's, reproduced verbatim.** Don't paraphrase it on future edits.
 
@@ -81,7 +87,11 @@ None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-S
 
 10. **CSS `mask`/`mask-composite` multi-layer order matters — get it backwards and the element goes fully invisible, not "unmasked."** For the perforated-edge (postage-stamp) technique on `/resources.html`: the solid base layer (`linear-gradient(#000,#000)`) must be listed **first**, with the 4 perforation gradients listed after using `mask-composite: add, subtract, subtract, subtract, subtract` (matching order for `-webkit-mask-composite`). Listing the solid layer *last* (the order most CSS-tricks writeups show) renders as a fully transparent element in Chromium — not a square card, not a broken corner, just nothing, with no console error. If a masked element vanishes, suspect layer order before anything else.
 
-11. **Not a code trap — a verification-tool quirk.** The Claude Code Browser pane's screenshot capture is unreliable at some `window.scrollTo()` positions on tall pages: it can return a blank frame, or a frame mid-way through a CSS transition (translucent/washed-out), even though `getComputedStyle`, bounding rects, and `elementFromPoint` all report the page is correct. Reproduces on already-shipped pages too (confirmed on `/work/cseds.html`), so it isn't something to "fix" in page CSS. When a screenshot looks broken: re-screenshot the same scroll position without re-scrolling (rules out a mid-transition snapshot), and cross-check with `get_page_text` / computed-style JS calls before concluding the page itself is broken. Same root cause also affects native `<img loading="lazy">`: it doesn't reliably fetch after a synthetic `scrollTo()` jump on a very tall page (confirmed on `/work/futee.html` past ~4000px), even though the image loads instantly on direct navigation or once it's within the initial eager-load margin. Don't remove `loading="lazy"` from real page code to work around this — it's correct for real users on a multi-MB below-the-fold image; only strip it temporarily, in a live JS console, to visually confirm a mockup during verification.
+11. **Not a code trap — a verification-tool quirk.** The Claude Code Browser pane's screenshot capture is unreliable at some `window.scrollTo()` positions on tall pages: it can return a blank frame, or a frame mid-way through a CSS transition (translucent/washed-out), even though `getComputedStyle`, bounding rects, and `elementFromPoint` all report the page is correct. Reproduces on already-shipped pages too (confirmed on `/work/cseds.html`, and again on `/` past the hero once `BUILD-SPEC-HERO-SCROLL-TRANSITION.md` made the page taller — screenshots came back reliably blank at every scroll position at or past the About section, across fresh tabs, native anchor-jumps, and multiple viewport sizes, while `getBoundingClientRect`/`getComputedStyle`/`elementFromPoint` all confirmed the sticky illustration and About content were laid out and painted correctly), so it isn't something to "fix" in page CSS. When a screenshot looks broken: re-screenshot the same scroll position without re-scrolling (rules out a mid-transition snapshot), and cross-check with `get_page_text` / computed-style JS calls before concluding the page itself is broken. Same root cause also affects native `<img loading="lazy">`: it doesn't reliably fetch after a synthetic `scrollTo()` jump on a very tall page (confirmed on `/work/futee.html` past ~4000px), even though the image loads instantly on direct navigation or once it's within the initial eager-load margin. Don't remove `loading="lazy"` from real page code to work around this — it's correct for real users on a multi-MB below-the-fold image; only strip it temporarily, in a live JS console, to visually confirm a mockup during verification.
+
+12. **Two more verification-tool quirks, both confirmed while building `BUILD-SPEC-ABOUT.md` — neither is a real site bug.** (a) The Browser pane's local dev-server preview caches an HTML response **by URL**, so after editing a file and reloading the *same* tab/URL you can still be shown pre-edit markup — confirmed when an already-edited nav link kept reading its old `href` in one tab while a sibling tab on the identical URL showed the fix. Append a throwaway query string (`?cb=1`, bump the number each time) to force a real fetch when a reload doesn't seem to reflect a just-saved edit; don't assume the file write failed. (b) Reading `window.scrollY` (or any scroll-position property) in the *same* `javascript_tool` call that just triggered the scroll (`scrollTo`, `.click()` on an anchor, `scrollIntoView()`) returns a stale pre-scroll value — the scroll did happen, the read just raced it. Add a `computer` `wait` (~1s) before the follow-up read, or check in a separate tool call.
+
+13. **`position: sticky` never visually clamps in the Browser pane, regardless of how the scroll is triggered.** Confirmed with a minimal from-scratch test element (`position:sticky; top:50px` on a plain div, no grid, no ancestors) appended straight to `body` — its viewport `top` tracked `scrollY` 1:1 with zero clamping at every offset tested, identical to `position:static`. `getComputedStyle` still correctly reports `position: sticky` and the right `top` value, so the CSS is right; the tool's compositor just doesn't apply the constraint the way a real browser does. Also confirmed in the same session: `requestAnimationFrame` callbacks registered via `javascript_tool` don't fire between separate tool calls (waited 5s+, never ran) — don't gate scroll-driven logic behind rAF if you need to verify it through this tool; a plain synchronous scroll-listener call is both simpler and actually testable here. Net effect: any sticky-positioning or rAF-scroll-effect work needs to be verified by the human in their own browser (`localhost` + a real tab) — computed-style/rect checks in this tool can confirm the CSS/JS *would* work, but can't confirm the pin/scrub itself visually holds.
 
 ---
 
@@ -98,8 +108,10 @@ None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-S
 | `FIX-SPEC-FUTEE.md` | Fixes to the old nine-section Futee page | ⛔ Moot — that page no longer exists |
 | `BUILD-SPEC-FUTEE-MOVES.md` | Futee rebuilt as a four-move argument, locked copy | Built |
 | `BUILD-SPEC-FUTEE-MOCKUPS.md` | Addendum — scroll-inside/parallax device mockups on Moves 3 & 4 only | Built |
-| `BUILD-SPEC-HERO-CLOCK.md` | Clickable clock — "it's night in Lisbon right now" | Not built |
+| `BUILD-SPEC-HERO-CLOCK.md` | Clickable clock — "it's night in Lisbon right now" | ⚠️ Built, but the spec file itself was never saved to the repo — this table entry describes behavior that exists in `index.html`, not a doc you can open |
 | `BUILD-SPEC-RESOURCES.md` | `/resources.html` — pan/zoom quadrant canvas of stamps | Built, placeholder data |
+| `BUILD-SPEC-ABOUT.md` | Hero pose-layer system (cursor-driven, decoupled from time-of-day) + inline About section below hero | Built |
+| `BUILD-SPEC-HERO-SCROLL-TRANSITION.md` | Illustration sticks and scrolls with the visitor from hero into About (desktop only) — supersedes §4/§6 of `BUILD-SPEC-ABOUT.md` | Built |
 
 **⚠️ `BUILD-SPEC.md` is partly superseded.** It still describes a click-accordion for Chosen Work (now hover-expand — see `BUILD-SPEC-WORK.md`) and an All Work section on the homepage (now moved to `/work.html` — see `BUILD-SPEC-PROCESS.md`). **When they conflict, the later spec wins.**
 
@@ -108,9 +120,9 @@ None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-S
 ## Site structure
 
 ```
-/                  Hero → Chosen Work → My Process → Footer
+/                  Hero (with cursor-driven pose layer) → About → Chosen Work → My Process → Footer
 /work.html         All Work        (not built — linked from "See all work")
-/about.html        About           (not built)
+/about.html        About           (not built — About lives inline on / at #about instead, see below)
 /contact.html      Contact         (not built)
 /work/futee.html   Case study      ✅ LIVE — four-move rebuild
 /work/emf-ace.html Case study      ✅ LIVE
@@ -118,7 +130,9 @@ None open. `/work/futee.html` was rebuilt to the four-move structure in `BUILD-S
 /resources.html    Quadrant canvas of stamps  ✅ LIVE — placeholder data, see below
 ```
 
-**Nav:** Work · About · Contact · Resources. Work anchor-scrolls to Chosen Work (does *not* go to `/work.html`). About → `/about.html`. Contact → `/contact.html`. Resources → `/resources.html`. **Nothing in the nav points to `/work.html`** — it's reached only via "See all work".
+**Nav:** Work · About · Contact · Resources. Work anchor-scrolls to Chosen Work (does *not* go to `/work.html`). **About anchor-scrolls to `#about` on the homepage** (not a separate route — see `BUILD-SPEC-ABOUT.md`). Contact → `/contact.html`. Resources → `/resources.html`. **Nothing in the nav points to `/work.html`** — it's reached only via "See all work".
+
+**`#about` section (between hero and Chosen Work):** blurb + "~4 years in industry" credential + résumé link, two placeholders still open (see 🔴 Current priority above) + a 4-icon tool-stack row (Figma/Adobe/Procreate/Claude, inline SVG, ink/amber only — no brand-colour badges).
 
 **`/resources.html` placeholder data:** the `RESOURCES` array (bottom of the file, in the inline `<script>`) currently holds 12 placeholder entries (3 per quadrant) with `url: 'https://example.com'` and notes explicitly marked "Placeholder —". Swap in real picks by editing that one array — nothing else needs to change (layout, minimap, and the mobile/a11y list all derive from it). Quadrant labels are Reading / Inspiring / Silly / Useful, set in the `QUADRANTS` array just above it.
 
@@ -146,6 +160,6 @@ Reviewers **scan for signals** — they don't read linearly. They look for **jud
 ## Context
 
 - Neel is in **Sydney (AEST, UTC+10)**. Verify the current date before anything date-dependent.
-- Neel's hand-drawn SVG assets (arrows, rings, underlines, separators, process timeline) live in the drawn-assets folder. Black, `stroke-width: 2`, `stroke-linecap: round` — **recolour in code, never edit the source SVG.**
+- Neel's hand-drawn SVG assets (arrows, rings, underlines, separators, process timeline) live in `Drawn assests/` (typo, with a space — that's the real folder name) at the project root, **outside this repo**, sibling to `neel-parikh-site/`. Black, `stroke-width: 2`, `stroke-linecap: round` — **recolour in code, never edit the source SVG.** Pull a copy into `neel-parikh-site/assets/` (optimized as needed) rather than referencing the outside folder from any page.
 - **Confirm asset filenames before wiring them in.** Don't guess.
 - Neel has ~4 years industry experience (Design Lead at Media Mushroom) — **this is currently invisible on the site and it's his strongest credential.** He reads as a fresh grad. Worth surfacing.
