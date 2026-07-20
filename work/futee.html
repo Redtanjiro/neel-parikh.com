@@ -458,99 +458,6 @@
   }
   .fc-cascade strong { color: var(--chalk); }
 
-  /* ============ MOVE 3: NIGHT-PLAY SCREEN (built HTML/CSS — no clean export exists) ============ */
-  .fc-nightscreen {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background: var(--chalk);
-    color: var(--ink);
-    font-family: var(--ui);
-  }
-  .fc-nightscreen-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #141210;
-    color: var(--chalk);
-    padding: 16px 16px 10px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.06em;
-  }
-  .fc-nightscreen-bar-dot { color: var(--floodlight); }
-  .fc-nightscreen-venue {
-    position: relative;
-    height: 118px;
-    margin: 12px 14px 0;
-    border-radius: 10px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #0a1520 0%, #0e2a1a 55%, #123a1f 100%);
-  }
-  .fc-nightscreen-venue::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(9px 9px at 14% 22%, rgba(242, 227, 56, 0.95), transparent 72%),
-      radial-gradient(9px 9px at 86% 22%, rgba(242, 227, 56, 0.95), transparent 72%),
-      radial-gradient(80px 34px at 50% 105%, rgba(242, 227, 56, 0.16), transparent);
-  }
-  .fc-nightscreen-badge {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    background: var(--floodlight);
-    color: #141210;
-    font-family: var(--ui);
-    font-weight: 700;
-    font-size: 9px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 999px;
-  }
-  .fc-nightscreen-venue-name {
-    position: absolute;
-    left: 10px;
-    bottom: 10px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 14px;
-    color: #fff;
-  }
-  .fc-nightscreen-body { padding: 14px 16px 16px; flex: 1; }
-  .fc-nightscreen-label {
-    font-family: var(--ui);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: rgba(20, 18, 16, 0.48);
-    margin-bottom: 8px;
-  }
-  .fc-nightscreen-dates { display: flex; gap: 6px; margin-bottom: 16px; }
-  .fc-nightscreen-date {
-    flex: 1;
-    text-align: center;
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 7px 3px;
-    border-radius: 8px;
-    background: rgba(20, 18, 16, 0.055);
-  }
-  .fc-nightscreen-date--sel { background: var(--floodlight); font-weight: 700; }
-  .fc-nightscreen-slots { display: flex; flex-wrap: wrap; gap: 8px; position: relative; }
-  .fc-nightscreen-slot {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 8px 11px;
-    border-radius: 999px;
-    background: rgba(20, 18, 16, 0.05);
-    color: rgba(20, 18, 16, 0.38);
-  }
-  .fc-nightscreen-slot--on { background: #141210; color: var(--floodlight); font-weight: 700; }
-
   /* ============ MOVE 4: FIFA-STYLE COACH CARD (interactive) ============ */
   .fc-coach-card-wrap { perspective: 900px; margin: 0 auto; }
   .fc-coach-card {
@@ -639,62 +546,57 @@
     .fc-coach-card { transition: none; }
   }
 
-  /* ============ MOVE 4: RATING / SHOW-NO-SHOW LIST ============ */
-  .fc-rating-ui {
-    background: var(--chalk);
-    border-radius: 14px;
-    overflow: hidden;
-    color: var(--ink);
-    font-family: var(--ui);
-    max-width: 280px;
+  /* ============ PLACEHOLDER (labelled box at final aspect ratio, no reflow on swap) ============ */
+  .fc-placeholder {
+    aspect-ratio: var(--ph-ratio, 16 / 9);
+    width: 100%;
+    max-width: var(--ph-max, none);
     margin: 0 auto;
-  }
-  .fc-rating-ui-head {
-    background: #141210;
-    color: var(--chalk);
-    padding: 12px 16px;
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-  }
-  .fc-rating-row {
+    border: 1.5px dashed rgba(244, 245, 240, 0.32);
+    border-radius: 14px;
+    background: rgba(244, 245, 240, 0.035);
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 14px;
-    border-bottom: 1px solid rgba(20, 18, 16, 0.08);
-  }
-  .fc-rating-row:last-child { border-bottom: none; }
-  .fc-rating-avatar {
-    flex: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(20, 18, 16, 0.08);
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: var(--display);
-    font-weight: 700;
+    gap: 6px;
+    padding: 20px;
+    text-align: center;
+  }
+  .fc-placeholder-slot {
+    font-family: var(--mono);
     font-size: 12px;
-    color: rgba(20, 18, 16, 0.5);
-  }
-  .fc-rating-name { flex: 1; font-family: var(--ui); font-weight: 600; font-size: 12.5px; }
-  .fc-rating-status {
-    font-family: var(--ui);
-    font-size: 9px;
-    font-weight: 700;
     letter-spacing: 0.03em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 999px;
-    white-space: nowrap;
+    color: rgba(244, 245, 240, 0.55);
   }
-  .fc-rating-status--show { background: rgba(15, 113, 38, 0.12); color: var(--pitch); }
-  .fc-rating-status--no { background: rgba(20, 18, 16, 0.08); color: rgba(20, 18, 16, 0.42); }
-  .fc-rating-stars { font-family: var(--mono); font-size: 10.5px; color: rgba(20, 18, 16, 0.65); white-space: nowrap; }
-  .fc-rating-stars strong { color: #a9860a; }
+  .fc-placeholder-note {
+    font-family: var(--ui);
+    font-size: 11px;
+    color: rgba(244, 245, 240, 0.35);
+  }
+
+  /* ============ MOVE 3: bullets paired with the largest frame on the page ============ */
+  .fc-hardcall-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+    margin-top: 30px;
+  }
+  .fc-hardcall-grid .fc-cascade { margin-top: 0; }
+  @media (max-width: 820px) {
+    .fc-hardcall-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ CLOSING BEAT ============ */
+  .fc-closing-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 3vw, 28px);
+  }
+  @media (max-width: 820px) {
+    .fc-closing-shots { grid-template-columns: 1fr; }
+  }
 
   /* ============ FIGURE / FRAME (generic, reused throughout) ============ */
   .fc-figure { margin: 40px 0 0; }
@@ -707,7 +609,6 @@
   }
   .fc-frame img { width: 100%; }
   .fc-frame--phone { max-width: 390px; margin: 0 auto; }
-  .fc-move3-frame { width: 250px; }
   .fc-figure figcaption {
     font-family: var(--ui);
     font-size: 12px;
@@ -1054,17 +955,13 @@
   <div>
     <p class="fc-eyebrow">Case study — Product design</p>
     <h1 class="fc-title">Futee<span class="fc-dot">.</span></h1>
-    <p class="fc-lede">A football matchmaking platform for Bangkok, built so a Sunday morning game doesn't live or die in a group chat full of "maybes."</p>
-    <dl class="fc-meta">
-      <div><dt>Role</dt><dd>Product design, UX research, prototyping</dd></div>
-      <div><dt>Timeline</dt><dd>~3 months</dd></div>
-      <div><dt>Team</dt><dd>2 designers, weekly sprints</dd></div>
-      <div><dt>Platform</dt><dd>Web &amp; mobile (responsive)</dd></div>
-      <div><dt>Tools</dt><dd>Figma</dd></div>
-    </dl>
+    <p class="fc-lede">We designed a football-pitch booking app for Bangkok from our desks in India, never having been there. It went live, booked real games, and worked well enough that the pitch owners took it in-house.</p>
   </div>
   <div class="fc-hero-art">
-    <img src="/work/futee/assets/hero-illustration.png" alt="Hand-drawn illustration of a footballer mid-kick, wearing an orange number 8 kit and lime cleats, next to a star-patterned ball" width="2000" height="1125">
+    <div class="fc-placeholder" style="--ph-ratio: 16 / 9;">
+      <span class="fc-placeholder-slot">futee-cover</span>
+      <span class="fc-placeholder-note">night-play cover — placeholder until supplied</span>
+    </div>
   </div>
 </section>
 
@@ -1082,73 +979,35 @@
   <span class="fc-eyebrow-dark">Designing for a country you can't visit</span>
   <h2 class="fc-h2">Thailand is hot, so people play at night.</h2>
   <p class="fc-body-lg">Designing for a country you can't visit forces you to find the truth some other way. We couldn't watch people book pitches in Bangkok, so we did the next best things: we talked to people who actually play football in Thailand, and we pulled apart the local booking apps they already used — reading how they handled time, price, and place, rather than importing assumptions from apps we knew.</p>
-  <p class="fc-body-lg">One thing reframed the entire product. Thailand is hot — so people play at night. In the cold-weather countries most booking apps are designed for, football is a daytime, weekend-morning activity, and the whole interface assumes it. Ours had to assume the inverse. That single fact wasn't a detail — it cascaded through every important decision on the page:</p>
 
   <figure class="fc-figure">
     <div class="device-enter">
-      <div class="device-parallax" data-depth="14">
-        <div class="device device-phone fc-move3-frame" style="--float-delay:0s">
-          <div class="device-notch"></div>
-          <div class="device-screen">
-            <div class="fc-nightscreen">
-              <div class="fc-nightscreen-bar">
-                <span>FUTEE</span>
-                <span class="fc-nightscreen-bar-dot">●</span>
-              </div>
-              <div class="fc-nightscreen-venue">
-                <span class="fc-nightscreen-badge">Boosted</span>
-                <span class="fc-nightscreen-venue-name">Polo Football Park</span>
-              </div>
-              <div class="fc-nightscreen-body">
-                <div class="fc-nightscreen-label">Select date</div>
-                <div class="fc-nightscreen-dates">
-                  <span class="fc-nightscreen-date fc-nightscreen-date--sel">TODAY</span>
-                  <span class="fc-nightscreen-date">TOM</span>
-                  <span class="fc-nightscreen-date">WED</span>
-                  <span class="fc-nightscreen-date">THU</span>
-                </div>
-                <div class="fc-nightscreen-label">Select time — evening slots shown first</div>
-                <div class="fc-nightscreen-slots">
-                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">7:00 PM</span>
-                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">8:00 PM</span>
-                  <span class="fc-nightscreen-slot fc-nightscreen-slot--on">9:00 PM</span>
-                  <span class="fc-nightscreen-slot">10:00 AM</span>
-                  <span class="fc-nightscreen-slot">2:00 PM</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="device-home"></div>
-          <span class="device-btn device-btn--vol1"></span>
-          <span class="device-btn device-btn--vol2"></span>
-          <span class="device-btn device-btn--power"></span>
-        </div>
+      <div class="fc-placeholder" style="--ph-ratio: 4 / 3; --ph-max: 560px;">
+        <span class="fc-placeholder-slot">futee-process-teardown</span>
+        <span class="fc-placeholder-note">local-app teardown board or captioned player note — placeholder</span>
       </div>
     </div>
-    <figcaption>Find Game, evening-first. Rebuilt in code for this write-up — the shipped screen's export didn't survive clean, but the evening-default behaviour it captures did ship.</figcaption>
+    <figcaption>How we read the local apps instead of the room we couldn't be in.</figcaption>
   </figure>
 
-  <figure class="fc-figure">
-    <div class="device-enter" style="--enter-delay:140ms">
-      <div class="device-parallax" data-depth="-10">
-        <div class="device device-laptop" style="--float-delay:2.5s">
-          <div class="device-bezel">
-            <div class="device-screen">
-              <img src="/work/futee/assets/solution-findgame-full.png" alt="The Find Game page, full length: Top Rated Pitches banner, date and venue filters, and the sortable results grid" loading="lazy" data-scroll-inside>
-            </div>
-          </div>
-          <div class="device-base"></div>
+  <p class="fc-body-lg">One thing reframed the entire product. Thailand is hot — so people play at night. In the cold-weather countries most booking apps are designed for, football is a daytime, weekend-morning activity, and the whole interface assumes it. Ours had to assume the inverse. That single fact wasn't a detail — it cascaded through every important decision on the page:</p>
+
+  <div class="fc-hardcall-grid">
+    <ul class="fc-cascade">
+      <li><p>Default time slots opened in the evening, not the morning — the app should meet people when they actually play.</p></li>
+      <li><p>Availability surfaced night slots first, because a daytime-first list would bury the times that mattered and quietly tell users the app wasn't built for them.</p></li>
+      <li><p>Imagery and tone leaned into floodlights and night play — the product had to look like the game it was for, or it would read as a foreign app translated for a local market.</p></li>
+    </ul>
+    <figure class="fc-figure" style="margin-top:0;">
+      <div class="device-enter" style="--enter-delay:120ms">
+        <div class="fc-placeholder" style="--ph-ratio: 9 / 16; --ph-max: 320px;">
+          <span class="fc-placeholder-slot">★ futee-booking-night</span>
+          <span class="fc-placeholder-note">booking screen, evening default + night surfaced first — largest frame on the page, placeholder for a clean flat export</span>
         </div>
       </div>
-    </div>
-    <figcaption>Find Game, full length — the booking flow the evening default lives inside. Scroll to see the filters and the results, sorted by rating.</figcaption>
-  </figure>
-
-  <ul class="fc-cascade">
-    <li><p>Default time slots opened in the evening, not the morning — the app should meet people when they actually play.</p></li>
-    <li><p>Availability surfaced night slots first, because a daytime-first list would bury the times that mattered and quietly tell users the app wasn't built for them.</p></li>
-    <li><p>Imagery and tone leaned into floodlights and night play — the product had to look like the game it was for, or it would read as a foreign app translated for a local market.</p></li>
-  </ul>
+      <figcaption>Find Game, evening-first — the screen these three calls produced.</figcaption>
+    </figure>
+  </div>
 
   <p class="fc-body-lg" style="margin-top:28px;">None of that comes from a feature list. It comes from one correctly-read constraint about heat and daylight — and getting it wrong would have produced a perfectly functional app that no Thai player felt was theirs.</p>
 </section>
@@ -1197,58 +1056,41 @@
 
   <figure class="fc-figure">
     <div class="device-enter" style="--enter-delay:140ms">
-      <div class="device-parallax" data-depth="-14">
-        <div class="device device-laptop" style="--float-delay:2s">
-          <div class="device-bezel">
-            <div class="device-screen">
-              <img src="/work/futee/assets/create-game-confirm-full.png" alt="Create Game flow, full length: a booked-game confirmation with a share link, a publish-visibility dropdown (private match, public match, free public match), and the pitch results below" loading="lazy" data-scroll-inside>
-            </div>
-          </div>
-          <div class="device-base"></div>
-        </div>
+      <div class="fc-placeholder" style="--ph-ratio: 16 / 10; --ph-max: 420px;">
+        <span class="fc-placeholder-slot">futee-owner-backend</span>
+        <span class="fc-placeholder-note">pitch-owner booking back-end, flat screen — placeholder</span>
       </div>
     </div>
-    <figcaption>Pitch owners — the booking flow, confirmed in one screen with one small decision (how to publish the match). The same simplicity is what the owner-side back-end had to carry through.</figcaption>
+    <figcaption>Pitch owners — a deliberately simple back-end, the side of the market most likely to walk if the tool felt like work.</figcaption>
   </figure>
 
   <figure class="fc-figure">
     <div class="device-enter" style="--enter-delay:280ms">
-      <div class="device-parallax" data-depth="10">
-        <div class="fc-frame device" style="max-width:280px; margin:0 auto; padding:10px; --float-delay:4s;">
-          <div class="fc-rating-ui">
-            <div class="fc-rating-ui-head">Reliability — last game</div>
-            <div class="fc-rating-row">
-              <span class="fc-rating-avatar">C</span>
-              <span class="fc-rating-name">Chatmanee</span>
-              <span class="fc-rating-status fc-rating-status--show">Showed</span>
-              <span class="fc-rating-stars">★ <strong>4.8</strong></span>
-            </div>
-            <div class="fc-rating-row">
-              <span class="fc-rating-avatar">A</span>
-              <span class="fc-rating-name">Anchali</span>
-              <span class="fc-rating-status fc-rating-status--show">Showed</span>
-              <span class="fc-rating-stars">★ <strong>4.5</strong></span>
-            </div>
-            <div class="fc-rating-row">
-              <span class="fc-rating-avatar">B</span>
-              <span class="fc-rating-name">Busaba</span>
-              <span class="fc-rating-status fc-rating-status--no">No-show</span>
-              <span class="fc-rating-stars">★ <strong>3.2</strong></span>
-            </div>
-            <div class="fc-rating-row">
-              <span class="fc-rating-avatar">K</span>
-              <span class="fc-rating-name">Kriang Sak</span>
-              <span class="fc-rating-status fc-rating-status--show">Showed</span>
-              <span class="fc-rating-stars">★ <strong>4.9</strong></span>
-            </div>
-          </div>
-        </div>
+      <div class="fc-placeholder" style="--ph-ratio: 3 / 4; --ph-max: 280px;">
+        <span class="fc-placeholder-slot">futee-rating-ui</span>
+        <span class="fc-placeholder-note">show/no-show + 1–5 ability score, flat — placeholder</span>
       </div>
     </div>
-    <figcaption>Players — show/no-show plus a 1–5 self-described-ability score, public on the profile. Rebuilt in code for this write-up; names and scores are illustrative.</figcaption>
+    <figcaption>Players — show/no-show plus a 1–5 self-described-ability score, public on the profile.</figcaption>
   </figure>
 
   <p class="fc-body-lg" style="margin-top:36px;">It shipped. It ran live and booked real games. Then the pitch owners took it in-house — which is the honest ending, and not a disappointing one: a model gets absorbed like that precisely because it works. The thing we'd designed was worth owning.</p>
+</section>
+
+<div class="fc-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
+
+<!-- 5. CLOSING BEAT -->
+<section class="fc-section" id="closing-shots">
+  <div class="fc-closing-shots">
+    <div class="fc-placeholder" style="--ph-ratio: 16 / 10;">
+      <span class="fc-placeholder-slot">futee-final-shots</span>
+      <span class="fc-placeholder-note">shipped app, hero shot 1 — placeholder</span>
+    </div>
+    <div class="fc-placeholder" style="--ph-ratio: 16 / 10;">
+      <span class="fc-placeholder-slot">futee-final-shots</span>
+      <span class="fc-placeholder-note">shipped app, hero shot 2 — placeholder</span>
+    </div>
+  </div>
 </section>
 
 <!-- 10. NEXT -->

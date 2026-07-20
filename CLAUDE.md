@@ -22,13 +22,14 @@ Project constants for **neel-parikh.com**. Read this before touching anything.
 
 ## 🔴 Current priority
 
-Two placeholders on the homepage need Neel's own words before this is done — see `BUILD-SPEC-ABOUT.md`:
-1. The About-section blurb (`<!-- ABOUT COPY GOES HERE -->` in `index.html`).
-2. The AU work-rights line (`<!-- WORK RIGHTS LINE GOES HERE -->`) — don't guess at citizen/PR/visa status.
+All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.html`) are now four-move and hold real, placeholder-labelled asset slots — see `BUILD-SPEC-FUTEE-V2.md`, `BUILD-SPEC-EMF-ACE.md`, `BUILD-SPEC-CSEDS-MOVES.md`. Open items, in priority order:
 
-The "~4 years in industry" credential line and the résumé link are both live now (`#about` section) — those two items from the earlier handoff are done.
+1. **Futee real assets** — 6 placeholder slots await final art: `futee-cover`, `futee-process-teardown`, `futee-booking-night` (⭐ largest, make-or-break), `futee-owner-backend`, `futee-rating-ui`, `futee-final-shots` (×2). The coach card is the one thing already built for real (interactive hover/flip).
+2. **EMF-ACE confirms** — India→Abu Dhabi remote framing is now confirmed (designed remotely from India, environmental branding executed on-site in a single day) and no longer marked. One `[CONFIRM]` span remains: the studio name ("Media Mushroom," in the hero meta's Role line). One placeholder remains (`emf-award-or-spread`, optional) — everything else uses real campaign assets already in `work/emf-ace/assets/`.
+3. **CSEDS Lighthouse score** — the one genuinely missing fact, two placeholder chips (`.cs-lighthouse-placeholder`) waiting on a real mobile score run against the live site.
+4. Two homepage About-section placeholders from `BUILD-SPEC-ABOUT.md` — the blurb (`<!-- ABOUT COPY GOES HERE -->`) and the AU work-rights line (`<!-- WORK RIGHTS LINE GOES HERE -->`) in `index.html`. Don't guess at citizen/PR/visa status.
 
-`/work/futee.html` was rebuilt to the four-move structure in `BUILD-SPEC-FUTEE-MOVES.md` (2026-07-19), which superseded the old nine-section page and its `FIX-SPEC-FUTEE.md` punch list — the Figma-chrome screenshots, the broken before/after compare, and the uncleared nav-pill offset all went away with the sections that had them. The Move 3 "night-play" screen and both Move 4 assets (coach card, rating list) are built as real HTML/CSS, not screenshots — see the spec for why.
+**Don't assume old case-study copy was "unwritten" just because a new spec says so** — check the live page first. This session found EMF-ACE and CSEDS both already had specific, real, previously-approved copy that a fresh spec incorrectly assumed didn't exist yet; both were restructured into four moves rather than overwritten with generic placeholder text. See the "Copy note" in each spec file.
 
 **The locked copy in `BUILD-SPEC-FUTEE-MOVES.md` is Neel's, reproduced verbatim.** Don't paraphrase it on future edits.
 
@@ -106,12 +107,15 @@ The "~4 years in industry" credential line and the résumé link are both live n
 | `BUILD-SPEC-FOOTER.md` | Falling contact pills (CSS, **no Matter.js**) | Current |
 | `BUILD-SPEC-FUTEE.md` | The Futee case study — original nine-section template | ⛔ Superseded by `BUILD-SPEC-FUTEE-MOVES.md` |
 | `FIX-SPEC-FUTEE.md` | Fixes to the old nine-section Futee page | ⛔ Moot — that page no longer exists |
-| `BUILD-SPEC-FUTEE-MOVES.md` | Futee rebuilt as a four-move argument, locked copy | Built |
-| `BUILD-SPEC-FUTEE-MOCKUPS.md` | Addendum — scroll-inside/parallax device mockups on Moves 3 & 4 only | Built |
+| `BUILD-SPEC-FUTEE-MOVES.md` | Futee rebuilt as a four-move argument, locked copy | ⛔ Superseded by `BUILD-SPEC-FUTEE-V2.md` (new approved copy + asset treatment) |
+| `BUILD-SPEC-FUTEE-MOCKUPS.md` | Addendum — scroll-inside/parallax device mockups on Moves 3 & 4 only | Built (mechanism reused, not superseded) |
+| `BUILD-SPEC-FUTEE-V2.md` | Futee four-move, new approved copy — swaps the built night-play HTML mockup for an image placeholder, adds a third Move-4 bullet (pitch-owner backend) | Built |
 | `BUILD-SPEC-HERO-CLOCK.md` | Clickable clock — "it's night in Lisbon right now" | ⚠️ Built, but the spec file itself was never saved to the repo — this table entry describes behavior that exists in `index.html`, not a doc you can open |
 | `BUILD-SPEC-RESOURCES.md` | `/resources.html` — pan/zoom quadrant canvas of stamps | Built, placeholder data |
 | `BUILD-SPEC-ABOUT.md` | Hero pose-layer system (cursor-driven, decoupled from time-of-day) + inline About section below hero | Built |
 | `BUILD-SPEC-HERO-SCROLL-TRANSITION.md` | Illustration sticks and scrolls with the visitor from hero into About (desktop only) — supersedes §4/§6 of `BUILD-SPEC-ABOUT.md` | Built |
+| `BUILD-SPEC-EMF-ACE.md` | EMF ACE case study, old 7-section → four-move; real campaign assets used where they exist, 2 facts still `[CONFIRM]` | Built |
+| `BUILD-SPEC-CSEDS-MOVES.md` | CSEDS case study, old 8-section → four-move; all copy is `[COPY TBD]`, real assets reused | Built |
 
 **⚠️ `BUILD-SPEC.md` is partly superseded.** It still describes a click-accordion for Chosen Work (now hover-expand — see `BUILD-SPEC-WORK.md`) and an All Work section on the homepage (now moved to `/work.html` — see `BUILD-SPEC-PROCESS.md`). **When they conflict, the later spec wins.**
 

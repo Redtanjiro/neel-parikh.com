@@ -424,40 +424,6 @@
     .ea-meta { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* ============ IMPACT / STATS ============ */
-  .ea-impact { max-width: 1000px; }
-  .ea-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 44px;
-  }
-  .ea-stat {
-    border-top: 2px solid var(--gold);
-    padding-top: 16px;
-  }
-  .ea-stat-num {
-    display: block;
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: clamp(34px, 4.2vw, 52px);
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: var(--sand);
-  }
-  .ea-stat-suffix { color: var(--gold); }
-  .ea-stat-label {
-    display: block;
-    font-family: var(--ui);
-    font-size: 13px;
-    color: rgba(232, 217, 195, 0.6);
-    margin-top: 10px;
-    max-width: 20ch;
-  }
-  @media (max-width: 720px) {
-    .ea-stats { grid-template-columns: repeat(2, 1fr); }
-  }
-
   /* ============ CONSTRAINT ============ */
   .ea-constraint-callout {
     margin-top: 28px;
@@ -542,6 +508,22 @@
     line-height: 1.6;
     color: rgba(232, 217, 195, 0.65);
     margin-top: 12px;
+  }
+
+  /* ============ CONFIRM-BEFORE-PUBLISH MARKER ============ */
+  .ea-confirm {
+    background: rgba(212, 175, 55, 0.16);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .ea-confirm::before {
+    content: '[CONFIRM] ';
+    font-family: var(--mono);
+    font-size: 0.75em;
+    color: var(--gold);
   }
 
   /* ============ PAGENAV ============ */
@@ -728,12 +710,9 @@
 <nav class="ea-secnav" aria-label="Case study sections">
   <div class="ea-secnav-track" aria-hidden="true"><span class="ea-secnav-progress" id="eaSecnavProgress"></span></div>
   <div class="ea-secnav-links">
-    <a href="#impact">Impact</a>
-    <a href="#constraint">The constraint</a>
-    <a href="#sequence">Sequence</a>
-    <a href="#killed">What I killed</a>
-    <a href="#panel">The panel</a>
-    <a href="#reflection">Reflection</a>
+    <a href="#frame">The frame</a>
+    <a href="#hard-call">The hard call</a>
+    <a href="#outcome">The outcome</a>
   </div>
 </nav>
 
@@ -742,9 +721,9 @@
   <div>
     <p class="ea-eyebrow">Case study — Brand &amp; campaign</p>
     <h1 class="ea-title">EMF ACE<br>Abu Dhabi<span class="ea-dot">.</span></h1>
-    <p class="ea-lede">An eleven-year-old wedding-industry brand's biggest event yet — teaser to gala, built inside a colour story and a logo lockup I didn't get to choose.</p>
+    <p class="ea-lede">An eleven-year-old wedding-industry brand's biggest event yet, branded end to end from teaser to gala — environmental, social, YouTube ads, awards, the magazine — inside a colour story and a logo lockup I didn't get to choose. It shipped across three venues, on time.</p>
     <dl class="ea-meta">
-      <div><dt>Role</dt><dd>Design Lead, Media Mushroom</dd></div>
+      <div><dt>Role</dt><dd>Design Lead, <span class="ea-confirm">Media Mushroom</span></dd></div>
       <div><dt>Client</dt><dd>EMF Global</dd></div>
       <div><dt>Scope</dt><dd>Campaign content system — teasers, reveals, guest &amp; venue announcements, countdown, event week</dd></div>
       <div><dt>Team</dt><dd>Production, product owners &amp; sponsors</dd></div>
@@ -753,49 +732,23 @@
     </dl>
   </div>
   <div class="ea-hero-art">
-    <img src="/work/emf-ace/assets/emf-countdown-hourglass.png" alt="Campaign key art: an hourglass in the desert at sunset, sand pouring through, with the copy 'Early bird registration closes 8th June' and the EMF Global / ACE Abu Dhabi lockups" width="513" height="513">
+    <img src="/work/emf-ace/assets/emf-event-marquee.jpg" alt="Photograph from the live event: an illuminated 'EMF' letter marquee hanging over guests in formal wear, with a lit stage visible beyond" width="1000" height="1778">
   </div>
 </section>
 
-<!-- 2. IMPACT -->
-<section class="ea-section ea-impact" id="impact">
-  <span class="ea-eyebrow-dark">Outcome, first</span>
-  <h2 class="ea-h2">What this actually took</h2>
-  <p class="ea-body-lg">EMF ACE is a live, ticketed industry event, not a product with analytics. There's no reach, impression or engagement number to report honestly — so here's what's real and countable instead.</p>
-  <div class="ea-stats" id="eaStats">
-    <div class="ea-stat" data-target="1000">
-      <span class="ea-stat-num"><span class="ea-stat-count">0</span><span class="ea-stat-suffix">+</span></span>
-      <span class="ea-stat-label">Individual assets produced across the campaign</span>
-    </div>
-    <div class="ea-stat" data-target="3">
-      <span class="ea-stat-num"><span class="ea-stat-count">0</span></span>
-      <span class="ea-stat-label">Days — the event itself, 26–28 July</span>
-    </div>
-    <div class="ea-stat" data-target="500">
-      <span class="ea-stat-num"><span class="ea-stat-count">0</span><span class="ea-stat-suffix">+</span></span>
-      <span class="ea-stat-label">Registered before the event, from one thank-you post</span>
-    </div>
-    <div class="ea-stat" data-target="11">
-      <span class="ea-stat-num"><span class="ea-stat-count">0</span></span>
-      <span class="ea-stat-label">Years the EMF brand has run — the system this had to fit inside</span>
-    </div>
-  </div>
-</section>
-
-<div class="ea-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 3. THE CONSTRAINT -->
-<section class="ea-section" id="constraint">
+<!-- 2. THE FRAME -->
+<section class="ea-section" id="frame">
   <span class="ea-eyebrow-dark">The constraint that shaped everything</span>
   <h2 class="ea-h2">Every post had to carry a colour story and two logos I didn't choose.</h2>
-  <p class="ea-body-lg">EMF Global runs on an eleven-year-old identity. The brief was specific about colour, and specific about where both marks — the EMF Global logo and the ACE Abu Dhabi lockup built for this edition — had to sit on every single asset, from a teaser nobody could yet identify as EMF to the gala night finale. There was no version of this project where I got to propose a new palette or redraw the mark.</p>
+  <p class="ea-body-lg">EMF Global runs on an eleven-year-old identity. The campaign was designed remotely from India, with the environmental branding executed on-site in Abu Dhabi in a single day. The brief was specific about colour, and specific about where both marks — the EMF Global logo and the ACE Abu Dhabi lockup built for this edition — had to sit on every single asset, from a teaser nobody could yet identify as EMF to the gala night finale. There was no version of this project where I got to propose a new palette or redraw the mark.</p>
+  <p class="ea-body-lg">EMF ACE is a live, ticketed industry event, not a product with analytics — there's no reach or engagement number to report honestly, so here's what's real: 1,000+ individual assets, across a ~3-month push, for a brand that's run for 11 years, with 500+ people registered off the back of a single thank-you post before the doors even opened.</p>
   <p class="ea-body-lg">That's a different job to Futee or CSEDS, where the system started from nothing. Here, the room to make calls was inside those fixed elements — what could carry zero branding and what couldn't, how a five-person panel card could hold a completely different density of information than a single-message announcement and still read as the same campaign.</p>
 </section>
 
 <div class="ea-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
 
-<!-- 4. THE SEQUENCE -->
-<section class="ea-section" id="sequence">
+<!-- 3. THE HARD CALL (most visual weight) -->
+<section class="ea-section" id="hard-call">
   <span class="ea-eyebrow-dark">The sequencing decision</span>
   <h2 class="ea-h2">Teaser, reveal, hype, credibility, event — the order was the design.</h2>
   <p class="ea-body-lg">Nothing in this campaign is a one-off post. Every asset belongs to a phase, and the phase is what tells a stranger whether to keep scrolling or start paying attention.</p>
@@ -838,15 +791,8 @@
       <figcaption>Event week — the marquee, live, inside the room.</figcaption>
     </figure>
   </div>
-</section>
 
-<div class="ea-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 5. WHAT I KILLED -->
-<section class="ea-section ea-killed" id="killed">
-  <span class="ea-eyebrow-dark">What I killed</span>
-  <h2 class="ea-h2">The desert nearly carried the whole campaign. It didn't.</h2>
-  <p class="ea-body-lg">An early direction leaned hard into desert imagery — dunes, camels, the open road. Most of it got killed in favour of the Arabian-night treatment that carries the rest of the campaign: deep purple, gold, a starlit sky over the Abu Dhabi skyline. Desert survived only where it started — the teaser phase, before there was a logo to carry.</p>
+  <p class="ea-body-lg" style="margin-top:36px;">The brand system had to be strong enough that any one of those 1,000+ assets still belonged to the weekend without hand-holding — including the ones made in a rush. An early direction had leaned hard into desert imagery, dunes and camels and the open road, before most of it got killed in favour of the Arabian-night treatment above: deep purple, gold, a starlit sky over the skyline. Desert survived only where it started, the teaser phase, before there was a logo to carry it —</p>
 
   <div class="ea-killed-compare">
     <figure class="ea-tile">
@@ -864,17 +810,17 @@
   </div>
 
   <div class="ea-killed-callout">
-    <p><strong>The catch:</strong> this exact teaser went out for review with the wrong dates before it got caught — 20–21 July instead of the actual 26th–27th–28th. Same composition, same camel, same F1 car in the sand; the date block and the branding are the only things that changed.</p>
+    <p><strong>The catch:</strong> this exact teaser went out for review with the wrong dates before it got caught — 20–21 July instead of the actual 26th–27th–28th. Same composition, same camel, same F1 car in the sand; the date block and the branding are the only things that changed. That's what a system strong enough to absorb chaos looks like in practice — a rushed, near-miss piece still gets caught and corrected instead of shipping wrong.</p>
   </div>
 </section>
 
 <div class="ea-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
 
-<!-- 6. THE PANEL -->
-<section class="ea-section" id="panel">
+<!-- 4. SECOND CONSTRAINT + HONEST OUTCOME -->
+<section class="ea-section" id="outcome">
   <span class="ea-eyebrow-dark">The panel beat</span>
   <h2 class="ea-h2">One card holding five names instead of one message.</h2>
-  <p class="ea-body-lg">Most of the campaign is a single message per post — a date, a venue, a guest. "Global Design Fusion" is different: five real panelists, each with a title and a country, on one card, under the same two logos and the same colour system as everything else — carrying a completely different job.</p>
+  <p class="ea-body-lg">Most of the campaign is a single message per post — a date, a venue, a guest. "Global Design Fusion" is different: five real panelists, each with a title and a country, on one card, under the same two logos and the same colour system as everything else — carrying a completely different job. That's the harder structural problem underneath the whole campaign: twelve decision-makers with equal authority, a brief that kept expanding, and venues — the Ritz-Carlton above among them — I'd never stood in, briefed from measurements and floor plans with one day on the ground before the event.</p>
 
   <figure class="ea-panel-figure">
     <div class="ea-tile-frame">
@@ -882,15 +828,8 @@
     </div>
     <figcaption>Kaveri Vij (Moderator, Designer Events Inc, India) · Dhun Cordo (Full Moon Creative Services, India) · Mark Khawaja (LA TABLE, Abu Dhabi) · Hannah Connelly (Couture Events Worldwide, Dubai) · Asma Al Hajri (ALKhayalee, Oman)</figcaption>
   </figure>
-</section>
 
-<div class="ea-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
-
-<!-- 7. REFLECTION -->
-<section class="ea-section" id="reflection">
-  <span class="ea-eyebrow-dark">What this taught me</span>
-  <h2 class="ea-h2">Running it was the actual lesson.</h2>
-  <p class="ea-body-lg">Futee and CSEDS taught me to design a system from zero. EMF ACE taught me to run one that already existed — producing 1,000+ individual assets while coordinating production, product owners, and sponsors at the same time, not just a design file. That's a different skill to making one post look good, and it's the one this case study is actually about.</p>
+  <p class="ea-body-lg" style="margin-top:36px;">Futee and CSEDS taught me to design a system from zero. EMF ACE taught me to run one that already existed — producing 1,000+ individual assets while coordinating production, product owners, and sponsors at the same time, not just a design file. Ran it like any project going in; the workload compounded faster than that plan accounted for, and a fast-scaling, many-stakeholder job like this is one I'd structure differently from day one next time. It shipped across three venues, on time — that's the honest outcome, and the actual lesson is in how it got run, not just how it looks.</p>
 </section>
 
 <!-- 8. NEXT -->
@@ -993,43 +932,6 @@
     window.addEventListener('scroll', updateSecnavProgress, { passive: true });
     window.addEventListener('resize', updateSecnavProgress);
     updateSecnavProgress();
-  }
-
-  /* ---------- counting stat block ---------- */
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var statEls = document.querySelectorAll('.ea-stat');
-
-  function animateCount(el) {
-    var target = Number(el.dataset.target);
-    var countEl = el.querySelector('.ea-stat-count');
-    if (reduceMotion) {
-      countEl.textContent = target;
-      return;
-    }
-    var start = null;
-    var duration = 900;
-    function step(ts) {
-      if (!start) start = ts;
-      var progress = Math.min(1, (ts - start) / duration);
-      var eased = 1 - Math.pow(1 - progress, 3);
-      countEl.textContent = Math.round(eased * target);
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  if ('IntersectionObserver' in window) {
-    var statObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          animateCount(entry.target);
-          statObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.4 });
-    statEls.forEach(function (el) { statObserver.observe(el); });
-  } else {
-    statEls.forEach(animateCount);
   }
 
   /* ---------- Footer pills ---------- */
