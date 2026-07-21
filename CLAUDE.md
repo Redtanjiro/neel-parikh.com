@@ -7,7 +7,7 @@ Project constants for **neel-parikh.com**. Read this before touching anything.
 ## Non-negotiables
 
 1. **NEVER delete the `CNAME` file.** It maps the custom domain. Deleting it breaks the site. This has happened before.
-2. **Vanilla HTML/CSS/JS only.** No React, no framework, no npm, no bundler, no build step, no third-party libraries. Deploys straight to GitHub Pages. If a solution requires a build step, it is the wrong solution.
+2. **Vanilla HTML/CSS/JS only, with one exception: GSAP.** No React, no other framework, no npm, no bundler, no build step. **GSAP (core + ScrollTrigger + SplitText) is loaded sitewide via the cdnjs CDN, added 2026-07-21** — every page has three `<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/...">` tags plus a `gsap.registerPlugin(ScrollTrigger, SplitText)` call, right before that page's own inline `<script>` block. **Pinned to 3.13.0, not the 3.12.5 first requested** — `SplitText` was a paid "Club GreenSock" plugin and 404s on cdnjs at 3.12.5; it only became public in 3.13.0. Keep all three files on the same version. **`index.html` additionally loads `MorphSVGPlugin`** (same CDN, same version) for the homepage preloader — the other four pages don't need it and don't have it. No other third-party library — this is a deliberate, single exception, not a general opening. Everything still deploys straight to GitHub Pages with no build step; GSAP is a runtime script tag, not a bundled dependency. Before building a new scroll/reveal/text effect, check whether GSAP already does it rather than hand-rolling another `IntersectionObserver`/`stroke-dashoffset` version — but the existing hand-rolled systems (hero pose scrub, device-mockup parallax, footer pill drop, line-draw hovers) stay as they are; this isn't a mandate to port them.
 3. **Root-relative paths** (`/assets/...`) so pages resolve from any route.
 
 ---
@@ -49,7 +49,7 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 --line  : rgba(20,18,16,0.12)
 ```
 
-`Fraunces` and `Caveat` exist but are **About-page only** — don't import them elsewhere.
+`Fraunces` and `Caveat` exist but are **About-page only**, with one exception: `index.html`'s preloader uses `Fraunces` italic (`var(--font-voice)`) for the word "illustrated" in its closing signature line — nowhere else on the homepage. Don't import either family anywhere beyond those two spots.
 
 **Case studies derive their OWN palette from their subject's world.** They share *structure*, not *look*.
 - **Futee** = football at night under floodlights: `--pitch #0F7126` · `--floodlight #f2e338` · `--chalk #f4f5f0`
@@ -116,6 +116,8 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 | `BUILD-SPEC-HERO-SCROLL-TRANSITION.md` | Illustration sticks and scrolls with the visitor from hero into About (desktop only) — supersedes §4/§6 of `BUILD-SPEC-ABOUT.md` | Built |
 | `BUILD-SPEC-EMF-ACE.md` | EMF ACE case study, old 7-section → four-move; real campaign assets used where they exist, 2 facts still `[CONFIRM]` | Built |
 | `BUILD-SPEC-CSEDS-MOVES.md` | CSEDS case study, old 8-section → four-move; all copy is `[COPY TBD]`, real assets reused | Built |
+| `BUILD-SPEC-PRELOADER.md` | Homepage-only preloader — black hold → hand-drawn mug line-draw → signature → dissolve into the hero | ⛔ Superseded by `BUILD-SPEC-PRELOADER-V2.md` |
+| `BUILD-SPEC-PRELOADER-V2.md` | Homepage preloader v2 — GSAP + MorphSVGPlugin, "love" wordmark morphs its "o" into a heart, then signature writes in letter by letter | Built |
 
 **⚠️ `BUILD-SPEC.md` is partly superseded.** It still describes a click-accordion for Chosen Work (now hover-expand — see `BUILD-SPEC-WORK.md`) and an All Work section on the homepage (now moved to `/work.html` — see `BUILD-SPEC-PROCESS.md`). **When they conflict, the later spec wins.**
 
