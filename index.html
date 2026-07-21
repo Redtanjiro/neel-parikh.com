@@ -785,106 +785,39 @@
     color: rgba(20, 18, 16, 0.7);
   }
 
-  .process-interactive { max-width: 900px; margin: 0 auto; }
+  .process-interactive { max-width: 1040px; margin: 0 auto; }
 
-  .process-timeline { position: relative; padding: 34px 4px 44px; }
-  .timeline-inner { position: relative; }
-  .timeline-svg-clip {
-    clip-path: inset(0 100% 0 0);
-    transition: clip-path 1.6s cubic-bezier(.16,1,.3,1);
-  }
-  .process-timeline.is-drawn .timeline-svg-clip { clip-path: inset(0 0 0 0); }
-  @media (prefers-reduced-motion: reduce) {
-    .timeline-svg-clip { clip-path: inset(0 0 0 0); transition: none; }
-  }
-  .timeline-svg { width: 100%; height: auto; display: block; }
-  .timeline-path {
+  .process-path-col { display: flex; justify-content: center; }
+  .timeline-svg { width: 100%; max-width: 220px; height: auto; display: block; }
+  .timeline-path-base {
     fill: none;
-    stroke: rgba(20, 18, 16, 0.4);
+    stroke: #B4B2A9;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-dasharray: 10 10;
+    stroke-dasharray: 9 9;
     vector-effect: non-scaling-stroke;
   }
+  .timeline-path-accent {
+    fill: none;
+    stroke: #e8a13a;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .timeline-node-dot { fill: #D3D1C7; }
 
-  .timeline-nodes { position: absolute; inset: 0; }
-
-  .timeline-node {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    opacity: 1;
-    transition: opacity .2s ease;
-  }
-  .timeline-node::after {
-    content: '';
-    position: absolute;
-    inset: 6px;
-    border-radius: 50%;
-    background: rgba(20, 18, 16, 0.42);
-    transition: background-color .2s ease, transform .2s ease;
-  }
-  .timeline-node.active::after {
-    background: var(--amber);
-    transform: scale(1.15);
-  }
-  .process-interactive.has-active .timeline-node:not(.active) { opacity: 0.45; }
-
-  .timeline-node-label {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--mono);
-    font-weight: 500;
-    font-size: 10px;
-    color: rgba(20, 18, 16, 0.5);
-    white-space: nowrap;
-    transition: color .2s ease;
-  }
-  .timeline-node[data-side="up"] .timeline-node-label { bottom: 100%; margin-bottom: 8px; }
-  .timeline-node[data-side="down"] .timeline-node-label { top: 100%; margin-top: 8px; }
-  .timeline-node.active .timeline-node-label {
-    color: var(--amber);
-    font-weight: 700;
-  }
-
-  .process-cards {
-    display: flex;
-    flex-direction: column;
-    max-width: 720px;
-    margin: 8px auto 0;
-  }
-  .process-card {
-    padding: 24px 4px;
-    border-bottom: 1px solid var(--line);
-    border-left: 3px solid transparent;
-    cursor: pointer;
-    opacity: 1;
-    transition: opacity .2s ease, border-color .2s ease, background-color .2s ease, padding-left .2s ease;
-  }
-  .process-card:last-child { border-bottom: none; }
-  .process-card.active {
-    border-left-color: var(--amber);
-    background: rgba(232, 161, 58, 0.06);
-    padding-left: 16px;
-  }
-  .process-interactive.has-active .process-card:not(.active) { opacity: 0.45; }
+  .process-cards { position: relative; }
+  .process-card { padding: 4px 0; }
 
   .process-card-num {
     display: block;
     font-family: var(--mono);
     font-size: 13px;
-    color: rgba(20, 18, 16, 0.5);
+    color: var(--amber);
     margin-bottom: 10px;
-    transition: color .2s ease;
   }
-  .process-card.active .process-card-num { color: var(--amber); }
   .process-card-claim {
     font-family: var(--display);
     font-weight: 700;
@@ -900,11 +833,37 @@
     max-width: 600px;
     color: rgba(20, 18, 16, 0.75);
   }
+
+  @media (min-width: 900px) {
+    .process-interactive {
+      display: grid;
+      grid-template-columns: 40% 60%;
+      gap: clamp(24px, 4vw, 56px);
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 0;
+    }
+    .process-path-col { height: 78vh; }
+    .timeline-svg { width: auto; height: 100%; max-width: none; }
+    .process-cards { min-height: 340px; }
+    .process-card { position: absolute; inset: 0; opacity: 0.25; }
+  }
+
+  @media (max-width: 899px) {
+    .process-interactive {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .timeline-svg { max-width: 200px; margin: 0 auto; }
+    .process-cards { display: flex; flex-direction: column; gap: 4px; }
+    .process-card { padding: 20px 0; border-bottom: 1px solid var(--line); }
+    .process-card:last-child { border-bottom: none; }
+    .process-card-claim { font-size: clamp(19px, 5.5vw, 24px); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .process-card,
-    .timeline-node,
-    .timeline-node::after,
-    .timeline-node-label { transition: none; }
+    .process-card { opacity: 1 !important; transform: none !important; }
   }
 
   /* ============ MOBILE ============ */
@@ -1066,11 +1025,6 @@
       outline: 2px solid var(--amber);
       outline-offset: 3px;
     }
-
-    .process-timeline { display: none; }
-    .process-cards { margin-top: 0; max-width: 100%; }
-    .process-card { opacity: 1 !important; }
-    .process-card-claim { font-size: clamp(19px, 5.5vw, 24px); }
 
     .site-nav,
     .site-nav.shrunk { top: 12px; }
@@ -1481,19 +1435,12 @@
     <p class="process-lede">It doesn't look like a diamond because it has never once gone like a diamond.</p>
 
     <div class="process-interactive" id="process-interactive">
-      <div class="process-timeline" id="process-timeline">
-        <div class="timeline-inner">
-          <div class="timeline-svg-clip">
-            <svg class="timeline-svg" viewBox="0 0 1666 603" aria-hidden="true">
-              <path class="timeline-path" d="M522.159 411.941C525.287 411.941 536.172 410.778 545.624 406.167C558.293 399.988 572.077 384.603 585.496 368.499C609.508 339.682 613.357 312.885 617.787 307.382C623.74 299.986 645.84 294.056 665.68 276.922C687.105 258.421 696.991 231.636 708.356 222.278C718.064 214.284 735.675 215.905 764.384 216.239C774.243 216.354 780.006 209.784 784.911 203.787C794.078 195.7 801.2 191.79 805.109 191.469C807.425 191.365 810.416 191.381 817.357 191.712" />
-              <path class="timeline-path" d="M818.772 187.103C822.634 187.103 834.852 185.992 862.916 172.917C871.417 168.957 874.791 165.12 877.573 161.496C880.323 157.913 882.364 149.125 884.695 134.333C887.583 116.005 884.961 98.2115 883.258 84.0332C881.617 70.3823 883.161 61.5881 884.973 58.2606C886.544 55.3754 889.274 53.3017 891.946 51.2556C894.404 49.3734 902.667 48.9095 913.488 49.0061C929.543 49.1496 947.76 73.3303 956.079 76.8876C964.645 80.5503 978.433 78.9928 984.873 81.8621C991.461 84.7973 991.091 96.0102 994.832 100.996C1001.74 110.204 1023.16 110.296 1032.66 117.841C1044.58 127.302 1049.21 143.029 1053.77 160.707C1056.58 171.588 1054.06 181.003 1050.89 190.166C1045.05 207.026 1033.09 228.162 1023.28 246.61C1014.38 263.33 1015.95 280.622 1019.26 288.657C1026.88 307.117 1053.83 316.247 1061.51 318.621C1074.52 322.64 1085.69 312.299 1092.15 312.913C1095.83 313.263 1098.4 317.779 1100.77 321.279C1105.65 328.493 1100.87 342.673 1096.83 352.48C1095.19 356.449 1095.3 360.871 1095.76 364.984C1096.63 372.798 1111.28 376.448 1127.59 378.733C1139.17 380.356 1148.28 378.129 1152.9 376.284C1161.56 372.825 1168.43 360.477 1174.14 346.834C1175.08 343.915 1175.67 341.515 1176.35 339.374C1177.03 337.234 1177.79 335.424 1179.3 332.386" />
-              <path class="timeline-path" d="M1179.19 337.958C1179.16 335.672 1181 327.938 1186.02 320.922C1191.67 313.032 1204.49 311.174 1221.16 310.583C1229.74 310.28 1235.49 317.256 1239.86 324.029C1245.1 332.142 1242.19 343.942 1244.24 346.089C1246.36 348.305 1254.18 347.53 1263.34 347.251C1278.74 346.782 1296.7 324.593 1307.46 305.917C1316.77 289.759 1319.48 275.233 1324.77 268.45C1340.71 248.019 1354.62 245.468 1358.9 239.502C1361.59 235.759 1361.83 231.241 1362.29 218.478C1363.44 186.571 1362.73 163.392 1364.39 159.813C1369.91 147.94 1384.83 138.153 1408.03 126.065C1427.22 116.064 1444.66 117.659 1453.35 121.414C1467.31 127.443 1470.27 146.481 1471.91 157.643C1476.05 185.75 1469.05 205.434 1467.08 226.526C1466.64 231.202 1467.05 232.958 1467.78 234.452C1471.53 242.075 1484.01 243.654 1498.8 244.222C1510.41 240.1 1530.96 223.37 1540.84 214.238C1542.15 213.48 1543.61 213.171 1545.3 215.047" />
-              <path class="timeline-path" d="M-5.93774 200.344C-5.83067 200.344 11.5225 199.235 43.6797 196.527C70.5879 194.262 84.4439 190.126 91.806 187.859C118.049 179.776 126.115 178.789 134.215 176.457C151.711 171.421 179.647 173.837 195.317 167.193C205.787 162.754 221.861 148.858 241.222 132.724C258.67 118.186 266.78 117.493 285.276 117.465C306.816 117.431 320.628 119.351 335.895 112.711C342.308 109.922 348.052 109.249 353.054 109.488C356.71 109.663 359.022 113.446 361.2 117.771C367.133 129.552 366.996 160.324 365.785 175.534C365.473 179.446 353.894 192.948 338.453 213.761C328.386 227.331 326.213 235.505 325.434 239.087C325.04 240.898 325.068 242.773 327.852 245.176C342.491 257.814 351.411 260.38 355.265 265.62C357.338 268.438 356.67 273.069 353.143 286.018C344.875 316.373 334.573 338.609 333.448 345.251C332.42 351.319 333.702 356.092 335.548 359.328C339.281 365.872 350.604 369.14 361.39 371.608C378.974 375.631 393.099 366.51 410.951 357.928C417.487 354.786 423.289 354.692 428.236 355.003C447.611 356.221 471.375 383.528 478.691 385.925C489.346 389.417 493.803 395.241 498.04 400.773C502.656 406.797 508.122 411.155 515.532 412.832C521.718 412.934 527.356 412.361 531.102 411.244C532.892 410.648 534.456 409.993 536.067 409.318" />
-              <path class="timeline-path" d="M1542.7 212.545C1545.19 212.545 1553.24 215.144 1562.71 222.7C1580.64 237.006 1593.14 242.8 1605.28 246.003C1627 251.737 1650.85 237.485 1665.1 232.779C1668.35 232.305 1673.37 232.13 1680.66 232.473C1684.43 232.815 1688.35 233.5 1692.39 234.206" />
-            </svg>
-          </div>
-          <div class="timeline-nodes" id="timeline-nodes"></div>
-        </div>
+      <div class="process-path-col">
+        <svg class="timeline-svg" viewBox="0 0 180 1105" aria-hidden="true">
+          <path class="timeline-path-base" id="timelinePathBase" d="M90,28 C148,84 152,122 88,181 C28,238 34,268 92,330 C154,384 146,424 86,479 C26,530 36,572 94,628 C152,680 144,722 84,777 C24,828 38,870 96,926 C150,982 142,1016 90,1075" />
+          <path class="timeline-path-accent" id="timelinePathAccent" />
+          <g id="timelineNodesSvg"></g>
+        </svg>
       </div>
 
       <div class="process-cards" id="process-cards"></div>
@@ -2014,129 +1961,162 @@
     {
       short: 'The world, not the brief',
       claim: 'I start with the world, not the brief',
-      text: 'Every project gets a palette and a signature element pulled from its own subject. A football app runs on floodlight yellow and counts up to 90 minutes. An engineering distributor gets a load gauge. If it could be swapped onto any other project, it isn’t design — it’s decoration.',
-      x: 152.218, y: 173.745
+      text: 'Every project gets a palette and a signature element pulled from its own subject. A football app runs on floodlight yellow and counts up to 90 minutes. An engineering distributor gets a load gauge. If it could be swapped onto any other project, it isn’t design — it’s decoration.'
     },
     {
       short: 'A hypothesis, not an instruction',
       claim: 'The brief is a hypothesis, not an instruction',
-      text: 'Clients ask for a lunchbox when the problem is “kids need to carry food.” I take the request seriously and the framing sceptically — the first job is finding out whether we’re solving the right thing.',
-      x: 515.286, y: 413.13
+      text: 'Clients ask for a lunchbox when the problem is “kids need to carry food.” I take the request seriously and the framing sceptically — the first job is finding out whether we’re solving the right thing.'
     },
     {
       short: 'Where the users actually are',
       claim: 'I go where the users actually are',
-      text: 'Not a survey blast. Contextual inquiry, on their turf, watching what people do rather than what they say they do. The gap between the two is usually where the design problem is hiding.',
-      x: 817.87, y: 188.874
+      text: 'Not a survey blast. Contextual inquiry, on their turf, watching what people do rather than what they say they do. The gap between the two is usually where the design problem is hiding.'
     },
     {
       short: 'Before I open Figma',
       claim: 'I draw before I open Figma',
-      text: 'Pen first, always. Tools invite you to make things look resolved before the thinking is. A crooked sketch is honest about being unfinished — a clean artboard lies.',
-      x: 999.404, y: 105.089
+      text: 'Pen first, always. Tools invite you to make things look resolved before the thinking is. A crooked sketch is honest about being unfinished — a clean artboard lies.'
     },
     {
       short: 'Structure is the design',
       claim: 'Structure is the design',
-      text: 'Information architecture, card sorts, naming. Most “the UI is confusing” problems are actually “the model is confusing” problems. Fix the structure and the interface tends to fall out of it.',
-      x: 1240.78, y: 344.473
+      text: 'Information architecture, card sorts, naming. Most “the UI is confusing” problems are actually “the model is confusing” problems. Fix the structure and the interface tends to fall out of it.'
     },
     {
       short: 'I build it myself',
       claim: 'I build it myself',
-      text: 'I ship real code — hand-written HTML/CSS/JS, Framer, TouchDesigner, p5.js. Designing something you can’t build means designing things that don’t survive contact with a browser. Building it is how I find out where the design was lying.',
-      x: 1482.17, y: 246.723, compactLabel: true
+      text: 'I ship real code — hand-written HTML/CSS/JS, Framer, TouchDesigner, p5.js. Designing something you can’t build means designing things that don’t survive contact with a browser. Building it is how I find out where the design was lying.'
     },
     {
       short: 'Where the work earns trust',
       claim: 'Craft is where the work earns trust',
-      text: 'The hand-drawn line that draws itself in. The illustration that changes with your local clock. Motion that respects prefers-reduced-motion. Nobody briefs this. It’s the difference between a site that works and one people remember.',
-      x: 1605.06, y: 246.723, side: 'up', compactLabel: true
+      text: 'The hand-drawn line that draws itself in. The illustration that changes with your local clock. Motion that respects prefers-reduced-motion. Nobody briefs this. It’s the difference between a site that works and one people remember.'
     },
     {
       short: 'The start of the argument',
       claim: 'Shipping is the start of the argument',
-      text: 'Launch is a hypothesis meeting reality. What I measure after is worth more than what I assumed before — and I’d rather change my mind in public than defend a decision that stopped being true.',
-      x: 1650, y: 233, side: 'down', compactLabel: true
+      text: 'Launch is a hypothesis meeting reality. What I measure after is worth more than what I assumed before — and I’d rather change my mind in public than defend a decision that stopped being true.'
     }
   ];
-  var PROCESS_VIEWBOX = { w: 1666, h: 603 };
 
-  var nodesEl = document.getElementById('timeline-nodes');
+  var pathBaseEl = document.getElementById('timelinePathBase');
+  var pathAccentEl = document.getElementById('timelinePathAccent');
+  var nodesSvgGroup = document.getElementById('timelineNodesSvg');
   var cardsEl = document.getElementById('process-cards');
-  var processInteractiveEl = document.getElementById('process-interactive');
+  var pinTargetEl = document.getElementById('process-interactive');
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  var nodeEls = [];
+  var cardEls = [];
+
+  pathAccentEl.setAttribute('d', pathBaseEl.getAttribute('d'));
 
   PROCESS.forEach(function (item, i) {
     var n = i + 1;
-    var side = item.side || (item.y < PROCESS_VIEWBOX.h / 2 ? 'up' : 'down');
     var num = pad2(n);
-    var lineLabel = item.compactLabel ? num : (num + ' · ' + item.short);
 
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'timeline-node';
-    btn.dataset.step = n;
-    btn.dataset.side = side;
-    btn.style.left = (item.x / PROCESS_VIEWBOX.w * 100) + '%';
-    btn.style.top = (item.y / PROCESS_VIEWBOX.h * 100) + '%';
-    btn.innerHTML =
-      '<span class="timeline-node-label" aria-hidden="true">' + lineLabel + '</span>' +
-      '<span class="visually-hidden">' + item.claim + '</span>';
-
-    btn.addEventListener('mouseenter', function () { setActiveStep(n); });
-    btn.addEventListener('focus', function () { setActiveStep(n); });
-    btn.addEventListener('mouseleave', clearActiveStep);
-    btn.addEventListener('blur', clearActiveStep);
-
-    nodesEl.appendChild(btn);
+    var dot = document.createElementNS(SVG_NS, 'circle');
+    dot.setAttribute('class', 'timeline-node-dot');
+    dot.setAttribute('r', 6);
+    nodesSvgGroup.appendChild(dot);
+    nodeEls.push(dot);
 
     var card = document.createElement('div');
     card.className = 'process-card';
     card.dataset.step = n;
-    card.tabIndex = 0;
     card.innerHTML =
       '<span class="process-card-num">' + num + '</span>' +
       '<h3 class="process-card-claim">' + item.claim + '</h3>' +
-      '<p class="process-card-text">' + item.text + '</p>';
-
-    card.addEventListener('mouseenter', function () { setActiveStep(n); });
-    card.addEventListener('focus', function () { setActiveStep(n); });
-    card.addEventListener('mouseleave', clearActiveStep);
-    card.addEventListener('blur', clearActiveStep);
-
+      '<p class="process-card-text">' + item.text + '</p>' +
+      '<span class="visually-hidden">Step ' + num + ': ' + item.short + '</span>';
     cardsEl.appendChild(card);
+    cardEls.push(card);
   });
 
-  function setActiveStep(n) {
-    processInteractiveEl.classList.add('has-active');
-    document.querySelectorAll('.timeline-node').forEach(function (b) {
-      b.classList.toggle('active', Number(b.dataset.step) === n);
+  // Node positions are derived from the path's own geometry (viewBox units),
+  // so they never need recomputing on resize — only the SVG's rendered scale changes.
+  var pathTotalLength = pathBaseEl.getTotalLength();
+  nodeEls.forEach(function (dot, i) {
+    var frac = nodeEls.length > 1 ? i / (nodeEls.length - 1) : 0;
+    var pt = pathBaseEl.getPointAtLength(pathTotalLength * frac);
+    dot.setAttribute('cx', pt.x);
+    dot.setAttribute('cy', pt.y);
+  });
+
+  function renderProcessStatic() {
+    pathAccentEl.style.strokeDasharray = 'none';
+    pathAccentEl.style.strokeDashoffset = 0;
+    nodeEls.forEach(function (dot) {
+      dot.setAttribute('r', 8);
+      dot.style.fill = '#e8a13a';
     });
-    document.querySelectorAll('.process-card').forEach(function (c) {
-      c.classList.toggle('active', Number(c.dataset.step) === n);
+    cardEls.forEach(function (card) {
+      card.style.opacity = 1;
+      card.style.transform = 'none';
     });
   }
 
-  function clearActiveStep() {
-    processInteractiveEl.classList.remove('has-active');
-    document.querySelectorAll('.timeline-node.active, .process-card.active').forEach(function (el) {
-      el.classList.remove('active');
-    });
-  }
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var timelineEl = document.getElementById('process-timeline');
-  if ('IntersectionObserver' in window) {
-    var timelineObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          timelineEl.classList.add('is-drawn');
-          timelineObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.3 });
-    timelineObserver.observe(timelineEl);
+  if (prefersReducedMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    renderProcessStatic();
   } else {
-    timelineEl.classList.add('is-drawn');
+    var processMM = gsap.matchMedia();
+
+    processMM.add({
+      isDesktop: '(min-width: 900px)',
+      isMobile: '(max-width: 899px)'
+    }, function (context) {
+      var isDesktop = context.conditions.isDesktop;
+      var n = PROCESS.length;
+
+      if (isDesktop) {
+        gsap.set(cardEls, { opacity: 0.25, y: 10 });
+        gsap.set(cardEls[0], { opacity: 1, y: 0 });
+        gsap.set(nodeEls, { attr: { r: 6 }, fill: '#D3D1C7' });
+        gsap.set(nodeEls[0], { attr: { r: 8 }, fill: '#e8a13a' });
+        gsap.set(pathAccentEl, { strokeDasharray: pathTotalLength, strokeDashoffset: pathTotalLength });
+
+        var dur = Math.max(n - 1, 1);
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pinTargetEl,
+            start: 'top top',
+            end: '+=' + (n * 400),
+            pin: true,
+            scrub: 0.6,
+            anticipatePin: 1
+          }
+        });
+        tl.to(pathAccentEl, { strokeDashoffset: 0, ease: 'none', duration: dur }, 0);
+        for (var i = 1; i < n; i++) {
+          tl.to(cardEls[i - 1], { opacity: 0.25, y: 10, duration: 0.4, ease: 'power2.out' }, i);
+          tl.to(cardEls[i], { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, i);
+          tl.to(nodeEls[i], { attr: { r: 8 }, fill: '#e8a13a', duration: 0.4, ease: 'power2.out' }, i);
+        }
+      } else {
+        gsap.set(pathAccentEl, { strokeDasharray: 'none', strokeDashoffset: 0 });
+        gsap.set(nodeEls, { attr: { r: 8 }, fill: '#e8a13a' });
+        gsap.set(cardEls, { opacity: 0, y: 24 });
+
+        cardEls.forEach(function (card) {
+          gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: card, start: 'top 80%', toggleActions: 'play none none reverse' }
+          });
+        });
+      }
+    });
+
+    var refreshProcessOnce = function () { ScrollTrigger.refresh(); };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(refreshProcessOnce);
+    }
+    window.addEventListener('load', refreshProcessOnce);
   }
 
   /* ---------- Footer pills ---------- */
