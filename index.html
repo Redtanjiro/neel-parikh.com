@@ -1107,21 +1107,23 @@
   .pl-madewith {
     display: flex;
     align-items: center;
-    gap: 14px;
   }
   .pl-text {
     font-family: var(--ui);
     font-size: 15px;
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--paper);
   }
-  .pl-love-svg {
-    width: 130px;
-    height: auto;
-    display: block;
+  .pl-o {
+    width: 13px;
+    height: 12px;
+    display: inline-block;
+    margin: 0 1px;
     overflow: visible;
   }
-  .pl-love-svg path { fill: #fff; }
+  .pl-o path { fill: var(--paper); }
 
   .pl-signature {
     position: absolute;
@@ -1165,13 +1167,7 @@
 
 <div id="preloader" aria-hidden="true">
   <div class="pl-madewith">
-    <span class="pl-text">made with</span>
-    <svg class="pl-love-svg" viewBox="0 0 426 135" xmlns="http://www.w3.org/2000/svg">
-      <path class="love-letter" d="M0 131.286V0H28.6441V131.286H0ZM5.96753 131.286V107.217H84.1422V131.286H5.96753Z" />
-      <path id="loveO" d="M146.186 134.07C135.71 134.07 126.493 132.015 118.536 127.904C110.58 123.66 104.347 117.494 99.838 109.405C95.3292 101.183 93.0748 90.9717 93.0748 78.7714C93.0748 66.5711 95.3292 56.4263 99.838 48.337C104.479 40.2477 110.778 34.2138 118.735 30.2355C126.825 26.1245 135.975 24.069 146.186 24.069C156.662 24.069 165.879 26.1245 173.835 30.2355C181.925 34.3464 188.224 40.5129 192.733 48.7348C197.374 56.8241 199.695 66.9689 199.695 79.1692C199.695 91.5021 197.308 101.78 192.534 110.001C187.892 118.091 181.527 124.125 173.438 128.103C165.481 132.081 156.397 134.07 146.186 134.07ZM147.18 112.786C152.352 112.786 156.662 111.593 160.11 109.206C163.691 106.819 166.343 103.238 168.067 98.4642C169.923 93.5576 170.852 87.6564 170.852 80.7606C170.852 73.4669 169.857 67.3005 167.868 62.2612C166.011 57.0894 163.226 53.1773 159.513 50.5251C155.8 47.7402 151.092 46.3478 145.39 46.3478C140.484 46.3478 136.24 47.5413 132.659 49.9283C129.079 52.1827 126.36 55.7632 124.504 60.6699C122.647 65.4439 121.719 71.3451 121.719 78.3736C121.719 89.6455 123.973 98.199 128.482 104.034C132.991 109.869 139.224 112.786 147.18 112.786Z" />
-      <path class="love-letter" d="M241.986 131.286L207.176 27.0528H238.804L260.884 108.609H264.066L286.146 27.0528H316.581L281.571 131.286H241.986Z" />
-      <path class="love-letter" d="M378.155 134.07C369.535 134.07 361.844 132.877 355.08 130.49C348.45 128.103 342.814 124.655 338.172 120.146C333.531 115.637 329.95 110.068 327.431 103.437C325.044 96.8066 323.85 89.314 323.85 80.9595C323.85 72.7375 324.978 65.1787 327.232 58.2829C329.619 51.2544 333.067 45.2206 337.576 40.1814C342.084 35.0095 347.588 31.0312 354.086 28.2463C360.584 25.4615 367.944 24.069 376.166 24.069C384.122 24.069 391.217 25.3951 397.45 28.0474C403.683 30.567 408.855 34.4128 412.965 39.5846C417.209 44.7565 420.259 51.1218 422.116 58.6807C424.105 66.107 424.834 74.6604 424.304 84.3411L342.35 85.1367V69.4223L407.794 68.8255L397.649 76.7822C398.577 69.7538 398.113 63.9852 396.256 59.4764C394.4 54.9676 391.681 51.6523 388.101 49.5305C384.653 47.4087 380.807 46.3478 376.564 46.3478C371.524 46.3478 367.082 47.6739 363.236 50.3262C359.39 52.9784 356.407 56.8904 354.285 62.0623C352.163 67.1016 351.102 73.2017 351.102 80.3627C351.102 91.6347 353.555 99.923 358.462 105.227C363.501 110.532 370.066 113.184 378.155 113.184C381.868 113.184 384.984 112.72 387.504 111.792C390.156 110.731 392.278 109.405 393.869 107.813C395.593 106.222 396.919 104.432 397.848 102.443C398.909 100.453 399.771 98.4642 400.434 96.4751L425.298 101.846C424.105 106.752 422.315 111.195 419.928 115.173C417.673 119.019 414.623 122.401 410.777 125.318C406.932 128.103 402.29 130.225 396.853 131.683C391.549 133.275 385.316 134.07 378.155 134.07Z" />
-    </svg>
+    <span class="pl-text">made with&nbsp;</span><span class="pl-text love-letter">l</span><svg class="pl-o" viewBox="0 0 134 123" xmlns="http://www.w3.org/2000/svg"><path id="loveO" fill-rule="evenodd" d="M117,61.5 A50,50 0 1,0 17,61.5 A50,50 0 1,0 117,61.5 Z M89,61.5 A22,22 0 1,0 45,61.5 A22,22 0 1,0 89,61.5 Z" /></svg><span class="pl-text love-letter">ve</span>
   </div>
   <div class="pl-signature" id="plSignature"></div>
 </div>
@@ -1206,16 +1202,7 @@
   var loveO = document.getElementById('loveO');
   var loveLetters = document.querySelectorAll('.love-letter');
   var madewith = document.querySelector('.pl-madewith');
-  var madeWithText = document.querySelector('.pl-text');
-  var loveSvg = document.querySelector('.pl-love-svg');
   var sigEl = document.getElementById('plSignature');
-
-  /* "o" bounding box center (~146, 79) minus the heart's own raw bounding-box
-     center (~67, 61) in Vector.svg's coordinate space — MorphSVG rewrites
-     #loveO's path data using the heart's raw coordinates, it doesn't
-     reposition them, so this offset is tweened in, not baked into the d string. */
-  var HEART_OFFSET_X = 79;
-  var HEART_OFFSET_Y = 18;
 
   function buildSignature() {
     var groups = [
@@ -1245,12 +1232,11 @@
 
   var tl = gsap.timeline({ onComplete: finish });
 
-  tl.from([madeWithText, loveSvg], { opacity: 0, y: 16, duration: 0.5, ease: 'power3.out', stagger: 0.08 })
+  tl.from(madewith, { opacity: 0, y: 16, duration: 0.5, ease: 'power3.out' })
     .to({}, { duration: 0.4 })
     .to(loveLetters, { opacity: 0, duration: 0.4, ease: 'power2.in', stagger: 0.06 }, '<')
     .to(loveO, {
       morphSVG: { shape: HEART_D, type: 'rotational' },
-      x: HEART_OFFSET_X, y: HEART_OFFSET_Y,
       fill: '#e8a13a',
       duration: 0.9, ease: 'power2.inOut'
     }, '<')
