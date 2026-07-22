@@ -53,8 +53,8 @@ window.PROJECTS = [
     disciplines: ["Immersive"],
     description: "A speculative light-and-sound installation for Vivid Sydney, designed solo for a UNSW immersive design course.",
     accent: "#e3a05c",
-    featured: false,
-    speculative: true // academic/coursework, not client work — kept out of the
-                       // Chosen Work grid; see .chosen-work-speculative in index.html
+    featured: true,
+    speculative: true // academic/coursework, not client work — still shown
+                       // in the Chosen Work grid alongside client projects
   }
 ];

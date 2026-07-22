@@ -139,7 +139,7 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 /resources.html    Quadrant canvas of stamps  ✅ LIVE — placeholder data, see below
 ```
 
-**Into Yesterday sits apart from the other three case studies deliberately.** It's not in the Chosen Work accordion or the nav — it's surfaced via its own labeled `.chosen-work-speculative` block on the homepage ("Speculative / Coursework — not client work"), directly below the client-work grid's "See all work" link, so a reader sees the client-vs-coursework distinction before opening it. Registered in `assets/projects.js` with `featured: false, speculative: true` for whenever `/work.html` gets built.
+**Into Yesterday sits in the Chosen Work accordion alongside the client case studies** (`featured: true` in `assets/projects.js`, `speculative: true` retained as metadata for whenever `/work.html` gets built) — the earlier session's separate "Speculative / Coursework" block was removed by request; there's no visual distinction from client work in the grid itself, only within the case study page's own honest-framing copy.
 
 **Nav:** Work · About · Contact · Resources. Work anchor-scrolls to Chosen Work (does *not* go to `/work.html`). **About anchor-scrolls to `#about` on the homepage** (not a separate route — see `BUILD-SPEC-ABOUT.md`). Contact → `/contact.html`. Resources → `/resources.html`. **Nothing in the nav points to `/work.html`** — it's reached only via "See all work".
 

@@ -768,69 +768,6 @@
     padding-bottom: 2px;
   }
 
-  /* Speculative / coursework work — kept visually separate from client
-     work rather than blended into the same filtered accordion grid, so
-     the client-vs-coursework distinction reads before a visitor opens
-     the case study. */
-  .chosen-work-speculative {
-    margin-top: 56px;
-    padding-top: 32px;
-    border-top: 1px dashed var(--line);
-  }
-  .speculative-label {
-    display: block;
-    font-family: var(--ui);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: rgba(20, 18, 16, 0.5);
-    margin-bottom: 18px;
-  }
-  .speculative-card {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 8px 4px;
-    text-decoration: none;
-    color: var(--ink);
-  }
-  .speculative-card-num {
-    font-family: var(--mono);
-    font-size: 14px;
-    color: rgba(20, 18, 16, 0.4);
-    min-width: 34px;
-  }
-  .speculative-card-body { flex: 1; min-width: 0; }
-  .speculative-card-title {
-    display: block;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(22px, 3vw, 32px);
-    letter-spacing: -0.01em;
-  }
-  .speculative-card-desc {
-    display: block;
-    font-family: var(--body);
-    font-size: 14.5px;
-    line-height: 1.5;
-    color: rgba(20, 18, 16, 0.62);
-    margin-top: 6px;
-    max-width: 52ch;
-  }
-  .speculative-card-arrow {
-    font-family: var(--ui);
-    font-size: 20px;
-    flex: none;
-    transition: transform .2s ease;
-  }
-  .speculative-card:hover .speculative-card-arrow,
-  .speculative-card:focus-visible .speculative-card-arrow {
-    transform: translateX(4px);
-  }
-  @media (max-width: 640px) {
-    .speculative-card { flex-wrap: wrap; }
-    .speculative-card-arrow { display: none; }
-  }
 
   /* ============ MY PROCESS ============ */
   .process {
@@ -1401,18 +1338,6 @@
     <p class="empty-state" id="chosen-empty">New work landing here soon.</p>
 
     <a href="/work.html" class="see-all">See all work →</a>
-
-    <div class="chosen-work-speculative">
-      <span class="speculative-label">SPECULATIVE / COURSEWORK — NOT CLIENT WORK</span>
-      <a href="/work/into-yesterday.html" class="speculative-card">
-        <span class="speculative-card-num">04</span>
-        <span class="speculative-card-body">
-          <span class="speculative-card-title">Into Yesterday</span>
-          <span class="speculative-card-desc">A speculative light-and-sound installation for Vivid Sydney, designed solo for a UNSW immersive design course.</span>
-        </span>
-        <span class="speculative-card-arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
   </div>
 </section>
 
