@@ -9,14 +9,13 @@
 <link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@1,9..144,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --display: 'Bricolage Grotesque', sans-serif;
     --body: 'DM Sans', sans-serif;
     --ui: 'Inter', sans-serif;
     --mono: 'JetBrains Mono', monospace;
-    --font-voice: 'Fraunces', serif; /* intro signature only — see CLAUDE.md */
 
     --amber: #e8a13a;
     --ink: #141210;
@@ -1044,58 +1043,6 @@
     .footer-pill { padding: 16px 26px; font-size: 16px; }
   }
 
-  /* ============ INTRO (frosted-glass, scroll-scrubbed) ============ */
-  html.no-intro .intro-glass { display: none; }
-
-  .intro-glass {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(244, 241, 234, 0.5);
-    pointer-events: none;
-  }
-  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-    .intro-glass {
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-  }
-
-  .intro-signature {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0 24px;
-    font-family: var(--font-voice);
-    font-style: italic;
-    font-size: clamp(22px, 4.2vw, 38px);
-    color: var(--ink);
-    text-shadow: 0 1px 16px rgba(255, 255, 255, 0.55);
-    text-align: center;
-  }
-  .intro-char {
-    display: inline-block;
-    white-space: pre;
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  .intro-heart {
-    width: 0.72em;
-    height: 0.66em;
-    margin-left: 0.18em;
-    flex: none;
-    overflow: visible;
-    transform-origin: 50% 50%;
-  }
-  .intro-heart path { fill: var(--amber); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .intro-glass { display: none; }
-  }
 </style>
 </head>
 <body>
@@ -1105,12 +1052,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
 <script>
   gsap.registerPlugin(ScrollTrigger, SplitText);
-</script>
-
-<script>
-  if (sessionStorage.getItem('np_intro_shown')) {
-    document.documentElement.classList.add('no-intro');
-  }
 </script>
 
 <header class="site-nav" id="site-nav">
@@ -1250,12 +1191,6 @@
   </button>
 
   <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
-
-  <div class="intro-glass" id="introGlass" aria-hidden="true">
-    <p class="intro-signature" id="introSignature">
-      <span id="introWords"></span><svg class="intro-heart" id="introHeart" viewBox="0 0 134 123" xmlns="http://www.w3.org/2000/svg"><path d="M66.9947 122.935L57.2804 114.092C22.7782 82.8054 0 62.104 0 36.8471C0 16.1457 16.2127 0 36.8471 0C48.5041 0 59.6922 5.42657 66.9947 13.9349C74.2971 5.42657 85.4852 0 97.1423 0C117.777 0 133.989 16.1457 133.989 36.8471C133.989 62.104 111.211 82.8054 76.7089 114.092L66.9947 122.935Z" /></svg>
-    </p>
-  </div>
 </section>
 
 <div class="pose-scrub" id="pose-scrub" aria-hidden="true"></div>
@@ -1376,118 +1311,6 @@
 <script>
 (function () {
   'use strict';
-
-  /* ---------- Frosted-glass scroll-scrubbed intro ----------
-     Pins #hero itself (not a separate section) so the intro overlays the
-     real hero rather than adding a section above it. Hero's own document
-     position stays 0 either way — pinning holds it visually in place
-     without moving it in the flow — but the pin still consumes 1400px of
-     scroll during which hero LOOKS frozen rather than actually scrolling.
-     The hero pose-scrub further below used to assume "scrollY approaching
-     hero's own height" meant hero was about to scroll away; that's no
-     longer true while the pin is active, so it now measures where #about
-     actually sits instead of reconstructing the pin math itself. */
-  (function () {
-    var heroEl = document.getElementById('hero');
-    var glass = document.getElementById('introGlass');
-    var wordsEl = document.getElementById('introWords');
-    var heart = document.getElementById('introHeart');
-    var signature = document.getElementById('introSignature');
-    if (!heroEl || !glass || !wordsEl || !heart) return;
-
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var alreadySeen = sessionStorage.getItem('np_intro_shown');
-
-    // Return visit within the same session: html.no-intro (set synchronously
-    // in <head>) already hides .intro-glass via CSS — nothing to wire up,
-    // and critically no ScrollTrigger.create() call, so no pin-spacer and
-    // no dead scroll space where the intro would have been.
-    if (alreadySeen) return;
-    sessionStorage.setItem('np_intro_shown', '1');
-
-    if (reduceMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      glass.style.display = 'none';
-      return;
-    }
-
-    var WORD = 'hand drawn with love';
-    var charSpans = [];
-    WORD.split('').forEach(function (ch) {
-      var span = document.createElement('span');
-      span.className = 'intro-char';
-      span.textContent = ch === ' ' ? ' ' : ch;
-      wordsEl.appendChild(span);
-      charSpans.push(span);
-    });
-
-    gsap.set(heart, { rotation: -230, scale: 0, transformOrigin: '50% 50%' });
-
-    var mm = gsap.matchMedia();
-
-    mm.add({
-      isDesktop: '(min-width: 900px)',
-      isMobile: '(max-width: 899px)'
-    }, function (context) {
-      if (context.conditions.isDesktop) {
-        var tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroEl,
-            start: 'top top',
-            end: '+=1400', // main feel dial — how much scroll the whole intro takes to play through
-            pin: true,
-            scrub: 0.5,
-            anticipatePin: 1,
-            // Once scrolled past, stop listening so scrolling back up can't re-drive
-            // the scrub in reverse (glass re-opacifying, pin re-engaging). scrub smoothing
-            // (0.5s) lags real scroll position, so a fast scroll can reach onLeave before
-            // the tween visually catches up — snap to the finished frame first, then
-            // kill(false, true), which skips reverting the pin/DOM (already correctly
-            // unpinned at this point) and leaves those end values in place: a one-way intro.
-            onLeave: function (self) { tl.progress(1); self.kill(false, true); }
-          }
-        });
-
-        tl.to(charSpans, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.035 }, 0)
-          .to(heart, { rotation: 0, scale: 1, duration: 0.8, ease: 'back.out(1.5)' }, '-=0.15')
-          .to({}, { duration: 0.6 })
-          .to(signature, { opacity: 0, y: -24, duration: 0.6, ease: 'none' })
-          .to(glass, { opacity: 0, duration: 0.7, ease: 'none' }, '<+=0.1');
-      } else {
-        // Mobile: backdrop-filter blur is the most likely thing to stutter
-        // here, so there's no pin and no scrubbed char/heart reveal — the
-        // signature and heart render already-settled, and the glass just
-        // clears on a short, unpinned opacity fade as the visitor starts
-        // scrolling.
-        gsap.set(charSpans, { opacity: 1, y: 0 });
-        gsap.set(heart, { rotation: 0, scale: 1 });
-
-        var mobileFade = gsap.to(glass, {
-          opacity: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: heroEl,
-            start: 'top top',
-            end: '+=400',
-            scrub: 0.3,
-            onLeave: function (self) { mobileFade.progress(1); self.kill(false, true); }
-          }
-        });
-      }
-    });
-
-    // Fonts (the italic serif signature) and the inline heart SVG can both
-    // shift layout after ScrollTrigger's first pass — refresh once they've
-    // settled, then nudge the hero pose-scrub (below) to re-measure via its
-    // existing resize listener rather than reaching into its closure.
-    var refreshOnce = function () {
-      ScrollTrigger.refresh();
-      window.dispatchEvent(new Event('resize'));
-    };
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(refreshOnce);
-    }
-    window.addEventListener('load', refreshOnce);
-  })();
 
   /* ---------- nav pill shrink/expand on scroll ---------- */
   var nav = document.getElementById('site-nav');
@@ -1793,13 +1616,9 @@
 
     function measure() {
       heroHeightPx = hero.offsetHeight;
-      /* zoneEndPx is the scrollY at which #about actually begins — normally
-         that's just heroHeightPx (About sits right after hero, hero starts
-         at document position 0), but the intro's pinned ScrollTrigger now
-         consumes extra *frozen* scroll distance before hero is free to
-         scroll away, which heroHeightPx alone doesn't know about. Measuring
-         #about's own position directly sidesteps reconstructing that pin
-         math and stays correct regardless of how long the intro's pin is. */
+      /* zoneEndPx is the scrollY at which #about actually begins — measuring
+         #about's own runtime position directly (rather than assuming it's
+         just heroHeightPx) stays correct even if hero's height changes. */
       zoneEndPx = aboutSection ? (aboutSection.getBoundingClientRect().top + window.scrollY) : heroHeightPx;
       var r = illo.getBoundingClientRect();
       landingRect = { left: r.left, width: r.width, top: 100, height: r.width * (858 / 828) };
@@ -1851,9 +1670,8 @@
       heroPoseEls.forEach(function (el) { el.style.opacity = '0'; });
 
       /* rectA.top is hero's viewport position (in px) at the instant
-         scrollY === zoneStart. Hero's own document top is always 0 (the
-         intro pins hero in place rather than inserting a section above
-         it), so this is just 0 - zoneStart === -(zoneEndPx - ZONE_PX). */
+         scrollY === zoneStart. Hero's own document top is always 0, so
+         this is just 0 - zoneStart === -(zoneEndPx - ZONE_PX). */
       var rectA = { left: 0, top: -(zoneEndPx - ZONE_PX), width: window.innerWidth, height: heroHeightPx };
       var rectB = landingRect;
 
