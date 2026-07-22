@@ -1511,7 +1511,14 @@
             end: '+=1400', // main feel dial — how much scroll the whole intro takes to play through
             pin: true,
             scrub: 0.5,
-            anticipatePin: 1
+            anticipatePin: 1,
+            // Once scrolled past, stop listening so scrolling back up can't re-drive
+            // the scrub in reverse (glass re-opacifying, pin re-engaging). scrub smoothing
+            // (0.5s) lags real scroll position, so a fast scroll can reach onLeave before
+            // the tween visually catches up — snap to the finished frame first, then
+            // kill(false, true), which skips reverting the pin/DOM (already correctly
+            // unpinned at this point) and leaves those end values in place: a one-way intro.
+            onLeave: function (self) { tl.progress(1); self.kill(false, true); }
           }
         });
 
@@ -1529,14 +1536,15 @@
         gsap.set(charSpans, { opacity: 1, y: 0 });
         gsap.set(heart, { rotation: 0, scale: 1 });
 
-        gsap.to(glass, {
+        var mobileFade = gsap.to(glass, {
           opacity: 0,
           ease: 'none',
           scrollTrigger: {
             trigger: heroEl,
             start: 'top top',
             end: '+=400',
-            scrub: 0.3
+            scrub: 0.3,
+            onLeave: function (self) { mobileFade.progress(1); self.kill(false, true); }
           }
         });
       }
