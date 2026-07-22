@@ -27,7 +27,7 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 1. **Futee real assets** — 6 placeholder slots await final art: `futee-cover`, `futee-process-teardown`, `futee-booking-night` (⭐ largest, make-or-break), `futee-owner-backend`, `futee-rating-ui`, `futee-final-shots` (×2). The coach card is the one thing already built for real (interactive hover/flip).
 2. **EMF-ACE confirms** — India→Abu Dhabi remote framing is now confirmed (designed remotely from India, environmental branding executed on-site in a single day) and no longer marked. One `[CONFIRM]` span remains: the studio name ("Media Mushroom," in the hero meta's Role line). One placeholder remains (`emf-award-or-spread`, optional) — everything else uses real campaign assets already in `work/emf-ace/assets/`.
 3. **CSEDS Lighthouse score** — the one genuinely missing fact, two placeholder chips (`.cs-lighthouse-placeholder`) waiting on a real mobile score run against the live site.
-4. Two homepage About-section placeholders from `BUILD-SPEC-ABOUT.md` — the blurb (`<!-- ABOUT COPY GOES HERE -->`) and the AU work-rights line (`<!-- WORK RIGHTS LINE GOES HERE -->`) in `index.html`. Don't guess at citizen/PR/visa status.
+4. ~~Two homepage About-section placeholders~~ — **done.** The About blurb is filled in with Neel's own copy (three paragraphs, in `.about-copy`). The AU work-rights line was removed outright rather than filled in — `.about-work-rights` and its placeholder span no longer exist in `index.html`.
 
 **Don't assume old case-study copy was "unwritten" just because a new spec says so** — check the live page first. This session found EMF-ACE and CSEDS both already had specific, real, previously-approved copy that a fresh spec incorrectly assumed didn't exist yet; both were restructured into four moves rather than overwritten with generic placeholder text. See the "Copy note" in each spec file.
 
@@ -118,6 +118,7 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 | `BUILD-SPEC-CSEDS-MOVES.md` | CSEDS case study, old 8-section → four-move; all copy is `[COPY TBD]`, real assets reused | Built |
 | `BUILD-SPEC-PRELOADER.md` | Homepage-only preloader — black hold → hand-drawn mug line-draw → signature → dissolve into the hero | ⛔ Superseded by `BUILD-SPEC-PRELOADER-V2.md` |
 | `BUILD-SPEC-PRELOADER-V2.md` | Homepage preloader v2 — GSAP + MorphSVGPlugin, "love" wordmark morphs its "o" into a heart, then signature writes in letter by letter | Built |
+| `BUILD-SPEC-INTO-YESTERDAY.md` | Fourth case study, `/work/into-yesterday.html` — a speculative Vivid Sydney installation, DDES9010 coursework, not client work. Own four-move build, own palette, no device frames | Built — copy is Claude-drafted per an explicit one-off exception to "Neel writes the copy," awaiting his edit/approval before it ships |
 
 **⚠️ `BUILD-SPEC.md` is partly superseded.** It still describes a click-accordion for Chosen Work (now hover-expand — see `BUILD-SPEC-WORK.md`) and an All Work section on the homepage (now moved to `/work.html` — see `BUILD-SPEC-PROCESS.md`). **When they conflict, the later spec wins.**
 
@@ -130,11 +131,14 @@ All three case studies (`/work/futee.html`, `/work/emf-ace.html`, `/work/cseds.h
 /work.html         All Work        (not built — linked from "See all work")
 /about.html        About           (not built — About lives inline on / at #about instead, see below)
 /contact.html      Contact         (not built)
-/work/futee.html   Case study      ✅ LIVE — four-move rebuild
-/work/emf-ace.html Case study      ✅ LIVE
-/work/cseds.html   Case study      ✅ LIVE
+/work/futee.html          Case study      ✅ LIVE — four-move rebuild
+/work/emf-ace.html        Case study      ✅ LIVE
+/work/cseds.html          Case study      ✅ LIVE
+/work/into-yesterday.html Case study      ✅ Built — speculative/coursework, not client work; see BUILD-SPEC-INTO-YESTERDAY.md
 /resources.html    Quadrant canvas of stamps  ✅ LIVE — placeholder data, see below
 ```
+
+**Into Yesterday sits apart from the other three case studies deliberately.** It's not in the Chosen Work accordion or the nav — it's surfaced via its own labeled `.chosen-work-speculative` block on the homepage ("Speculative / Coursework — not client work"), directly below the client-work grid's "See all work" link, so a reader sees the client-vs-coursework distinction before opening it. Registered in `assets/projects.js` with `featured: false, speculative: true` for whenever `/work.html` gets built.
 
 **Nav:** Work · About · Contact · Resources. Work anchor-scrolls to Chosen Work (does *not* go to `/work.html`). **About anchor-scrolls to `#about` on the homepage** (not a separate route — see `BUILD-SPEC-ABOUT.md`). Contact → `/contact.html`. Resources → `/resources.html`. **Nothing in the nav points to `/work.html`** — it's reached only via "See all work".
 

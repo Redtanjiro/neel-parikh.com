@@ -596,11 +596,6 @@
   }
   .about-resume-link:hover,
   .about-resume-link:focus-visible { color: var(--amber); }
-  .about-work-rights {
-    font-family: var(--ui);
-    font-size: 13px;
-    color: rgba(20, 18, 16, 0.6);
-  }
 
   .about-stack-label {
     display: block;
@@ -768,6 +763,70 @@
     text-decoration: none;
     border-bottom: 1px solid var(--ink);
     padding-bottom: 2px;
+  }
+
+  /* Speculative / coursework work — kept visually separate from client
+     work rather than blended into the same filtered accordion grid, so
+     the client-vs-coursework distinction reads before a visitor opens
+     the case study. */
+  .chosen-work-speculative {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px dashed var(--line);
+  }
+  .speculative-label {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: rgba(20, 18, 16, 0.5);
+    margin-bottom: 18px;
+  }
+  .speculative-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 8px 4px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .speculative-card-num {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: rgba(20, 18, 16, 0.4);
+    min-width: 34px;
+  }
+  .speculative-card-body { flex: 1; min-width: 0; }
+  .speculative-card-title {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: -0.01em;
+  }
+  .speculative-card-desc {
+    display: block;
+    font-family: var(--body);
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: rgba(20, 18, 16, 0.62);
+    margin-top: 6px;
+    max-width: 52ch;
+  }
+  .speculative-card-arrow {
+    font-family: var(--ui);
+    font-size: 20px;
+    flex: none;
+    transition: transform .2s ease;
+  }
+  .speculative-card:hover .speculative-card-arrow,
+  .speculative-card:focus-visible .speculative-card-arrow {
+    transform: translateX(4px);
+  }
+  @media (max-width: 640px) {
+    .speculative-card { flex-wrap: wrap; }
+    .speculative-card-arrow { display: none; }
   }
 
   /* ============ MY PROCESS ============ */
@@ -1364,14 +1423,13 @@
   <div class="about-content" id="about-content">
     <span class="eyebrow">ABOUT</span>
     <div class="about-copy">
-      <!-- ABOUT COPY GOES HERE — Neel writes this, not Claude. -->
-      <p class="is-placeholder">Placeholder — Neel to write a short about-me paragraph here.</p>
+      <p>That scene up there is my desk. Literally — I painted it. This whole site works the same way: a version of my workspace, collecting the projects I'm happy with (or was, at the time) and the experiments in between.</p>
+      <p>I've been doing this for a while — four years in industry, most recently as Design Lead at Media Mushroom, and now a Master of Design at UNSW here in Sydney. I draw by hand, and I build with AI — this site is hand-illustrated, then coded side by side with Claude. That's the long way of saying I like the spot where craft meets code.</p>
+      <p>And with AI — I don't want to be lost in it, but I don't want to be someone who just uses it either. There's a middle ground, and I've been chasing it for a while now. This site is my current answer: drawn by hand, built with AI, moving.</p>
     </div>
     <p class="about-credential">~4 years in industry — Design Lead at Media Mushroom — before an MDes at UNSW.</p>
     <div class="about-resume">
       <a href="/assets/files/neel-parikh-cv.pdf" class="about-resume-link" target="_blank" rel="noopener">Résumé (PDF) ↗</a>
-      <!-- WORK RIGHTS LINE GOES HERE — Neel to confirm exact wording (citizen / PR / visa status). -->
-      <span class="about-work-rights is-placeholder">Placeholder — work rights line.</span>
     </div>
 
     <div class="about-stack">
@@ -1425,6 +1483,18 @@
     <p class="empty-state" id="chosen-empty">New work landing here soon.</p>
 
     <a href="/work.html" class="see-all">See all work →</a>
+
+    <div class="chosen-work-speculative">
+      <span class="speculative-label">SPECULATIVE / COURSEWORK — NOT CLIENT WORK</span>
+      <a href="/work/into-yesterday.html" class="speculative-card">
+        <span class="speculative-card-num">04</span>
+        <span class="speculative-card-body">
+          <span class="speculative-card-title">Into Yesterday</span>
+          <span class="speculative-card-desc">A speculative light-and-sound installation for Vivid Sydney, designed solo for a UNSW immersive design course.</span>
+        </span>
+        <span class="speculative-card-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 </section>
 

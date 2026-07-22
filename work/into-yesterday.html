@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Into Yesterday — Neel Parikh</title>
+<meta name="description" content="Into Yesterday: a speculative immersive light-and-sound installation for Vivid Sydney, designed solo for DDES9010. Case study by Neel Parikh.">
+<link rel="icon" type="image/png" href="/assets/favicon/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --ui: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+
+    /* site-wide tokens (nav + footer reuse these) */
+    --amber: #e8a13a;
+    --ink: #141210;
+    --paper: #f4f1ea;
+    --line: rgba(20, 18, 16, 0.12);
+
+    /* Into Yesterday world tokens — dusk-lit maze, night water, memory orbs */
+    --night: #150f1c;
+    --dusk: #e3a05c;
+    --mist: #e8ddd3;
+    --orb: #c2447a;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 140px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--night);
+    color: var(--mist);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--dusk);
+    outline-offset: 3px;
+  }
+
+  /* ============ NAV (shared, site-wide) ============ */
+  .site-nav {
+    position: fixed;
+    top: 20px; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    font-family: var(--ui);
+    transition: top .45s cubic-bezier(.16,1,.3,1);
+  }
+  .site-nav.shrunk { top: 12px; }
+
+  .nav-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    max-width: 760px;
+    width: calc(100% - 40px);
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: rgba(20, 18, 16, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1),
+                padding .45s cubic-bezier(.16,1,.3,1),
+                gap .45s cubic-bezier(.16,1,.3,1),
+                background-color .45s ease;
+  }
+  .shrunk .nav-pill {
+    max-width: 440px;
+    padding: 8px 20px;
+    gap: 18px;
+    background: rgba(20, 18, 16, 0.5);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .nav-brand-expanded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    max-width: 220px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .nav-brand-expanded { max-width: 0; opacity: 0; }
+
+  .nav-sprite {
+    height: 30px;
+    width: auto;
+    flex: none;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    transform-origin: bottom center;
+    animation: sprite-bob 3.2s ease-in-out infinite;
+  }
+  .shrunk .nav-sprite { animation: none; }
+  @keyframes sprite-bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-2px) rotate(1.5deg); }
+  }
+
+  .wordmark-full {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .wordmark-compact {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+  }
+  .shrunk .wordmark-compact {
+    max-width: 40px;
+    opacity: 1;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1) .1s, opacity .3s ease .15s;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    list-style: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding-bottom: 6px;
+    transition: color .25s ease, font-size .3s ease;
+  }
+  .shrunk .nav-link { font-size: 12px; }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--amber) !important;
+  }
+
+  .nav-underline {
+    position: absolute;
+    left: -4%;
+    bottom: -3px;
+    width: 108%;
+    height: 14px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .nav-underline path {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .5s ease, opacity .12s ease;
+  }
+  .nav-link:hover .nav-underline path,
+  .nav-link:focus-visible .nav-underline path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  .nav-link--work .nav-underline { transform: rotate(-0.6deg) scaleY(1); }
+  .nav-link--about .nav-underline { transform: rotate(0.9deg) scaleY(1.1); }
+  .nav-link--contact .nav-underline { transform: rotate(-1.2deg) scaleY(0.9); }
+  .nav-link--resources .nav-underline { transform: rotate(0.7deg) scaleY(1.05); }
+
+  .nav-clock {
+    flex: none;
+    overflow: hidden;
+    max-width: 160px;
+    opacity: 1;
+    margin-left: 22px;
+    transition: max-width .45s cubic-bezier(.16,1,.3,1), opacity .3s ease, margin-left .45s ease;
+  }
+  .shrunk .nav-clock { max-width: 0; opacity: 0; margin-left: 0; }
+
+  .nav-clock-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .nav-clock-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex: none;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .nav-pill, .nav-brand-expanded, .wordmark-compact,
+    .nav-link, .nav-clock, .nav-underline path { transition: none; }
+    .nav-sprite, .nav-clock-dot { animation: none; }
+  }
+
+  /* ============ CASE STUDY SHELL ============ */
+  .iy-section {
+    padding: clamp(48px, 6vw, 76px) clamp(20px, 5vw, 56px);
+    max-width: 880px;
+    margin: 0 auto;
+    scroll-margin-top: 140px;
+  }
+  .iy-divider { width: 100%; max-width: 880px; height: 20px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); box-sizing: border-box; }
+  .iy-divider svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .iy-divider path {
+    fill: none;
+    stroke: rgba(232, 221, 211, 0.22);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .iy-eyebrow-dark {
+    display: block;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--dusk);
+    margin-bottom: 14px;
+  }
+  .iy-h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+    margin: 0 0 22px;
+  }
+  .iy-body-lg {
+    font-family: var(--body);
+    font-size: clamp(16px, 1.6vw, 18px);
+    line-height: 1.65;
+    color: rgba(232, 221, 211, 0.85);
+    max-width: 64ch;
+    margin: 0 0 16px;
+  }
+
+  /* ============ STICKY SECTION NAV ============ */
+  .iy-secnav {
+    position: fixed;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .iy-secnav-track {
+    position: relative;
+    width: 2px;
+    align-self: stretch;
+    background: rgba(232, 221, 211, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .iy-secnav-progress {
+    position: absolute;
+    inset: 0;
+    background: var(--dusk);
+    border-radius: 2px;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  .iy-secnav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .iy-secnav a {
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(232, 221, 211, 0.45);
+    text-decoration: none;
+    text-align: left;
+    transition: color .2s ease;
+  }
+  .iy-secnav a:hover,
+  .iy-secnav a:focus-visible {
+    color: var(--dusk);
+  }
+  .iy-secnav a.is-active {
+    color: var(--dusk);
+    font-weight: 700;
+  }
+  @media (max-width: 1180px) {
+    .iy-secnav { display: none; }
+  }
+
+  /* ============ HERO ============ */
+  .iy-hero {
+    padding: clamp(120px, 16vw, 180px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 72px);
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: end;
+  }
+  .iy-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--dusk);
+    margin-bottom: 18px;
+  }
+  .iy-title {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(38px, 6.4vw, 84px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--mist);
+  }
+  .iy-dot { color: var(--dusk); }
+  .iy-lede {
+    font-family: var(--body);
+    font-size: clamp(16px, 1.8vw, 19px);
+    line-height: 1.55;
+    color: rgba(232, 221, 211, 0.85);
+    max-width: 46ch;
+    margin: 20px 0 0;
+  }
+  .iy-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 28px;
+    margin: 40px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(232, 221, 211, 0.16);
+  }
+  .iy-meta div { margin: 0; }
+  .iy-meta dt {
+    font-family: var(--ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(232, 221, 211, 0.5);
+    margin-bottom: 6px;
+  }
+  .iy-meta dd {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--mist);
+    margin: 0;
+  }
+  .iy-hero-art { width: 100%; border-radius: 12px; overflow: hidden; }
+  .iy-hero-art img { width: 100%; height: auto; }
+  @media (max-width: 820px) {
+    .iy-hero { grid-template-columns: 1fr; }
+    .iy-hero-art { max-width: 320px; margin: 0 auto; }
+    .iy-meta { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============ TILE GRID / FIGURES (renders shown flat, full-bleed — no device frames) ============ */
+  .iy-tile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 24px;
+    margin-top: 40px;
+  }
+  .iy-tile { margin: 0; }
+  .iy-tile-frame {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(232, 221, 211, 0.14);
+    background: #0c0810;
+  }
+  .iy-tile-frame img { width: 100%; height: auto; display: block; }
+  .iy-tile figcaption {
+    font-family: var(--ui);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgba(232, 221, 211, 0.7);
+    margin-top: 10px;
+  }
+  .iy-tile figcaption strong { color: var(--mist); font-weight: 600; }
+  @media (max-width: 640px) {
+    .iy-tile-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ KILLED / PIVOT ============ */
+  .iy-killed-callout {
+    margin-top: 28px;
+    padding: 22px 26px;
+    background: rgba(227, 160, 92, 0.08);
+    border-left: 3px solid var(--dusk);
+    border-radius: 4px;
+  }
+  .iy-killed-callout p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--mist);
+    margin: 0;
+  }
+  .iy-killed-callout strong { color: var(--dusk); }
+  .iy-killed-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 36px;
+    align-items: start;
+  }
+  .iy-killed-compare .iy-tile-frame { max-width: 100%; margin: 0; }
+  @media (max-width: 640px) {
+    .iy-killed-compare { grid-template-columns: 1fr; }
+  }
+
+  /* ============ PANEL FIGURE (single supporting image) ============ */
+  .iy-panel-figure { margin: 40px 0 0; }
+  .iy-panel-figure .iy-tile-frame { max-width: 100%; margin: 0; }
+  .iy-panel-figure figcaption {
+    font-family: var(--ui);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(232, 221, 211, 0.65);
+    margin-top: 12px;
+  }
+  .iy-panel-figure--narrow { max-width: 420px; }
+
+  /* ============ STORYBOARD STACK ============ */
+  .iy-storyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 36px;
+  }
+  .iy-storyboard .iy-tile-frame { max-width: 100%; }
+  .iy-storyboard figcaption {
+    font-family: var(--ui);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgba(232, 221, 211, 0.6);
+    margin-top: 10px;
+  }
+
+  /* ============ SENSORY LIST ============ */
+  .iy-sensory-list {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 28px;
+  }
+  .iy-sensory-list li {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(232, 221, 211, 0.85);
+    padding-left: 18px;
+    position: relative;
+  }
+  .iy-sensory-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--orb);
+  }
+  .iy-sensory-list strong { color: var(--mist); font-weight: 600; }
+  @media (max-width: 640px) {
+    .iy-sensory-list { grid-template-columns: 1fr; }
+  }
+
+  /* ============ HONEST OUTCOME CALLOUT ============ */
+  .iy-outcome-callout {
+    margin-top: 32px;
+    padding: 22px 26px;
+    background: rgba(194, 68, 122, 0.08);
+    border-left: 3px solid var(--orb);
+    border-radius: 4px;
+  }
+  .iy-outcome-callout p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--mist);
+    margin: 0;
+  }
+  .iy-outcome-callout strong { color: var(--orb); }
+
+  /* ============ PAGENAV ============ */
+  .iy-pagenav {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 34px clamp(20px, 5vw, 56px) 0;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(232, 221, 211, 0.16);
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .iy-pagenav a { color: rgba(232, 221, 211, 0.6); text-decoration: none; }
+  .iy-pagenav a:hover { color: var(--dusk); }
+
+  /* ============ FOOTER (shared, site-wide) ============ */
+  .site-footer {
+    background: var(--ink);
+    padding: clamp(70px, 10vw, 110px) clamp(20px, 5vw, 56px) clamp(48px, 6vw, 64px);
+    margin-top: clamp(64px, 9vw, 110px);
+  }
+  .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+  .footer-pills {
+    --fall-distance: -50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px 24px;
+    padding-bottom: clamp(40px, 6vw, 56px);
+  }
+
+  .footer-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 2.6vw, 30px) clamp(34px, 4.4vw, 50px);
+    color: var(--paper);
+    font-family: var(--ui);
+    font-size: clamp(18px, 2.4vw, 26px);
+    font-weight: 500;
+    text-decoration: none;
+    opacity: 1;
+    transform: rotate(var(--rot, 0deg));
+    transition: transform .2s ease, color .2s ease;
+  }
+  .footer-pill-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .footer-pill-shape path {
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.5);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    transition: stroke .2s ease;
+  }
+  .footer-pill-label { position: relative; z-index: 1; white-space: nowrap; }
+
+  .footer-pill:hover,
+  .footer-pill:focus-visible {
+    transform: translateY(-3px) rotate(var(--rot, 0deg));
+    color: var(--amber);
+  }
+  .footer-pill:hover .footer-pill-shape path,
+  .footer-pill:focus-visible .footer-pill-shape path {
+    stroke: var(--amber);
+  }
+  .footer-pill--accent { color: var(--amber); }
+  .footer-pill--accent .footer-pill-shape path { stroke: var(--amber); }
+
+  .footer-pills.pending .footer-pill {
+    opacity: 0;
+    transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg));
+  }
+  .footer-pills.dropped .footer-pill {
+    animation: pill-drop .7s cubic-bezier(.34, 1.56, .64, 1) both;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes pill-drop {
+    0% { opacity: 0; transform: translateY(var(--fall-distance)) rotate(var(--rot, 0deg)); }
+    100% { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-pills.pending .footer-pill,
+    .footer-pills.dropped .footer-pill {
+      opacity: 1;
+      transform: rotate(var(--rot, 0deg));
+      animation: none;
+    }
+    .footer-pill { transition: none; }
+  }
+
+  .footer-floor { width: 100%; height: 20px; }
+  .footer-floor svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .footer-floor path {
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.22);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (max-width: 820px) {
+    .site-nav, .site-nav.shrunk { top: 12px; }
+    .nav-pill { width: calc(100% - 24px); padding: 10px 12px; gap: 14px; }
+    .shrunk .nav-pill { max-width: 320px; }
+    .wordmark-full { font-size: 15px; }
+    .nav-sprite { height: 24px; }
+    .nav-links { gap: 11px; }
+    .nav-link { font-size: 10.5px; }
+    .shrunk .nav-link { font-size: 10.5px; }
+    .nav-clock { display: none; }
+
+    .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
+    .footer-pill { padding: 16px 26px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="site-nav">
+  <div class="nav-pill">
+    <a href="/" class="nav-brand" aria-label="Neel Parikh — back to top">
+      <span class="nav-brand-expanded" aria-hidden="true">
+        <img class="nav-sprite" src="/assets/sprite/neel-mug.png" alt="" aria-hidden="true">
+        <span class="wordmark-full">Neel Parikh</span>
+      </span>
+      <span class="wordmark-compact" aria-hidden="true">NP</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a href="/index.html#chosen-work" class="nav-link nav-link--work">
+          Work
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 12C2 12 20 13 40 12.4C60 11.8 80 11 98 10.6" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/about.html" class="nav-link nav-link--about">
+          About
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11C2 11 22 12.5 42 12C62 11.5 80 10.4 98 9.8" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/contact.html" class="nav-link nav-link--contact">
+          Contact
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 10.5C2 10.5 18 12.8 38 11.8C58 10.8 82 10.9 98 12.2" />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="/resources.html" class="nav-link nav-link--resources">
+          Resources
+          <svg class="nav-underline" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+            <path pathLength="1" d="M2 11.5C2 11.5 20 10 40 11.2C60 12.4 82 12 98 10.8" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-clock">
+      <span class="nav-clock-inner">
+        <span class="nav-clock-dot" aria-hidden="true"></span>
+        <span id="nav-clock-label">MORNING</span>
+        <span id="nav-clock-time">--:--</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<nav class="iy-secnav" aria-label="Case study sections">
+  <div class="iy-secnav-track" aria-hidden="true"><span class="iy-secnav-progress" id="iySecnavProgress"></span></div>
+  <div class="iy-secnav-links">
+    <a href="#frame">The brief</a>
+    <a href="#hard-call">The pivot</a>
+    <a href="#outcome">The outcome</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="iy-hero" id="hero">
+  <div>
+    <p class="iy-eyebrow">Case study — Speculative installation</p>
+    <h1 class="iy-title">Into Yesterday<span class="iy-dot">.</span></h1>
+    <p class="iy-lede">Visitors walk into a maze that gets warmer, taller, and louder the deeper they go — grass rising underfoot, light shifting from cool white to amber, sound building — until the walls open onto water and a scatter of glowing orbs. The descent is the design: a physical journey built to feel like remembering.</p>
+    <dl class="iy-meta">
+      <div><dt>Role</dt><dd>Concept, Spatial &amp; Sound Design, 3D Visualisation</dd></div>
+      <div><dt>Type</dt><dd>Academic / Speculative — DDES9010</dd></div>
+      <div><dt>Tools</dt><dd>Blender, GarageBand</dd></div>
+      <div><dt>Year</dt><dd>2025</dd></div>
+      <div><dt>Site</dt><dd>Barangaroo Reserve, for Vivid Sydney</dd></div>
+      <div><dt>Scope</dt><dd>Solo — concept through render and soundscape</dd></div>
+    </dl>
+  </div>
+  <div class="iy-hero-art">
+    <img src="/work/into-yesterday/assets/iy-cover.jpg" alt="Render of the Into Yesterday installation at dusk: a warm-lit maze wall beside dark water scattered with glowing glass memory orbs in red, magenta, and blue" width="1800" height="1012">
+  </div>
+</section>
+
+<!-- 2. THE FRAME -->
+<section class="iy-section" id="frame">
+  <span class="iy-eyebrow-dark">The brief</span>
+  <h2 class="iy-h2">A course brief for Vivid Sydney, worked solo, resolved as a concept — not a build.</h2>
+  <p class="iy-body-lg">Into Yesterday was designed for DDES9010 (Immersive Design) at UNSW: translate abstract emotional states — nostalgia, warmth, reflection — into a physical journey a visitor walks through, sited at Barangaroo Reserve for Vivid Sydney. Solo scope, start to finish: concept design, spatial design, 3D visualisation, and sound design, in Blender and GarageBand.</p>
+  <p class="iy-body-lg">It's academic and speculative, and that's stated here plainly rather than hedged around: the project is resolved as a spatial system, a full 3D render, and an original soundscape — not fabricated, not tested with a live audience. The status sits next to the craft, not in place of it.</p>
+  <p class="iy-body-lg">Barangaroo Reserve was chosen for its relationship with water, open public access, and the contrast between urban density and calm landscape — a site already associated with pause and reflection, which the installation leans on rather than fights.</p>
+
+  <figure class="iy-panel-figure iy-panel-figure--narrow">
+    <div class="iy-tile-frame">
+      <img src="/work/into-yesterday/assets/iy-barangaroo-site.jpg" alt="Photograph of the real Barangaroo Reserve waterfront at night, with the Sydney skyline lit up across the water and two silhouetted figures walking along the stepped stone shoreline" width="1400" height="972" loading="lazy">
+    </div>
+    <figcaption>Barangaroo Reserve, the real site — the one piece of unstaged reality the render builds from.</figcaption>
+  </figure>
+</section>
+
+<div class="iy-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
+
+<!-- 3. THE HARD CALL (most visual weight) -->
+<section class="iy-section" id="hard-call">
+  <span class="iy-eyebrow-dark">The pivot</span>
+  <h2 class="iy-h2">A striking pavilion solved the wrong problem. A walked maze solved the real one.</h2>
+  <p class="iy-body-lg">The first two directions were architectural. Iteration 1 was a sloped-roof structure over a platform; Iteration 2 rounded that into a dome. Both were striking objects to look at. Neither solved the actual brief — a graduated emotional journey, where intensity changes as a visitor moves through it. A single enclosed structure can't zone itself: you're either inside the feeling or outside it, with no gradient in between.</p>
+  <p class="iy-body-lg">The maze dropped the building idea entirely. A walked path let grass height, light warmth, air temperature, and sound intensity each shift continuously with distance travelled — short grass and bright, cool light at the edges; long grass, warm light, warm air, and a fuller soundscape toward the centre. The spatial device carries the emotional pacing; it isn't a backdrop for it.</p>
+
+  <div class="iy-killed-compare">
+    <figure class="iy-tile">
+      <div class="iy-tile-frame">
+        <img src="/work/into-yesterday/assets/iy-process-killed.jpg" alt="Process diagram: a beach-scene mood board beside two killed architectural iterations — Iteration 1, a sloped-roof structure over a platform, and Iteration 2, a domed pavilion on the same platform" width="1250" height="946" loading="lazy">
+      </div>
+      <figcaption><strong>Killed —</strong> mood board, Iteration 1 (sloped roof), Iteration 2 (dome). Both got as far as a massed model before being dropped.</figcaption>
+    </figure>
+    <figure class="iy-tile">
+      <div class="iy-tile-frame">
+        <img src="/work/into-yesterday/assets/iy-maze-final.jpg" alt="Clean aerial render of the final maze design at dusk: a warm-lit maze grid beside dark water with glowing orbs floating near the entrance" width="1800" height="1012" loading="lazy">
+      </div>
+      <figcaption><strong>Shipped —</strong> the maze, zoned from bright entrance to warm, immersive centre.</figcaption>
+    </figure>
+  </div>
+
+  <div class="iy-killed-callout">
+    <p><strong>Why it survived the cut:</strong> neither pavilion iteration could zone a journey — only frame a view. The maze could, because a path has length, and length is the one thing a single object doesn't have.</p>
+  </div>
+
+  <figure class="iy-panel-figure iy-panel-figure--narrow" style="margin-top:40px;">
+    <div class="iy-tile-frame">
+      <img src="/work/into-yesterday/assets/iy-process-model.jpg" alt="Blender viewport screenshot of the final maze model from above, with camera markers scattered across it for render setup" width="1650" height="795" loading="lazy">
+    </div>
+    <figcaption>The modelled maze in Blender, camera markers still placed for the render pass — one process artifact, not a polished gallery of them.</figcaption>
+  </figure>
+</section>
+
+<div class="iy-divider" aria-hidden="true"><svg viewBox="0 62 469 38" preserveAspectRatio="none"><path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" /></svg></div>
+
+<!-- 4. SECOND CONSTRAINT + HONEST OUTCOME -->
+<section class="iy-section" id="outcome">
+  <span class="iy-eyebrow-dark">The second constraint</span>
+  <h2 class="iy-h2">One entrance, built to bottleneck itself.</h2>
+  <p class="iy-body-lg">Vivid Sydney draws large, mixed crowds — the installation had to absorb high foot traffic without breaking the personal, reflective quality it's built around. The single-entrance maze solves this directly: it creates a natural bottleneck that self-regulates flow, so the piece can serve a large audience while each visitor still experiences it as a private, unhurried walk. The same zoning that carries the emotional arc — low immersion at the edge, rising toward a high-immersion core, releasing into the reflection area at the water — also carries the crowd logic.</p>
+
+  <figure class="iy-panel-figure">
+    <div class="iy-tile-frame">
+      <img src="/work/into-yesterday/assets/iy-immersion-diagram.jpg" alt="Diagram of the maze marked with four numbered zones: 1 Low immersion at the outer edge, 2 Mild immersion, 3 High immersion at the core, and 4 Reflection area at the water" width="605" height="430" loading="lazy">
+    </div>
+    <figcaption>Low → Mild → High immersion → Reflection area — one zoning system doing double duty on emotional pacing and crowd flow.</figcaption>
+  </figure>
+
+  <p class="iy-body-lg" style="margin-top:40px;">The eight-frame storyboard below is what the zoning was actually planned against — arrival to reflection, each frame a checkpoint for what the light, grass, and sound should be doing at that point in the walk.</p>
+
+  <div class="iy-storyboard">
+    <figure class="iy-tile">
+      <div class="iy-tile-frame">
+        <img src="/work/into-yesterday/assets/iy-storyboard-1.jpg" alt="Storyboard frames 1 to 4: Arrival, Walking in, Exploring, and The past — a figure walking deeper into the glowing maze as dusk falls" width="1800" height="1250" loading="lazy">
+      </div>
+      <figcaption>Arrival → Walking in → Exploring → The past.</figcaption>
+    </figure>
+    <figure class="iy-tile">
+      <div class="iy-tile-frame">
+        <img src="/work/into-yesterday/assets/iy-storyboard-2.jpg" alt="Storyboard frames 5 to 8: The summers gone, All roads lead there, Core memory, and Reflection — the figure reaching the maze's warm centre before emerging beside the water and its floating orbs" width="1800" height="1250" loading="lazy">
+      </div>
+      <figcaption>The summers gone → All roads lead there → Core memory → Reflection.</figcaption>
+    </figure>
+  </div>
+
+  <p class="iy-body-lg" style="margin-top:40px;">Sight, sound, touch, and movement were designed as one system, not layered on separately:</p>
+  <ul class="iy-sensory-list">
+    <li><strong>Sight —</strong> sunset hues, soft gradients, reflections on water.</li>
+    <li><strong>Sound —</strong> a nostalgic soundscape composed in GarageBand, intensity rising toward the centre and softening again near the water.</li>
+    <li><strong>Touch —</strong> grass underfoot, cool evening air against warm light.</li>
+    <li><strong>Movement —</strong> gentle pulsing lights and drifting orbs guiding attention.</li>
+  </ul>
+  <p class="iy-body-lg" style="margin-top:16px;">None of that reads as one sense at a time when you're standing in it — which is the point, and also exactly the part a render and a stereo mix can't fully prove.</p>
+
+  <div class="iy-outcome-callout">
+    <p><strong>The honest outcome:</strong> Into Yesterday is a course submission, not a built installation. The concept is resolved end-to-end — spatial design, a full 3D render, an original soundscape — but it hasn't gone in front of a live audience, and there's no attendance number or usability finding to report because neither happened. The craft is real; the outcome is a resolved concept, not a measured one, and that's stated here plainly rather than dressed up as something it isn't.</p>
+  </div>
+</section>
+
+<!-- 8. NEXT -->
+<div class="iy-pagenav">
+  <a href="/index.html">← Neel Parikh</a>
+  <a href="/work.html">See all work →</a>
+</div>
+
+<footer class="site-footer" id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-pills" id="footer-pills"></div>
+    <div class="footer-floor" aria-hidden="true">
+      <svg viewBox="0 62 469 38" preserveAspectRatio="none">
+        <path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" />
+      </svg>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/DrawSVGPlugin.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+</script>
+<script src="/assets/motion-tokens.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- nav pill shrink/expand on scroll ---------- */
+  var nav = document.getElementById('site-nav');
+  var lastY = window.scrollY;
+  var ticking = false;
+  var TOP_ZONE = 80;
+  var THRESHOLD = 6;
+
+  function updateNavShrink() {
+    var y = window.scrollY;
+    if (y < TOP_ZONE) {
+      nav.classList.remove('shrunk');
+      lastY = y;
+    } else if (Math.abs(y - lastY) > THRESHOLD) {
+      nav.classList.toggle('shrunk', y > lastY);
+      lastY = y;
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(updateNavShrink);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  /* ---------- nav clock ---------- */
+  var SCENE_LABELS = { morning: 'MORNING', midday: 'MIDDAY', golden: 'GOLDEN HOUR', night: 'NIGHT' };
+  var labelEl = document.getElementById('nav-clock-label');
+  var timeEl = document.getElementById('nav-clock-time');
+
+  function getScene(hour) {
+    if (hour >= 5 && hour < 11) return 'morning';
+    if (hour >= 11 && hour < 16) return 'midday';
+    if (hour >= 16 && hour < 19) return 'golden';
+    return 'night';
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function updateClock() {
+    var now = new Date();
+    labelEl.textContent = SCENE_LABELS[getScene(now.getHours())];
+    timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  /* ---------- section nav scrollspy ---------- */
+  var secnavLinks = document.querySelectorAll('.iy-secnav a');
+  if (secnavLinks.length && 'IntersectionObserver' in window) {
+    var secnavMap = {};
+    secnavLinks.forEach(function (link) {
+      secnavMap[link.getAttribute('href').slice(1)] = link;
+    });
+    var secnavObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = secnavMap[entry.target.id];
+        if (!link) return;
+        link.classList.toggle('is-active', entry.isIntersecting);
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    Object.keys(secnavMap).forEach(function (id) {
+      var section = document.getElementById(id);
+      if (section) secnavObserver.observe(section);
+    });
+  }
+
+  /* ---------- section nav scroll progress ---------- */
+  var secnavProgress = document.getElementById('iySecnavProgress');
+  if (secnavProgress) {
+    var updateSecnavProgress = function () {
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - doc.clientHeight;
+      var pct = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      secnavProgress.style.transform = 'scaleY(' + pct.toFixed(3) + ')';
+    };
+    window.addEventListener('scroll', updateSecnavProgress, { passive: true });
+    window.addEventListener('resize', updateSecnavProgress);
+    updateSecnavProgress();
+  }
+
+  /* ---------- Footer pills ---------- */
+  var PILLS = [
+    { label: 'Email', url: 'mailto:neelparikh7@gmail.com' },
+    { label: 'LinkedIn', url: 'https://linkedin.com/in/neel-parikh-413b16169/' },
+    { label: 'Instagram', url: '#' }, // TODO: Neel to supply Instagram URL
+    { label: 'GitHub', url: 'https://github.com/Redtanjiro' },
+    { label: 'Résumé', url: '/assets/files/neel-parikh-cv.pdf', download: true },
+    { label: 'Say hi', url: 'mailto:neelparikh7@gmail.com?subject=Hey%20Neel', accent: true }
+  ];
+  var PILL_ROTATIONS = [-3, 2, -2.5, 3, -2, 2.5];
+  var PILL_STAGGER_MS = 100;
+  var PILL_SHAPES = [
+    'M76.7874 16.2182C76.7676 16.2182 76.7477 16.2182 72.653 16.3587C68.5582 16.4992 60.3891 16.7801 55.0636 17.0685C49.7381 17.3568 47.5036 17.6439 45.0377 17.792C39.9491 18.0976 36.4777 17.9651 34.9519 18.1006C33.3926 18.2391 29.9118 19.8732 25.5993 21.9204C22.7442 23.2757 21.9852 24.9076 20.8313 27.004C18.8633 30.5799 18.7729 32.2198 18.3184 34.208C17.5275 37.6676 18.2543 41.4872 19.548 44.6925C21.122 48.5925 22.3134 49.8813 23.1844 50.6958C24.2795 51.7199 25.9985 52.4629 29.3257 54.2533C31.1813 55.2518 33.8645 55.4632 38.5905 55.7782C41.9967 56.0053 47.4677 56.0365 56.1253 56.3051C64.7829 56.5738 76.466 56.9941 82.6954 57.1796C89.3446 57.3776 90.3041 57.1582 91.329 57.015C94.3867 56.5876 98.2784 56.0423 100.428 55.1111C103.352 53.8438 105.34 51.2614 106.603 50.2042C107.612 49.3588 108.319 47.789 108.887 46.0273C109.852 43.0334 111.386 37.9322 111.867 35.338C112.332 32.8255 111.598 28.8356 110.622 26.5131C109.576 24.0245 107.79 22.4884 106.781 21.7764C105.31 20.7386 102.747 19.9547 99.6034 19.0171C97.9571 18.5261 96.1364 18.2569 93.6375 18.0181C88.0118 17.4806 84.3809 17.4385 83.5339 17.2657C81.1482 16.779 78.8265 16.2537 77.678 15.9158C77.4109 15.8409 77.1518 15.7923 76.8406 15.7672C76.5293 15.7422 76.1738 15.7422 75.8074 15.7422',
+    'M67.4355 17.7327C67.3971 17.7327 64.6152 17.6838 58.6774 17.3591C55.4945 17.1851 51.9963 16.5824 48.0994 16.3049C44.2025 16.0275 40.0204 15.9888 37.2847 16.1032C31.7428 16.335 29.9583 17.9868 26.8338 20.5645C25.7522 21.4568 25.1133 22.5433 24.4123 23.6584C23.822 24.5974 22.4968 28.1258 20.6415 33.0988C19.0926 37.2504 19.8218 39.6392 20.8827 42.4012C21.8628 44.9528 24.085 47.4894 25.9523 49.5174C26.9351 50.5848 28.4301 51.4773 31.7137 52.9054C33.7855 53.8065 36.9012 54.5084 44.0398 55.3011C51.1784 56.0938 62.302 56.8135 71.9448 56.938C81.5877 57.0625 89.4129 56.5701 93.7467 56.2491C99.7157 55.8071 102.94 53.75 105.112 52.2878C106.601 51.2852 108.657 46.7875 109.644 44.043C111.019 40.2225 109.751 36.3623 108.791 33.5944C107.522 29.9392 105.856 27.4901 104.433 26.1588C101.425 23.3424 98.6552 21.5077 96.9232 20.7114C95.7541 20.1738 93.901 19.5844 91.0583 19.0213C88.2155 18.4582 84.415 17.9951 80.0195 17.7425C75.6239 17.49 70.7485 17.4619 65.7253 17.433',
+    'M54.9867 16.9128C54.9768 16.9128 54.9669 16.9128 52.0405 16.942C49.1141 16.9713 43.2715 17.0298 37.6997 17.44C32.128 17.8502 27.0041 18.6103 23.9537 19.1287C20.0611 19.7901 18.4125 20.6085 16.7247 21.7054C14.7976 22.9578 13.5196 24.8813 12.5524 26.4636C11.7137 27.8359 11.0702 30.8217 10.262 35.3897C9.4209 40.1434 9.71834 43.0853 9.91035 44.0755C10.5713 47.484 12.5173 50.1445 13.8284 51.675C14.3872 52.3274 15.9828 53.0041 20.2932 54.3814C23.3825 55.3684 28.4384 56.4882 36.305 57.285C44.1717 58.0817 54.7306 58.4058 62.779 58.3171C70.8274 58.2284 76.0454 57.7171 81.3986 57.0771C86.7518 56.4371 92.0821 55.6838 96.0867 54.9C100.091 54.1162 102.609 53.3246 105.074 52.4491C109.91 50.7318 113.143 49.1032 114.829 47.8871C117.858 45.7024 118.867 43.7613 119.631 42.1307C120.922 39.3756 120.085 34.1726 119.317 31.1616C118.976 29.8244 118.25 28.4725 117.127 26.4605C114.076 20.9916 111.524 19.0811 108.111 16.9816C105.844 15.5875 102.44 15.1429 96.7225 14.788C92.9195 14.552 87.2621 14.7206 81.8968 14.8155C76.5316 14.9104 71.624 15.0589 68.326 15.1303C63.489 15.235 60.4645 15.5207 57.8 16.1157C56.5729 16.3708 55.5996 16.531 54.9442 16.6421C54.2888 16.7532 53.9808 16.8103 52.9748 16.8962'
+  ];
+
+  var pillsEl = document.getElementById('footer-pills');
+  PILLS.forEach(function (pill, i) {
+    var a = document.createElement('a');
+    a.className = 'footer-pill' + (pill.accent ? ' footer-pill--accent' : '');
+    a.href = pill.url;
+    a.style.setProperty('--rot', PILL_ROTATIONS[i % PILL_ROTATIONS.length] + 'deg');
+    a.style.setProperty('--delay', (i * PILL_STAGGER_MS) + 'ms');
+    if (pill.download) a.setAttribute('download', '');
+    a.innerHTML =
+      '<svg class="footer-pill-shape" viewBox="0 0 130 73" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="' + PILL_SHAPES[i % PILL_SHAPES.length] + '" />' +
+      '</svg>' +
+      '<span class="footer-pill-label">' + pill.label + '</span>';
+    pillsEl.appendChild(a);
+  });
+
+  pillsEl.classList.add('pending');
+  if ('IntersectionObserver' in window) {
+    var footerObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          pillsEl.classList.remove('pending');
+          pillsEl.classList.add('dropped');
+          footerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    footerObserver.observe(pillsEl);
+  } else {
+    pillsEl.classList.remove('pending');
+  }
+})();
+</script>
+</body>
+</html>
