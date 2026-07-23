@@ -13,6 +13,7 @@ window.PROJECTS = [
     disciplines: ["UI/UX", "Visual"],
     description: "A football-culture-first product design system for a grassroots matchmaking app.",
     accent: "#f2e338",
+    image: null, // no usable lead image yet — futee-cover is still an open placeholder on the case study page itself
     featured: true
   },
   {
@@ -23,6 +24,7 @@ window.PROJECTS = [
     disciplines: ["Visual", "Brand"],
     description: "A campaign content system for an Abu Dhabi wedding-industry showcase, built inside an existing 11-year brand.",
     accent: "#d4af37",
+    image: "/work/emf-ace/assets/emf-event-marquee.jpg",
     featured: true
   },
   {
@@ -33,6 +35,7 @@ window.PROJECTS = [
     disciplines: ["UI/UX"],
     description: "Consolidating two live websites into one for an Australian construction-materials distributor, on Framer.",
     accent: "#b23324",
+    image: "/work/cseds/assets/hero-landing.png",
     featured: true
   },
   {
@@ -53,6 +56,7 @@ window.PROJECTS = [
     disciplines: ["Immersive"],
     description: "A speculative light-and-sound installation for Vivid Sydney, designed solo for a UNSW immersive design course.",
     accent: "#e3a05c",
+    image: "/work/into-yesterday/assets/iy-cover.jpg",
     featured: true,
     speculative: true // academic/coursework, not client work — still shown
                        // in the Chosen Work grid alongside client projects

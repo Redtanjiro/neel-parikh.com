@@ -9,13 +9,14 @@
 <link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@1,9..144,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --display: 'Bricolage Grotesque', sans-serif;
     --body: 'DM Sans', sans-serif;
     --ui: 'Inter', sans-serif;
     --mono: 'JetBrains Mono', monospace;
+    --font-voice: 'Fraunces', serif; /* About display-statement emphasis only — see CLAUDE.md */
 
     --amber: #e8a13a;
     --ink: #141210;
@@ -101,6 +102,18 @@
     flex: none;
     text-decoration: none;
     color: #fff;
+    transform-origin: left center;
+    transition: transform .2s ease;
+  }
+  /* "Still alive" cue — a small nudge on hover keeps the brand mark feeling
+     like an illustrated character rather than a static logo. */
+  .nav-brand:hover,
+  .nav-brand:focus-visible {
+    transform: scale(1.05);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-brand { transition: none; }
+    .nav-brand:hover, .nav-brand:focus-visible { transform: none; }
   }
 
   .nav-brand-expanded {
@@ -292,13 +305,44 @@
   }
 
   /* ============ HERO ============ */
+  /* .hero-stage stacks #hero directly over #about's own top 100vh (both
+     children of one position:relative box) instead of #about following #hero
+     as a normal sibling. #about (normal flow) is what gives the stage its real
+     height — #hero is absolutely positioned and contributes none, so once the
+     split's pin releases there's no leftover "hero's own empty 100vh box" to
+     scroll through before About appears. See BUILD-SPEC-HERO-SPLIT-REVEAL.md,
+     "KNOWN BUG FROM FIRST BUILD" — a black gap after the pin, caused by #hero
+     resuming normal flow (and its own height) once unpinned, since the first
+     build only used pinSpacing:false, which avoids reserving extra space
+     *during* the pin but does nothing about #hero's own natural box *after*. */
+  .hero-stage { position: relative; }
   .hero {
-    position: relative;
-    min-height: 100vh;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    background: var(--ink);
     padding-top: 110px;
+    z-index: 10; /* above #about (default stacking), below .site-nav (100) */
   }
+
+  /* Illustration splits into two curtain-halves on scroll; only the scene/pose
+     art duplicates into each half (see BUILD-SPEC-HERO-SPLIT-REVEAL.md for why
+     the interactive UI on top — discipline buttons, clock — stays singular).
+     Each half is full hero size with the other side clipped away, so both
+     halves show a continuous slice of the same image rather than two
+     independently-"covered" crops. A 1% overlap past the centreline on each
+     side avoids a seam gap while the halves are in motion.
+     The dark fallback background (shown briefly before the first time-of-day
+     scene image fades in) lives on the HALVES, not on #hero itself — #hero's
+     own box stays put the whole time the halves translate away, so a
+     background there would paint over #about instead of revealing it (see
+     BUILD-SPEC-SPLIT-FIX.md: confirmed via elementsFromPoint that #hero was
+     exactly this opaque layer, sitting between the halves and #about). */
+  .hero-split { position: absolute; inset: 0; }
+  .hero-half { position: absolute; inset: 0; background: var(--ink); }
+  .hero-half--left { clip-path: inset(0 49% 0 0); }
+  .hero-half--right { clip-path: inset(0 0 0 49%); }
 
   .hero-scenes { position: absolute; inset: 0; }
   .hero-scene {
@@ -514,51 +558,128 @@
     background: var(--paper);
     border-top: 1px solid var(--line);
     padding: clamp(60px, 9vw, 100px) clamp(20px, 5vw, 56px);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(32px, 6vw, 64px);
-    align-items: start;
   }
 
-  .hero-illustration {
+  /* Centred as a block (not just its own text) so the composition lines up
+     with the viewport's actual centre — where the parted halves' gap opens —
+     rather than sitting left-flush within a wide viewport's leftover space.
+     See BUILD-SPEC-ABOUT-CENTER-WORK-CARDS.md. */
+  .about-content { max-width: 900px; margin-inline: auto; }
+
+  /* .about-reveal is the sticky, vertically-centred "screen" for the display
+     statement (recomposed per the acceptance checkpoints in the split-reveal
+     spec). position:sticky is load-bearing, not decorative: #about is normal
+     document flow behind the pinned, splitting hero, so without this the
+     statement scrolls off the top of the viewport almost immediately (~127px
+     in) while the reveal doesn't start until much later — the whole
+     line-stagger/squiggle-draw would play out entirely off-screen. height:100vh
+     + flex-center keeps the statement centred in the pinned viewport at every
+     progress point; padding-top clears the nav pill so nothing ever slides
+     under it, regardless of #about's total content height. Held at
+     opacity:0/visibility:hidden until the split timeline explicitly reveals it
+     (progress 0.45) — the opaque paper background here (not on .about-statement
+     itself) is what stops whatever's scrolling underneath from bleeding
+     through while stuck, same class of bug as BUILD-SPEC-SPLIT-FIX.md, just
+     scoped to this wrapper instead of #hero. */
+  .about-reveal {
     position: sticky;
-    top: 100px;
-    align-self: start;
-    width: min(100%, 380px);
-    aspect-ratio: 828 / 858;
-  }
-
-  .pose-scrub {
-    position: fixed;
     top: 0;
-    left: 0;
-    z-index: 5;
-    pointer-events: none;
-    background-repeat: no-repeat;
+    z-index: 2;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 110px;
+    background: var(--paper);
     opacity: 0;
+    visibility: hidden;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .pose-scrub { display: none; }
+  .about-reveal .eyebrow { text-align: center; }
+  /* Constrained per-line measure (~14-18ch at display size) so the statement
+     sits well clear of the halves' art at common widths even mid-split, when
+     the paper gap is narrower than the full viewport (halves are still
+     travelling, not yet fully parted, at the 0.45 reveal point) — gap width at
+     1280/1440/1920 computed by hand from the timeline's own numbers (not yet
+     screenshotted live — see BUILD-SPEC-ABOUT-CENTER-WORK-CARDS.md's
+     completion report for why, and the exact math). */
+  .about-statement {
+    max-width: 620px;
+    margin-inline: auto;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(28px, 5.2vw, 58px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: 16px;
   }
-  @media (max-width: 820px) {
-    .pose-scrub { display: none; }
+  .about-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(24px);
   }
-  .hero-illustration .hero-poses { position: absolute; inset: 0; pointer-events: none; }
-  .hero-illustration .hero-pose {
+  .about-key {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-voice);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .about-squiggle {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: bottom;
-    opacity: 0;
-    transition: opacity 120ms ease;
+    left: -2%;
+    bottom: -8px;
+    width: 104%;
+    height: 18px;
+    overflow: visible;
+    pointer-events: none;
   }
-  .hero-illustration .hero-pose.is-active { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) {
-    .hero-illustration .hero-pose { transition: none; }
+  .about-squiggle path {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2.4;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  /* .about-support groups the paragraph/credential/résumé/tools as one unit,
+     revealed only once scrolled past the split's pin — never mid-pin, and
+     never before the display statement (see BUILD-SPEC-HERO-SPLIT-REVEAL.md's
+     recompose pass: this used to be its own independent, decoupled
+     ScrollTrigger, which is exactly why it could appear before the statement
+     had finished revealing). Declared BEFORE the mobile media query below —
+     with equal specificity, source order decides, so the mobile override has
+     to come after this base rule or it's silently ignored (confirmed as a
+     real bug: computed opacity stayed 0 on mobile until this was reordered). */
+  .about-support {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 24px;
+    opacity: 0;
+    transform: translateY(24px);
   }
 
+  @media (prefers-reduced-motion: reduce), (max-width: 899px) {
+    /* Matches the GSAP matchMedia breakpoint below 900px — the split/reveal
+       timeline never runs there, so these need a CSS-only visible default. */
+    .about-line { opacity: 1; transform: none; }
+    .about-squiggle path { stroke-dashoffset: 0; }
+    .about-reveal {
+      position: static;
+      height: auto;
+      padding-top: 0;
+      background: none;
+      opacity: 1;
+      visibility: visible;
+    }
+    .about-support { opacity: 1; transform: none; }
+  }
+
+  .about-copy { max-width: 640px; }
   .about-copy p {
     font-family: var(--body);
     font-size: 16px;
@@ -576,13 +697,14 @@
     font-weight: 500;
     color: var(--ink);
     margin: 0 0 28px;
-    padding-left: 14px;
-    border-left: 2px solid var(--amber);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--amber);
   }
   .about-resume {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 16px;
   }
   .about-resume-link {
@@ -601,6 +723,7 @@
   }
   .about-stack-label {
     display: block;
+    text-align: center;
     font-family: var(--ui);
     font-size: 12px;
     font-weight: 600;
@@ -611,6 +734,7 @@
   .tool-row {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 22px;
   }
   .tool-item {
@@ -623,8 +747,17 @@
     height: 26px;
     flex: none;
     color: var(--ink);
+    transition: color .2s ease, transform .15s ease;
   }
-  .tool-item:hover .tool-icon { color: var(--amber); }
+  .tool-item:hover .tool-icon { color: var(--amber); transform: scale(1.12); }
+  .tool-item:nth-child(1):hover .tool-icon { transform: scale(1.12) rotate(-6deg); }
+  .tool-item:nth-child(2):hover .tool-icon { transform: scale(1.12) rotate(5deg); }
+  .tool-item:nth-child(3):hover .tool-icon { transform: scale(1.12) rotate(-4deg); }
+  .tool-item:nth-child(4):hover .tool-icon { transform: scale(1.12) rotate(6deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .tool-icon { transition: color .2s ease; }
+    .tool-item:hover .tool-icon { transform: none; }
+  }
   .tool-label {
     font-family: var(--ui);
     font-size: 14px;
@@ -632,10 +765,6 @@
     color: var(--ink);
   }
 
-  @media (max-width: 820px) {
-    .hero-about-wrap { grid-template-columns: 1fr; }
-    .hero-illustration { display: none; }
-  }
 
   .filter-chip {
     display: none;
@@ -662,8 +791,6 @@
   }
   .filter-chip button:hover { background: rgba(232, 161, 58, 0.25); }
 
-  .accordion-row.is-hidden { display: none; }
-
   .row-divider { width: 100%; height: 16px; }
   .row-divider svg { width: 100%; height: 100%; display: block; overflow: visible; }
   .row-divider path {
@@ -675,76 +802,173 @@
     vector-effect: non-scaling-stroke;
   }
 
-  .accordion-trigger {
-    width: 100%;
-    display: flex;
+  /* ============ WORK CARDS (replaces the old hover-accordion,
+     BUILD-SPEC-ABOUT-CENTER-WORK-CARDS.md) ============ */
+  .work-card {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(28px, 5vw, 56px);
     align-items: center;
-    gap: 24px;
-    padding: 26px 4px;
-    text-align: left;
+    padding: clamp(36px, 6vw, 64px) 4px;
+    text-decoration: none;
+    color: var(--ink);
   }
-  .row-num {
+  .work-card:nth-of-type(even) { grid-template-columns: 1fr 1.1fr; }
+  .work-card:nth-of-type(even) .work-card-media { order: 2; }
+  .work-card.is-hidden { display: none; }
+
+  .work-card-media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(20, 18, 16, 0.04);
+  }
+  .work-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .2s ease;
+  }
+  @media (hover: hover) {
+    .work-card:hover .work-card-media img { transform: scale(1.03); }
+  }
+  .work-card-media.is-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1.5px dashed rgba(20, 18, 16, 0.18);
+    background: rgba(20, 18, 16, 0.02);
+  }
+  .work-card-media-slot {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: rgba(20, 18, 16, 0.4);
+  }
+  .work-card-media-note {
+    font-family: var(--ui);
+    font-size: 11px;
+    color: rgba(20, 18, 16, 0.32);
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .work-card-index {
+    display: block;
     font-family: var(--mono);
     font-size: 14px;
     color: var(--amber);
-    min-width: 34px;
+    margin-bottom: 10px;
   }
-  .row-title {
-    flex: 1;
+  .work-card-title {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(24px, 3.4vw, 38px);
+    font-size: clamp(28px, 3.6vw, 42px);
     letter-spacing: -0.01em;
+    margin: 0 0 14px;
   }
-  .row-toggle {
-    font-family: var(--ui);
-    font-size: 22px;
-    font-weight: 400;
-    line-height: 1;
-    transition: transform .3s ease;
-    color: var(--ink);
-  }
-  .accordion-row.is-open .row-toggle { transform: rotate(45deg); }
-
-  .accordion-panel {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-    gap: 24px;
-    padding: 0 4px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .45s ease, padding .45s ease;
-  }
-  .accordion-row.is-open .accordion-panel {
-    max-height: 220px;
-    padding: 0 4px 36px;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .accordion-panel { transition: none; }
-  }
-  .panel-desc {
+  .work-card-desc {
     font-family: var(--body);
     font-size: 16px;
     line-height: 1.6;
-    max-width: 460px;
-    margin: 0 0 14px;
+    max-width: 46ch;
+    margin: 0 0 10px;
   }
-  .panel-link {
+  .work-card-outcome {
+    display: block;
+    font-family: var(--ui);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    padding-left: 14px;
+    border-left: 2px solid var(--amber);
+    margin: 0 0 18px;
+  }
+  .work-card-cta {
+    position: relative;
     display: inline-block;
     font-family: var(--ui);
     font-size: 14px;
     font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 2px;
+    padding-bottom: 4px;
   }
-  .panel-giant {
-    font-family: var(--mono);
-    font-weight: 500;
-    font-size: clamp(48px, 9vw, 130px);
-    line-height: 0.8;
-    white-space: nowrap;
+  .work-card-cta-underline {
+    position: absolute;
+    left: -4%;
+    bottom: -1px;
+    width: 108%;
+    height: 10px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .work-card-cta-underline path {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .45s ease, opacity .12s ease;
+  }
+  .work-card:hover .work-card-cta-underline path,
+  .work-card:focus-visible .work-card-cta-underline path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work-card-media img,
+    .work-card-cta-underline path { transition: none; }
+    .work-card:hover .work-card-media img { transform: none; }
+  }
+  @media (max-width: 700px) {
+    .work-card,
+    .work-card:nth-of-type(even) { grid-template-columns: 1fr; }
+    .work-card-media,
+    .work-card:nth-of-type(even) .work-card-media { order: -1; }
+  }
+
+  /* Shared hover-draw underline (same stroke-dashoffset technique as .nav-underline)
+     for inline text links outside the nav — the EMF ACE mention in About and
+     "See all work". Uses currentColor. Work cards use their own near-identical
+     .work-card-cta/-underline instead of this, since the card's hover scope is
+     the whole card (.work-card:hover), not the CTA text itself — .link-draw's
+     self-scoped :hover wouldn't fire from hovering the image or title. */
+  .link-draw {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    padding-bottom: 4px;
+  }
+  .link-draw-underline {
+    position: absolute;
+    left: -4%;
+    bottom: -1px;
+    width: 108%;
+    height: 10px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .link-draw-underline path {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition: stroke-dashoffset .45s ease, opacity .12s ease;
+  }
+  .link-draw:hover .link-draw-underline path,
+  .link-draw:focus-visible .link-draw-underline path {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .link-draw-underline path { transition: none; }
   }
 
   .empty-state {
@@ -757,15 +981,15 @@
   .empty-state.is-visible { display: block; }
 
   .see-all {
-    display: inline-block;
     margin-top: 40px;
     font-family: var(--ui);
     font-size: 14px;
     font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 2px;
+    color: var(--ink);
+    transition: color .2s ease;
   }
+  .see-all:hover,
+  .see-all:focus-visible { color: var(--amber); }
 
 
   /* ============ MY PROCESS ============ */
@@ -962,7 +1186,13 @@
   }
 
   @media (max-width: 820px) {
+    /* No hero-stage overlay on mobile — hero and About just stack normally,
+       same as the desktop-only split effect being disabled below. */
     .hero {
+      position: relative;
+      top: auto; left: auto;
+      width: auto;
+      height: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -971,7 +1201,12 @@
       min-height: 100svh;
       justify-content: flex-start;
     }
-    .hero-scenes {
+    /* No split on mobile — same pattern as the site's other pinned/scrubbed
+       effects (My Process, the old intro): simpler fallback on narrow
+       viewports. .hero-split takes over .hero-scenes's old role as the flex
+       item; the right half is hidden and the left half's clip-path removed
+       so it renders as one plain, unsplit illustration. */
+    .hero-split {
       order: 2;
       position: relative;
       inset: auto;
@@ -983,6 +1218,8 @@
       border-radius: 10px;
       overflow: hidden;
     }
+    .hero-half--right { display: none; }
+    .hero-half--left { position: absolute; inset: 0; clip-path: none; }
     .hero-scene, .hero-pose { object-fit: cover; object-position: 30% 46%; }
     .hero-dim { display: none; }
     .hero-copy, .hero-disciplines {
@@ -1112,34 +1349,70 @@
   </div>
 </header>
 
+<div class="hero-stage" id="hero-stage">
 <section class="hero" id="hero">
-  <div class="hero-scenes">
-    <img class="hero-scene" data-scene="morning" alt=""
-         src="/assets/hero/hero-morning.webp"
-         srcset="/assets/hero/hero-morning-sm.webp 1280w, /assets/hero/hero-morning.webp 2560w"
-         sizes="100vw">
-    <img class="hero-scene" data-scene="midday" alt=""
-         src="/assets/hero/hero-midday.webp"
-         srcset="/assets/hero/hero-midday-sm.webp 1280w, /assets/hero/hero-midday.webp 2560w"
-         sizes="100vw">
-    <img class="hero-scene" data-scene="golden" alt=""
-         src="/assets/hero/hero-golden.webp"
-         srcset="/assets/hero/hero-golden-sm.webp 1280w, /assets/hero/hero-golden.webp 2560w"
-         sizes="100vw">
-    <img class="hero-scene" data-scene="night" alt=""
-         src="/assets/hero/hero-night.webp"
-         srcset="/assets/hero/hero-night-sm.webp 1280w, /assets/hero/hero-night.webp 2560w"
-         sizes="100vw">
+  <div class="hero-split" id="hero-split">
+    <div class="hero-half hero-half--left">
+      <div class="hero-scenes">
+        <img class="hero-scene" data-scene="morning" alt=""
+             src="/assets/hero/hero-morning.webp"
+             srcset="/assets/hero/hero-morning-sm.webp 1280w, /assets/hero/hero-morning.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="midday" alt=""
+             src="/assets/hero/hero-midday.webp"
+             srcset="/assets/hero/hero-midday-sm.webp 1280w, /assets/hero/hero-midday.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="golden" alt=""
+             src="/assets/hero/hero-golden.webp"
+             srcset="/assets/hero/hero-golden-sm.webp 1280w, /assets/hero/hero-golden.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="night" alt=""
+             src="/assets/hero/hero-night.webp"
+             srcset="/assets/hero/hero-night-sm.webp 1280w, /assets/hero/hero-night.webp 2560w"
+             sizes="100vw">
 
-    <div class="hero-poses" aria-hidden="true">
-      <img class="hero-pose is-active" data-pose="working" alt=""
-           src="/assets/hero/hero-pose-working.webp"
-           srcset="/assets/hero/hero-pose-working-sm.webp 1280w, /assets/hero/hero-pose-working.webp 2560w"
-           sizes="100vw">
-      <img class="hero-pose" data-pose="reading" alt=""
-           src="/assets/hero/hero-pose-reading.webp"
-           srcset="/assets/hero/hero-pose-reading-sm.webp 1280w, /assets/hero/hero-pose-reading.webp 2560w"
-           sizes="100vw">
+        <div class="hero-poses" aria-hidden="true">
+          <img class="hero-pose is-active" data-pose="working" alt=""
+               src="/assets/hero/hero-pose-working.webp"
+               srcset="/assets/hero/hero-pose-working-sm.webp 1280w, /assets/hero/hero-pose-working.webp 2560w"
+               sizes="100vw">
+          <img class="hero-pose" data-pose="reading" alt=""
+               src="/assets/hero/hero-pose-reading.webp"
+               srcset="/assets/hero/hero-pose-reading-sm.webp 1280w, /assets/hero/hero-pose-reading.webp 2560w"
+               sizes="100vw">
+        </div>
+      </div>
+    </div>
+    <div class="hero-half hero-half--right">
+      <div class="hero-scenes">
+        <img class="hero-scene" data-scene="morning" alt=""
+             src="/assets/hero/hero-morning.webp"
+             srcset="/assets/hero/hero-morning-sm.webp 1280w, /assets/hero/hero-morning.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="midday" alt=""
+             src="/assets/hero/hero-midday.webp"
+             srcset="/assets/hero/hero-midday-sm.webp 1280w, /assets/hero/hero-midday.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="golden" alt=""
+             src="/assets/hero/hero-golden.webp"
+             srcset="/assets/hero/hero-golden-sm.webp 1280w, /assets/hero/hero-golden.webp 2560w"
+             sizes="100vw">
+        <img class="hero-scene" data-scene="night" alt=""
+             src="/assets/hero/hero-night.webp"
+             srcset="/assets/hero/hero-night-sm.webp 1280w, /assets/hero/hero-night.webp 2560w"
+             sizes="100vw">
+
+        <div class="hero-poses" aria-hidden="true">
+          <img class="hero-pose is-active" data-pose="working" alt=""
+               src="/assets/hero/hero-pose-working.webp"
+               srcset="/assets/hero/hero-pose-working-sm.webp 1280w, /assets/hero/hero-pose-working.webp 2560w"
+               sizes="100vw">
+          <img class="hero-pose" data-pose="reading" alt=""
+               src="/assets/hero/hero-pose-reading.webp"
+               srcset="/assets/hero/hero-pose-reading-sm.webp 1280w, /assets/hero/hero-pose-reading.webp 2560w"
+               sizes="100vw">
+        </div>
+      </div>
     </div>
   </div>
   <div class="hero-dim"></div>
@@ -1193,71 +1466,64 @@
   <a href="#chosen-work" class="scroll-cue" aria-label="Scroll to work">↓</a>
 </section>
 
-<div class="pose-scrub" id="pose-scrub" aria-hidden="true"></div>
-
 <section class="hero-about-wrap" id="about">
-  <div class="hero-illustration" id="hero-illustration" aria-hidden="true">
-    <div class="hero-poses">
-      <img class="hero-pose is-active" data-pose="working" alt=""
-           src="/assets/hero/hero-pose-working-crop.webp"
-           srcset="/assets/hero/hero-pose-working-crop-sm.webp 414w, /assets/hero/hero-pose-working-crop.webp 828w"
-           sizes="380px">
-      <img class="hero-pose" data-pose="reading" alt=""
-           src="/assets/hero/hero-pose-reading-crop.webp"
-           srcset="/assets/hero/hero-pose-reading-crop-sm.webp 414w, /assets/hero/hero-pose-reading-crop.webp 828w"
-           sizes="380px">
-    </div>
-  </div>
-
   <div class="about-content" id="about-content">
-    <span class="eyebrow">ABOUT</span>
-    <h2 class="section-title">About</h2>
-    <div class="about-copy">
-      <p>That scene up there is my desk. Literally — I painted it. This whole site works the same way: a version of my workspace, collecting the projects I'm happy with (or was, at the time) and the experiments in between.</p>
-      <p>I've been doing this for a while — four years in industry, most recently as Design Lead at Media Mushroom, and now a Master of Design at UNSW here in Sydney. I draw by hand, and I build with AI — this site is hand-illustrated, then coded side by side with Claude. That's the long way of saying I like the spot where craft meets code.</p>
-      <p>And with AI — I don't want to be lost in it, but I don't want to be someone who just uses it either. There's a middle ground, and I've been chasing it for a while now. This site is my current answer: drawn by hand, built with AI, moving.</p>
-    </div>
-    <p class="about-credential">~4 years in industry — Design Lead at Media Mushroom — before an MDes at UNSW.</p>
-    <div class="about-resume">
-      <a href="/assets/files/neel-parikh-cv.pdf" class="about-resume-link" target="_blank" rel="noopener">Résumé (PDF) ↗</a>
+    <div class="about-reveal" id="about-reveal">
+      <span class="eyebrow">ABOUT</span>
+      <h2 class="about-statement" id="about-statement">
+        <span class="about-line">I'm a product &amp; interaction designer,</span>
+        <span class="about-line">an <span class="about-key">illustrator<svg class="about-squiggle" viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 14C20 8 40 20 60 12C80 4 100 18 120 10C140 4 160 16 178 10C185 8 190 10 198 12" /></svg></span>,</span>
+        <span class="about-line">and an immersive, AI-native maker.</span>
+      </h2>
     </div>
 
-    <div class="about-stack">
-      <span class="about-stack-label">TOOLS</span>
-      <div class="tool-row">
-        <div class="tool-item">
-          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <path d="M14 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M9 14h5a5 5 0 1 1 0 10H9V14Z" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M9 14a5 5 0 1 0 0 10V14Z" stroke="currentColor" stroke-width="1.6"/>
-          </svg>
-          <span class="tool-label">Figma</span>
-        </div>
-        <div class="tool-item">
-          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <path d="M6 23L14 5L22 23" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10.2 15H17.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          <span class="tool-label">Adobe</span>
-        </div>
-        <div class="tool-item">
-          <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <path d="M23 5L11 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-            <circle cx="9" cy="19" r="2.6" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M7.4 21.8C6.8 22.6 6.8 23.6 7.6 24.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          <span class="tool-label">Procreate</span>
-        </div>
-        <div class="tool-item">
-          <svg class="tool-icon" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
-            <path d="M14 2C14 8.5 14.5 12.5 15.5 13.5C16.5 14.5 20.5 15 27 15C20.5 15 16.5 15.5 15.5 16.5C14.5 17.5 14 21.5 14 28C14 21.5 13.5 17.5 12.5 16.5C11.5 15.5 7.5 15 1 15C7.5 15 11.5 14.5 12.5 13.5C13.5 12.5 14 8.5 14 2Z"/>
-          </svg>
-          <span class="tool-label">Claude</span>
+    <div class="about-support" id="about-support">
+      <div class="about-copy">
+        <p id="about-copy-text">Neel Parikh is a product and interaction designer based in Sydney with over 4 years of experience across brand, UI/UX, and immersive design. He's led design as Design Lead at Media Mushroom, working with clients including Maruti Suzuki, IIM Ahmedabad, and <a href="/work/emf-ace.html" class="link-draw">EMF ACE<svg class="link-draw-underline" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8C2 8 20 9.2 40 8.4C60 7.6 80 6.8 98 6.2" /></svg></a>. Neel is known for hand-illustrated craft — bringing a painterly, personal touch to interfaces that usually stay generic. Whether shaping brand systems or building AI-native and immersive product experiences, his work is driven by curiosity, precision, and a refusal to let good design look templated.</p>
+      </div>
+      <p class="about-credential">~4 years in industry, before an MDes at UNSW.</p>
+      <div class="about-resume">
+        <a href="/assets/files/neel-parikh-cv.pdf" class="about-resume-link" target="_blank" rel="noopener">Résumé (PDF) ↗</a>
+      </div>
+
+      <div class="about-stack">
+        <span class="about-stack-label">TOOLS</span>
+        <div class="tool-row">
+          <div class="tool-item">
+            <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path d="M14 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M9 14h5a5 5 0 1 1 0 10H9V14Z" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M9 14a5 5 0 1 0 0 10V14Z" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <span class="tool-label">Figma</span>
+          </div>
+          <div class="tool-item">
+            <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path d="M6 23L14 5L22 23" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10.2 15H17.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span class="tool-label">Adobe</span>
+          </div>
+          <div class="tool-item">
+            <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path d="M23 5L11 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="9" cy="19" r="2.6" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M7.4 21.8C6.8 22.6 6.8 23.6 7.6 24.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span class="tool-label">Procreate</span>
+          </div>
+          <div class="tool-item">
+            <svg class="tool-icon" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
+              <path d="M14 2C14 8.5 14.5 12.5 15.5 13.5C16.5 14.5 20.5 15 27 15C20.5 15 16.5 15.5 15.5 16.5C14.5 17.5 14 21.5 14 28C14 21.5 13.5 17.5 12.5 16.5C11.5 15.5 7.5 15 1 15C7.5 15 11.5 14.5 12.5 13.5C13.5 12.5 14 8.5 14 2Z"/>
+            </svg>
+            <span class="tool-label">Claude</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+</div>
 
 <section class="chosen-work" id="chosen-work">
   <div class="section-inner">
@@ -1269,10 +1535,10 @@
       <button id="filter-chip-dismiss" aria-label="Clear filter" type="button">✕</button>
     </div>
 
-    <div class="accordion" id="accordion"></div>
+    <div class="work-cards" id="work-cards"></div>
     <p class="empty-state" id="chosen-empty">New work landing here soon.</p>
 
-    <a href="/work.html" class="see-all">See all work →</a>
+    <a href="/work.html" class="see-all link-draw">See all work →<svg class="link-draw-underline" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8C2 8 20 9.2 40 8.4C60 7.6 80 6.8 98 6.2" /></svg></a>
   </div>
 </section>
 
@@ -1311,6 +1577,134 @@
 <script>
 (function () {
   'use strict';
+
+  /* ---------- hero split → About reveal (BUILD-SPEC-HERO-SPLIT-REVEAL.md) ----------
+     #hero pins with pinSpacing:false, so #about (its next sibling) is never
+     pushed down to make room — it occupies the document position hero would
+     have held, sitting right behind it from scroll position 0. As hero's two
+     illustration-halves translate apart (only the illustration splits — the
+     interactive UI on top stays singular and just fades, see the spec for why),
+     About's own content, which is genuinely already there, comes into view
+     through the gap and scrolls normally underneath as the pin progresses.
+     One shared scrubbed timeline drives the split, the hero UI fade, the
+     About display-line stagger, and the squiggle draw — one timing source. */
+  (function () {
+    var heroEl = document.getElementById('hero');
+    var aboutEl = document.getElementById('about');
+    var aboutReveal = document.getElementById('about-reveal');
+    var aboutSupport = document.getElementById('about-support');
+    var leftHalf = document.querySelector('.hero-half--left');
+    var rightHalf = document.querySelector('.hero-half--right');
+    var aboutLines = document.querySelectorAll('.about-line');
+    var squigglePath = document.querySelector('.about-squiggle path');
+    if (!heroEl || !aboutEl || !aboutReveal || !leftHalf || !rightHalf || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var mm = gsap.matchMedia();
+    mm.add({
+      isDesktop: '(min-width: 900px)',
+      isMobile: '(max-width: 899px)'
+    }, function (context) {
+      if (!context.conditions.isDesktop) return; // mobile: no split, hero and About render statically
+
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroEl,
+          start: 'top top',
+          end: '+=900', // main feel dial — how much scroll the whole split+reveal takes
+          scrub: 0.5,
+          pin: true,
+          pinSpacing: false,
+          anticipatePin: 1
+        }
+      });
+
+      // Explicit checkpoints (composition pass, BUILD-SPEC-HERO-SPLIT-REVEAL.md):
+      // every value below is a deliberate "screen" boundary, not just a feel
+      // dial — verified against 25/50/75/100% screenshots. Durations are
+      // explicit throughout so scrub progress 0-1 maps predictably onto these
+      // numbers (GSAP's default 0.5s-per-tween would otherwise stretch things
+      // unevenly across the scroll range).
+      // GSAP timeline position labels are TIME, and tl.progress()/scrub map
+      // scroll-fraction onto a fraction of the timeline's TOTAL duration —
+      // not directly onto these position numbers — so every tween's end time
+      // must be checked and the LATEST one must land exactly on 1.0, or every
+      // checkpoint below silently drifts (confirmed the hard way: an earlier
+      // version's tweens summed to a total duration of 0.9, so authored
+      // "0.45" actually fired at real scroll-progress 0.5, not 0.45 — visible
+      // only by driving tl.progress() directly and comparing against the
+      // authored labels, not by eyeballing scrub'd scroll behaviour). Every
+      // value below is chosen so the last tween (the hero cleanup fade) ends
+      // at exactly 1.0.
+      tl
+        // 1. Hero copy/chips fully gone by 0.15 — nothing hero-owned may still
+        // be mid-fade past this point (checked at the 25% screenshot).
+        .to(['.hero-copy', '.hero-disciplines', '.hero-clock-mobile', '.scroll-cue'], { opacity: 0, ease: 'none', duration: 0.15 }, 0)
+        // 2. Halves part 0.1–0.7 (start slightly after the hero-text fade
+        // begins so the two moves read as sequential, not simultaneous).
+        .to(leftHalf, { xPercent: -65, ease: 'none', duration: 0.6 }, 0.1)
+        .to(rightHalf, { xPercent: 65, ease: 'none', duration: 0.6 }, 0.1)
+        // 3. About stays fully hidden (autoAlpha via CSS default) until 0.45 —
+        // an instant flip, not a tween: the actual visible reveal is the
+        // lines' own opacity/y stagger starting at the same instant, so there
+        // is nothing to see at 0.45 itself, just the gate opening.
+        .set(aboutReveal, { autoAlpha: 1 }, 0.45)
+        // Explicit per-line tweens, not the `stagger` shorthand — combined
+        // with explicit position parameters, stagger's actual start/duration
+        // didn't land where the numbers implied (confirmed by driving
+        // tl.progress() directly, bypassing scrub smoothing entirely). Named
+        // positions per line removes the ambiguity.
+        .to(aboutLines[0], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.45)
+        .to(aboutLines[1], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.55)
+        .to(aboutLines[2], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.6)
+        // 4. Squiggle draws under "illustrator" (line 2, done revealing by
+        // 0.75) over 0.75–0.9.
+        .to(squigglePath, { strokeDashoffset: 0, ease: 'none', duration: 0.15 }, 0.75)
+        // Cleanup: #hero's own box (halves already off-screen by 0.7, hero
+        // copy already gone by 0.15) fades out once everything else is done —
+        // this is also what makes the timeline's total duration land on
+        // exactly 1.0 (see comment above). Avoids a lingering invisible-but-
+        // interactive element at z-index:10 rather than fixing a visible bug.
+        .to(heroEl, { autoAlpha: 0, ease: 'none', duration: 0.1 }, 0.9);
+    });
+  })();
+
+  /* ---------- About supporting content (paragraph/credential/résumé/tools) —
+     grouped, revealed as one unit only once scrolled PAST the pin, never
+     during it. Previously this was its own independent, decoupled
+     ScrollTrigger keyed to its own scroll-into-view position — which could
+     fire before the display statement had even finished revealing, since
+     nothing tied the two together (this is the "paragraph renders above the
+     statement" bug from the recompose pass). trigger: heroEl, start:'bottom
+     top' fires at exactly the scroll position where the pin's own range ends
+     (hero's document bottom reaching the viewport top — computed correctly by
+     ScrollTrigger even while hero is pinned/fixed), so this can never begin
+     before the split timeline's 100% checkpoint. ---------- */
+  (function () {
+    var heroEl = document.getElementById('hero');
+    var supportEl = document.getElementById('about-support');
+    if (!heroEl || !supportEl || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Desktop-only, same as the split timeline above — without this gate,
+    // GSAP applies an inline opacity:0 the moment this ScrollTrigger is
+    // created, on every viewport width, which silently overrides the mobile
+    // CSS fallback (.about-support{opacity:1}) since inline styles win
+    // regardless of media query. Confirmed as a real bug via computed styles
+    // at 390px width, not just theorised.
+    if (!window.matchMedia('(min-width: 900px)').matches) return;
+
+    gsap.to(supportEl, {
+      opacity: 1,
+      y: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroEl,
+        start: 'bottom top',
+        end: 'bottom top-=300',
+        scrub: 0.5
+      }
+    });
+  })();
 
   /* ---------- nav pill shrink/expand on scroll ---------- */
   var nav = document.getElementById('site-nav');
@@ -1589,127 +1983,9 @@
     });
   }
 
-  /* ---------- hero-to-about pose scrub: single element shrinks from full hero cover
-     down to the small About crop as the visitor scrolls, then hands off to the
-     sticky landing spot (#hero-illustration) built in BUILD-SPEC-ABOUT.md ---------- */
-  (function () {
-    var scrub = document.getElementById('pose-scrub');
-    var illo = document.getElementById('hero-illustration');
-    var aboutContent = document.getElementById('about-content');
-    var aboutSection = document.getElementById('about');
-    var heroPoseEls = document.querySelectorAll('.hero .hero-poses .hero-pose');
-    var illoPoseEls = illo ? illo.querySelectorAll('.hero-pose') : [];
-    if (!scrub || !illo || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var FULL_SRC = {
-      working: '/assets/hero/hero-pose-working.webp',
-      reading: '/assets/hero/hero-pose-reading.webp'
-    };
-    var CROP_FRAC = { x0: 1064 / 3840, y0: 873 / 2160, x1: 2306 / 3840, y1: 1 };
-    var IMG_ASPECT = 3840 / 2160;
-    var ZONE_PX = 500;
-
-    var heroHeightPx = 0;
-    var zoneEndPx = 0;
-    var landingRect = null;
-    var mqNarrow = window.matchMedia('(max-width: 820px)');
-
-    function measure() {
-      heroHeightPx = hero.offsetHeight;
-      /* zoneEndPx is the scrollY at which #about actually begins — measuring
-         #about's own runtime position directly (rather than assuming it's
-         just heroHeightPx) stays correct even if hero's height changes. */
-      zoneEndPx = aboutSection ? (aboutSection.getBoundingClientRect().top + window.scrollY) : heroHeightPx;
-      var r = illo.getBoundingClientRect();
-      landingRect = { left: r.left, width: r.width, top: 100, height: r.width * (858 / 828) };
-    }
-
-    function coverFrac(boxAspect) {
-      if (boxAspect > IMG_ASPECT) {
-        var vh = IMG_ASPECT / boxAspect;
-        return { x0: 0, x1: 1, y0: (1 - vh) / 2, y1: 1 - (1 - vh) / 2 };
-      }
-      var vw = boxAspect / IMG_ASPECT;
-      return { x0: (1 - vw) / 2, x1: 1 - (1 - vw) / 2, y0: 0, y1: 1 };
-    }
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    function update() {
-      if (mqNarrow.matches) {
-        scrub.style.opacity = '0';
-        illoPoseEls.forEach(function (el) { el.style.opacity = ''; });
-        aboutContent.style.opacity = '';
-        aboutContent.style.transform = '';
-        return;
-      }
-
-      var scrollY = window.scrollY;
-      var zoneStart = zoneEndPx - ZONE_PX;
-      var zoneEnd = zoneEndPx;
-      var progress = (scrollY - zoneStart) / (zoneEnd - zoneStart);
-      progress = Math.max(0, Math.min(1, progress));
-
-      // About's own copy/credential/tools rise and fade in on the same
-      // progress value as the pose — the whole section arrives together.
-      aboutContent.style.opacity = String(progress);
-      aboutContent.style.transform = 'translateY(' + ((1 - progress) * 24) + 'px)';
-
-      // the landing pose only appears once the shrink has actually finished —
-      // otherwise it's fully opaque and visible the moment About peeks into
-      // view from the bottom of the viewport, long before the scrub kicks in.
-      var landed = scrollY >= zoneEnd;
-      illoPoseEls.forEach(function (el) { el.style.opacity = landed ? '' : '0'; });
-
-      if (progress <= 0 || progress >= 1) {
-        scrub.style.opacity = '0';
-        heroPoseEls.forEach(function (el) { el.style.opacity = ''; });
-        return;
-      }
-
-      heroPoseEls.forEach(function (el) { el.style.opacity = '0'; });
-
-      /* rectA.top is hero's viewport position (in px) at the instant
-         scrollY === zoneStart. Hero's own document top is always 0, so
-         this is just 0 - zoneStart === -(zoneEndPx - ZONE_PX). */
-      var rectA = { left: 0, top: -(zoneEndPx - ZONE_PX), width: window.innerWidth, height: heroHeightPx };
-      var rectB = landingRect;
-
-      var left = lerp(rectA.left, rectB.left, progress);
-      var top = lerp(rectA.top, rectB.top, progress);
-      var width = lerp(rectA.width, rectB.width, progress);
-      var height = lerp(rectA.height, rectB.height, progress);
-
-      var fracA = coverFrac(rectA.width / rectA.height);
-      var x0 = lerp(fracA.x0, CROP_FRAC.x0, progress);
-      var y0 = lerp(fracA.y0, CROP_FRAC.y0, progress);
-      var x1 = lerp(fracA.x1, CROP_FRAC.x1, progress);
-      var y1 = lerp(fracA.y1, CROP_FRAC.y1, progress);
-      var wFrac = x1 - x0, hFrac = y1 - y0;
-
-      var bgW = width / wFrac;
-      var bgH = height / hFrac;
-      var bgX = -(x0 * bgW);
-      var bgY = -(y0 * bgH);
-
-      scrub.style.backgroundImage = 'url(' + FULL_SRC[HERO_POSES[currentPoseZone % HERO_POSES.length]] + ')';
-      scrub.style.left = left + 'px';
-      scrub.style.top = top + 'px';
-      scrub.style.width = width + 'px';
-      scrub.style.height = height + 'px';
-      scrub.style.backgroundSize = bgW + 'px ' + bgH + 'px';
-      scrub.style.backgroundPosition = bgX + 'px ' + bgY + 'px';
-      scrub.style.opacity = '1';
-    }
-
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', function () { measure(); update(); });
-    measure();
-    update();
-  })();
-
-  /* ---------- Chosen Work accordion ---------- */
-  var accordionEl = document.getElementById('accordion');
+  /* ---------- Chosen Work cards (BUILD-SPEC-ABOUT-CENTER-WORK-CARDS.md,
+     replaces the old hover-accordion) ---------- */
+  var cardsEl = document.getElementById('work-cards');
   var emptyEl = document.getElementById('chosen-empty');
   var featured = window.PROJECTS.filter(function (p) { return p.featured; })
     .sort(function (a, b) { return a.order - b.order; });
@@ -1718,63 +1994,66 @@
     '<path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" />' +
     '</svg>';
 
-  accordionEl.insertAdjacentHTML('beforeend', '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>');
+  // Outcome lines are Neel's copy, not written here (see the spec's §2.3) —
+  // each slot ships as a dev-facing HTML comment marker only. No element is
+  // rendered for it at all yet, so nothing resembling placeholder text can
+  // show up live.
+  var OUTCOME_SLOT_COMMENTS = {
+    futee: '<!-- NEEL: outcome line — e.g. shipped/ran live bookings -->',
+    'emf-ace': '<!-- NEEL: outcome line -->',
+    cseds: '<!-- NEEL: outcome line — client launch -->',
+    'into-yesterday': '<!-- NEEL: outcome line (optional — speculative/coursework, may not need one) -->'
+  };
+
+  cardsEl.insertAdjacentHTML('beforeend', '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>');
 
   featured.forEach(function (project) {
-    var row = document.createElement('div');
-    row.className = 'accordion-row';
-    row.dataset.disciplines = project.disciplines.join(',');
+    var card = document.createElement('a');
+    card.className = 'work-card';
+    card.href = '/work/' + project.slug + '.html';
+    card.dataset.disciplines = project.disciplines.join(',');
 
     var num = pad2(project.order);
 
-    row.innerHTML =
-      '<button class="accordion-trigger" aria-expanded="false" type="button">' +
-        '<span class="row-num">' + num + '</span>' +
-        '<span class="row-title">' + project.title + '</span>' +
-        '<span class="row-toggle" aria-hidden="true">+</span>' +
-      '</button>' +
-      '<div class="accordion-panel">' +
-        '<div>' +
-          '<p class="panel-desc">' + project.description + '</p>' +
-          '<a class="panel-link" href="/work/' + project.slug + '.html" style="color:' + project.accent + '">View case study →</a>' +
-        '</div>' +
-        '<span class="panel-giant" style="color:' + project.accent + '">' + num + '</span>' +
-      '</div>' +
-      '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>';
+    var mediaHtml = project.image
+      ? '<img src="' + project.image + '" alt="" loading="lazy">'
+      : '<span class="work-card-media-slot">Image placeholder</span>' +
+        '<span class="work-card-media-note">Lead image not supplied yet</span>';
 
-    var trigger = row.querySelector('.accordion-trigger');
+    card.innerHTML =
+      '<div class="work-card-media' + (project.image ? '' : ' is-empty') + '">' + mediaHtml + '</div>' +
+      '<div class="work-card-body">' +
+        '<span class="work-card-index">' + num + '</span>' +
+        '<h3 class="work-card-title">' + project.title + '</h3>' +
+        '<p class="work-card-desc">' + project.description + '</p>' +
+        (OUTCOME_SLOT_COMMENTS[project.slug] || '') +
+        '<span class="work-card-cta" style="color:' + project.accent + '">View case study →' +
+          '<svg class="work-card-cta-underline" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8C2 8 20 9.2 40 8.4C60 7.6 80 6.8 98 6.2" /></svg>' +
+        '</span>' +
+      '</div>';
 
-    function openRow() {
-      accordionEl.querySelectorAll('.accordion-row.is-open').forEach(function (openRowEl) {
-        if (openRowEl !== row) {
-          openRowEl.classList.remove('is-open');
-          openRowEl.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
-        }
-      });
-      row.classList.add('is-open');
-      trigger.setAttribute('aria-expanded', 'true');
-    }
-    function closeRow() {
-      row.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded', 'false');
-    }
-
-    row.addEventListener('mouseenter', openRow);
-    row.addEventListener('mouseleave', closeRow);
-    row.addEventListener('focusin', openRow);
-    row.addEventListener('focusout', function (e) {
-      if (!row.contains(e.relatedTarget)) closeRow();
-    });
-    trigger.addEventListener('click', function () {
-      if (row.classList.contains('is-open')) {
-        closeRow();
-      } else {
-        openRow();
-      }
-    });
-
-    accordionEl.appendChild(row);
+    cardsEl.appendChild(card);
+    cardsEl.insertAdjacentHTML('beforeend', '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>');
   });
+
+  /* Motion: fade + rise once, on first entry only (once:true) — no
+     BUILD-SPEC-MOTION.md §5.5 in the repo to match (confirmed via `ls *.md`;
+     see BUILD-SPEC-ABOUT-CENTER-WORK-CARDS.md), so this reuses the same
+     restrained reveal already shipped elsewhere on this site rather than
+     inventing a new "ink-reveal" technique with no definition to build
+     against. Hover image-scale is plain CSS (:hover, hover:hover-gated). */
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.utils.toArray('.work-card').forEach(function (card, i) {
+      gsap.from(card, {
+        opacity: 0,
+        y: 60,
+        duration: 0.6,
+        delay: (i % 4) * 0.08,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: card, start: 'top 80%', once: true }
+      });
+    });
+  }
 
   function pad2(n) { return n < 10 ? '00' + n : (n < 100 ? '0' + n : '' + n); }
 
@@ -1790,14 +2069,10 @@
     filterChip.classList.add('is-visible');
 
     var visibleCount = 0;
-    accordionEl.querySelectorAll('.accordion-row').forEach(function (row) {
-      var matches = row.dataset.disciplines.split(',').indexOf(discipline) !== -1;
-      row.classList.toggle('is-hidden', !matches);
+    cardsEl.querySelectorAll('.work-card').forEach(function (card) {
+      var matches = card.dataset.disciplines.split(',').indexOf(discipline) !== -1;
+      card.classList.toggle('is-hidden', !matches);
       if (matches) visibleCount++;
-      if (!matches && row.classList.contains('is-open')) {
-        row.classList.remove('is-open');
-        row.querySelector('.accordion-trigger').setAttribute('aria-expanded', 'false');
-      }
     });
     emptyEl.classList.toggle('is-visible', visibleCount === 0);
   }
@@ -1805,8 +2080,8 @@
   function clearFilter() {
     currentFilter = null;
     filterChip.classList.remove('is-visible');
-    accordionEl.querySelectorAll('.accordion-row').forEach(function (row) {
-      row.classList.remove('is-hidden');
+    cardsEl.querySelectorAll('.work-card').forEach(function (card) {
+      card.classList.remove('is-hidden');
     });
     emptyEl.classList.remove('is-visible');
   }

@@ -1,0 +1,35 @@
+# BUILD-SPEC-SPLIT-FIX.md
+
+Fix for the broken hero-split → About build on neel-parikh.com. Written 2026-07-23, from a screenshot, without repo access — a companion diagnostic to `BUILD-SPEC-HERO-SPLIT-REVEAL.md`, not a replacement for it.
+
+Per §0.1: `ls *.md` confirms `BUILD-SPEC-HERO-SPLIT-REVEAL.md` is the only current hero-split spec in the repo (`BUILD-SPEC-HERO-ABOUT-COLLAPSE.md` also exists but is marked superseded/never-shipped in `CLAUDE.md`). No conflict to flag.
+
+## Investigation findings
+
+Tested each hypothesis against the running dev server (`http://localhost:8743`, freshly cache-busted, fresh tab) rather than assuming. **None of the reported symptoms reproduced.**
+
+* **H1 (JS error) — false.** Zero console messages of any kind (not just errors — checked for the "warns and continues" GSAP missing-target case too). `gsap`/`ScrollTrigger` both loaded. `.hero-stage`, `.hero-split`, `.hero-half--left`, `.hero-half--right`, `.about-line` (×3) all resolve, non-null. The hero `ScrollTrigger` is registered (confirmed via `ScrollTrigger.getAll()`).
+* **H2 (illustration missing) — false.** Both halves measure the full 1440×900 viewport, each containing 6 `<img>` (4 time-of-day scenes + 2 poses), the active image loaded (`complete: true`, `naturalWidth: 1440`, real src `hero-morning.webp`).
+* **H3 (pin broken) — false, but built differently from this spec's assumption.** The pin exists, registered on `#hero`, `start ≈ 0`, `end = 900`. **Note:** this build does not use the original spec's exact `pinSpacing:true` + `#about` absolutely-positioned-inside-`.hero-stage` approach — it uses `pinSpacing:false` with `#hero` (not `#about`) as the absolutely-positioned element, and `#about` left in normal flow so its *real* content height (not a hardcoded `+=140%`) determines the scrollable distance. This was the deliberate, already-verified fix for the first build's black-gap bug (documented in `BUILD-SPEC-HERO-SPLIT-REVEAL.md`'s Build notes, confirmed against GSAP's own docs). Not reverted, since it's already validated working — `#chosen-work` starts at exactly 1110px, matching `#about`'s real height, no gap.
+* **H4 — false** (implicitly, via the H2 image checks: halves are correctly sized/positioned/opaque, not transparent or instantly-translated).
+* **§3 dark-on-dark — not reproducing.** Computed styles checked at 4 scroll depths (0/450/950/1200): `#about`, `#about-statement`, and `#chosen-work` all report the paper background (`rgb(244, 241, 234)`) and ink text (`rgb(20, 18, 16)`) throughout.
+* **§3.4 clock-theme conflict — does not exist.** Searched for any runtime script touching backgrounds/theme outside the hero; the day-cycle system only toggles `.hero-scene`/`.hero-pose` image opacity inside the hero itself. No mechanism sets section backgrounds by time of day. Nothing to flag to Neel here.
+
+**Most likely explanation:** the 09:35 AEST screenshot was taken against a stale/cached page load. The turn immediately before this spec arrived had just shipped a real fix (`.about-statement` was `position:sticky` with no background of its own, so content scrolling underneath it bled through — exactly the kind of thing that would photograph as "dark-on-dark" or "About visible behind the nav"). Python's `http.server` (this project's local dev server) doesn't send strong cache-control headers, so a real browser can serve a stale copy of `index.html`/scripts without a hard refresh — the same class of issue `CLAUDE.md` already documents for the Browser pane tool, but it can affect a real browser too.
+
+**No code changes made this pass** — nothing here reproduced against the actual repo state, and the spec's own §0.2 explicitly says not to shotgun-fix hypotheses that don't test true.
+
+## Correction: the bug was real — found via paint-stack check
+
+The "stale cache" conclusion above was wrong, or at least incomplete. Neel supplied four fresh real-browser screenshots (hero at rest: correct; mid-split: parted halves reveal an **opaque black panel**, not About; post-split: About rendering dark-on-dark; Work section: correct) and pointed out the actual blind spot — checking `getComputedStyle` on `#about` only confirms what `#about` *would* look like if nothing painted over it. It says nothing about what's *actually on top of it* in the stacking order. That requires a paint-stack check, not a computed-style check on the target element alone.
+
+**Root cause, confirmed two ways:**
+
+1. **Static inspection:** `.hero` carried `background: var(--ink)` at `z-index: 10`, sized to `height: 100vh` covering the full stage. The split only translates the *halves* (`.hero-half--left/--right`, children of `.hero-split`, inside `#hero`) — `#hero`'s own box and its own background never move and don't fade until late in the timeline (`autoAlpha` on `#hero` itself only starts at progress 0.7). So for the whole 0–0.7 range, the space the halves vacate is still covered by `#hero`'s own opaque ink background sitting at z-index 10, above `#about`.
+2. **Runtime confirmation:** `document.elementsFromPoint(innerWidth/2, innerHeight*0.6)` at mid-split (scroll 270) listed, top to bottom: `.hero-split` (transparent) → **`SECTION#hero`, `background-color: rgb(20, 18, 16)`, opacity 1, z-index 10** → `.pin-spacer` (transparent) → ... → `#about` (paper, further down). `#hero` was the first opaque layer — exactly the predicted culprit, exactly where predicted.
+
+**Fix:** moved the dark fallback background off the shared parent and onto the individual halves — `.hero` loses `background: var(--ink)` entirely; `.hero-half` (the shared class for both `--left`/`--right`) gains it instead. Each half now carries its own opacity/solidity with it as it translates, so the vacated centre strip is covered by nothing once both halves have moved — correctly exposing `#about` underneath. At rest, both halves together still fully cover the stage exactly as before (confirmed: `elementsFromPoint` at rest returns `.hero-half--right`, `background-color: rgb(20, 18, 16)`, before any images/JS have necessarily settled).
+
+**Re-verified with the same paint-stack technique, not computed-styles-in-isolation:** at scroll 270 (mid-split), the first opaque element in the paint stack is now `SECTION#about`, `rgb(244, 241, 234)` (paper) — About, not hero. Full sequence re-checked (0 / 270 / 540 / 900 / 1000) and reverse (back to 0) all resolve to the expected opaque layer at each point (`hero-half` at rest, `about` mid-split, `chosen-work` after the pin ends). Screenshot at scroll 300 rendered cleanly this time (not blank/glitched) and visually confirms: parted halves at the left/right edges, paper-coloured gap between them, hero-copy/disciplines text correctly mid-fade, no black panel. Zero console messages throughout.
+
+**Answer to "report back which element it was":** `SECTION#hero` (`.hero`) — its own `background: var(--ink)`, not the halves, not a preloader/backdrop layer (no such layer exists in this codebase).
