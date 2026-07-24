@@ -533,7 +533,7 @@
   /* ============ CHOSEN WORK ============ */
   .chosen-work {
     background: var(--paper);
-    padding: clamp(80px, 12vw, 140px) clamp(20px, 5vw, 56px) clamp(60px, 8vw, 100px);
+    padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 56px) clamp(60px, 8vw, 100px);
   }
   .section-inner { max-width: 1040px; margin: 0 auto; }
 
@@ -557,7 +557,7 @@
   .hero-about-wrap {
     background: var(--paper);
     border-top: 1px solid var(--line);
-    padding: clamp(60px, 9vw, 100px) clamp(20px, 5vw, 56px);
+    padding: clamp(60px, 9vw, 100px) clamp(20px, 5vw, 56px) clamp(28px, 4vw, 48px);
   }
 
   /* Centred as a block (not just its own text) so the composition lines up
@@ -679,18 +679,6 @@
     .about-support { opacity: 1; transform: none; }
   }
 
-  .about-copy { max-width: 640px; }
-  .about-copy p {
-    font-family: var(--body);
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink);
-    margin: 0 0 20px;
-  }
-  .about-copy .is-placeholder {
-    color: rgba(20, 18, 16, 0.45);
-    font-style: italic;
-  }
   .about-credential {
     font-family: var(--ui);
     font-size: 14px;
@@ -721,26 +709,19 @@
   .about-stack {
     margin-top: 36px;
   }
-  .about-stack-label {
-    display: block;
-    text-align: center;
-    font-family: var(--ui);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--amber);
-    margin-bottom: 20px;
-  }
   .tool-row {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 22px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
   }
   .tool-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
   }
   .tool-icon {
     width: 26px;
@@ -1375,23 +1356,20 @@
     <div class="about-reveal" id="about-reveal">
       <span class="eyebrow">ABOUT</span>
       <h2 class="about-statement" id="about-statement">
-        <span class="about-line">I'm a product &amp; interaction designer,</span>
-        <span class="about-line">an <span class="about-key">illustrator<svg class="about-squiggle" viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 14C20 8 40 20 60 12C80 4 100 18 120 10C140 4 160 16 178 10C185 8 190 10 198 12" /></svg></span>,</span>
-        <span class="about-line">and an immersive, AI-native maker.</span>
+        <span class="about-line">hello!</span>
+        <span class="about-line">I am an <span class="about-key">AI-native<svg class="about-squiggle" viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 14C20 8 40 20 60 12C80 4 100 18 120 10C140 4 160 16 178 10C185 8 190 10 198 12" /></svg></span> product designer,</span>
+        <span class="about-line">illustrator and immersive designer</span>
+        <span class="about-line">with 3+ years of experience.</span>
       </h2>
     </div>
 
     <div class="about-support" id="about-support">
-      <div class="about-copy">
-        <p id="about-copy-text">Neel Parikh is a product and interaction designer based in Sydney with over 4 years of experience across brand, UI/UX, and immersive design. He's led design as Design Lead at Media Mushroom, working with clients including Maruti Suzuki, IIM Ahmedabad, and <a href="/work/emf-ace.html" class="link-draw">EMF ACE<svg class="link-draw-underline" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8C2 8 20 9.2 40 8.4C60 7.6 80 6.8 98 6.2" /></svg></a>. Neel is known for hand-illustrated craft — bringing a painterly, personal touch to interfaces that usually stay generic. Whether shaping brand systems or building AI-native and immersive product experiences, his work is driven by curiosity, precision, and a refusal to let good design look templated.</p>
-      </div>
-      <p class="about-credential">~4 years in industry, before an MDes at UNSW.</p>
+      <p class="about-credential">MDes at UNSW.</p>
       <div class="about-resume">
         <a href="/assets/files/neel-parikh-cv.pdf" class="about-resume-link" target="_blank" rel="noopener">Résumé (PDF) ↗</a>
       </div>
 
       <div class="about-stack">
-        <span class="about-stack-label">TOOLS</span>
         <div class="tool-row">
           <div class="tool-item">
             <svg class="tool-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
@@ -1537,13 +1515,17 @@
         // with explicit position parameters, stagger's actual start/duration
         // didn't land where the numbers implied (confirmed by driving
         // tl.progress() directly, bypassing scrub smoothing entirely). Named
-        // positions per line removes the ambiguity.
-        .to(aboutLines[0], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.45)
-        .to(aboutLines[1], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.55)
-        .to(aboutLines[2], { opacity: 1, y: 0, ease: 'none', duration: 0.15 }, 0.6)
-        // 4. Squiggle draws under "illustrator" (line 2, done revealing by
-        // 0.75) over 0.75–0.9.
-        .to(squigglePath, { strokeDashoffset: 0, ease: 'none', duration: 0.15 }, 0.75)
+        // positions per line removes the ambiguity. Four lines now (was
+        // three, BUILD-SPEC-ABOUT-CONTENT-REFRESH.md) — restaggered so the
+        // last line still finishes before the squiggle starts.
+        .to(aboutLines[0], { opacity: 1, y: 0, ease: 'none', duration: 0.12 }, 0.45)
+        .to(aboutLines[1], { opacity: 1, y: 0, ease: 'none', duration: 0.12 }, 0.52)
+        .to(aboutLines[2], { opacity: 1, y: 0, ease: 'none', duration: 0.12 }, 0.59)
+        .to(aboutLines[3], { opacity: 1, y: 0, ease: 'none', duration: 0.12 }, 0.66)
+        // 4. Squiggle draws under "AI-native" (line 2 of 4, done revealing by
+        // 0.64) over 0.78–0.90 — after all four lines finish, matching the
+        // original design's choice to let every line settle before drawing.
+        .to(squigglePath, { strokeDashoffset: 0, ease: 'none', duration: 0.12 }, 0.78)
         // Cleanup: #hero's own box (halves already off-screen by 0.7, hero
         // copy already gone by 0.15) fades out once everything else is done —
         // this is also what makes the timeline's total duration land on
