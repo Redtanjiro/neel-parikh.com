@@ -662,6 +662,16 @@
     opacity: 0;
     transform: translateY(24px);
   }
+  /* Extra padding/margin desktop-only, matching the GSAP matchMedia
+     breakpoint below: #about-support's rendered height is what gives
+     #about-reveal (position:sticky) room to stay glued on screen for the
+     hero-split ScrollTrigger's own scroll distance — see that trigger's
+     end-value comment. Mobile has no sticky/pin at all, so it doesn't need
+     (or want) the extra height; keep it at the original compact spacing
+     there. */
+  @media (min-width: 900px) {
+    .about-support { padding-top: 100px; }
+  }
 
   @media (prefers-reduced-motion: reduce), (max-width: 899px) {
     /* Matches the GSAP matchMedia breakpoint below 900px — the split/reveal
@@ -708,6 +718,9 @@
 
   .about-stack {
     margin-top: 36px;
+  }
+  @media (min-width: 900px) {
+    .about-stack { margin-top: 100px; }
   }
   .tool-row {
     display: flex;
@@ -1473,8 +1486,19 @@
         scrollTrigger: {
           trigger: heroEl,
           start: 'top top',
-          end: '+=900', // main feel dial — how much scroll the whole split+reveal takes
-          scrub: 0.5,
+          // Hard ceiling, not just a feel dial: #about-reveal is CSS
+          // position:sticky, not GSAP-pinned — it only stays glued to the
+          // viewport for as long as #about-support (its next sibling) is
+          // tall enough to sustain that ("stick room" = #about-support's own
+          // height). If this distance exceeds that stick room, #about-reveal
+          // starts sliding away and exposing Chosen Work underneath WHILE
+          // this timeline is still mid-fade (confirmed as a real bug,
+          // 2026-07-24, after trimming About's copy shrank #about-support —
+          // see BUILD-SPEC-ABOUT-CONTENT-REFRESH.md). Verify #about-support's
+          // rendered height comfortably exceeds this value before changing
+          // either one.
+          end: '+=300',
+          scrub: 0.25,
           pin: true,
           pinSpacing: false,
           anticipatePin: 1
