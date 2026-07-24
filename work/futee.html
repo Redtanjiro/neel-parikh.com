@@ -546,33 +546,30 @@
     .fc-coach-card { transition: none; }
   }
 
-  /* ============ PLACEHOLDER (labelled box at final aspect ratio, no reflow on swap) ============ */
-  .fc-placeholder {
-    aspect-ratio: var(--ph-ratio, 16 / 9);
+  /* Real screen shots — flat exports shown at natural aspect (no forced crop),
+     capped per-slot by --shot-max. Light frame so a screenshot on white reads
+     as a framed screen against the dark pitch background. */
+  .fc-shot {
+    display: block;
     width: 100%;
-    max-width: var(--ph-max, none);
+    max-width: var(--shot-max, none);
+    height: auto;
     margin: 0 auto;
-    border: 1.5px dashed rgba(244, 245, 240, 0.32);
     border-radius: 14px;
-    background: rgba(244, 245, 240, 0.035);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 20px;
-    text-align: center;
+    background: #fff;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
   }
-  .fc-placeholder-slot {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.03em;
-    color: rgba(244, 245, 240, 0.55);
+  /* Lift toward the reader on hover — transform-only, so it stays cheap. */
+  .fc-figure:hover .fc-shot,
+  .fc-hero-art:hover .fc-shot {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 30px 64px rgba(0, 0, 0, 0.36);
   }
-  .fc-placeholder-note {
-    font-family: var(--ui);
-    font-size: 11px;
-    color: rgba(244, 245, 240, 0.35);
+  @media (prefers-reduced-motion: reduce) {
+    .fc-shot { transition: none; }
+    .fc-figure:hover .fc-shot,
+    .fc-hero-art:hover .fc-shot { transform: none; }
   }
 
   /* ============ MOVE 3: bullets paired with the largest frame on the page ============ */
@@ -958,9 +955,10 @@
     <p class="fc-lede">We designed a football-pitch booking app for Bangkok from our desks in India, never having been there. It went live, booked real games, and worked well enough that the pitch owners took it in-house.</p>
   </div>
   <div class="fc-hero-art">
-    <div class="fc-placeholder" style="--ph-ratio: 16 / 9;">
-      <span class="fc-placeholder-slot">futee-cover</span>
-      <span class="fc-placeholder-note">night-play cover — placeholder until supplied</span>
+    <div class="device-enter">
+      <img class="fc-shot" src="/work/futee/assets/hero-illustration.png"
+           alt="Hand-drawn illustration of a footballer in a red number-8 shirt and white shorts, mid-stride about to strike a navy star-patterned ball, drawn in a loose felt-tip style with pink and lime accents."
+           width="3840" height="2160" style="box-shadow:none; background:transparent;">
     </div>
   </div>
 </section>
@@ -982,12 +980,11 @@
 
   <figure class="fc-figure">
     <div class="device-enter">
-      <div class="fc-placeholder" style="--ph-ratio: 4 / 3; --ph-max: 560px;">
-        <span class="fc-placeholder-slot">futee-process-teardown</span>
-        <span class="fc-placeholder-note">local-app teardown board or captioned player note — placeholder</span>
-      </div>
+      <img class="fc-shot" src="/work/futee/assets/problem-grid.png"
+           alt="Research board titled 'Major problems inverse with features', built from user insights: a top row of orange goal cards (finding fit players, better matchmaking, finding a game fast, building a community) each paired with a yellow feature card below it (post-game player rating, booking a pitch and hiring a referee, browsing open games nearby, organiser invites)."
+           width="1500" height="939" style="--shot-max: 560px;">
     </div>
-    <figcaption>How we read the local apps instead of the room we couldn't be in.</figcaption>
+    <figcaption>Every problem we heard, mapped to the feature meant to answer it — the map we built instead of a room we couldn't stand in.</figcaption>
   </figure>
 
   <p class="fc-body-lg">One thing reframed the entire product. Thailand is hot — so people play at night. In the cold-weather countries most booking apps are designed for, football is a daytime, weekend-morning activity, and the whole interface assumes it. Ours had to assume the inverse. That single fact wasn't a detail — it cascaded through every important decision on the page:</p>
@@ -1000,10 +997,9 @@
     </ul>
     <figure class="fc-figure" style="margin-top:0;">
       <div class="device-enter" style="--enter-delay:120ms">
-        <div class="fc-placeholder" style="--ph-ratio: 9 / 16; --ph-max: 320px;">
-          <span class="fc-placeholder-slot">★ futee-booking-night</span>
-          <span class="fc-placeholder-note">booking screen, evening default + night surfaced first — largest frame on the page, placeholder for a clean flat export</span>
-        </div>
+        <img class="fc-shot" src="/work/futee/assets/solution-findgame-full.png"
+             alt="The full Find Game screen: a Top Rated Pitches banner, a horizontal date picker defaulting to Today, venue search with city/province/district and radius and price-per-hour filters, then a grid of fifteen open games — each a floodlit pitch photo with an available-timeslots badge and a rating."
+             width="1400" height="3571" style="--shot-max: 360px;">
       </div>
       <figcaption>Find Game, evening-first — the screen these three calls produced.</figcaption>
     </figure>
@@ -1055,23 +1051,12 @@
   </figure>
 
   <figure class="fc-figure">
-    <div class="device-enter" style="--enter-delay:140ms">
-      <div class="fc-placeholder" style="--ph-ratio: 16 / 10; --ph-max: 420px;">
-        <span class="fc-placeholder-slot">futee-owner-backend</span>
-        <span class="fc-placeholder-note">pitch-owner booking back-end, flat screen — placeholder</span>
-      </div>
-    </div>
-    <figcaption>Pitch owners — a deliberately simple back-end, the side of the market most likely to walk if the tool felt like work.</figcaption>
-  </figure>
-
-  <figure class="fc-figure">
     <div class="device-enter" style="--enter-delay:280ms">
-      <div class="fc-placeholder" style="--ph-ratio: 3 / 4; --ph-max: 280px;">
-        <span class="fc-placeholder-slot">futee-rating-ui</span>
-        <span class="fc-placeholder-note">show/no-show + 1–5 ability score, flat — placeholder</span>
-      </div>
+      <img class="fc-shot" src="/work/futee/assets/solution-teams-mobile.png"
+           alt="Mobile screen titled 'Confirm players who Showed Up (10 of 12)' — a checklist of twelve player names with black tick boxes, two left unchecked, the input a game organiser uses to mark who actually turned up."
+           width="788" height="1660" style="--shot-max: 260px;">
     </div>
-    <figcaption>Players — show/no-show plus a 1–5 self-described-ability score, public on the profile.</figcaption>
+    <figcaption>Players — the show / no-show check that feeds the reliability score. It's not finding a pitch that breaks pickup football; it's trusting ten strangers will turn up.</figcaption>
   </figure>
 
   <p class="fc-body-lg" style="margin-top:36px;">It shipped. It ran live and booked real games. Then the pitch owners took it in-house — which is the honest ending, and not a disappointing one: a model gets absorbed like that precisely because it works. The thing we'd designed was worth owning.</p>
@@ -1082,21 +1067,29 @@
 <!-- 5. CLOSING BEAT -->
 <section class="fc-section" id="closing-shots">
   <div class="fc-closing-shots">
-    <div class="fc-placeholder" style="--ph-ratio: 16 / 10;">
-      <span class="fc-placeholder-slot">futee-final-shots</span>
-      <span class="fc-placeholder-note">shipped app, hero shot 1 — placeholder</span>
-    </div>
-    <div class="fc-placeholder" style="--ph-ratio: 16 / 10;">
-      <span class="fc-placeholder-slot">futee-final-shots</span>
-      <span class="fc-placeholder-note">shipped app, hero shot 2 — placeholder</span>
-    </div>
+    <figure class="fc-figure" style="margin:0;">
+      <div class="device-enter">
+        <img class="fc-shot" src="/work/futee/assets/solution-dashboard.png"
+             alt="The player's home dashboard: a highlighted next-game banner, three stat cards (games participated 28, average rating 8.1 of 10, games created 12), a featured floodlit pitch, and a create-game shortcut."
+             width="1483" height="1418">
+      </div>
+      <figcaption>The player's home — next game, rating, history, one tap to create.</figcaption>
+    </figure>
+    <figure class="fc-figure" style="margin:0;">
+      <div class="device-enter" style="--enter-delay:140ms">
+        <img class="fc-shot" src="/work/futee/assets/create-game-confirm-full.png"
+             alt="A booking confirmation: a gold star burst over 'Game at Polo Ground booked!', with a copy-invite-link button and a menu to publish the match as private, public, or free public."
+             width="1400" height="3576" style="--shot-max: 420px;">
+      </div>
+      <figcaption>And a game going live — booked, with an invite link to fill the other spots.</figcaption>
+    </figure>
   </div>
 </section>
 
 <!-- 10. NEXT -->
 <div class="fc-pagenav">
   <a href="/index.html">← Neel Parikh</a>
-  <a href="/work.html">See all work →</a>
+  <a href="/index.html#chosen-work">See all work →</a>
 </div>
 
 <footer class="site-footer" id="site-footer">
@@ -1217,6 +1210,12 @@
           });
         }, { threshold: 0.2 });
         enterEls.forEach(function (el) { enterObserver.observe(el); });
+        // Failsafe: if the observer never fires (odd viewport states, etc.),
+        // reveal everything after a few seconds so a real screenshot is never
+        // left stuck at opacity 0.
+        setTimeout(function () {
+          enterEls.forEach(function (el) { el.classList.add('is-in'); });
+        }, 4000);
       } else {
         enterEls.forEach(function (el) { el.classList.add('is-in'); });
       }

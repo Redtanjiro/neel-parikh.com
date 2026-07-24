@@ -429,18 +429,6 @@
     .cs-meta { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* ============ LIGHTHOUSE PLACEHOLDER ============ */
-  .cs-lighthouse-placeholder {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: rgba(20, 18, 16, 0.5);
-    background: rgba(20, 18, 16, 0.05);
-    border: 1px dashed rgba(20, 18, 16, 0.25);
-    border-radius: 4px;
-    padding: 2px 8px;
-  }
-
   /* ============ PROBLEM ============ */
   .cs-problem-list {
     list-style: none;
@@ -991,7 +979,7 @@
 <section class="cs-section" id="frame">
   <span class="cs-eyebrow-dark">The problem</span>
   <h2 class="cs-h2">Two websites, one mobile-first audience, and no room to be heavy.</h2>
-  <p class="cs-body-lg">CSEDS is live, not a prototype — <a href="https://csedsaust.com.au" target="_blank" rel="noopener">csedsaust.com.au</a>. Two large, live sites down to one: a construction-materials distributor's brand site and its growing engineering-software arm (aTENA, CivilGeo, DeepExcavation), close to nine products carried across and organised into one findable stack, backing a brand with 30+ years of engineering practice behind it, since 1991. <span class="cs-lighthouse-placeholder">[Lighthouse mobile score — placeholder until the live site is old enough to benchmark honestly]</span></p>
+  <p class="cs-body-lg">CSEDS is live, not a prototype — <a href="https://csedsaust.com.au" target="_blank" rel="noopener">csedsaust.com.au</a>. Two large, live sites down to one: a construction-materials distributor's brand site and its growing engineering-software arm (aTENA, CivilGeo, DeepExcavation), close to nine products carried across and organised into one findable stack, backing a brand with 30+ years of engineering practice behind it, since 1991.</p>
   <p class="cs-body-lg">CSEDS Australia Pty Ltd isn't an engineering consultancy — it's a distributor, bringing international construction products and engineering software into the Australian market under founder Ted Bennett, CP Eng. That distinction shaped the brief: this is a catalogue that changes as CSEDS signs new suppliers, run by a team that needed to update it themselves, not a static portfolio site.</p>
   <p class="cs-body-lg">The brief carried four constraints, and they pull against each other. More content fights findability. Faithful-to-the-originals fights improvement. Comprehensive fights lightweight-on-mobile. There's no single move that resolves all four at once — the whole project is finding the trade-off that gets closest.</p>
   <ol class="cs-problem-list">
@@ -1171,7 +1159,7 @@
   <p class="cs-body-lg">Three concrete calls came out of that constraint: CSEDS's own red carried through as the accent, in place of the Manufact template's default palette — it's the brand colour Ted had already moved the business to, and swapping in a template blue would have quietly undone that. Product names stayed exactly as customers knew them — Livin Modular, Barchip, TrueGrid, TripStop — rather than being tidied up for internal consistency. And the top-level structure — Home, Software, About, Products, Contact — stayed recognisable rather than getting reorganised for its own sake, because the win here was findability within a familiar shape, not a new shape to learn.</p>
 
   <span class="cs-eyebrow-dark" style="display:block; margin-top:36px;">Keeping it light</span>
-  <p class="cs-body-lg">The site is too new to have a performance benchmark worth quoting — rather than run a number that isn't meaningful yet, or invent one, here are the structural decisions actually made for "most users are on mobile," measurement left for later. <span class="cs-lighthouse-placeholder">[Lighthouse mobile score — placeholder]</span> The stack accordion is the biggest one: collapsing close to nine products to a name and a photo each, instead of loading every product's full detail into one scroll, is a content decision that happens to also be a weight decision. Product photography is sized for a catalogue page, not treated as uncompressed hero imagery throughout. And building on Framer rather than a fully custom stack means responsive image handling and breakpoint behaviour come from a platform built for exactly this kind of content site, instead of being reinvented per page.</p>
+  <p class="cs-body-lg">The site is too new to have a performance benchmark worth quoting — rather than run a number that isn't meaningful yet, or invent one, here are the structural decisions actually made for "most users are on mobile," measurement left for later. The stack accordion is the biggest one: collapsing close to nine products to a name and a photo each, instead of loading every product's full detail into one scroll, is a content decision that happens to also be a weight decision. Product photography is sized for a catalogue page, not treated as uncompressed hero imagery throughout. And building on Framer rather than a fully custom stack means responsive image handling and breakpoint behaviour come from a platform built for exactly this kind of content site, instead of being reinvented per page.</p>
 
   <span class="cs-eyebrow-dark" style="display:block; margin-top:36px;">What I'd do differently</span>
   <p class="cs-body-lg">Writing this case study, I went back through the live site section by section and found something I'd missed: a "Trusted by clients" block — five stock headshots, a five-star testimonial from an "Emily Carter, Product Designer," and a stat pair — sitting near the bottom of both the homepage and the software page, with a MANUFACT® watermark visible in the same section. It's unedited template content, not CSEDS's. I know because the two placements don't even agree with each other:</p>
@@ -1196,7 +1184,7 @@
 <!-- 10. NEXT -->
 <div class="cs-pagenav">
   <a href="/index.html">← Neel Parikh</a>
-  <a href="/work.html">See all work →</a>
+  <a href="/index.html#chosen-work">See all work →</a>
 </div>
 
 <footer class="site-footer" id="site-footer">

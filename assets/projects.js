@@ -13,7 +13,9 @@ window.PROJECTS = [
     disciplines: ["UI/UX", "Visual"],
     description: "A football-culture-first product design system for a grassroots matchmaking app.",
     accent: "#f2e338",
-    image: null, // no usable lead image yet — futee-cover is still an open placeholder on the case study page itself
+    image: "/work/futee/assets/hero-illustration.png", // hand-drawn footballer, matches the case study's own cover
+    // outcome: Claude-drafted 2026-07-23 from case-study facts, awaiting Neel's approval (normally he writes copy)
+    outcome: "Shipped, ran live and booked real games, then taken in-house.",
     featured: true
   },
   {
@@ -25,6 +27,8 @@ window.PROJECTS = [
     description: "A campaign content system for an Abu Dhabi wedding-industry showcase, built inside an existing 11-year brand.",
     accent: "#d4af37",
     image: "/work/emf-ace/assets/emf-event-marquee.jpg",
+    // outcome: Claude-drafted 2026-07-23 from case-study facts, awaiting Neel's approval
+    outcome: "500+ registered off one post before doors opened; ~1,000 attended.",
     featured: true
   },
   {
@@ -36,6 +40,8 @@ window.PROJECTS = [
     description: "Consolidating two live websites into one for an Australian construction-materials distributor, on Framer.",
     accent: "#b23324",
     image: "/work/cseds/assets/hero-landing.png",
+    // outcome: Claude-drafted 2026-07-23 from case-study facts, awaiting Neel's approval
+    outcome: "Two live sites merged into one — shipped, live at csedsaust.com.au.",
     featured: true
   },
   {
@@ -57,6 +63,8 @@ window.PROJECTS = [
     description: "A speculative light-and-sound installation for Vivid Sydney, designed solo for a UNSW immersive design course.",
     accent: "#e3a05c",
     image: "/work/into-yesterday/assets/iy-cover.jpg",
+    // outcome: Claude-drafted 2026-07-23, awaiting Neel's approval — keeps the page's own honest speculative framing
+    outcome: "Coursework, not client work — resolved as a full spatial system, render, and original score.",
     featured: true,
     speculative: true // academic/coursework, not client work — still shown
                        // in the Chosen Work grid alongside client projects

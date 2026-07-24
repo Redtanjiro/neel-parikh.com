@@ -678,6 +678,33 @@
     .footer-pills { --fall-distance: -24px; gap: 16px 14px; }
     .footer-pill { padding: 16px 26px; font-size: 16px; }
   }
+
+  /* ============ IMAGE MOTION (added 2026-07-23) ============
+     Scroll-reveal + hover-lift on the renders and process images.
+     Progressive enhancement: the hidden start state only applies once JS
+     adds html.js-reveal, so if JS is off/fails or reduced-motion is set,
+     every image stays fully visible — never stuck at opacity 0. */
+  .iy-tile-frame, .iy-panel-figure, .iy-hero-art img {
+    transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+  }
+  @media (hover: hover) {
+    .iy-tile:hover .iy-tile-frame,
+    .iy-panel-figure:hover {
+      transform: translateY(-5px) scale(1.012);
+      box-shadow: 0 26px 54px rgba(0,0,0,.38);
+    }
+    .iy-hero-art:hover img { transform: translateY(-5px) scale(1.012); }
+  }
+  html.js-reveal .iy-reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1);
+  }
+  html.js-reveal .iy-reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .iy-tile-frame, .iy-panel-figure, .iy-hero-art img { transition: none; }
+    html.js-reveal .iy-reveal { opacity: 1; transform: none; transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -867,7 +894,7 @@
 <!-- 8. NEXT -->
 <div class="iy-pagenav">
   <a href="/index.html">← Neel Parikh</a>
-  <a href="/work.html">See all work →</a>
+  <a href="/index.html#chosen-work">See all work →</a>
 </div>
 
 <footer class="site-footer" id="site-footer">
@@ -1022,6 +1049,26 @@
   } else {
     pillsEl.classList.remove('pending');
   }
+
+  /* Image scroll-reveal — progressive enhancement (see the .js-reveal CSS).
+     Skipped entirely under reduced-motion so images just stay visible. */
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!('IntersectionObserver' in window)) return;
+    var targets = document.querySelectorAll('.iy-tile, .iy-panel-figure');
+    if (!targets.length) return;
+    document.documentElement.classList.add('js-reveal');
+    targets.forEach(function (el) { el.classList.add('iy-reveal'); });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(function (el) { io.observe(el); });
+    // Failsafe: if the observer never fires, reveal everything after a few
+    // seconds so nothing is ever left stuck hidden.
+    setTimeout(function () { targets.forEach(function (el) { el.classList.add('is-in'); }); }, 4000);
+  })();
 })();
 </script>
 </body>

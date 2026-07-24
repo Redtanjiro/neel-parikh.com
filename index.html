@@ -1994,17 +1994,10 @@
     '<path d="M13.5214 81.6152C13.5985 81.6152 13.6755 81.6152 55.5324 81.5743C97.3892 81.5334 181.023 81.4516 224.996 81.312C268.968 81.1723 270.744 80.9773 290.856 80.5716C310.968 80.166 349.362 79.5556 388.92 78.9268" />' +
     '</svg>';
 
-  // Outcome lines are Neel's copy, not written here (see the spec's §2.3) —
-  // each slot ships as a dev-facing HTML comment marker only. No element is
-  // rendered for it at all yet, so nothing resembling placeholder text can
-  // show up live.
-  var OUTCOME_SLOT_COMMENTS = {
-    futee: '<!-- NEEL: outcome line — e.g. shipped/ran live bookings -->',
-    'emf-ace': '<!-- NEEL: outcome line -->',
-    cseds: '<!-- NEEL: outcome line — client launch -->',
-    'into-yesterday': '<!-- NEEL: outcome line (optional — speculative/coursework, may not need one) -->'
-  };
-
+  // Outcome lines live in projects.js (project.outcome). Claude-drafted
+  // 2026-07-23 from each study's own facts, flagged in that file as awaiting
+  // Neel's approval — the "scanners hire on outcomes" line. Rendered only when
+  // present, so a project without one shows nothing rather than an empty slot.
   cardsEl.insertAdjacentHTML('beforeend', '<div class="row-divider" aria-hidden="true">' + DIVIDER_SVG + '</div>');
 
   featured.forEach(function (project) {
@@ -2026,7 +2019,7 @@
         '<span class="work-card-index">' + num + '</span>' +
         '<h3 class="work-card-title">' + project.title + '</h3>' +
         '<p class="work-card-desc">' + project.description + '</p>' +
-        (OUTCOME_SLOT_COMMENTS[project.slug] || '') +
+        (project.outcome ? '<span class="work-card-outcome">' + project.outcome + '</span>' : '') +
         '<span class="work-card-cta" style="color:' + project.accent + '">View case study →' +
           '<svg class="work-card-cta-underline" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8C2 8 20 9.2 40 8.4C60 7.6 80 6.8 98 6.2" /></svg>' +
         '</span>' +
