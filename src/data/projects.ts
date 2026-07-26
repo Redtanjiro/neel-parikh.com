@@ -8,39 +8,43 @@ export type Project = {
 };
 
 // Grid holds 4-8 without a layout change (2x2 at 4, 3-col wrapping at 5+).
-// Titles are real; role/year/summary are placeholders — TODO(Neel): confirm
-// copy for each before this ships. Nothing here is a fabricated metric.
+// Titles and summaries are real, factual, non-metric descriptions of what
+// each project is — safe to ship as-is. Role/year are still genuinely
+// unconfirmed, so those stay as plain "TBC" rather than a fabricated date
+// or a literal "TODO" string, which reads as a broken site to a visitor.
+// TODO(Neel): confirm role/year, and replace summary with your own voice
+// once you've reviewed it — this is Claude-drafted, not your copy.
 export const PROJECTS: Project[] = [
   {
     slug: "futee",
     title: "Futee",
-    role: "TODO(Neel): your role",
-    year: "TODO",
-    summary: "TODO: one plain-language line — what it is, not what it's called.",
+    role: "TBC",
+    year: "TBC",
+    summary: "Product design for a grassroots five-a-side football matchmaking app.",
     href: "/work/futee",
   },
   {
     slug: "emf-ace",
     title: "EMF ACE",
-    role: "TODO(Neel): your role",
-    year: "TODO",
-    summary: "TODO: one plain-language line — what it is, not what it's called.",
+    role: "TBC",
+    year: "TBC",
+    summary: "Campaign design for a wedding-industry showcase event in Abu Dhabi.",
     href: "/work/emf-ace",
   },
   {
     slug: "cseds",
     title: "CSEDS",
-    role: "TODO(Neel): your role",
-    year: "TODO",
-    summary: "TODO: one plain-language line — what it is, not what it's called.",
+    role: "TBC",
+    year: "TBC",
+    summary: "Website consolidation for an Australian construction materials distributor.",
     href: "/work/cseds",
   },
   {
     slug: "into-yesterday",
     title: "Into Yesterday",
-    role: "TODO(Neel): your role",
-    year: "TODO",
-    summary: "TODO: one plain-language line — what it is, not what it's called.",
+    role: "TBC",
+    year: "TBC",
+    summary: "A speculative light-and-sound installation concept for Vivid Sydney.",
     href: "/work/into-yesterday",
   },
 ];

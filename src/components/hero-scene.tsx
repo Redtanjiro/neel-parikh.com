@@ -62,6 +62,13 @@ const REAL_LAYERS: RealLayer[] = [
   },
 ];
 
+// z-index scheme, page-wide: wall(0) < room objects(1) < light cone(3)
+// < lamp(5) < about-lines(6) < burst-mask(20, fixed) < nav(50).
+// The lamp MUST stay above the cone — it's the light's source, not one
+// more object the light washes over. Getting this backwards was the bug
+// where the lamp visually vanished the moment the cone opened.
+const LAYER_Z: Partial<Record<HeroLayerKey, number>> = { lamp: 5 };
+
 export default function HeroScene({ refs }: Props) {
   return (
     <div className="absolute inset-0" id="hero-stage">
@@ -72,7 +79,7 @@ export default function HeroScene({ refs }: Props) {
           refs.current.heroLayers.wall = el;
         }}
         className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #2a2622, #16130f)" }}
+        style={{ background: "linear-gradient(180deg, #2a2622, #16130f)", zIndex: 0 }}
       />
 
       {REAL_LAYERS.map((layer) => (
@@ -82,7 +89,7 @@ export default function HeroScene({ refs }: Props) {
             refs.current.heroLayers[layer.key] = el;
           }}
           className="absolute will-change-transform"
-          style={layer.style}
+          style={{ ...layer.style, zIndex: LAYER_Z[layer.key] ?? 1 }}
         >
           <picture>
             <source srcSet={`/hero/${layer.base}.webp`} type="image/webp" />

@@ -26,6 +26,7 @@ export default function LightCone({ refs }: Props) {
         background:
           "radial-gradient(120% 90% at 9% 17%, var(--cream) 0%, #e8cf84 35%, #caa955 100%)",
         opacity: 0,
+        zIndex: 3,
       }}
     />
   );

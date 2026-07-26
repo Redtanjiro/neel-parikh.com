@@ -19,7 +19,7 @@ const LINES = [
 export default function AboutLines({ refs }: Props) {
   return (
     <div
-      className="absolute left-[20%] top-[38%] w-[58%] max-w-[720px]"
+      className="absolute left-[20%] top-[38%] z-[6] w-[58%] max-w-[720px]"
       style={{ fontFamily: "var(--font-pixel)" }}
     >
       {LINES.map((line, i) => (
@@ -28,7 +28,7 @@ export default function AboutLines({ refs }: Props) {
           ref={(el) => {
             refs.current.lines[i] = el;
           }}
-          className="mb-5 text-2xl leading-snug text-[#141210] opacity-0 sm:text-3xl md:text-4xl"
+          className="mb-5 text-3xl font-bold leading-snug text-[#141210] opacity-0 sm:text-4xl md:text-5xl"
           style={{ transform: "translateY(14px)" }}
         >
           {line}

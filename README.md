@@ -97,28 +97,30 @@ this twice while building (arm64 sandbox), unlikely on a normal machine.
 
 ## Git / GitHub — get it live
 
-**This IS `Redtanjiro/neel-parikh.com`** — the real repo, already wired to
-the `neel-parikh.com` custom domain via the `CNAME` file (untouched) and
-Cloudflare DNS, and GitHub Pages is already set to **Source: GitHub
-Actions**. This replaces what used to be here (the old vanilla-HTML/GSAP
-build, archived locally in `V2/` — gitignored, never pushed, still on
-disk if you want it back) with this Next.js project at the repo root,
-plus `.github/workflows/deploy.yml`, which builds and deploys the static
-export automatically on every push to `main`.
+This folder is already a git repo with a clean history (its own, separate
+from the old `neel-parikh-site` repo), and includes
+`.github/workflows/deploy.yml` — a GitHub Actions workflow that builds and
+deploys the static export to GitHub Pages automatically on every push to
+`main`. No manual "gh-pages branch" step needed.
 
-Because Pages is already set to "GitHub Actions" as its source, **there is
-no settings change to make** — the very next push to `main` triggers the
-workflow, and once it's green (check the **Actions** tab), `neel-parikh.com`
-is serving this new site.
+1. Create a new, empty repo on GitHub (don't initialize it with a README).
+2. From this folder:
+   ```bash
+   git remote add origin https://github.com/<you>/<repo-name>.git
+   git push -u origin main
+   ```
+3. On GitHub: **Settings → Pages → Source → "GitHub Actions"** (not
+   "Deploy from a branch"). The push you just did will already have kicked
+   off the workflow — check the **Actions** tab; once it's green, the
+   Pages URL shown under Settings → Pages is your live site
+   (`https://<you>.github.io/<repo-name>/`).
+4. Custom domain (optional, once you're happy with it): the old site's
+   custom domain (`neel-parikh.com`, via a `CNAME` file + Cloudflare DNS)
+   isn't wired up here yet, on purpose — this repo has no `CNAME` file, so
+   it'll only be reachable at the `github.io` URL above until you decide
+   to point the real domain at it. Add a `CNAME` file with just
+   `neel-parikh.com` in it, plus the Cloudflare DNS records, when you're
+   ready to make it the live site.
 
-```bash
-git add -A
-git commit -m "Add real figure cutout to hero scene"
-git push
-```
-
-I can't run that last command myself — no GitHub connector is authorized
-in this session, and this sandbox has no saved credentials for
-`github.com` (confirmed: `git push` here fails with "could not read
-Username for '`https://github.com`'"). Everything above is already staged
-and ready; that push is the one thing only you can do.
+I can't push this myself — no GitHub connector is authorized in this
+session — but everything up to step 1 is done and committed.

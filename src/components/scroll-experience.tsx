@@ -133,8 +133,8 @@ export default function ScrollExperience() {
             tl.to(
               el,
               {
-                xPercent: exit.x,
-                yPercent: exit.y,
+                x: `${exit.x}vw`,
+                y: `${exit.y}vh`,
                 rotate: exit.rot,
                 opacity: 0,
                 ease: "power2.out",
@@ -192,7 +192,9 @@ export default function ScrollExperience() {
             tl.to(el, { opacity: 1, y: 0, duration: width * 0.3, ease: "power2.out" }, beat.start);
             if (i > 0) {
               const prev = r.lines[i - 1];
-              if (prev) tl.to(prev, { opacity: 0.55, duration: width * 0.3 }, beat.start);
+              // Dim, don't wash out — 0.55 read as barely-there against the
+              // gold backdrop once the font-weight/size were fixed too.
+              if (prev) tl.to(prev, { opacity: 0.82, duration: width * 0.3 }, beat.start);
             }
           });
 
