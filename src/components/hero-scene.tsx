@@ -54,25 +54,48 @@ export default function HeroScene({ refs }: Props) {
           />
         </picture>
 
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-          <p className="display mb-1 text-sm font-semibold uppercase tracking-[0.08em] sm:text-base md:text-lg">
+        {/* Contrast scrim — sits between the room and the copy, but below
+            the figure, so the artwork reads through while white text keeps
+            a workable contrast ratio over the lamp pool and window. */}
+        <div className="hero-scrim pointer-events-none absolute inset-0" />
+
+        <div className="hero-text pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
+          <p className="display mb-3 text-xs font-medium uppercase tracking-[0.22em] opacity-90 sm:mb-4 sm:text-sm md:text-base">
             welcome to my workspace
           </p>
 
-          <h1 className="flex w-full items-baseline justify-center gap-[12vw] font-bold uppercase leading-[0.95] tracking-tight">
-            <span className="display-condensed text-[clamp(2.5rem,9.5vw,8rem)]">Neel</span>
-            <span className="display-condensed text-[clamp(2.5rem,9.5vw,8rem)]">Parikh</span>
+          <h1 className="name-gap flex w-full items-baseline justify-center font-bold uppercase leading-[0.92] tracking-tight">
+            <span className="display-condensed text-[clamp(2.75rem,9.5vw,8rem)]">Neel</span>
+            <span className="display-condensed text-[clamp(2.75rem,9.5vw,8rem)]">Parikh</span>
           </h1>
 
-          <p className="display mt-2 flex w-full items-baseline justify-center gap-[15vw] text-[clamp(0.9rem,2.4vw,1.9rem)] font-medium">
+          <p className="display tag-gap mt-5 flex w-full items-baseline justify-center text-[clamp(0.95rem,2.2vw,1.65rem)] font-normal sm:mt-6">
             <span>Interaction, brand</span>
             <span>and immersive designer</span>
           </p>
         </div>
 
-        <p className="display pointer-events-none absolute bottom-[6%] left-1/2 -translate-x-1/2 text-[clamp(0.9rem,2vw,1.5rem)] font-medium text-white">
-          scroll down
-        </p>
+        <div className="hero-text pointer-events-none absolute bottom-[5%] left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white">
+          <span className="display text-[clamp(0.7rem,1.3vw,0.9rem)] font-medium uppercase tracking-[0.22em] opacity-90">
+            scroll down
+          </span>
+          <svg
+            className="scroll-cue"
+            width="18"
+            height="10"
+            viewBox="0 0 18 10"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M1 1l8 7 8-7"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
 
       {/* The person — separate layer so they can walk out of frame while

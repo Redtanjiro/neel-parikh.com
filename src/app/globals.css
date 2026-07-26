@@ -113,3 +113,44 @@ button {
 
 .display-condensed { transform: none; }
 */
+
+/* --- Hero legibility -------------------------------------------------
+   White copy sits directly on painted artwork. The painting has a bright
+   warm pool at lower-left (lamp) and a light window at centre, so plain
+   white text drops to roughly 1.5:1 contrast in places. A soft radial
+   scrim between the room and the copy buys contrast back without
+   flattening the art, and lives BELOW the figure layer so the figure
+   itself stays crisp and uncovered. */
+.hero-scrim {
+  background:
+    radial-gradient(60% 42% at 50% 46%, rgba(8, 7, 6, 0.62) 0%, rgba(8, 7, 6, 0.34) 55%, rgba(8, 7, 6, 0) 100%),
+    linear-gradient(to bottom, rgba(8, 7, 6, 0.45) 0%, rgba(8, 7, 6, 0) 26%),
+    linear-gradient(to top, rgba(8, 7, 6, 0.5) 0%, rgba(8, 7, 6, 0) 22%);
+}
+
+.hero-text {
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Gap between NEEL / PARIKH has to clear the figure's head. clamp() keeps
+   it from collapsing onto his face on narrow viewports or ballooning on
+   ultrawide; below 640px the name goes to a single line instead, since
+   there isn't enough width to split around him at all. */
+.name-gap { gap: clamp(4.5rem, 12vw, 16rem); }
+.tag-gap  { gap: clamp(5.5rem, 15vw, 22rem); }
+
+@media (max-width: 640px) {
+  .name-gap { gap: 0.28em; }
+  .tag-gap  { flex-direction: column; gap: 0.15rem; }
+}
+
+@keyframes hero-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+
+.scroll-cue { animation: hero-bob 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue { animation: none; }
+}
