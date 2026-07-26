@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0f0d0c;
+  --bg-elevated: #1a1714;
+  --bg-card: #1f1b17;
+  --ink: #f4ede1;
+  --muted: #a99e8f;
+  --line: rgba(244, 237, 225, 0.12);
+  --accent: #e8622d;
+  --accent-bright: #ff7d43;
+  --cream: #f5e3ab;
+
+  --font-hand: "Caveat", cursive;
+  --font-pixel: "Pixelify Sans", ui-monospace, monospace;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-card: var(--bg-card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+  --color-cream: var(--cream);
+
+  --font-hand: var(--font-hand);
+  --font-pixel: var(--font-pixel);
+  --font-body: var(--font-body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Reduced motion: strip transform-based reveals back to a plain, readable page */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
