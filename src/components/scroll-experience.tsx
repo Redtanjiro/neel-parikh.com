@@ -24,17 +24,17 @@ gsap.registerPlugin(ScrollTrigger);
 // immediately and decelerates (ease out, not in) — spec section 6.
 // xPercent/yPercent are relative translations away from each layer's own
 // rest position; delay/duration are fractions of beat 2's own span.
+// Beat 2 exits. NOTE: the room is a single painted layer now (see
+// hero-scene.tsx) — the per-object shatter the spec describes needs each
+// object cut from the PAINTED composite as a clean silhouette, which
+// doesn't exist yet. Rect-cutting the painting was tried and failed
+// visibly (each piece carried a rectangle of wall with it, and the
+// still-visible room underneath left ghost duplicates). So for now the
+// room recedes as one scene and only the figure walks out.
 const LAYER_EXITS: Partial<
   Record<HeroLayerKey, { x: number; y: number; rot: number; delay: number; duration: number }>
 > = {
-  kettle: { x: -55, y: -30, rot: -25, delay: 0.0, duration: 0.55 },
-  // window-curtains is one combined layer (see hero-scene.tsx) — bigger
-  // exit distance since it's carrying what would've been three layers.
-  window: { x: 20, y: -55, rot: 3, delay: 0.06, duration: 0.65 },
-  chair: { x: -45, y: 55, rot: -16, delay: 0.1, duration: 0.65 },
-  figure: { x: -70, y: 4, rot: -5, delay: 0.1, duration: 0.6 },
-  fridge: { x: 60, y: 12, rot: 8, delay: 0.14, duration: 0.7 },
-  table: { x: -30, y: 65, rot: -5, delay: 0.18, duration: 0.75 },
+  figure: { x: -60, y: 0, rot: 0, delay: 0.0, duration: 0.7 },
 };
 
 export default function ScrollExperience() {

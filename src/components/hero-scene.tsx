@@ -1,110 +1,86 @@
 "use client";
 
-import { CSSProperties } from "react";
-import { HeroLayerKey, SceneRefs } from "@/lib/scroll-refs";
+import { SceneRefs } from "@/lib/scroll-refs";
 
 type Props = {
   refs: React.MutableRefObject<SceneRefs>;
 };
 
-type RealLayer = {
-  key: HeroLayerKey;
-  base: string; // filename stem in /public/hero, e.g. "lamp" -> lamp.webp + lamp.png
-  style: CSSProperties; // left/top anchor + width; height follows the image's own aspect ratio
-};
-
-// Seven of the ten spec layers are real hand-drawn cutouts, found in
-// `Drawn assests/` mid-build (the spec assumed all ten existed as
-// separated files; only these did, and "figure" turned up under the name
-// `Working_pose.png` — Neel's own cursor-pose asset from the old site,
-// which happens to be exactly "person at a desk with a laptop" this spec
-// needs). Trimmed to content bounds (threshold-cleaned — a few of these
-// exports had scattered near-zero-alpha noise pixels dragging the naive
-// bbox out to the canvas edge), WebP with PNG fallback, copied into
-// /public/hero. window-curtains combines what the spec listed as three
-// separate files (window + curtains-left + curtains-right), matching how
-// Neel's own export came out.
-const REAL_LAYERS: RealLayer[] = [
-  {
-    key: "window",
-    base: "window-curtains",
-    style: { left: "27%", top: "0%", width: "46%" },
-  },
-  {
-    key: "fridge",
-    base: "fridge",
-    style: { left: "70%", top: "14%", width: "20%" },
-  },
-  {
-    key: "table",
-    base: "table",
-    style: { left: "2%", top: "58%", width: "42%" },
-  },
-  {
-    key: "chair",
-    base: "chair",
-    style: { left: "0%", top: "68%", width: "24%" },
-  },
-  {
-    key: "kettle",
-    base: "kettle",
-    style: { left: "16%", top: "48%", width: "11%" },
-  },
-  {
-    key: "lamp",
-    base: "lamp",
-    style: { left: "7%", top: "40%", width: "9%" },
-  },
-  {
-    key: "figure",
-    base: "figure",
-    style: { left: "27%", top: "34%", width: "22%" },
-  },
-];
-
-// z-index scheme, page-wide: wall(0) < room objects(1) < light cone(3)
-// < lamp(5) < about-lines(6) < burst-mask(20, fixed) < nav(50).
-// The lamp MUST stay above the cone — it's the light's source, not one
-// more object the light washes over. Getting this backwards was the bug
-// where the lamp visually vanished the moment the cone opened.
-const LAYER_Z: Partial<Record<HeroLayerKey, number>> = { lamp: 5 };
-
+/**
+ * THE HERO IS THE PAINTED ART, NOT A RE-ASSEMBLY OF CUTOUTS.
+ *
+ * Earlier builds composited seven flat PNGs from `Drawn assests/Home office
+ * interior@2x*.png`. That was the wrong source: those files are an *asset
+ * inventory sheet* — flat, unlit line art with the words "LAMP", "KETTLE",
+ * "FRIDGE" drawn into them as inventory labels. No arrangement of them was
+ * ever going to match the reference, because the reference is painted:
+ * warm lamp pool on the left wall, blue moonlight through the window,
+ * vignette falling off into the corners. All of that lighting is baked
+ * into the painting and cannot be reconstructed from flat silhouettes.
+ *
+ * The real hero is two files that were already aligned on the same
+ * 3840x2160 canvas, straight from Neel's own artwork:
+ *   Nighttime.png    -> room-night.webp     (the painted room)
+ *   Working_pose.png -> figure-working.webp (the person at the desk)
+ *
+ * Both render full-bleed at inset:0 so their original alignment is
+ * preserved exactly — do not reposition either one independently.
+ */
 export default function HeroScene({ refs }: Props) {
   return (
-    <div className="absolute inset-0" id="hero-stage">
-      {/* wall — background, fades rather than moving. Still placeholder:
-          no wall.png cutout has turned up yet. */}
+    <div className="absolute inset-0 overflow-hidden" id="hero-stage">
+      {/* Painted room. Recedes as one scene (spec beats 2/3) rather than
+          shattering into pieces — see the note in scroll-experience.tsx
+          for why the per-object shatter is blocked on assets that don't
+          exist yet. */}
       <div
         ref={(el) => {
           refs.current.heroLayers.wall = el;
         }}
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #2a2622, #16130f)", zIndex: 0 }}
-      />
+        className="absolute inset-0 will-change-transform"
+        style={{ zIndex: 1 }}
+      >
+        <picture>
+          <source
+            media="(max-width: 900px)"
+            srcSet="/hero/room-night-sm.webp"
+            type="image/webp"
+          />
+          <img
+            src="/hero/room-night.webp"
+            alt="A dark room at night: a desk lamp lighting a kettle and mug, a window looking out over rooftops, a fridge in the corner."
+            className="block h-full w-full select-none object-cover"
+            draggable={false}
+          />
+        </picture>
+      </div>
 
-      {REAL_LAYERS.map((layer) => (
-        <div
-          key={layer.key}
-          ref={(el) => {
-            refs.current.heroLayers[layer.key] = el;
-          }}
-          className="absolute will-change-transform"
-          style={{ ...layer.style, zIndex: LAYER_Z[layer.key] ?? 1 }}
-        >
-          <picture>
-            <source srcSet={`/hero/${layer.base}.webp`} type="image/webp" />
-            <img
-              src={`/hero/${layer.base}.png`}
-              alt=""
-              className="block w-full h-auto select-none"
-              draggable={false}
-            />
-          </picture>
-        </div>
-      ))}
+      {/* The person — a separate layer so they can leave the frame while
+          the room stays (spec beat 2). */}
+      <div
+        ref={(el) => {
+          refs.current.heroLayers.figure = el;
+        }}
+        className="absolute inset-0 will-change-transform"
+        style={{ zIndex: 2 }}
+      >
+        <picture>
+          <source
+            media="(max-width: 900px)"
+            srcSet="/hero/figure-working-sm.webp"
+            type="image/webp"
+          />
+          <img
+            src="/hero/figure-working.webp"
+            alt=""
+            className="block h-full w-full select-none object-cover"
+            draggable={false}
+          />
+        </picture>
+      </div>
 
       <div
-        className="absolute bottom-[6%] left-1/2 -translate-x-1/2 text-center"
+        className="absolute bottom-[7%] left-[8%] z-[6]"
         style={{ fontFamily: "var(--font-hand)" }}
       >
         <p className="text-3xl text-[color:var(--accent-bright)] sm:text-5xl">
