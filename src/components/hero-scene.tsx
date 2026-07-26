@@ -13,12 +13,17 @@ type RealLayer = {
   style: CSSProperties; // left/top anchor + width; height follows the image's own aspect ratio
 };
 
-// The six layers Neel actually had cut out in `Drawn assests/` (found mid-build —
-// the spec assumed all ten existed; only these six did). Real hand-drawn art,
-// trimmed to content bounds, WebP with PNG fallback, copied into /public/hero.
-// window-curtains combines what the spec listed as three separate files
-// (window + curtains-left + curtains-right) since that's how Neel's own
-// export came out — one wide layer reads the same on screen either way.
+// Seven of the ten spec layers are real hand-drawn cutouts, found in
+// `Drawn assests/` mid-build (the spec assumed all ten existed as
+// separated files; only these did, and "figure" turned up under the name
+// `Working_pose.png` — Neel's own cursor-pose asset from the old site,
+// which happens to be exactly "person at a desk with a laptop" this spec
+// needs). Trimmed to content bounds (threshold-cleaned — a few of these
+// exports had scattered near-zero-alpha noise pixels dragging the naive
+// bbox out to the canvas edge), WebP with PNG fallback, copied into
+// /public/hero. window-curtains combines what the spec listed as three
+// separate files (window + curtains-left + curtains-right), matching how
+// Neel's own export came out.
 const REAL_LAYERS: RealLayer[] = [
   {
     key: "window",
@@ -50,33 +55,18 @@ const REAL_LAYERS: RealLayer[] = [
     base: "lamp",
     style: { left: "7%", top: "40%", width: "9%" },
   },
-];
-
-// PLACEHOLDER ART — no cutout exists yet for these two.
-// TODO(Neel): export `figure.png` (you, at the desk) and `wall.png`
-// (background) the same way as the six real layers above — trimmed to
-// content bounds, transparent PNG/WebP — and swap them in below.
-const PLACEHOLDER_LAYERS: {
-  key: HeroLayerKey;
-  label: string;
-  style: CSSProperties;
-  bg: string;
-  radius?: string;
-}[] = [
   {
     key: "figure",
-    label: "figure — TODO: export cutout",
-    bg: "linear-gradient(180deg, #3a3630, #232019)",
-    style: { left: "44%", top: "38%", width: "22%", height: "60%" },
-    radius: "40% 40% 8px 8px",
+    base: "figure",
+    style: { left: "27%", top: "34%", width: "22%" },
   },
 ];
 
 export default function HeroScene({ refs }: Props) {
   return (
     <div className="absolute inset-0" id="hero-stage">
-      {/* wall — background, fades rather than moving. Placeholder wash
-          until a real wall.png exists. */}
+      {/* wall — background, fades rather than moving. Still placeholder:
+          no wall.png cutout has turned up yet. */}
       <div
         ref={(el) => {
           refs.current.heroLayers.wall = el;
@@ -103,28 +93,6 @@ export default function HeroScene({ refs }: Props) {
               draggable={false}
             />
           </picture>
-        </div>
-      ))}
-
-      {PLACEHOLDER_LAYERS.map((layer) => (
-        <div
-          key={layer.key}
-          ref={(el) => {
-            refs.current.heroLayers[layer.key] = el;
-          }}
-          className="absolute flex items-end justify-center border border-dashed border-[color:var(--accent)]/50 will-change-transform"
-          style={{
-            ...layer.style,
-            background: layer.bg,
-            borderRadius: layer.radius ?? "2px",
-          }}
-        >
-          <span
-            className="mb-1 rounded bg-black/50 px-1.5 py-0.5 text-[11px] leading-none"
-            style={{ fontFamily: "var(--font-hand)", color: "var(--cream)" }}
-          >
-            {layer.label}
-          </span>
         </div>
       ))}
 

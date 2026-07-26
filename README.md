@@ -59,15 +59,17 @@ this twice while building (arm64 sandbox), unlikely on a normal machine.
 
 **Placeholder, needs your input before this ships:**
 
-1. **Six of the ten hero layers are real** — `lamp`, `kettle`, `fridge`,
-   `table` (mug included), `chair` (jacket included), and a combined
+1. **Seven of the ten hero layers are real** — `lamp`, `kettle`, `fridge`,
+   `table` (mug included), `chair` (jacket included), a combined
    `window-curtains` (found in `Drawn assests/` as "Home office
-   interior@2x*.png", not in the composite mockups I'd checked earlier —
-   real transparent cutouts, cropped to content bounds and converted to
-   WebP+PNG in `public/hero/`, ~620KB total). **`figure` and `wall` still
-   don't exist as cutouts** — `src/components/hero-scene.tsx` keeps
-   labeled placeholder divs for just those two; export them the same way
-   and swap them in the `PLACEHOLDER_LAYERS` list.
+   interior@2x*.png"), and `figure` (found under the name
+   `Working_pose.png` — an old cursor-pose asset from the previous site
+   that happens to already be exactly "you, at a desk, on a laptop").
+   All cropped to content bounds (a couple needed alpha-threshold
+   cleanup — stray near-zero-alpha noise pixels were dragging a naive
+   bbox out to the canvas edge) and converted to WebP+PNG in
+   `public/hero/`. **Only `wall` (the background) still doesn't exist as
+   a cutout** — it's a plain CSS gradient in `hero-scene.tsx` for now.
 2. **About-line copy is a draft** (`src/components/about-lines.tsx`) —
    line 1 is short on purpose (cone apex is narrow). Yours to edit.
 3. **Work-card content is a draft** (`src/data/projects.ts`) — titles are
@@ -111,7 +113,7 @@ is serving this new site.
 
 ```bash
 git add -A
-git commit -m "Replace site with scroll-driven lamp portfolio"
+git commit -m "Add real figure cutout to hero scene"
 git push
 ```
 
