@@ -55,22 +55,22 @@ export default function HeroScene({ refs }: Props) {
         </picture>
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-          <p className="mb-1 text-sm font-semibold tracking-wide sm:text-base md:text-lg">
+          <p className="display mb-1 text-sm font-semibold uppercase tracking-[0.08em] sm:text-base md:text-lg">
             welcome to my workspace
           </p>
 
           <h1 className="flex w-full items-baseline justify-center gap-[12vw] font-bold uppercase leading-[0.95] tracking-tight">
-            <span className="text-[clamp(2.5rem,9vw,7.5rem)]">Neel</span>
-            <span className="text-[clamp(2.5rem,9vw,7.5rem)]">Parikh</span>
+            <span className="display-condensed text-[clamp(2.5rem,9.5vw,8rem)]">Neel</span>
+            <span className="display-condensed text-[clamp(2.5rem,9.5vw,8rem)]">Parikh</span>
           </h1>
 
-          <p className="mt-2 flex w-full items-baseline justify-center gap-[15vw] text-[clamp(0.9rem,2.4vw,1.9rem)] font-semibold">
+          <p className="display mt-2 flex w-full items-baseline justify-center gap-[15vw] text-[clamp(0.9rem,2.4vw,1.9rem)] font-medium">
             <span>Interaction, brand</span>
             <span>and immersive designer</span>
           </p>
         </div>
 
-        <p className="pointer-events-none absolute bottom-[6%] left-1/2 -translate-x-1/2 text-[clamp(0.9rem,2vw,1.5rem)] font-semibold text-white">
+        <p className="display pointer-events-none absolute bottom-[6%] left-1/2 -translate-x-1/2 text-[clamp(0.9rem,2vw,1.5rem)] font-medium text-white">
           scroll down
         </p>
       </div>

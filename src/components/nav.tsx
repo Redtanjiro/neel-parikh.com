@@ -5,7 +5,7 @@ export default function Nav() {
     <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 sm:px-10">
       <a
         href="#"
-        className="text-sm font-bold uppercase tracking-wide text-white sm:text-base"
+        className="display text-sm font-semibold uppercase tracking-[0.08em] text-white sm:text-base"
       >
         Neel Parikh
       </a>
@@ -19,7 +19,7 @@ export default function Nav() {
         </a>
         <a
           href="mailto:neelparikh7@gmail.com"
-          className="rounded-full border-2 border-[color:var(--accent)] px-6 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--bg)] sm:text-base"
+          className="rounded-full border-2 border-[color:var(--accent)] px-6 py-2 display text-sm font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-[color:var(--accent)] hover:text-[color:var(--bg)] sm:text-base"
         >
           Lets talk
         </a>

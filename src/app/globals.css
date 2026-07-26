@@ -13,8 +13,15 @@
 
   --font-hand: "Caveat", cursive;
   --font-pixel: "Pixelify Sans", ui-monospace, monospace;
-  --font-body: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Poppins", system-ui, sans-serif;
+  /* Futura Condensed is Adobe-licensed and not distributable via CDN.
+     "Futura Std Condensed" / "Futura PT Condensed" are listed FIRST so the
+     real thing is used automatically on any machine that has it, or once
+     the licensed webfont files are dropped into public/fonts (see README).
+     Jost is the fallback: a free geometric sans drawn as a Futura revival
+     - same circular bowls, same low x-height, same single-storey a. It is
+     not condensed, so .display-condensed narrows it slightly. */
+  --font-display: "Futura Std Condensed", "Futura PT Condensed", "Futura Condensed", "Jost", system-ui, sans-serif;
+  --font-body: "Jost", "Inter", system-ui, -apple-system, sans-serif;
 }
 
 @theme inline {
@@ -71,3 +78,38 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* Approximates a condensed width for the Jost fallback. Skipped when real
+   Futura Condensed is present, since that is already condensed by design. */
+.display-condensed {
+  font-family: var(--font-display);
+  display: inline-block;
+  transform: scaleX(0.86);
+  transform-origin: center;
+  letter-spacing: 0.01em;
+}
+
+.display {
+  font-family: var(--font-display);
+}
+
+/* Licensed Futura Condensed — see public/fonts/README.md.
+   Uncomment once the .woff2 files are in place; --font-display already
+   prefers Futura, so it takes over with no other change.
+
+@font-face {
+  font-family: "Futura Condensed";
+  src: url("/fonts/futura-condensed.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Futura Condensed";
+  src: url("/fonts/futura-condensed-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+.display-condensed { transform: none; }
+*/
