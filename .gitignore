@@ -42,3 +42,4 @@ next-env.d.ts
 
 # local reference material, never served / never pushed
 V2/
+v3/
