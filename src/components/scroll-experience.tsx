@@ -12,30 +12,12 @@ import BurstMask from "./burst-mask";
 import WorkSection from "./work-section";
 import FixedCanvas from "./canvas/fixed-canvas";
 import { LampParticlesHandle } from "./canvas/lamp-particles";
-import { createSceneRefs, HeroLayerKey } from "@/lib/scroll-refs";
+import { createSceneRefs } from "@/lib/scroll-refs";
 import { useViewportProfile } from "@/lib/use-viewport-profile";
 import { BEATS, TOTAL_PINNED_VH } from "@/lib/beats";
 import { buildConePolygon, CONE_APEX } from "@/lib/cone-path";
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Per-layer exit choreography for beat 2 ("room flies out"). Heavy objects
-// drift slower/later than light ones; every layer commits to leaving
-// immediately and decelerates (ease out, not in) — spec section 6.
-// xPercent/yPercent are relative translations away from each layer's own
-// rest position; delay/duration are fractions of beat 2's own span.
-// Beat 2 exits. NOTE: the room is a single painted layer now (see
-// hero-scene.tsx) — the per-object shatter the spec describes needs each
-// object cut from the PAINTED composite as a clean silhouette, which
-// doesn't exist yet. Rect-cutting the painting was tried and failed
-// visibly (each piece carried a rectangle of wall with it, and the
-// still-visible room underneath left ghost duplicates). So for now the
-// room recedes as one scene and only the figure walks out.
-const LAYER_EXITS: Partial<
-  Record<HeroLayerKey, { x: number; y: number; rot: number; delay: number; duration: number }>
-> = {
-  figure: { x: -60, y: 0, rot: 0, delay: 0.0, duration: 0.7 },
-};
 
 export default function ScrollExperience() {
   const refs = useRef(createSceneRefs());
@@ -100,6 +82,9 @@ export default function ScrollExperience() {
             Object.values(r.heroLayers).forEach((el) => {
               if (el) gsap.set(el, { clearProps: "transform", position: "static", display: "inline-block", margin: 4 });
             });
+            if (r.heroNameLeft) gsap.set(r.heroNameLeft, { clearProps: "transform" });
+            if (r.heroNameRight) gsap.set(r.heroNameRight, { clearProps: "transform" });
+            if (r.heroGradient) gsap.set(r.heroGradient, { opacity: 0 });
             if (r.cone) gsap.set(r.cone, { opacity: 0, display: "none" });
             r.lines.forEach((el) => {
               if (el) gsap.set(el, { opacity: 1, transform: "none", position: "static" });
@@ -118,6 +103,10 @@ export default function ScrollExperience() {
           gsap.set(r.cone, { opacity: 0 });
           r.lines.forEach((el) => el && gsap.set(el, { opacity: 0, y: 14 }));
           gsap.set(r.burst, { opacity: 0 });
+          const nameSpread = isMobile ? "6vw" : "12vw";
+          if (r.heroNameLeft) gsap.set(r.heroNameLeft, { x: `-${nameSpread}` });
+          if (r.heroNameRight) gsap.set(r.heroNameRight, { x: nameSpread });
+          if (r.heroGradient) gsap.set(r.heroGradient, { scaleY: 0 });
           const material = lampRef.current?.material;
           if (material) material.uniforms.uFormation.value = 0;
 
@@ -126,23 +115,19 @@ export default function ScrollExperience() {
           // --- Beat 2: room flies out ---
           const b2 = BEATS.roomFliesOut;
           const b2Width = b2.end - b2.start;
-          (Object.keys(LAYER_EXITS) as HeroLayerKey[]).forEach((key) => {
-            const el = r.heroLayers[key];
-            const exit = LAYER_EXITS[key];
-            if (!el || !exit) return;
-            tl.to(
-              el,
-              {
-                x: `${exit.x}vw`,
-                y: `${exit.y}vh`,
-                rotate: exit.rot,
-                opacity: 0,
-                ease: "power2.out",
-                duration: isMobile ? b2Width * 0.6 : exit.duration * b2Width,
-              },
-              b2.start + (isMobile ? 0 : exit.delay * b2Width)
-            );
-          });
+          // Headline words converge to their resting (CSS gap) position and
+          // a black gradient rises from the floor of the frame, in the same
+          // window the room fades — the room sinking into shadow as focus
+          // narrows, rather than a plain opacity crossfade.
+          if (r.heroNameLeft) {
+            tl.to(r.heroNameLeft, { x: 0, ease: "power2.out", duration: b2Width }, b2.start);
+          }
+          if (r.heroNameRight) {
+            tl.to(r.heroNameRight, { x: 0, ease: "power2.out", duration: b2Width }, b2.start);
+          }
+          if (r.heroGradient) {
+            tl.to(r.heroGradient, { scaleY: 1, ease: "power1.in", duration: b2Width }, b2.start);
+          }
           if (r.heroLayers.wall) {
             tl.to(
               r.heroLayers.wall,

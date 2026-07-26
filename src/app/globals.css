@@ -132,6 +132,20 @@ button {
   text-shadow: 0 1px 18px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+/* Rises from the bottom edge on scroll (JS-driven scaleY, see
+   scroll-experience.tsx). transform-origin: bottom keeps the growth
+   anchored to the floor of the frame instead of expanding from centre. */
+.hero-gradient {
+  height: 65%;
+  background: linear-gradient(
+    to top,
+    rgba(4, 3, 2, 0.96) 0%,
+    rgba(4, 3, 2, 0.7) 40%,
+    rgba(4, 3, 2, 0) 100%
+  );
+  transform-origin: 50% 100%;
+}
+
 /* Gap between NEEL / PARIKH has to clear the figure's head. clamp() keeps
    it from collapsing onto his face on narrow viewports or ballooning on
    ultrawide; below 640px the name goes to a single line instead, since
