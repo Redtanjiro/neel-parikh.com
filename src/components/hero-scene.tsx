@@ -10,29 +10,29 @@ type Props = {
  * THE HERO IS THE PAINTED ART, NOT A RE-ASSEMBLY OF CUTOUTS.
  *
  * Earlier builds composited seven flat PNGs from `Drawn assests/Home office
- * interior@2x*.png`. That was the wrong source: those files are an *asset
- * inventory sheet* — flat, unlit line art with the words "LAMP", "KETTLE",
- * "FRIDGE" drawn into them as inventory labels. No arrangement of them was
- * ever going to match the reference, because the reference is painted:
- * warm lamp pool on the left wall, blue moonlight through the window,
- * vignette falling off into the corners. All of that lighting is baked
- * into the painting and cannot be reconstructed from flat silhouettes.
+ * interior@2x*.png`. Wrong source: those are an *asset inventory sheet* —
+ * flat, unlit line art with "LAMP" / "KETTLE" / "FRIDGE" drawn in as
+ * labels. The reference is painted (warm lamp pool, blue moonlight through
+ * the window, vignette into the corners) and none of that lighting can be
+ * reconstructed from flat silhouettes.
  *
- * The real hero is two files that were already aligned on the same
- * 3840x2160 canvas, straight from Neel's own artwork:
- *   Nighttime.png    -> room-night.webp     (the painted room)
+ * The real hero is two files already aligned on the same 3840x2160 canvas:
+ *   Nighttime.png    -> room-night.webp     (painted room)
  *   Working_pose.png -> figure-working.webp (the person at the desk)
  *
- * Both render full-bleed at inset:0 so their original alignment is
- * preserved exactly — do not reposition either one independently.
+ * Both render full-bleed at inset:0 so their original alignment is exact —
+ * never reposition one independently of the other.
+ *
+ * LAYERING: the headline sits BETWEEN room and figure, so the figure
+ * occludes it naturally where they overlap. That's what puts "NEEL" and
+ * "PARIKH" on either side of his head without any manual masking.
  */
 export default function HeroScene({ refs }: Props) {
   return (
     <div className="absolute inset-0 overflow-hidden" id="hero-stage">
-      {/* Painted room. Recedes as one scene (spec beats 2/3) rather than
-          shattering into pieces — see the note in scroll-experience.tsx
-          for why the per-object shatter is blocked on assets that don't
-          exist yet. */}
+      {/* Painted room + all hero copy. Both live on this layer so the copy
+          fades out with the room on scroll (spec beat 2) without needing
+          its own timeline target. */}
       <div
         ref={(el) => {
           refs.current.heroLayers.wall = el;
@@ -53,10 +53,30 @@ export default function HeroScene({ refs }: Props) {
             draggable={false}
           />
         </picture>
+
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+          <p className="mb-1 text-sm font-semibold tracking-wide sm:text-base md:text-lg">
+            welcome to my workspace
+          </p>
+
+          <h1 className="flex w-full items-baseline justify-center gap-[12vw] font-bold uppercase leading-[0.95] tracking-tight">
+            <span className="text-[clamp(2.5rem,9vw,7.5rem)]">Neel</span>
+            <span className="text-[clamp(2.5rem,9vw,7.5rem)]">Parikh</span>
+          </h1>
+
+          <p className="mt-2 flex w-full items-baseline justify-center gap-[15vw] text-[clamp(0.9rem,2.4vw,1.9rem)] font-semibold">
+            <span>Interaction, brand</span>
+            <span>and immersive designer</span>
+          </p>
+        </div>
+
+        <p className="pointer-events-none absolute bottom-[6%] left-1/2 -translate-x-1/2 text-[clamp(0.9rem,2vw,1.5rem)] font-semibold text-white">
+          scroll down
+        </p>
       </div>
 
-      {/* The person — a separate layer so they can leave the frame while
-          the room stays (spec beat 2). */}
+      {/* The person — separate layer so they can walk out of frame while
+          the room stays, and so they occlude the headline behind them. */}
       <div
         ref={(el) => {
           refs.current.heroLayers.figure = el;
@@ -77,15 +97,6 @@ export default function HeroScene({ refs }: Props) {
             draggable={false}
           />
         </picture>
-      </div>
-
-      <div
-        className="absolute bottom-[7%] left-[8%] z-[6]"
-        style={{ fontFamily: "var(--font-hand)" }}
-      >
-        <p className="text-3xl text-[color:var(--accent-bright)] sm:text-5xl">
-          Welcome to my work space!
-        </p>
       </div>
     </div>
   );
