@@ -230,14 +230,28 @@ export default function ScrollExperience() {
           );
 
           // --- Beat 10: reformation ---
+          // Always adds this tween, even if the R3F material ref isn't
+          // ready yet at timeline-build time — the uniform is read lazily
+          // via onUpdate instead of closed over now. Gating the tween
+          // itself on `material` (as before) meant a slow canvas mount
+          // silently dropped the timeline's final tween, so
+          // tl.totalDuration() locked in at wherever beat 9 ended instead
+          // of 1 — the exact drift trap called out below.
           const b10 = BEATS.reformation;
-          if (material) {
-            tl.to(
-              material.uniforms.uFormation,
-              { value: 1, duration: b10.end - b10.start, ease: "power2.inOut" },
-              b10.start
-            );
-          }
+          const formationProxy = { v: 0 };
+          tl.to(
+            formationProxy,
+            {
+              v: 1,
+              duration: b10.end - b10.start,
+              ease: "power2.inOut",
+              onUpdate: () => {
+                const m = lampRef.current?.material;
+                if (m) m.uniforms.uFormation.value = formationProxy.v;
+              },
+            },
+            b10.start
+          );
 
           // Trap #15, carried forward as good practice regardless of which
           // build it was learned on: a scrubbed timeline whose last tween
