@@ -1,45 +1,38 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Font source packages — only the shipped woff2 lives in fonts/
+Panchang_Complete/
+Sprat-type-master/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Source media — only encoded output in media/ is committed
+*.mov
+ascii-magic-*.mp4
+locked-off_camera_motion_only_in_the_clouds-*.mp4
 
-# testing
-/coverage
+# Source art. Each of these is the input to something small in media/:
+#   Sprite.png       (1.7 MB) -> media/neel-sprite.png   (11 KB)
+#   folder_icon2.png (4.0 MB) -> media/folder.png        (209 KB)
+# Committing them would put 10 MB in the repo to ship 215 KB.
+Sprite.png
+Folder_icon.png
+folder_icon2.png
+folder.png
 
-# next.js
-/.next/
-/out/
+# Design source files
+*.psd
+*.ai
+*.fig
+*.sketch
 
-# production
-/build
-
-# misc
+# OS
 .DS_Store
-*.pem
+Thumbs.db
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# Editor
+.vscode/
+.idea/
 
-# env files (can opt-in for committing if needed)
-.env*
+# Unused font cut — Sprat ships as one weight (ExtendedLight) only
+fonts/Sprat-ExtendedBold.woff2
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# local reference material, never served / never pushed
-V2/
-v3/
+# Calfine source (only the shipped woff2 is committed)
+calfine/
+calfine.zip

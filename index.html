@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neel Parikh — Designer</title>
+<meta name="description" content="A designer without a team is, well, marooned. Selected work by Neel Parikh.">
+
+<meta property="og:title" content="Neel Parikh — Designer">
+<meta property="og:description" content="A designer without a team is, well, marooned.">
+<meta property="og:image" content="https://neel-parikh.com/media/hero-poster.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preload" href="fonts/Panchang-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Calfine.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Sprat-ExtendedLight.woff2" as="font" type="font/woff2" crossorigin>
+<!-- No poster preload. The frame is black until step 5, by which point
+     the video is playing — preloading the still would have been 125KB
+     spent on something almost nobody sees. It stays in the markup for
+     reduced-motion, where it replaces the video entirely. -->
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<a class="skip" href="#work">Skip to work</a>
+
+<!-- Site chrome. Born at beat 5, then persistent — so it sits outside
+     .hero and is fixed, rather than scrolling away with it. -->
+<header class="chrome" id="chrome">
+  <div class="chrome__rule"><span class="chrome__rule-fill" id="progress-fill"></span></div>
+  <span class="chrome__mark" id="chrome-mark">Marooned.</span>
+  <nav class="chrome__nav">
+    <a href="#work">Work</a>
+    <a href="mailto:neelparikh7@gmail.com">Contact</a>
+  </nav>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+
+  <div class="hero__media">
+    <video class="hero__video" id="hero-video"
+           poster="media/hero-poster.jpg"
+           autoplay muted loop playsinline preload="auto"
+           aria-hidden="true" tabindex="-1">
+      <source src="media/hero.webm" type="video/webm">
+      <source src="media/hero.mp4" type="video/mp4">
+    </video>
+
+    <!-- The dither. Same island, colder read — the machine's version of
+         the place. Stacked directly on the hero plate at identical
+         framing so the swap is a dissolve in place, not a cut to a new
+         shot. Opacity is scrubbed across the pinned tail after the
+         wordmark lands; see applyDissolve in hero.js.
+
+         THIS IS ALSO THE WORK SECTION. The dissolve resolves into the
+         screen the files sit on — one plate, not a picture and then a
+         second copy of the same picture below it. See main.work below.
+
+         mp4 FIRST, unusually. The halftone is dense high-frequency noise
+         and VP9 handles it badly — 1.9 MB against x264's 1.45 MB on the
+         same frame — so the order is reversed from the hero above and
+         h264 is the one nearly everyone gets. The webm stays as the
+         fallback for builds without proprietary codecs.
+
+         preload="none", loaded on purpose two steps out: hero.js calls
+         load() at the island reveal, so it's buffered by the time the
+         dissolve starts. And the poster is real, not decorative — it's
+         what the layer shows if the buffer isn't ready, and without it
+         a slow connection crossfades the frame to nothing. -->
+    <video class="hero__dither" id="hero-dither"
+           poster="media/dither-poster.jpg"
+           muted loop playsinline preload="none"
+           aria-hidden="true" tabindex="-1">
+      <source src="media/dither.mp4" type="video/mp4">
+      <source src="media/dither.webm" type="video/webm">
+    </video>
+    <div class="hero__ditherwash" id="hero-ditherwash"></div>
+
+    <div class="hero__scrim"></div>
+    <div class="hero__vignette"></div>
+    <div class="hero__blackout" id="blackout"></div>
+    <div class="hero__grain"></div>
+  </div>
+
+  <!-- (chrome lives outside .hero — see css) -->
+  <!-- The script. Every line is real text in the DOM.
+
+       data-in  = the scroll step this phrase appears on
+       data-out = the step it leaves on (omit to stay for good)
+
+       One scroll = one line. A phrase whose range spans several steps
+       stays on screen while the next one arrives — that's how "like,
+       well" is still there when "a person…" lands beneath it, and the
+       diagonal builds instead of swapping. -->
+  <div class="hero__stage">
+
+    <div class="phrase pos--mid" data-in="1" data-out="2">
+      <span class="line line--body">No man is an island&#8230;</span>
+    </div>
+
+    <div class="phrase pos--tl" data-in="2" data-out="4">
+      <span class="line line--body">all by their self,</span>
+    </div>
+
+    <!-- data-continues: still its own scroll, but not its own dot.
+         Steps 2 and 3 are two halves of one sentence held apart across
+         the frame — the ledger counts sentences, not gestures, so this
+         one shares the dot the step before it lit. -->
+    <div class="phrase pos--br" data-in="3" data-out="4" data-continues>
+      <span class="line line--body">one must seek</span>
+    </div>
+
+    <!-- Two lines in one phrase, so the stagger hands you the set-up and
+         then the word 70ms later. --split widens the gap between them:
+         at the default 1.4vh "a piece of the" sits on top of Continent
+         like a kicker, and it's meant to be a beat before it. -->
+    <div class="phrase pos--mid phrase--split" data-in="4" data-out="5">
+      <span class="line line--body">a piece of the</span>
+      <span class="line line--hero">Continent</span>
+    </div>
+
+    <!-- The close reuses the diagonal from steps 2–3 on purpose: the
+         sentence opens across the frame and shuts across it. Both land
+         on step 5, which is also where the island appears — so the
+         picture and the ask arrive together.
+
+         --wrap because these two are sentences, not fragments. pos--tl
+         and pos--br carry white-space: nowrap, which is right for "all
+         by their self," and would run this one off the side of the
+         screen. -->
+    <div class="phrase pos--tl phrase--wrap" data-in="5" data-out="6">
+      <span class="line line--body">wave a hand or send a boat, lets join forces to do more.</span>
+    </div>
+
+    <div class="phrase pos--br phrase--wrap" data-in="5" data-out="6">
+      <span class="line line--body">lets work together.</span>
+    </div>
+
+    <!-- The wordmark. Calfine throughout except the two E's, which are
+         Panchang — the repeated letter is the rule, so the mix reads as
+         a decision rather than a ransom note. Letters are marked up
+         individually, so aria-label carries the actual name. -->
+    <div class="phrase pos--name" data-in="6" data-reveal="rise">
+      <span class="mask">
+        <span class="line line--name" aria-label="Neel Parikh"><span aria-hidden="true">N<i>E</i><i>E</i>L&nbsp;PARIKH</span></span>
+      </span>
+      <span class="mask">
+        <span class="line line--sub">Product designer · Sydney</span>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- ============ THE DESKTOP ============
+       This is not a second screen. The dissolve above resolves INTO the
+       surface the files sit on — the halftone stops being a picture of
+       the island and becomes the thing the island's laptop is showing.
+
+       An earlier version put a second copy of the same footage in its
+       own scrolling section below the hero. It worked, and it was wrong:
+       you scrolled past a full screen of the halftone only to arrive at
+       another full screen of the halftone. The transition was doing all
+       the work and then being repeated. One plate, and the files arrive
+       on it.
+
+       <main> nested in <section> is legal (main may not descend from
+       article/aside/header/footer/nav — section is fine), and it keeps
+       the actual content of the site inside the landmark rather than
+       leaving it stranded in a decorative hero. -->
+  <!-- tabindex="-1" so the skip link actually moves focus here rather
+       than only moving the viewport. The first Tab from it reaches a
+       folder, which fires the focusin jump in hero.js. -->
+  <main class="work" id="work" tabindex="-1">
+    <h2 class="visually-hidden">Selected work</h2>
+    <ul class="work__grid" id="work-grid" aria-label="Selected work">
+
+      <li class="folder" style="--i:0">
+        <a class="folder__link" href="work/project-one/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project One</span>
+          <span class="folder__meta">Product · 2026</span>
+        </a>
+      </li>
+
+      <li class="folder" style="--i:1">
+        <a class="folder__link" href="work/project-two/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project Two</span>
+          <span class="folder__meta">Systems · 2025</span>
+        </a>
+      </li>
+
+      <li class="folder" style="--i:2">
+        <a class="folder__link" href="work/project-three/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project Three</span>
+          <span class="folder__meta">Brand · 2025</span>
+        </a>
+      </li>
+
+      <li class="folder" style="--i:3">
+        <a class="folder__link" href="work/project-four/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project Four</span>
+          <span class="folder__meta">Product · 2025</span>
+        </a>
+      </li>
+
+      <li class="folder" style="--i:4">
+        <a class="folder__link" href="work/project-five/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project Five</span>
+          <span class="folder__meta">Motion · 2024</span>
+        </a>
+      </li>
+
+      <li class="folder" style="--i:5">
+        <a class="folder__link" href="work/project-six/">
+          <span class="folder__icon">
+            <span class="folder__spill" aria-hidden="true">
+              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
+            </span>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+          </span>
+          <span class="folder__name">Project Six</span>
+          <span class="folder__meta">Research · 2024</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <!-- ============ THE ABOUT WINDOW ============
+         The other half of the desktop. Files on the left, the person who
+         made them on the right — which is the argument the whole page is
+         making, so it should be visible in one frame rather than two.
+
+         Shaped as a media player on purpose. A player is a window whose
+         entire job is to tell you what someone is doing right now, which
+         is what an About section is for and almost never says. The
+         transport is real: each press steps the sprite and the caption
+         together. Nothing here is a button that does nothing.
+
+         Bitmap treatment, site palette. Hard 2px borders, no radii, one
+         solid unblurred drop shadow, monospace chrome. NOT a pixel
+         webfont — that would be a fourth face and another download on a
+         page already carrying two videos. Monospace is what a terminal
+         actually uses and the scroll cue's digit grid is already set in
+         it, so the register was on the page before this window was. -->
+    <aside class="about" id="about" aria-label="About Neel">
+      <div class="about__bar">
+        <span class="about__title">about.exe</span>
+        <span class="about__controls" aria-hidden="true">
+          <i></i><i></i><i class="is-close"></i>
+        </span>
+      </div>
+
+      <div class="about__body">
+        <!-- The sprite is decorative: the caption below carries every bit
+             of meaning it has, and describing five near-identical poses
+             to a screen reader is noise. -->
+        <div class="about__screen">
+          <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
+        </div>
+
+        <p class="about__name">Neel Parikh</p>
+        <p class="about__role">Product designer · Sydney</p>
+        <!-- SWAP ME. The one line here that should be yours. It's the
+             page's own joke rather than a claim about the work, which is
+             why it's safe as a default. -->
+        <p class="about__bio">A team of one, looking for a bigger boat.</p>
+
+        <div class="about__now">
+          <span class="about__label">Now</span>
+          <p class="about__caption" id="about-caption" aria-live="polite">Listening to something loud</p>
+        </div>
+
+        <div class="about__track" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="about__transport">
+          <button class="about__btn" type="button" data-step="-1" aria-controls="about-caption">
+            <span aria-hidden="true">&#9664;&#9664;</span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="about__btn" type="button" data-step="1" aria-controls="about-caption">
+            <span aria-hidden="true">&#9654;&#9654;</span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Scroll cue. The tumbling digit grid is decorative, not a loading
+       state — it exists so a pitch-black opening frame reads as alive
+       rather than broken, and it leaves with the cue on first input.
+       Adapted from a Uiverse component by PriyanshuGupta28
+       (uiverse.io/PriyanshuGupta28/bright-bobcat-12), recoloured to ink. -->
+  <div class="hero__cue" id="cue" aria-hidden="true" hidden>
+    <div class="matrix">
+      <span class="digit">0</span><span class="digit">1</span><span class="digit">0</span>
+      <span class="digit">1</span><span class="digit">1</span><span class="digit">0</span>
+      <span class="digit">0</span><span class="digit">1</span>
+      <span class="matrix__glow"></span>
+    </div>
+    <span>Scroll</span>
+    <svg width="10" height="26" viewBox="0 0 10 26" fill="none" aria-hidden="true">
+      <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
+    </svg>
+  </div>
+
+  <!-- The step ledger. One dot per line, filled as you go. Replaced a
+       chevron, which said "there is more" — half the answer. The real
+       question in a gated scroll is how long it means to hold you.
+
+       Empty on purpose: hero.js builds the dots from LAST, which is
+       itself derived from the phrases above. Adding a line to the story
+       stays a single edit to this file, and the ledger lengthens with it.
+
+       Decorative. Every line it counts is already real text in the DOM a
+       few elements up, so there is nothing here a screen reader hasn't
+       been given properly. -->
+  <div class="hero__steps" id="steps" aria-hidden="true"></div>
+</section>
+
+<!-- Everything below the hero. Which is now only this — the files live
+     on the plate above, so there is no third screen to build. -->
+<footer class="footer">
+  <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
+  <a class="footer__mail" href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+<script src="js/hero.js"></script>
+</body>
+</html>

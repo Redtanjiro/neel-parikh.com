@@ -1,0 +1,54 @@
+/**
+ * Panchang — Indian Type Foundry, via Fontshare (Fontshare Free License).
+ * Variable cut only: one 37KB request instead of seven static faces.
+ * font-display: block, not swap — a fallback face appearing mid-scramble
+ * reflows the line and reads as a bug.
+ */
+@font-face {
+  font-family: 'Panchang';
+  src: url('../fonts/Panchang-Variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: block;
+}
+
+/**
+ * Sprat — SIL OFL. A high-contrast extended didone, and about as far
+ * from Panchang's geometric sans as you can get.
+ *
+ * Reserved for work titles. Nothing else, ever. The hero is one person
+ * shouting into cloud; the titles are the evidence — the face changes
+ * because the subject changes, not for variety. One weight only: a
+ * second cut would make it a system rather than an accent.
+ *
+ * font-display: swap here, unlike Panchang — the work section is not
+ * mid-animation when it loads, so a brief fallback is harmless.
+ */
+@font-face {
+  font-family: 'Sprat';
+  src: url('../fonts/Sprat-ExtendedLight.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/**
+ * Calfine (DEMO) — the wordmark, and nothing else on the site.
+ *
+ * A condensed high-contrast display serif. It exists here for exactly
+ * eleven characters: "NEEL PARIKH" on the last frame of the story.
+ * Using it anywhere else would turn a signature into a typeface.
+ *
+ * 6 KB, because the file only needs to carry the glyphs it does.
+ *
+ * NOTE: this is the DEMO cut. It's fine for a personal site, but check
+ * the licence before any commercial use — demo releases usually forbid
+ * it and are missing most of the character set (66 glyphs here).
+ */
+@font-face {
+  font-family: 'Calfine';
+  src: url('../fonts/Calfine.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;   /* the wordmark must not render in a fallback face */
+}
