@@ -11,10 +11,10 @@ locked-off_camera_motion_only_in_the_clouds-*.mp4
 #   Sprite.png       (1.7 MB) -> media/neel-sprite.png   (11 KB)
 #   folder_icon2.png (4.0 MB) -> media/folder.png        (209 KB)
 # Committing them would put 10 MB in the repo to ship 215 KB.
-Sprite.png
-Folder_icon.png
-folder_icon2.png
-folder.png
+/Sprite.png
+/Folder_icon.png
+/folder_icon2.png
+/folder.png
 
 # Design source files
 *.psd
