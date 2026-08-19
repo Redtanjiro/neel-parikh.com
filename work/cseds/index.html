@@ -297,6 +297,61 @@ a{color:inherit}
       hairline so a white page does not bleed into the black ground ── */
 .shot.doc{border:1px solid var(--rule)}
 
+
+/* ══════════════════════════════════════════════════════════════════
+   DEVICE FRAMES
+   A screenshot is a document; a device frame makes it a screen. The
+   page inside scrolls, driven by the reader's own scroll position —
+   no autoplay, no loop, nothing to wait for, and it reverses when
+   they scroll back up. Frames are drawn, not photographed, so they
+   inherit the palette and cost nothing to load.
+   ══════════════════════════════════════════════════════════════════ */
+
+.device{position:relative}
+.device .screen{position:relative;overflow:hidden;background:var(--deep)}
+.device .screen > img{width:100%;min-height:100%;object-fit:cover;object-position:50% 0;
+  display:block;will-change:transform}
+
+/* the page keeps moving past the frame edge — a hairline says so */
+.device .screen::after{content:"";position:absolute;inset:auto 0 0 0;height:38px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.28));pointer-events:none}
+
+/* ── browser ── */
+.device.browser{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:#131313}
+.device.browser .bar{display:flex;align-items:center;gap:7px;padding:10px 13px;
+  background:#191919;border-bottom:1px solid var(--rule)}
+.device.browser .dot{width:9px;height:9px;border-radius:50%;background:rgba(251,247,240,.20);flex:none}
+.device.browser .url{margin-left:9px;flex:1;min-width:0;height:19px;border-radius:100px;
+  background:rgba(251,247,240,.07);display:flex;align-items:center;padding:0 11px;
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-45);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.device.browser .screen{aspect-ratio:16/10}
+
+/* ── phone ── */
+.device.phone{width:min(290px,100%);margin-inline:auto;border:1px solid var(--rule);
+  border-radius:36px;padding:10px;background:#0D0D0D}
+.device.phone .screen{aspect-ratio:9/19;border-radius:27px}
+.device.phone .screen::after{border-radius:0 0 27px 27px}
+.device.phone .notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);
+  width:62px;height:5px;border-radius:100px;background:rgba(251,247,240,.16);z-index:2}
+
+/* ── laptop ── */
+.device.laptop .lid{border:1px solid var(--rule);border-radius:11px 11px 3px 3px;
+  padding:11px 11px 13px;background:#131313}
+.device.laptop .screen{aspect-ratio:16/10;border-radius:3px}
+.device.laptop .base{height:11px;margin:0 -5%;border-radius:0 0 13px 13px;
+  background:linear-gradient(180deg,#242424,#111);border:1px solid var(--rule);border-top:none}
+.device.laptop .base::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  margin-top:1px;width:15%;height:3px;border-radius:0 0 6px 6px;background:rgba(251,247,240,.10)}
+
+/* a pair of phones sits tighter than a pair of anything else */
+.pair.phones{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,30px)}
+@media (max-width:560px){ .pair.phones{grid-template-columns:1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .device .screen > img{transform:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -446,12 +501,24 @@ a{color:inherit}
           <p class="prose">The front door has to answer "what is this company" before it sells anything. So it opens on the founder — thirty years, on camera, saying good engineering isn't about the cheapest spec — and only then lists what CSEDS supplies.</p>
         </div>
         <div class="pair">
-          <figure class="rise d1" style="margin:0"><div class="shot doc"><img src="img/landing-01.jpg" alt="CSEDS landing page — From raw materials to finished products, over a manufacturing film."></div><figcaption class="cap"><b>01</b> Hero</figcaption></figure>
-          <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/landing-02.jpg" alt="Driven by experience — the about section with the 4.9 rating and 30+ years figure."></div><figcaption class="cap"><b>02</b> Who we are</figcaption></figure>
+          <figure class="rise d1" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au</span></div>
+            <div class="screen" data-scrollshot><img src="img/landing-01.jpg" alt="CSEDS landing page — From raw materials to finished products, over a manufacturing film."></div>
+          </div><figcaption class="cap"><b>01</b> Hero</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au</span></div>
+            <div class="screen" data-scrollshot><img src="img/landing-02.jpg" alt="Driven by experience — the about section with the 4.9 rating and 30+ years figure."></div>
+          </div><figcaption class="cap"><b>02</b> Who we are</figcaption></figure>
         </div>
         <div class="pair">
-          <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/landing-03.jpg" alt="Innovative products for every challenge — the product list with feature bullets."></div><figcaption class="cap"><b>03</b> What we supply</figcaption></figure>
-          <figure class="rise d3" style="margin:0"><div class="shot doc"><img src="img/landing-04.jpg" alt="Trusted by clients — testimonials with on-time delivery rate and skilled professionals figures."></div><figcaption class="cap"><b>04</b> Proof</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au</span></div>
+            <div class="screen" data-scrollshot><img src="img/landing-03.jpg" alt="Innovative products for every challenge — the product list with feature bullets."></div>
+          </div><figcaption class="cap"><b>03</b> What we supply</figcaption></figure>
+          <figure class="rise d3" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au</span></div>
+            <div class="screen" data-scrollshot><img src="img/landing-04.jpg" alt="Trusted by clients — testimonials with on-time delivery rate and skilled professionals figures."></div>
+          </div><figcaption class="cap"><b>04</b> Proof</figcaption></figure>
         </div>
       </div>
     </section>
@@ -471,12 +538,24 @@ a{color:inherit}
           <p class="prose">A specifier arrives already knowing what they want. So the template front-loads the compliance claim — BAL-FZ, the highest bushfire attack level — then gives them the assembly table, the workflow, and the questions they were going to email anyway.</p>
         </div>
         <div class="pair">
-          <figure class="rise d1" style="margin:0"><div class="shot doc"><img src="img/product-01.jpg" alt="Livin Modular product page hero and overview with four compliance cards."></div><figcaption class="cap"><b>06</b> Claim first</figcaption></figure>
-          <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/product-02.jpg" alt="Product assembly specification table covering design, factory manufacture and applications."></div><figcaption class="cap"><b>07</b> The spec table</figcaption></figure>
+          <figure class="rise d1" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/service/livin-modular</span></div>
+            <div class="screen" data-scrollshot><img src="img/product-01.jpg" alt="Livin Modular product page hero and overview with four compliance cards."></div>
+          </div><figcaption class="cap"><b>06</b> Claim first</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/service/livin-modular</span></div>
+            <div class="screen" data-scrollshot><img src="img/product-02.jpg" alt="Product assembly specification table covering design, factory manufacture and applications."></div>
+          </div><figcaption class="cap"><b>07</b> The spec table</figcaption></figure>
         </div>
         <div class="pair">
-          <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/product-03.jpg" alt="Three-step workflow and the frequently asked questions accordion."></div><figcaption class="cap"><b>08</b> Workflow &amp; FAQ</figcaption></figure>
-          <figure class="rise d3" style="margin:0"><div class="shot doc"><img src="img/product-04.jpg" alt="Enquiry form and footer."></div><figcaption class="cap"><b>09</b> Enquiry</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/service/livin-modular</span></div>
+            <div class="screen" data-scrollshot><img src="img/product-03.jpg" alt="Three-step workflow and the frequently asked questions accordion."></div>
+          </div><figcaption class="cap"><b>08</b> Workflow &amp; FAQ</figcaption></figure>
+          <figure class="rise d3" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/service/livin-modular</span></div>
+            <div class="screen" data-scrollshot><img src="img/product-04.jpg" alt="Enquiry form and footer."></div>
+          </div><figcaption class="cap"><b>09</b> Enquiry</figcaption></figure>
         </div>
       </div>
     </section>
@@ -489,8 +568,14 @@ a{color:inherit}
           <p class="prose">The accent goes oxide red and the subject changes to ATENA, CivilGeo and DeepExcavation — but the grid, the type scale, the feature lists and the footer are the products template, untouched. <strong>Nothing was redesigned to make this page; a value was changed.</strong></p>
         </div>
         <div class="pair">
-          <figure class="rise d1" style="margin:0"><div class="shot doc"><img src="img/software-01.jpg" alt="Software page — From research-grade analysis to engineering practice, with the specialist software list."></div><figcaption class="cap"><b>10</b> Same hero, red</figcaption></figure>
-          <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/software-02.jpg" alt="Software page proof section and footer, matching the landing page structure."></div><figcaption class="cap"><b>11</b> Same proof block</figcaption></figure>
+          <figure class="rise d1" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/software</span></div>
+            <div class="screen" data-scrollshot><img src="img/software-01.jpg" alt="Software page — From research-grade analysis to engineering practice, with the specialist software list."></div>
+          </div><figcaption class="cap"><b>10</b> Same hero, red</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="device browser">
+            <div class="bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">csedsaust.com.au/software</span></div>
+            <div class="screen" data-scrollshot><img src="img/software-02.jpg" alt="Software page proof section and footer, matching the landing page structure."></div>
+          </div><figcaption class="cap"><b>11</b> Same proof block</figcaption></figure>
         </div>
       </div>
     </section>
@@ -501,8 +586,17 @@ a{color:inherit}
         <div class="rise d1">
           <p class="prose">Most of the traffic is a specifier on a site with one hand free. The feature lists stack, the spec table becomes a single column, and the quote button stays reachable — the hierarchy survives the narrow measure because it was never carried by the layout.</p>
         </div>
-        <figure class="rise d2" style="margin:0"><div class="shot doc"><img src="img/mobile-1.jpg" alt="Mobile landing page — hero, founder film and the about section."></div></figure>
-        <figure class="rise d3" style="margin:0"><div class="shot doc"><img src="img/mobile-2.jpg" alt="Mobile landing page — the 30+ years figure, product list and feature bullets."></div><figcaption class="cap"><b>12</b> The same page, one hand free</figcaption></figure>
+        <div class="pair phones">
+          <figure class="rise d2" style="margin:0"><div class="device phone">
+            <span class="notch" aria-hidden="true"></span>
+            <div class="screen" data-scrollshot><img src="img/phone-1.jpg" alt="Mobile landing page — hero, founder film and the about section."></div>
+          </div></figure>
+        <figure class="rise d3" style="margin:0"><div class="device phone">
+            <span class="notch" aria-hidden="true"></span>
+            <div class="screen" data-scrollshot><img src="img/phone-2.jpg" alt="Mobile landing page — the 30+ years figure, product list and feature bullets."></div>
+          </div></figure>
+        </div>
+        <p class="cap"><b>12</b> The same page, one hand free</p>
       </div>
     </section>
 
@@ -640,6 +734,40 @@ const REDUCED = typeof window.matchMedia === 'function'
 
 /* 7 — hero settles on load */
 requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+
+/* ── device frames: the page inside scrolls with the reader ────────
+   Progress is measured across the frame's whole travel through the
+   viewport, so the internal scroll finishes exactly as the frame
+   leaves. Transform only, rAF-throttled, passive, and inert under
+   prefers-reduced-motion. */
+(function deviceScroll(){
+  const frames = [...document.querySelectorAll('[data-scrollshot]')];
+  if (!frames.length || REDUCED) return;
+
+  let ticking = false;
+  const run = () => {
+    const vh = innerHeight;
+    frames.forEach(f => {
+      const r = f.getBoundingClientRect();
+      if (r.bottom < -160 || r.top > vh + 160) return;
+      const img = f.querySelector('img');
+      if (!img) return;
+      const travel = img.offsetHeight - f.clientHeight;
+      if (travel <= 4) return;
+      /* 0 as the frame's top edge reaches the bottom of the screen,
+         1 as its bottom edge clears the top */
+      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
+      /* ease so the ends settle rather than clip */
+      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
+    });
+    ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
+  addEventListener('resize', run);
+  run();
+})();
+
 </script>
 </body>
 </html>

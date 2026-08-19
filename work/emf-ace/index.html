@@ -313,6 +313,61 @@ a{color:inherit}
   rgba(0,0,0,.72) 78%, var(--void) 100%)}
 .hero-bg img{object-position:50% 58%}
 
+
+/* ══════════════════════════════════════════════════════════════════
+   DEVICE FRAMES
+   A screenshot is a document; a device frame makes it a screen. The
+   page inside scrolls, driven by the reader's own scroll position —
+   no autoplay, no loop, nothing to wait for, and it reverses when
+   they scroll back up. Frames are drawn, not photographed, so they
+   inherit the palette and cost nothing to load.
+   ══════════════════════════════════════════════════════════════════ */
+
+.device{position:relative}
+.device .screen{position:relative;overflow:hidden;background:var(--deep)}
+.device .screen > img{width:100%;min-height:100%;object-fit:cover;object-position:50% 0;
+  display:block;will-change:transform}
+
+/* the page keeps moving past the frame edge — a hairline says so */
+.device .screen::after{content:"";position:absolute;inset:auto 0 0 0;height:38px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.28));pointer-events:none}
+
+/* ── browser ── */
+.device.browser{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:#131313}
+.device.browser .bar{display:flex;align-items:center;gap:7px;padding:10px 13px;
+  background:#191919;border-bottom:1px solid var(--rule)}
+.device.browser .dot{width:9px;height:9px;border-radius:50%;background:rgba(251,247,240,.20);flex:none}
+.device.browser .url{margin-left:9px;flex:1;min-width:0;height:19px;border-radius:100px;
+  background:rgba(251,247,240,.07);display:flex;align-items:center;padding:0 11px;
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-45);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.device.browser .screen{aspect-ratio:16/10}
+
+/* ── phone ── */
+.device.phone{width:min(290px,100%);margin-inline:auto;border:1px solid var(--rule);
+  border-radius:36px;padding:10px;background:#0D0D0D}
+.device.phone .screen{aspect-ratio:9/19;border-radius:27px}
+.device.phone .screen::after{border-radius:0 0 27px 27px}
+.device.phone .notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);
+  width:62px;height:5px;border-radius:100px;background:rgba(251,247,240,.16);z-index:2}
+
+/* ── laptop ── */
+.device.laptop .lid{border:1px solid var(--rule);border-radius:11px 11px 3px 3px;
+  padding:11px 11px 13px;background:#131313}
+.device.laptop .screen{aspect-ratio:16/10;border-radius:3px}
+.device.laptop .base{height:11px;margin:0 -5%;border-radius:0 0 13px 13px;
+  background:linear-gradient(180deg,#242424,#111);border:1px solid var(--rule);border-top:none}
+.device.laptop .base::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  margin-top:1px;width:15%;height:3px;border-radius:0 0 6px 6px;background:rgba(251,247,240,.10)}
+
+/* a pair of phones sits tighter than a pair of anything else */
+.pair.phones{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,30px)}
+@media (max-width:560px){ .pair.phones{grid-template-columns:1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .device .screen > img{transform:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -419,6 +474,15 @@ a{color:inherit}
           <figure><div class="shot"><img src="img/emf-venue-ritz-carlton.png" alt="Ritz-Carlton venue announcement creative."></div><figcaption class="cap">Venue</figcaption></figure>
           <figure><div class="shot"><img src="img/emf-500-registered.png" alt="500 registered milestone creative."></div><figcaption class="cap">Milestone</figcaption></figure>
           <figure class="wide"><div class="shot"><img src="img/emf-anniversary-11years.png" alt="Eleven Glorious Years anniversary banner."></div><figcaption class="cap">Anniversary banner</figcaption></figure>
+        </div>
+        <div class="pair" style="align-items:start">
+          <figure class="rise d3" style="margin:0"><div class="device phone">
+            <span class="notch" aria-hidden="true"></span>
+            <div class="screen" data-scrollshot><img src="img/feed.jpg" alt="The ACE creatives running as a social feed — teasers, countdowns, panels and milestones, one after another."></div>
+          </div></figure>
+          <div class="rise d3">
+            <p class="prose">Almost all of it was consumed this way — thumbed past, at speed, between other people's posts. That is the real test of a lockup: it has about a second to say which weekend this belongs to.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -704,6 +768,40 @@ requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
     requestAnimationFrame(tick);
   }, { threshold:0.5 });
   io.observe(el);
+})();
+
+
+/* ── device frames: the page inside scrolls with the reader ────────
+   Progress is measured across the frame's whole travel through the
+   viewport, so the internal scroll finishes exactly as the frame
+   leaves. Transform only, rAF-throttled, passive, and inert under
+   prefers-reduced-motion. */
+(function deviceScroll(){
+  const frames = [...document.querySelectorAll('[data-scrollshot]')];
+  if (!frames.length || REDUCED) return;
+
+  let ticking = false;
+  const run = () => {
+    const vh = innerHeight;
+    frames.forEach(f => {
+      const r = f.getBoundingClientRect();
+      if (r.bottom < -160 || r.top > vh + 160) return;
+      const img = f.querySelector('img');
+      if (!img) return;
+      const travel = img.offsetHeight - f.clientHeight;
+      if (travel <= 4) return;
+      /* 0 as the frame's top edge reaches the bottom of the screen,
+         1 as its bottom edge clears the top */
+      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
+      /* ease so the ends settle rather than clip */
+      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
+    });
+    ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
+  addEventListener('resize', run);
+  run();
 })();
 
 </script>
