@@ -29,8 +29,8 @@
 
 :root{
   /* ── ground ── */
-  --void:#0A0C08;             /* page */
-  --deep:#14170F;             /* one step up — media wells only */
+  --void:#000000;            /* page — true black */
+  --deep:#0F120C;             /* media wells keep the project tint */
 
   --ink:#FBF7F0;              /* never pure #FFF */
   --ink-70:rgba(251,247,240,.74);
@@ -75,8 +75,8 @@ body{
 }
 img{display:block;max-width:100%;height:auto}
 a{color:inherit}
-::selection{background:var(--accent);color:#0A0C08}
-.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#0A0C08;
+::selection{background:var(--accent);color:#000000}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#000000;
   padding:12px 18px;font-family:var(--ui);font-size:13px}
 .skip:focus{left:8px;top:8px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -123,7 +123,7 @@ a{color:inherit}
 .back{position:fixed;z-index:60;top:16px;left:var(--pad);font-family:var(--ui);font-size:11px;
   letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink-45);
   padding:8px 16px;border:1px solid var(--rule);border-radius:100px;
-  background:rgba(10,12,8,.92);backdrop-filter:saturate(160%) blur(12px);
+  background:rgba(0,0,0,.92);backdrop-filter:saturate(160%) blur(12px);
   -webkit-backdrop-filter:saturate(160%) blur(12px);
   opacity:0;pointer-events:none;transform:translate3d(0,-8px,0);
   transition:opacity 320ms ease,transform 320ms var(--ease-out),color 200ms ease,border-color 200ms ease}
@@ -138,7 +138,7 @@ a{color:inherit}
   transform:scale(1.08);transition:transform 2200ms var(--ease-out) 120ms;will-change:transform}
 .is-ready .hero-bg img{transform:scale(1)}
 .hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(10,12,8,.34) 0%,rgba(10,12,8,.12) 34%,rgba(10,12,8,.62) 82%,var(--void) 100%)}
+  background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.12) 34%,rgba(0,0,0,.62) 82%,var(--void) 100%)}
 
 .hero-inner{position:relative;z-index:1;margin-top:auto;text-align:center}
 .hero-title{font-family:var(--display);font-weight:800;font-variation-settings:'opsz' 96;
@@ -179,10 +179,10 @@ a{color:inherit}
 .band.bleed{margin-inline:0}
 .band.tall{aspect-ratio:16/8}
 .band.short{aspect-ratio:16/4.6}
-.band img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
-  clip-path:inset(0 0 100% 0);transform:scale(1.05);
+.band img,.band video{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+  display:block;clip-path:inset(0 0 100% 0);transform:scale(1.05);
   transition:clip-path 1100ms var(--ease-out),transform 1600ms var(--ease-out)}
-.band.is-in img{clip-path:inset(0 0 0 0);transform:scale(1)}
+.band.is-in img,.band.is-in video{clip-path:inset(0 0 0 0);transform:scale(1)}
 .band-note{font-family:var(--ui);font-size:13px;letter-spacing:-.005em;color:var(--ink);
   text-align:right;margin:16px var(--pad) 0;font-weight:500}
 @media (max-width:700px){ .band,.band.tall,.band.short{aspect-ratio:4/3} }
@@ -258,7 +258,7 @@ a{color:inherit}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .ln > i{transform:none}
   .hero-bg img,.hero-tagline,.meta{transform:none;opacity:1}
-  .band img,.shot > img{clip-path:none;transform:none}
+  .band img,.band video,.shot > img{clip-path:none;transform:none}
   .run .dossier{position:static}
 }
 </style>
@@ -305,7 +305,19 @@ a{color:inherit}
   </div>
 </header>
 
-<!-- ══ 01 · BAND ═══════════════════════════════════════════════ -->
+<!-- ══ 01 · BAND — motion slot ═════════════════════════════════
+     A band takes an <img> or a <video>. To drop in the real motion
+     graphic, swap the img for:
+
+       <video data-motion muted loop playsinline preload="metadata"
+              poster="Macbook_Air_Mockup_2.png">
+         <source src="motion/01-profile.mp4" type="video/mp4">
+       </video>
+
+     Nothing else changes. [data-motion] videos play only while on
+     screen and stay paused entirely under prefers-reduced-motion,
+     with the poster standing in.
+     ════════════════════════════════════════════════════════════ -->
 <div class="band" data-reveal>
   <img src="Macbook_Air_Mockup_2.png" alt="The Futee player profile open on a laptop.">
 </div>
@@ -559,7 +571,23 @@ const REDUCED = typeof window.matchMedia === 'function'
   run();
 })();
 
-/* 5 — count-up for the outcome tally */
+/* 5 — motion slots: play only while on screen, never under reduced
+       motion. Saves battery and keeps the poster as the fallback. */
+(function motion(){
+  const vids = document.querySelectorAll('video[data-motion]');
+  if (!vids.length) return;
+  if (REDUCED) { vids.forEach(v => { v.autoplay = false; v.pause(); }); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      const v = e.target;
+      if (e.isIntersecting) { const p = v.play(); if (p) p.catch(()=>{}); }
+      else v.pause();
+    });
+  }, { threshold:0.15 });
+  vids.forEach(v => io.observe(v));
+})();
+
+/* 6 — count-up for the outcome tally */
 (function countUp(){
   document.querySelectorAll('[data-count]').forEach(el => {
     const end = parseFloat(el.dataset.count);
@@ -579,7 +607,7 @@ const REDUCED = typeof window.matchMedia === 'function'
   });
 })();
 
-/* 6 — hero settles on load */
+/* 7 — hero settles on load */
 requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
 </script>
 </body>
