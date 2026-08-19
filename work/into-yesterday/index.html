@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Into Yesterday — Neel Parikh</title>
+<meta name="description" content="Into Yesterday — a 3D short film about memory as a maze you can walk back into. Concept, direction, modelling and original score. UNSW, 2025.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   INTO YESTERDAY — MARK 5 SKELETON
+   Same structure as Futee, EMF and CSEDS. The palette, the copy, the
+   media and the project-only block at the bottom are what differ —
+   and this one leans hardest on that block.
+
+     00  hero        full-bleed photograph, wordmark, meta row,
+                     outcome numbers
+     01  band        full-bleed motion graphic
+     02  run         DOSSIER PINNED LEFT   · content runs right
+     03  band        full-bleed motion graphic
+     04  run.flip    DOSSIER PINNED RIGHT  · content runs left
+     05  band        full-bleed motion graphic
+     06  credits + next
+
+   Only the palette, the copy and the media change between projects.
+   Everything below this line is shared.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── ground ── */
+  --void:#000000;            /* page — true black */
+  --deep:#120E08;             /* media wells keep the project tint */
+
+  --ink:#FBF7F0;              /* never pure #FFF */
+  --ink-70:rgba(251,247,240,.74);
+  --ink-45:rgba(251,247,240,.46);
+  --rule:rgba(251,247,240,.20);
+
+  /* ── the film's own colours, taken off the clay and the render ── */
+  --wax:#F2B15A;              /* the lit maze wall */
+  --ember:#E0722C;            /* its shadow side */
+  --gem-red:#D0402F;
+  --gem-blue:#5566E0;
+  --gem-violet:#9A55D6;
+  --accent:var(--wax);
+
+  /* ── motion ── */
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.23,1,.32,1);
+
+  /* ── rhythm ── */
+  --pad:clamp(20px,8.4vw,108px);
+  --gap:clamp(26px,4.4vw,72px);
+  --sec:clamp(80px,10vw,150px);    /* between major sections */
+  --beat:clamp(52px,6.4vw,96px);   /* between beats inside a track */
+  --radius:0px;
+  --radius-pill:22px;
+
+  /* ── type ── */
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"DM Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  --ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+/* To run the site's own Panchang instead of Bricolage, uncomment this
+   and change --display to 'Panchang'. Path is Futee/ → ../Mark4/fonts/.
+@font-face{font-family:'Panchang';src:url('../Mark4/fonts/Panchang-Variable.woff2') format('woff2');
+  font-weight:200 800;font-style:normal;font-display:swap}
+*/
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.62;
+  letter-spacing:-.006em;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+::selection{background:var(--accent);color:#000000}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#000000;
+  padding:12px 18px;font-family:var(--ui);font-size:13px}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ══ shared type ═══════════════════════════════════════════════ */
+/* a hairline holds the section, now that there is no box to do it */
+.h-beat{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.1vw,30px);
+  line-height:1.1;letter-spacing:-.018em;margin:0 0 clamp(18px,2vw,30px);
+  padding-top:clamp(14px,1.6vw,22px);border-top:1px solid var(--rule)}
+.eyebrow{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-45);margin:0 0 14px}
+.prose{margin:0;max-width:60ch;font-size:16.5px;line-height:1.66;color:var(--ink-70)}
+.prose + .prose{margin-top:1.05em}
+.prose strong{font-weight:500;color:var(--ink)}
+.prose em{font-style:normal;font-weight:500;color:var(--ink)}
+.prose.lead{font-size:clamp(18px,1.5vw,21px);line-height:1.5;color:var(--ink);max-width:46ch;
+  letter-spacing:-.012em}
+.cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-45);margin:11px 0 0}
+
+/* ══ reveals — transform / opacity only, once, fully opt-out ════ */
+.ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+.ln > i{display:block;font-style:inherit;transform:translate3d(0,105%,0);
+  transition:transform 900ms var(--ease-out);transition-delay:var(--d,0ms)}
+[data-reveal].is-in .ln > i{transform:translate3d(0,0,0)}
+
+[data-reveal]{--rd:0ms}
+[data-reveal] .rise{opacity:0;transform:translate3d(0,16px,0);
+  transition:opacity 720ms var(--ease-soft),transform 720ms var(--ease-soft);transition-delay:var(--rd)}
+[data-reveal].is-in .rise{opacity:1;transform:none}
+.d1{--rd:100ms}.d2{--rd:200ms}.d3{--rd:300ms}.d4{--rd:400ms}
+
+/* ══ shot — a piece of media. No ground, no frame: the artwork is the
+   block. Wipes up on entry. ══════════════════════════════════════ */
+.shot{overflow:hidden;position:relative;background:var(--deep);border-radius:var(--radius)}
+.shot > img{width:100%;clip-path:inset(0 0 100% 0);transform:scale(1.05);
+  transition:clip-path 1050ms var(--ease-out),transform 1500ms var(--ease-out);
+  will-change:clip-path,transform}
+[data-reveal].is-in .shot > img,.shot[data-reveal].is-in > img{clip-path:inset(0 0 0 0);transform:scale(1)}
+
+/* ══ progress + back ═══════════════════════════════════════════ */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:70;background:var(--accent);
+  transform:scaleX(0);transform-origin:0 50%}
+/* chip, not bare text — it crosses the sticky dossier on both sides */
+.back{position:fixed;z-index:60;top:16px;left:var(--pad);font-family:var(--ui);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink-45);
+  padding:8px 16px;border:1px solid var(--rule);border-radius:100px;
+  background:rgba(0,0,0,.92);backdrop-filter:saturate(160%) blur(12px);
+  -webkit-backdrop-filter:saturate(160%) blur(12px);
+  opacity:0;pointer-events:none;transform:translate3d(0,-8px,0);
+  transition:opacity 320ms ease,transform 320ms var(--ease-out),color 200ms ease,border-color 200ms ease}
+.back.is-live{opacity:1;pointer-events:auto;transform:none}
+@media (hover:hover) and (pointer:fine){ .back:hover{color:var(--ink);border-color:var(--ink)} }
+
+/* ══ 00 · HERO ═════════════════════════════════════════════════ */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:clamp(64px,10vw,120px) var(--pad) 0;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:112%;object-fit:cover;object-position:50% 54%;
+  transform:scale(1.08);transition:transform 2200ms var(--ease-out) 120ms;will-change:transform}
+.is-ready .hero-bg img{transform:scale(1)}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.12) 34%,rgba(0,0,0,.62) 82%,var(--void) 100%)}
+
+.hero-inner{position:relative;z-index:1;margin-top:auto;text-align:center}
+.hero-title{font-family:var(--display);font-weight:800;font-variation-settings:'opsz' 96;
+  font-size:clamp(72px,13.5vw,190px);line-height:.86;letter-spacing:-.045em;margin:0}
+.hero-tagline{font-size:clamp(19px,3.2vw,42px);line-height:1.12;letter-spacing:-.02em;
+  color:var(--ink);margin:clamp(14px,1.8vw,26px) auto 0;max-width:26ch;font-weight:400;
+  opacity:0;transform:translate3d(0,12px,0);
+  transition:opacity 760ms ease 520ms,transform 760ms var(--ease-soft) 520ms}
+.is-ready .hero-tagline{opacity:1;transform:none}
+.hero-tagline em{font-style:normal;color:var(--accent)}
+
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);
+  border-top:1px solid var(--ink);margin-top:clamp(22px,3vw,42px);
+  padding:clamp(16px,1.8vw,26px) 0 clamp(26px,3.4vw,48px);text-align:left;
+  opacity:0;transform:translate3d(0,12px,0);
+  transition:opacity 760ms ease 660ms,transform 760ms var(--ease-soft) 660ms}
+.is-ready .meta{opacity:1;transform:none}
+.meta dt{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-45);margin:0 0 8px}
+.meta dd{margin:0;font-family:var(--mono);font-size:13px;line-height:1.45;letter-spacing:-.01em}
+@media (max-width:760px){ .meta{grid-template-columns:1fr 1fr;row-gap:22px} }
+
+/* the outcome numbers, sitting on the photograph itself */
+.tally{position:relative;z-index:1;padding:clamp(30px,4vw,56px) 0 clamp(46px,6vw,86px);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);text-align:center}
+.tally .n{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,104px);
+  line-height:.86;letter-spacing:-.045em;margin:0}
+.tally .n sup{font-size:.34em;font-weight:600;vertical-align:super;letter-spacing:0;margin-left:.1em}
+.tally .lab{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-45);margin:14px 0 0}
+@media (max-width:760px){ .tally{grid-template-columns:1fr;gap:34px} }
+
+/* ══ 01 · BAND — full-bleed motion graphic ═════════════════════
+   Bands are a fixed wide crop by design: they are a beat, not a
+   document. Anything that must be read whole goes in a .shot. */
+.band{position:relative;overflow:hidden;background:var(--deep);
+  margin:var(--sec) var(--pad) 0;aspect-ratio:16/6}
+.band.bleed{margin-inline:0}
+.band.tall{aspect-ratio:16/8}
+.band.short{aspect-ratio:16/4.6}
+.band img,.band video{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+  display:block;clip-path:inset(0 0 100% 0);transform:scale(1.05);
+  transition:clip-path 1100ms var(--ease-out),transform 1600ms var(--ease-out)}
+.band.is-in img,.band.is-in video{clip-path:inset(0 0 0 0);transform:scale(1)}
+.band-note{font-family:var(--ui);font-size:13px;letter-spacing:-.005em;color:var(--ink);
+  text-align:right;margin:16px var(--pad) 0;font-weight:500}
+@media (max-width:700px){ .band,.band.tall,.band.short{aspect-ratio:4/3} }
+
+/* full-width media — for artefacts that must be read whole, uncropped */
+.full{margin:var(--sec) var(--pad) 0}
+
+/* ══ RUN — the sticky-dossier two-column engine ════════════════ */
+.run{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.28fr);
+  gap:var(--gap);padding:var(--sec) var(--pad) 0;align-items:start}
+.run .dossier{grid-column:1;position:sticky;top:clamp(60px,14vh,120px);align-self:start;height:max-content}
+.run .track{grid-column:2;min-width:0;display:grid;gap:var(--beat)}
+
+/* the swap: dossier pins right, content runs left */
+.run.flip{grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr)}
+.run.flip .dossier{grid-column:2}
+.run.flip .track{grid-column:1}
+
+@media (max-width:900px){
+  .run,.run.flip{grid-template-columns:1fr;gap:clamp(40px,7vw,64px)}
+  .run .dossier,.run.flip .dossier{position:static;grid-column:1;top:auto}
+  .run .track,.run.flip .track{grid-column:1;gap:clamp(46px,8vw,80px)}
+}
+
+/* ── the dossier card itself ── */
+.dossier-mark{font-family:var(--display);font-weight:700;font-size:clamp(19px,1.8vw,26px);
+  letter-spacing:-.02em;margin:0 0 clamp(26px,3vw,44px)}
+.dossier-mark span{color:var(--ink-45);font-weight:500}
+.dossier-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(16px,2vw,30px);align-items:start}
+.facts{margin:0;display:grid;gap:clamp(18px,2vw,30px);align-content:start}
+.facts dt{font-family:var(--ui);font-size:11.5px;letter-spacing:.06em;color:var(--ink-45);margin:0 0 3px}
+.facts dd{margin:0;font-size:16px;line-height:1.35;letter-spacing:-.01em}
+.impacts{display:grid;gap:clamp(16px,2vw,30px)}
+.impact{border:1px solid var(--ink);border-radius:var(--radius-pill);
+  min-height:clamp(96px,9vw,124px);padding:18px 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.impact b{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,34px);
+  line-height:1;letter-spacing:-.03em}
+.impact small{font-family:var(--ui);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-45);line-height:1.35}
+@media (max-width:520px){ .dossier-body{grid-template-columns:1fr} }
+
+/* ── beats inside a track ── */
+.beat{min-width:0}
+.beat .stack{display:grid;gap:clamp(20px,2.6vw,38px)}
+.beat.indent{padding-left:clamp(0px,1.4vw,18px)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,40px)}
+@media (max-width:640px){ .pair{grid-template-columns:1fr} }
+
+/* ══ CREDITS + NEXT ════════════════════════════════════════════ */
+.credits{font-family:var(--ui);border-top:1px solid var(--rule);margin-top:var(--sec);
+  padding:clamp(36px,4.5vw,64px) var(--pad);display:grid;grid-template-columns:repeat(4,1fr);
+  gap:var(--gap);font-size:13.5px;color:var(--ink-70)}
+.credits h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-45);font-weight:500}
+@media (max-width:760px){ .credits{grid-template-columns:1fr 1fr;row-gap:26px} }
+
+.next{display:block;text-decoration:none;position:relative;overflow:hidden;
+  height:clamp(280px,40vw,520px);background:#000}
+.next img{width:100%;height:100%;object-fit:cover;opacity:.5;transform:scale(1.02);
+  transition:transform 800ms var(--ease-soft),opacity 800ms ease}
+@media (hover:hover) and (pointer:fine){ .next:hover img{transform:scale(1.06);opacity:.66} }
+.next .lbl{position:absolute;inset:auto 0 0 0;padding:var(--pad);color:var(--ink)}
+.next .lbl small{display:block;font-family:var(--ui);font-size:11.5px;letter-spacing:.15em;
+  text-transform:uppercase;opacity:.62;margin-bottom:10px}
+.next .lbl strong{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,74px);
+  letter-spacing:-.03em;line-height:1}
+
+/* ══ reduced motion ════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .ln > i{transform:none}
+  .hero-bg img,.hero-tagline,.meta{transform:none;opacity:1}
+  .band img,.band video,.shot > img{clip-path:none;transform:none}
+  .run .dossier{position:static}
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   INTO YESTERDAY — PROJECT-ONLY COMPONENTS
+   The film is about re-entering a memory, so the page makes you do
+   it: you scrub backwards into the past, you watch a maze draw
+   itself, and you walk four frames deeper before you're let out.
+   Every one is scroll-driven — nothing autoplays, nothing loops, and
+   all of it collapses to a still under prefers-reduced-motion.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── the hero render is lit from inside and blows out in the middle.
+      The title needs its own shade or it disappears into the wax. ── */
+.hero-bg::after{background:
+  radial-gradient(74% 58% at 50% 38%, rgba(0,0,0,.66) 0%, rgba(0,0,0,.30) 52%, rgba(0,0,0,0) 78%),
+  linear-gradient(180deg, rgba(0,0,0,.44) 0%, rgba(0,0,0,.22) 28%,
+                          rgba(0,0,0,.74) 76%, var(--void) 100%)}
+.hero-tagline em{color:var(--wax)}
+
+/* ── 1 · THE SCRUB · now → yesterday ─────────────────────────────
+   Two frames, one dissolve. The present is cold and desaturated; as
+   you scroll it warms, blooms and closes in, until you're inside the
+   memory. --p is written by JS, 0 → 1. */
+.scrub{position:relative;height:240vh;margin-top:var(--sec)}
+.scrub .stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#000}
+.scrub .layer{position:absolute;inset:0}
+.scrub .layer img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* NOW — cools and pulls back */
+.scrub .now img{
+  filter:saturate(calc(1 - var(--p) * .7)) brightness(calc(1 - var(--p) * .25));
+  transform:scale(calc(1 + var(--p) * .06));
+  opacity:calc(1 - var(--p) * 1.15)}
+/* YESTERDAY — arrives warm and comes toward you */
+.scrub .then img{
+  transform:scale(calc(1.16 - var(--p) * .16));
+  opacity:var(--p)}
+
+/* the warmth bleeding in, and the walls closing */
+.scrub .bloom{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(60% 55% at 50% 52%,
+    rgba(242,177,90,calc(var(--p) * .40)) 0%,
+    rgba(224,114,44,calc(var(--p) * .16)) 45%, transparent 72%)}
+.scrub .vignette{position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 calc(90px + var(--p) * 260px) calc(10px + var(--p) * 90px) rgba(0,0,0,.92)}
+
+.scrub .marks{position:absolute;inset:auto 0 0 0;padding:0 var(--pad) clamp(30px,5vw,64px);
+  display:flex;justify-content:space-between;align-items:flex-end;gap:20px;pointer-events:none}
+.scrub .mark{font-family:var(--display);font-weight:800;letter-spacing:-.03em;line-height:1;
+  font-size:clamp(30px,6vw,86px)}
+.scrub .mark.a{opacity:calc(1 - var(--p) * 1.6);transform:translate3d(0,calc(var(--p) * -14px),0)}
+.scrub .mark.b{opacity:calc((var(--p) - .35) * 2);transform:translate3d(0,calc((1 - var(--p)) * 18px),0);
+  color:var(--wax);text-align:right}
+/* the scrub bar */
+.scrub .rail{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(18px,2.4vw,30px);
+  height:1px;background:rgba(251,247,240,.22)}
+.scrub .rail::after{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--p) * 100%);
+  background:var(--wax);box-shadow:0 0 12px rgba(242,177,90,.7)}
+
+/* ── 2 · THE MAZE · it draws itself ──────────────────────────────
+   Generated in JS with a fixed seed, so it is the same maze every
+   visit. Walls grow first, then the way in traces through them. */
+.maze{padding:var(--sec) var(--pad) 0}
+.maze .frame{position:relative;width:100%;aspect-ratio:16/9;background:var(--deep);overflow:hidden}
+.maze svg{position:absolute;inset:0;width:100%;height:100%}
+.maze .walls{fill:none;stroke:rgba(242,177,90,.34);stroke-width:2;stroke-linecap:square}
+.maze .path{fill:none;stroke:var(--wax);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 7px rgba(242,177,90,.85)) drop-shadow(0 0 20px rgba(224,114,44,.45))}
+.maze .halo{position:absolute;width:190px;height:190px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(242,177,90,.30),transparent 68%);
+  transform:translate(-50%,-50%);opacity:0}
+.maze.is-live .halo{opacity:1}
+
+/* ── 3 · THE WALK (flipbook) · four frames deeper ───────────────────────
+   The storyboard, scrubbed. One panel at a time, cross-fading, so
+   the reader walks the same path the character does. */
+.walk{position:relative;height:300vh}
+.walk .stage{position:sticky;top:0;height:100svh;display:grid;place-items:center;
+  padding:clamp(70px,9vw,120px) var(--pad)}
+.walk .deck{position:relative;width:min(1000px,100%);aspect-ratio:16/8}
+.walk figure{position:absolute;inset:0;margin:0;opacity:0;transform:scale(.965);
+  transition:opacity 520ms var(--ease-soft),transform 720ms var(--ease-soft)}
+.walk figure.is-on{opacity:1;transform:scale(1)}
+.walk img{width:100%;height:100%;object-fit:cover;display:block}
+.walk .count{position:absolute;inset:auto auto 0 0;transform:translateY(140%);
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-45)}
+.walk .count b{color:var(--wax);font-weight:500}
+.walk .ticks{position:absolute;inset:auto 0 0 auto;transform:translateY(140%);display:flex;gap:6px}
+.walk .ticks i{width:26px;height:2px;background:rgba(251,247,240,.20);display:block}
+.walk .ticks i.on{background:var(--wax)}
+
+/* ── 4 · THE GEM FIELD ───────────────────────────────────────────
+   Memories in dark water. Drifts on its own, pushes away from the
+   cursor, and stops entirely when it is off screen. */
+.gems{position:absolute;inset:0;z-index:0;pointer-events:none}
+.gems canvas{width:100%;height:100%;display:block}
+.has-gems{position:relative}
+.has-gems > *:not(.gems){position:relative;z-index:1}
+
+/* ── the clay studies sit as a contact grid ── */
+.clay{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.4vw,18px)}
+.clay .shot{aspect-ratio:4/3}
+.clay .shot > img{width:100%;height:100%;object-fit:cover}
+@media (max-width:620px){ .clay{grid-template-columns:1fr 1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .scrub{height:auto;margin-top:var(--sec)}
+  .scrub .stage{position:static;height:auto;aspect-ratio:16/9}
+  .scrub .now{display:none}
+  .scrub .then img{transform:none;opacity:1}
+  .scrub .bloom,.scrub .vignette,.scrub .rail{display:none}
+  .scrub .mark.a{display:none} .scrub .mark.b{opacity:1;transform:none}
+  .walk{height:auto}
+  .walk .stage{position:static;height:auto;display:block}
+  .walk .deck{aspect-ratio:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .walk figure{position:static;opacity:1;transform:none}
+  .walk .count,.walk .ticks{display:none}
+  .maze .path{stroke-dasharray:none!important;stroke-dashoffset:0!important}
+  .maze .walls{stroke-dasharray:none!important;stroke-dashoffset:0!important}
+  .gems{display:none}
+}
+
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" data-progress aria-hidden="true"></div>
+<a class="back" data-back href="/#work">← Work</a>
+
+<main id="main">
+
+<!-- ══ 00 · HERO ═══════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true"><img src="img/hero.jpg" alt=""></div>
+  <div class="hero-inner">
+    <h1 class="hero-title">Into Yesterday</h1>
+    <p class="hero-tagline">A memory is a maze you can <em>walk back into</em>. Getting out is the hard part.</p>
+    <dl class="meta">
+      <div><dt>Role</dt><dd>Concept, direction, 3D,<br>sound — solo</dd></div>
+      <div><dt>Year</dt><dd>2025</dd></div>
+      <div><dt>Scope</dt><dd>Short film — boards, model,<br>render, score</dd></div>
+      <div><dt>Context</dt><dd>UNSW<br>Studio brief</dd></div>
+    </dl>
+  </div>
+  <div class="tally" data-reveal data-stagger>
+    <div><p class="n rise"><span data-count="9">0</span></p><p class="lab rise d1">Clay studies before a single render</p></div>
+    <div><p class="n rise d1"><span data-count="3">0</span></p><p class="lab rise d2">Crafts in one film</p></div>
+    <div><p class="n rise d2"><span data-count="1">0</span></p><p class="lab rise d3">Maze, built from nothing</p></div>
+  </div>
+</header>
+
+<!-- ══ 01 · SET-PIECE · THE SCRUB ══════════════════════════════
+     Scroll takes you out of the present and into the memory. -->
+<section class="scrub" data-scrub aria-label="The present dissolving into the past">
+  <div class="stage">
+    <div class="layer now"><img src="img/now.jpg" alt="A night city waterfront, figures walking a stone shoreline."></div>
+    <div class="layer then"><img src="img/cover.jpg" alt="The same warmth from inside the memory — a lit wall and gems on dark water."></div>
+    <div class="bloom" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="marks" aria-hidden="true">
+      <span class="mark a">Tonight</span>
+      <span class="mark b">Yesterday</span>
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- ══ 02 · RUN — dossier pinned LEFT ══════════════════════════ -->
+<section class="run has-gems" id="context">
+  <div class="gems" data-gems aria-hidden="true"><canvas></canvas></div>
+
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Into Yesterday <span>; TLDR</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Role</dt><dd class="rise">Everything</dd></div>
+        <div><dt class="rise d1">Medium</dt><dd class="rise d1">3D short film</dd></div>
+        <div><dt class="rise d2">Context</dt><dd class="rise d2">UNSW studio</dd></div>
+        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">One semester</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>1</b><small>Maker, every craft</small></div>
+        <div class="impact rise d2"><b>9</b><small>Clay studies</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Summary</h2>
+      <div class="rise d1">
+        <p class="prose lead">A short film about going back to a memory on purpose, and finding it has a floor plan.</p>
+        <p class="prose">I made all of it: the concept, the boards, the model, the lighting, the render and the score. It started as clay — nine small tiles of colour and texture made by hand — and ended as a lit maze standing in dark grass beside black water.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The idea</h2>
+      <div class="rise d1">
+        <p class="prose lead">Memory is navigable. That's the problem with it.</p>
+        <p class="prose">You don't drift into the past — you <em>go</em>, deliberately, and you know the turns. The maze is warm and lit from inside because that's how the memory advertises itself. <strong>The gems in the water are the parts you can see and can't reach:</strong> bright, close, on the other side of a wall you built.</p>
+        <p class="prose">Everything in the film follows from that one image. The walls glow. The grass outside doesn't.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Where it started</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Before any 3D, I made the palette by hand — clay pressed into small square tiles, photographed outside on grass and stone. Fast, physical, and impossible to fake in a colour picker. The film's whole range of amber, oxide red and bruised blue came out of these.</p>
+        </div>
+        <div class="clay rise d2">
+          <figure style="margin:0"><div class="shot"><img src="img/clay-1.jpg" alt="Nine clay tiles laid out on white paper on grass."></div></figure>
+          <figure style="margin:0"><div class="shot"><img src="img/clay-2.jpg" alt="The same tiles rearranged, photographed on stone steps."></div></figure>
+          <figure style="margin:0"><div class="shot"><img src="img/clay-3.jpg" alt="Individual clay studies in red, blue and yellow."></div></figure>
+        </div>
+        <figure class="rise d3" style="margin:0">
+          <div class="shot"><img src="img/clay-swatches.jpg" alt="A single clay tile grid — the source of the film's palette."></div>
+          <figcaption class="cap">The palette, before it was a palette</figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ 03 · SET-PIECE · THE MAZE DRAWS ITSELF ══════════════════ -->
+<section class="maze" data-maze aria-label="A maze drawing itself, then the route through it">
+  <div class="frame">
+    <svg preserveAspectRatio="none" aria-hidden="true">
+      <path class="walls"></path>
+      <path class="path"></path>
+    </svg>
+    <span class="halo" aria-hidden="true"></span>
+  </div>
+  <p class="cap">The plan is always simple once you're outside it</p>
+</section>
+
+<!-- ══ 04 · RUN — dossier pinned RIGHT ═════════════════════════ -->
+<section class="run flip" id="process">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Into Yesterday</p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Modelled in</dt><dd class="rise">Blender</dd></div>
+        <div><dt class="rise d1">Boards</dt><dd class="rise d1">Hand-drawn</dd></div>
+        <div><dt class="rise d2">Score</dt><dd class="rise d2">Original,<br>GarageBand</dd></div>
+        <div><dt class="rise d3">Palette</dt><dd class="rise d3">Clay, photographed</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>4</b><small>Frames, one walk</small></div>
+        <div class="impact rise d2"><b>0</b><small>Stock assets</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Reference</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">The look sits between two things that shouldn't go together: the soft, sunlit nostalgia of a kid on a hill, and the hard geometry of a floor plan seen from above. The moodboard holds both so the film could keep checking itself against them.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d1" style="margin:0"><div class="shot"><img src="img/moodboard.jpg" alt="Moodboard — a child watching a sunset over the sea."></div><figcaption class="cap">Warmth</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/group.jpg" alt="Collected film references and colour studies."></div><figcaption class="cap">Reference</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Building it</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">The maze is one modelled object, lit from within so the walls carry the light rather than receive it. Everything else in frame — the grass, the stone edge, the water, the gems — exists to be the thing the maze is <em>not</em>.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d1" style="margin:0"><div class="shot"><img src="img/blender-1.jpg" alt="The maze modelled in Blender, grey clay render with camera rig."></div><figcaption class="cap">Grey box</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/blender-2.jpg" alt="Blender viewport — the character spheres on a plane."></div><figcaption class="cap">Blocking</figcaption></figure>
+        </div>
+        <figure class="rise d3" style="margin:0">
+          <div class="shot"><img src="img/maze-aerial.jpg" alt="The finished maze, lit, seen from above on dark ground."></div>
+          <figcaption class="cap">Lit</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The walk</h2>
+      <div class="rise d1">
+        <p class="prose">Four boards, and each one is closer than the last. The camera never cuts away and never turns around — the only direction available is further in. <strong>Keep scrolling and you go with it.</strong></p>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ SET-PIECE · THE FLIPBOOK ════════════════════════════════ -->
+<section class="walk" data-walk aria-label="Four storyboard frames, walking deeper into the maze">
+  <div class="stage">
+    <div class="deck">
+      <figure><img src="img/sb-1.jpg" alt="Board one — the maze from outside, a figure at its mouth."></figure>
+      <figure><img src="img/sb-2.jpg" alt="Board two — inside the first corridor, looking down its length."></figure>
+      <figure><img src="img/sb-3.jpg" alt="Board three — deeper, the figure smaller against the wall."></figure>
+      <figure><img src="img/sb-4.jpg" alt="Board four — the far end, the figure almost gone."></figure>
+      <p class="count"><b>01</b> / 04 — further in</p>
+      <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 · OUTCOME ════════════════════════════════════════════ -->
+<section class="run" id="outcome">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Into Yesterday <span>; end</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Shown</dt><dd class="rise">UNSW studio</dd></div>
+        <div><dt class="rise d1">Runtime</dt><dd class="rise d1">Short</dd></div>
+        <div><dt class="rise d2">Made by</dt><dd class="rise d2">One person</dd></div>
+        <div><dt class="rise d3">Year</dt><dd class="rise d3">2025</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>3</b><small>Crafts, one voice</small></div>
+        <div class="impact rise d2"><b>1</b><small>Image, followed all the way</small></div>
+      </div>
+    </div>
+  </aside>
+  <div class="track">
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What I'd keep</h2>
+      <div class="rise d1">
+        <p class="prose lead">Making the palette out of clay before opening Blender.</p>
+        <p class="prose">It meant every colour decision was already made, by hand, in a medium that pushes back — so the render had something to be faithful to instead of something to invent. I'd do that first on every project now, 3D or not.</p>
+        <p class="prose">What I'd change: the film states its image beautifully and then holds it. <strong>It needed one moment where the maze does something the audience doesn't expect</strong> — a wall that moves, a light that goes out. The idea was strong enough to survive being tested, and I never tested it.</p>
+      </div>
+    </section>
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The poster</h2>
+      <figure class="rise d1" style="margin:0">
+        <div class="shot"><img src="img/poster-alt.jpg" alt="Alternate poster — the warm disc bleeding over a night city."></div>
+        <figcaption class="cap">Tonight, with yesterday leaking into it</figcaption>
+      </figure>
+    </section>
+  </div>
+</section>
+
+<!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
+<section class="credits">
+  <div><h4>Everything</h4>Neel Parikh</div>
+  <div><h4>Context</h4>UNSW — studio brief, 2025</div>
+  <div><h4>Made with</h4>Clay, Blender, GarageBand</div>
+  <div><h4>Score</h4>Original</div>
+</section>
+
+</main>
+
+<a class="next" href="/work/futee/" aria-label="Next project: Futee">
+  <img src="/work/futee/img/hero-floodlight.jpg" alt="">
+  <span class="lbl"><small>Next project</small><strong>Futee</strong></span>
+</a>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   Shared case-study behaviour.
+   transform/opacity only · custom easing · once-only reveals ·
+   no scroll hijacking · full prefers-reduced-motion opt-out.
+   ══════════════════════════════════════════════════════════════════ */
+const REDUCED = typeof window.matchMedia === 'function'
+  && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 1 — reveal on enter, once, never on scroll-up */
+(function reveals(){
+  const targets = document.querySelectorAll('[data-reveal]');
+  if (REDUCED) { targets.forEach(t => t.classList.add('is-in')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { rootMargin:'0px 0px -12% 0px', threshold:0.01 });
+  targets.forEach(t => io.observe(t));
+})();
+
+/* 2 — line-mask any [data-lines] headline. Splits on authored <br>,
+       so the text stays selectable and screen-reader legible. */
+(function maskLines(){
+  document.querySelectorAll('[data-lines]').forEach(el => {
+    el.innerHTML = el.innerHTML.split('<br>').map(s => s.trim())
+      .map((l,i) => `<span class="ln"><i style="--d:${i*70}ms">${l}</i></span>`).join('');
+  });
+})();
+
+/* 3 — scroll progress */
+(function progress(){
+  const bar = document.querySelector('[data-progress]');
+  if (!bar) return;
+  const run = () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+  };
+  addEventListener('scroll', run, { passive:true });
+  addEventListener('resize', run);
+  run();
+})();
+
+/* 4 — back chip: past the hero, and only while reading upward, so it
+       never sits on top of the dossier on the way down */
+(function back(){
+  const el = document.querySelector('[data-back]');
+  if (!el) return;
+  let last = scrollY;
+  const run = () => {
+    const y = scrollY;
+    const past = y > innerHeight * 0.7;
+    if (y > last + 4) el.classList.remove('is-live');
+    else if (y < last - 4 && past) el.classList.add('is-live');
+    if (!past) el.classList.remove('is-live');
+    last = y;
+  };
+  addEventListener('scroll', run, { passive:true });
+  run();
+})();
+
+/* 5 — motion slots: play only while on screen, never under reduced
+       motion. Saves battery and keeps the poster as the fallback. */
+(function motion(){
+  const vids = document.querySelectorAll('video[data-motion]');
+  if (!vids.length) return;
+  if (REDUCED) { vids.forEach(v => { v.autoplay = false; v.pause(); }); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      const v = e.target;
+      if (e.isIntersecting) { const p = v.play(); if (p) p.catch(()=>{}); }
+      else v.pause();
+    });
+  }, { threshold:0.15 });
+  vids.forEach(v => io.observe(v));
+})();
+
+/* 6 — count-up for the outcome tally */
+(function countUp(){
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const end = parseFloat(el.dataset.count);
+    if (REDUCED) { el.textContent = end; return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now(), dur = 1200;
+      const tick = t => {
+        const p = Math.min((t - t0) / dur, 1);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold:0.6 });
+    io.observe(el);
+  });
+})();
+
+/* 7 — hero settles on load */
+requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+
+/* ══════════════════════════════════════════════════════════════════
+   INTO YESTERDAY — project-only behaviour.
+   One shared rAF loop drives every scroll-linked piece, so the page
+   does at most one layout read per frame no matter how many
+   set-pieces are on screen.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* progress of an element's travel through the viewport, 0 → 1 */
+function travel(el, headroom = 0){
+  const r = el.getBoundingClientRect();
+  const total = r.height - innerHeight + headroom;
+  if (total <= 0) return r.top <= 0 ? 1 : 0;
+  return Math.min(Math.max(-r.top / total, 0), 1);
+}
+
+const SCROLLERS = [];
+(function loop(){
+  let ticking = false;
+  const run = () => { SCROLLERS.forEach(fn => fn()); ticking = false; };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
+  addEventListener('resize', run);
+  addEventListener('load', run);
+  run();
+})();
+
+/* ── 1 · the scrub ─────────────────────────────────────────────── */
+(function scrub(){
+  const el = document.querySelector('[data-scrub]');
+  if (!el || REDUCED) return;
+  SCROLLERS.push(() => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    el.style.setProperty('--p', travel(el).toFixed(4));
+  });
+})();
+
+/* ── 2 · the maze ──────────────────────────────────────────────
+   A perfect maze by randomised depth-first search, seeded so it is
+   the same maze on every visit. Walls are one path; the way in is a
+   second. Both are drawn by stroke-dashoffset as you scroll. */
+(function maze(){
+  const host = document.querySelector('[data-maze]');
+  if (!host) return;
+  const svg = host.querySelector('svg');
+  const wallsEl = svg.querySelector('.walls');
+  const pathEl  = svg.querySelector('.path');
+  const halo    = host.querySelector('.halo');
+
+  const COLS = 22, ROWS = 12, S = 40;
+  const W = COLS * S, H = ROWS * S;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  /* mulberry32 — small, seeded, good enough for a maze */
+  let seed = 20250607;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+
+  const idx = (c, r) => r * COLS + c;
+  const cells = Array.from({length: COLS * ROWS}, () => ({v:false, N:true, S:true, E:true, W:true}));
+  const stack = [{c:0, r:0}];
+  cells[0].v = true;
+  const DIRS = [['N',0,-1,'S'], ['S',0,1,'N'], ['E',1,0,'W'], ['W',-1,0,'E']];
+
+  while (stack.length){
+    const cur = stack[stack.length - 1];
+    const open = DIRS.filter(([,dc,dr]) => {
+      const c = cur.c + dc, r = cur.r + dr;
+      return c >= 0 && c < COLS && r >= 0 && r < ROWS && !cells[idx(c,r)].v;
+    });
+    if (!open.length) { stack.pop(); continue; }
+    const [d, dc, dr, opp] = open[Math.floor(rnd() * open.length)];
+    const c = cur.c + dc, r = cur.r + dr;
+    cells[idx(cur.c,cur.r)][d] = false;
+    cells[idx(c,r)][opp] = false;
+    cells[idx(c,r)].v = true;
+    stack.push({c, r});
+  }
+
+  /* walls */
+  let wd = '';
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){
+    const x = c * S, y = r * S, k = cells[idx(c,r)];
+    if (k.N) wd += `M${x} ${y}h${S}`;
+    if (k.W) wd += `M${x} ${y}v${S}`;
+    if (r === ROWS - 1 && k.S) wd += `M${x} ${y+S}h${S}`;
+    if (c === COLS - 1 && k.E) wd += `M${x+S} ${y}v${S}`;
+  }
+  wallsEl.setAttribute('d', wd);
+
+  /* the way in: solve top-left → bottom-right, then draw that route */
+  const prev = new Map(); const q = [0]; const seen = new Set([0]);
+  while (q.length){
+    const i = q.shift();
+    if (i === COLS * ROWS - 1) break;
+    const c = i % COLS, r = (i / COLS) | 0, k = cells[i];
+    for (const [d, dc, dr] of DIRS){
+      if (k[d]) continue;
+      const nc = c + dc, nr = r + dr;
+      if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
+      const n = idx(nc, nr);
+      if (seen.has(n)) continue;
+      seen.add(n); prev.set(n, i); q.push(n);
+    }
+  }
+  const route = []; let at = COLS * ROWS - 1;
+  while (at !== undefined){ route.push(at); if (at === 0) break; at = prev.get(at); }
+  route.reverse();
+  const pd = route.map((i, n) => {
+    const c = i % COLS, r = (i / COLS) | 0;
+    return `${n ? 'L' : 'M'}${c * S + S/2} ${r * S + S/2}`;
+  }).join('');
+  pathEl.setAttribute('d', pd);
+
+  if (REDUCED) { host.classList.add('is-done'); return; }
+
+  const wLen = wallsEl.getTotalLength(), pLen = pathEl.getTotalLength();
+  wallsEl.style.strokeDasharray = wLen; pathEl.style.strokeDasharray = pLen;
+  wallsEl.style.strokeDashoffset = wLen; pathEl.style.strokeDashoffset = pLen;
+
+  SCROLLERS.push(() => {
+    const r = host.getBoundingClientRect();
+    if (r.bottom < -100 || r.top > innerHeight + 100) return;
+    /* spread the draw across the frame's whole pass, so it is still
+       drawing while the reader is looking at it rather than finishing
+       before it arrives */
+    const p = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1);
+    const wallP = Math.min(p / .55, 1);            /* walls first */
+    const pathP = Math.max((p - .38) / .62, 0);    /* then the way in */
+    wallsEl.style.strokeDashoffset = wLen * (1 - wallP);
+    pathEl.style.strokeDashoffset  = pLen * (1 - Math.min(pathP, 1));
+    /* a glow riding the head of the line */
+    if (pathP > 0 && pathP < 1.02){
+      const pt = pathEl.getPointAtLength(pLen * Math.min(pathP, 1));
+      const box = svg.getBoundingClientRect();
+      halo.style.left = (pt.x / (COLS * S) * box.width) + 'px';
+      halo.style.top  = (pt.y / (ROWS * S) * box.height) + 'px';
+      host.classList.add('is-live');
+    } else host.classList.remove('is-live');
+  });
+})();
+
+/* ── 3 · the flipbook ──────────────────────────────────────────── */
+(function walk(){
+  const el = document.querySelector('[data-walk]');
+  if (!el || REDUCED) return;
+  const figs = [...el.querySelectorAll('figure')];
+  const ticks = [...el.querySelectorAll('.ticks i')];
+  const num = el.querySelector('.count b');
+  let last = -1;
+  SCROLLERS.push(() => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    const p = travel(el);
+    const i = Math.min(figs.length - 1, Math.floor(p * figs.length * 0.999));
+    if (i === last) return;
+    last = i;
+    figs.forEach((f, n) => f.classList.toggle('is-on', n === i));
+    ticks.forEach((t, n) => t.classList.toggle('on', n <= i));
+    if (num) num.textContent = String(i + 1).padStart(2, '0');
+  });
+  figs[0].classList.add('is-on');
+  ticks[0]?.classList.add('on');
+})();
+
+/* ── 4 · the gem field ─────────────────────────────────────────── */
+(function gems(){
+  const host = document.querySelector('[data-gems]');
+  if (!host || REDUCED) return;
+  const cv = host.querySelector('canvas'), ctx = cv.getContext('2d');
+  const TINT = ['#D0402F','#5566E0','#9A55D6','#F2B15A','#E0722C'];
+  let w = 0, h = 0, dots = [], live = false, raf = 0;
+  const mouse = { x:-9e9, y:-9e9 };
+
+  const size = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const r = host.getBoundingClientRect();
+    w = r.width; h = r.height;
+    cv.width = w * dpr; cv.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(Math.min(70, Math.max(24, w * h / 16000)));
+    dots = Array.from({length:n}, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      r: 1.6 + Math.random() * 3.4,
+      vx: (Math.random() - .5) * .12, vy: (Math.random() - .5) * .12,
+      c: TINT[(Math.random() * TINT.length) | 0], a: .25 + Math.random() * .5
+    }));
+  };
+
+  const draw = () => {
+    ctx.clearRect(0, 0, w, h);
+    for (const d of dots){
+      d.x += d.vx; d.y += d.vy;
+      if (d.x < -20) d.x = w + 20; if (d.x > w + 20) d.x = -20;
+      if (d.y < -20) d.y = h + 20; if (d.y > h + 20) d.y = -20;
+      const dx = d.x - mouse.x, dy = d.y - mouse.y;
+      const dist2 = dx*dx + dy*dy;
+      let x = d.x, y = d.y;
+      if (dist2 < 26000){                       /* drift away from the cursor */
+        const f = (1 - dist2 / 26000) * 34;
+        const m = Math.sqrt(dist2) || 1;
+        x += dx / m * f; y += dy / m * f;
+      }
+      ctx.beginPath();
+      ctx.arc(x, y, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = d.c; ctx.globalAlpha = d.a; ctx.fill();
+      ctx.globalAlpha = d.a * .28;
+      ctx.beginPath(); ctx.arc(x, y, d.r * 3.4, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (live) raf = requestAnimationFrame(draw);
+  };
+
+  size();
+  addEventListener('resize', size);
+  addEventListener('pointermove', e => {
+    const r = host.getBoundingClientRect();
+    mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+  }, { passive:true });
+
+  /* only animate while it is actually on screen */
+  new IntersectionObserver(([e]) => {
+    live = e.isIntersecting;
+    if (live) raf = requestAnimationFrame(draw); else cancelAnimationFrame(raf);
+  }, { threshold:0 }).observe(host);
+})();
+
+</script>
+</body>
+</html>
