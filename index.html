@@ -13,7 +13,7 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preload" href="fonts/Panchang-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/Calfine.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Allison.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Sprat-ExtendedLight.woff2" as="font" type="font/woff2" crossorigin>
 <!-- No poster preload. The frame is black until step 5, by which point
      the video is playing — preloading the still would have been 125KB
@@ -82,6 +82,24 @@
     <div class="hero__scrim"></div>
     <div class="hero__vignette"></div>
     <div class="hero__blackout" id="blackout"></div>
+
+    <!-- The island, as the machine renders it. ASCII pass off the same
+         footage that plays underneath, cropped to the one island and
+         sat ON TOP of the blackout — so screen one is a black frame
+         with a picture on it rather than a photograph being dimmed.
+         The real place is still down there, and it arrives when the
+         blackout lifts in the tail. Idea first, then the thing.
+
+         eager, not lazy: it is the first picture on the site and it is
+         due one gesture in. 104 KB as webp, jpg behind it for Safari
+         builds old enough to need it. -->
+    <div class="hero__isle" id="isle" aria-hidden="true">
+      <picture>
+        <source srcset="media/isle.webp" type="image/webp">
+        <img src="media/isle.jpg" alt="" width="1200" height="814" decoding="async">
+      </picture>
+    </div>
+
     <div class="hero__grain"></div>
   </div>
 
@@ -90,26 +108,56 @@
 
        data-in  = the scroll step this phrase appears on
        data-out = the step it leaves on (omit to stay for good)
+       data-at  = seconds into that step before it arrives
+       data-off = seconds into that step when it leaves again
 
-       One scroll = one line. A phrase whose range spans several steps
-       stays on screen while the next one arrives — that's how "like,
-       well" is still there when "a person…" lands beneath it, and the
-       diagonal builds instead of swapping. -->
+       TWO SCROLLS, NOT SIX. One gesture used to buy one line, which
+       made the story six gestures long and asked the reader to keep
+       pulling a lever to be told the rest of a sentence. Screen one is
+       the claim; screen two says the whole of the rest of it on its
+       own, and the only thing a gesture buys now is the crossing
+       between them.
+
+       Which is why data-at exists. Inside a step the beats are TIMED,
+       not scrolled — the page speaks a paragraph instead of handing
+       out one word per pull. See SEQ_STEP in hero.js. -->
   <div class="hero__stage">
 
-    <div class="phrase pos--mid" data-in="1" data-out="2">
-      <span class="line line--body">No man is an island&#8230;</span>
+    <!-- ============ SCREEN ONE ============
+         The island, the claim, and the correction. "man" is struck
+         through and "Designer" written under it in Allison, which is
+         the whole joke of the site made in one gesture: the quote is
+         about people, and this is about the one doing the work.
+
+         del/ins rather than a decorative span — a strike-and-replace
+         is exactly the pair of elements HTML already has for it, and a
+         screen reader gets "No man Designer is an island", which is
+         what the frame says. The strike is drawn rather than
+         text-decoration so it can be animated; see .cut in main.css. -->
+    <div class="phrase pos--isle" data-in="1" data-out="2" data-cut>
+      <span class="line line--body">No <span class="cut"><del>man</del><ins class="hand">Designer</ins></span> is an island&#8230;</span>
     </div>
 
-    <div class="phrase pos--tl" data-in="2" data-out="4">
+    <!-- ============ SCREEN TWO ============
+         Four beats on a timer. The first two are the diagonal — one
+         thought held apart across the frame — and they CLEAR before
+         the answer arrives, so the payoff lands on an empty screen
+         rather than under the question.
+
+           0.00  all by their self,
+           1.15  one must seek
+           2.70  both leave
+           3.35  a piece of the / Continent
+           4.75  Let's work together?
+
+         The gap before the last line is deliberate and it is the one
+         number here worth protecting: the sentence has finished, and
+         the ask is a separate thing said after it. -->
+    <div class="phrase pos--tl" data-in="2" data-at="0" data-off="2.7">
       <span class="line line--body">all by their self,</span>
     </div>
 
-    <!-- data-continues: still its own scroll, but not its own dot.
-         Steps 2 and 3 are two halves of one sentence held apart across
-         the frame — the ledger counts sentences, not gestures, so this
-         one shares the dot the step before it lit. -->
-    <div class="phrase pos--br" data-in="3" data-out="4" data-continues>
+    <div class="phrase pos--br" data-in="2" data-at="1.15" data-off="2.7">
       <span class="line line--body">one must seek</span>
     </div>
 
@@ -117,39 +165,13 @@
          then the word 70ms later. --split widens the gap between them:
          at the default 1.4vh "a piece of the" sits on top of Continent
          like a kicker, and it's meant to be a beat before it. -->
-    <div class="phrase pos--mid phrase--split" data-in="4" data-out="5">
+    <div class="phrase pos--mid phrase--split" data-in="2" data-at="3.35">
       <span class="line line--body">a piece of the</span>
       <span class="line line--hero">Continent</span>
     </div>
 
-    <!-- The close reuses the diagonal from steps 2–3 on purpose: the
-         sentence opens across the frame and shuts across it. Both land
-         on step 5, which is also where the island appears — so the
-         picture and the ask arrive together.
-
-         --wrap because these two are sentences, not fragments. pos--tl
-         and pos--br carry white-space: nowrap, which is right for "all
-         by their self," and would run this one off the side of the
-         screen. -->
-    <div class="phrase pos--tl phrase--wrap" data-in="5" data-out="6">
-      <span class="line line--body">wave a hand or send a boat, lets join forces to do more.</span>
-    </div>
-
-    <div class="phrase pos--br phrase--wrap" data-in="5" data-out="6">
-      <span class="line line--body">lets work together.</span>
-    </div>
-
-    <!-- The wordmark. Calfine throughout except the two E's, which are
-         Panchang — the repeated letter is the rule, so the mix reads as
-         a decision rather than a ransom note. Letters are marked up
-         individually, so aria-label carries the actual name. -->
-    <div class="phrase pos--name" data-in="6" data-reveal="rise">
-      <span class="mask">
-        <span class="line line--name" aria-label="Neel Parikh"><span aria-hidden="true">N<i>E</i><i>E</i>L&nbsp;PARIKH</span></span>
-      </span>
-      <span class="mask">
-        <span class="line line--sub">Product designer · Sydney</span>
-      </span>
+    <div class="phrase pos--ask" data-in="2" data-at="4.75">
+      <span class="line line--hand">Let&#8217;s work together?</span>
     </div>
 
   </div>

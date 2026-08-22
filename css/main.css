@@ -87,6 +87,11 @@
   /* Two voices, one boundary. Panchang is the person shouting into the
      cloud; Sprat is the work itself. They never share a block. */
   --font-display: 'Panchang', ui-sans-serif, system-ui, sans-serif;
+  /* The third voice, and the smallest one on the site: a handwriting
+     face for the two places the page stops narrating and speaks as a
+     person - the correction over "man", and the ask at the end.
+     Allison, subset to the nineteen characters those two need. */
+  --font-hand: 'Allison', 'Snell Roundhand', 'Segoe Script', cursive;
   --font-work: 'Sprat', Georgia, 'Times New Roman', serif;
   --font-ui: ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -223,6 +228,38 @@ img, video { display: block; max-width: 100%; }
   opacity: 1;
 }
 
+/* ---------- the island plate ----------
+   Screen one, and it sits ON TOP of the blackout rather than under it.
+   The frame is black; this is a picture ON the black, not a photograph
+   being dimmed to nothing. The real footage is still underneath and
+   still paused, and it arrives when the blackout lifts in the tail -
+   the machine's reading of the place first, then the place.
+
+   mix-blend-mode: screen because the plate is a bright figure on a
+   black ground: screen over #000 is the identity, so the file's own
+   black never shows as a box edge no matter how the jpeg fallback
+   compresses the noise around the palms.
+
+   Initial state lives here, not in JS - hero.js tweens TO focus, and a
+   `to` tween needs somewhere to come from. */
+.hero__isle {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.04);
+  filter: blur(12px);
+  will-change: opacity, transform, filter;
+}
+.hero__isle img {
+  width: clamp(300px, 37vw, 620px);
+  height: auto;
+  /* Above centre, because the line and the word written under it take
+     the lower third of the frame. */
+  transform: translateY(-6svh);
+  mix-blend-mode: screen;
+}
+
 /* Static grain. Dialled back from .05 to .025 now the hero is the ASCII
    treatment — that frame is already dense high-frequency texture, and
    grain on top of it is noise on noise. It still does its original job
@@ -269,14 +306,27 @@ img, video { display: block; max-width: 100%; }
 /* Opposite corners. The distance between these two is the point: it's
    the hesitation the sentence is describing, made spatial, and it only
    works because they're on screen at the same time. */
+/* align-items, not just text-align. .phrase is a column flexbox that
+   centres its children, and the box itself is width:100% — so for a
+   long time these two were CENTRED lines nudged 3vw off the middle,
+   and the diagonal the comment above describes wasn't really there.
+   The distance is the whole point of the pair, so it has to be real:
+   the line goes to the corner it was written for.
+
+   9vw / 26svh rather than 3 / 17 for the same reason. These two used
+   to share the frame with three other lines and had to stay out of
+   their way; they are alone on the screen now, and the gap they open
+   is the hesitation the sentence is describing. */
 .pos--tl {
   justify-self: start; align-self: center;
-  transform: translate(3vw, -17svh);
+  align-items: flex-start;
+  transform: translate(9vw, -26svh);
   text-align: left; max-width: none;
 }
 .pos--br {
   justify-self: end; align-self: center;
-  transform: translate(-3vw, 17svh);
+  align-items: flex-end;
+  transform: translate(-9vw, 26svh);
   text-align: right; max-width: none;
 }
 /* These two never wrap. They're fragments — breaking "one must seek"
@@ -335,7 +385,66 @@ img, video { display: block; max-width: 100%; }
    other; the gap is the beat between them. */
 .phrase--split { gap: clamp(1.25rem, 5vh, 3.5rem); }
 
-.pos--ask { transform: translateY(14svh); }
+/* Screen one's line sits low, under the island. Screen two's ask sits
+   lower still - it is the last thing on the page before the desktop,
+   and the gap above it is the pause the sentence ended on. */
+.pos--isle { transform: translateY(16svh); }
+.pos--mid.phrase--split { transform: translateY(-4svh); }
+.pos--ask { transform: translateY(28svh); }
+
+/* ---------- the correction ----------
+   "man" struck through, "Designer" written under it. The strike is
+   drawn rather than text-decoration for one reason: text-decoration
+   cannot be animated, and this line has to be READ before it is
+   corrected. So del carries the meaning and a pseudo-element carries
+   the mark.
+
+   Both moves are CSS transitions on one attribute. hero.js sets
+   data-cut-on 620ms into the step and that is the whole of its
+   involvement - see setCut. The 260ms delay on the word is what keeps
+   the two as two events: the line is cut, and then something is
+   written under the cut. */
+.cut {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+.cut del { text-decoration: none; }
+.cut::after {
+  content: '';
+  position: absolute;
+  left: -.14em; right: -.14em;
+  top: 50%;
+  height: .05em;
+  min-height: 1px;
+  background: currentColor;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 520ms var(--ease-move);
+}
+.phrase[data-cut-on] .cut::after { transform: translateY(-50%) scaleX(1); }
+
+/* Absolutely positioned inside .cut, not laid out beside it, so it
+   lands under the struck word at every width without a single
+   breakpoint. It is an <ins> because that is what it is. */
+.hand {
+  position: absolute;
+  left: -.06em;
+  top: 1.0em;
+  text-decoration: none;
+  font-family: var(--font-hand);
+  font-size: 1.5em;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(.1em) rotate(-1.5deg);
+  transform-origin: 0 50%;
+  transition: opacity 460ms var(--ease-out) 260ms,
+              transform 620ms var(--ease-out) 260ms;
+}
+.phrase[data-cut-on] .hand { opacity: 1; transform: rotate(-1.5deg); }
 
 .pos--name {
   align-items: flex-start;
@@ -383,6 +492,18 @@ img, video { display: block; max-width: 100%; }
   line-height: var(--leading-tight);
   white-space: nowrap;
   --blur-in: 15px;
+}
+/* The ask. Same face as the correction on screen one, and the only two
+   places it appears - which is what makes it read as an aside in
+   someone's hand rather than a decorative script. */
+.line--hand {
+  font-family: var(--font-hand);
+  font-size: clamp(2rem, 4.6vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  --blur-in: 6px;
 }
 .line--sub     { font-size: var(--type-sub);  font-weight: 400; color: var(--ink-dim); letter-spacing: .015em; --blur-in: 5px; }
 /* ---------- the wordmark ----------
@@ -649,6 +770,25 @@ img, video { display: block; max-width: 100%; }
   .digit, .matrix__glow { animation: none; }
   .digit { opacity: .55; }
   .matrix__glow { opacity: .3; }
+
+  /* The correction still happens - it is the joke, and a joke that
+     only lands for people who tolerate motion is not much of one. It
+     just stops travelling: the strike appears rather than being drawn,
+     and the word fades in where it will sit rather than settling into
+     place. */
+  .cut::after {
+    transition-duration: 200ms;
+    transform: translateY(-50%) scaleX(1);
+    opacity: 0;
+    transition-property: opacity;
+  }
+  .phrase[data-cut-on] .cut::after { opacity: 1; }
+  .hand {
+    transform: none;
+    transition: opacity 240ms linear 200ms;
+  }
+  .phrase[data-cut-on] .hand { transform: none; }
+  .hero__isle { transform: none; filter: none; }
 }
 
 /* =========================================================
@@ -1214,11 +1354,24 @@ img, video { display: block; max-width: 100%; }
    ========================================================= */
 @media (max-width: 640px) {
   .phrase { max-width: 24ch; }
-  .pos--tl { transform: translate(0, -19svh); }
-  .pos--br { transform: translate(0,  19svh); }
-  .pos--ask { transform: translateY(11svh); }
+  .pos--tl { transform: translate(5vw, -22svh); }
+  .pos--br { transform: translate(-5vw, 22svh); }
+  /* The claim must not break across two lines here: "Designer" is
+     absolutely positioned under the struck word, so a wrap drops the
+     second line straight through it. Sized to fit 20 characters in a
+     390px frame rather than left to the shared line clamp. */
+  .pos--isle { transform: translateY(13svh); max-width: none; }
+  .pos--isle .line { white-space: nowrap; font-size: clamp(1rem, 5.4vw, 2.5rem); }
+  .pos--mid.phrase--split { transform: translateY(-3svh); }
+  .pos--ask { transform: translateY(24svh); }
   .pos--name { transform: translateY(23svh); }
-  .line--hero { letter-spacing: .16em; margin-right: -.16em; }
+  .hero__isle img { width: min(74vw, 340px); transform: translateY(-7svh); }
+  .hand { font-size: 1.35em; }
+  /* Tracked-out and nowrap, so this is the widest thing on the page by
+     some way. At the shared clamp's floor it ran under the step ledger
+     on a 390px screen; the floor comes down rather than the tracking,
+     because the tracking is the point. */
+  .line--hero { font-size: clamp(1.5rem, 7.4vw, 6rem); letter-spacing: .16em; margin-right: -.16em; }
   .chrome { padding: 1.1rem 6vw; }
   .chrome__nav { gap: 1.1rem; }
 }
@@ -1312,9 +1465,28 @@ img, video { display: block; max-width: 100%; }
    it. Everything JS would have animated into place is already in place,
    and the desktop layer stops being a layer — it can't float over a hero
    that no longer fills the screen. */
+/* No-JS and reduced-motion tails for the two new pieces. Both say the
+   same thing: the correction and the island are content, so they are
+   present - they just stop performing. */
+/* The plate goes. It lives inside .hero__media, which stays absolute
+   here, and the video underneath it is already showing its poster —
+   two islands stacked on one another with no blackout between them is
+   worse than one. */
+.no-js .hero__isle { display: none; }
+.no-js .cut::after { transform: translateY(-50%) scaleX(1); }
+.no-js .hand {
+  position: static; display: inline; opacity: 1; transform: none;
+  margin-left: .3em;
+}
 .no-js .phrase { opacity: 1; visibility: visible; position: static; transform: none; max-width: none; text-align: left; }
 .no-js .hero { height: auto; padding: 20vh 0; }
-.no-js .hero__stage { position: static; display: block; }
+/* relative + z-index, not static. .hero__media is absolutely
+   positioned and comes first in the DOM, so a STATIC stage paints
+   underneath it and the entire story sits behind the video — which is
+   what happened here for as long as this fallback has existed. It only
+   became visible when .cut arrived, because a positioned descendant
+   punched one fragment of the sentence up through the picture. */
+.no-js .hero__stage { position: relative; z-index: 2; display: block; padding: 0 6vw; }
 .no-js .chrome { opacity: 1; visibility: visible; }
 .no-js .hero__blackout { opacity: 0; }   /* JS owns the reveal; without it, don't hide the frame */
 .no-js .hero__dither, .no-js .hero__ditherwash { display: none; }

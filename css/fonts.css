@@ -52,3 +52,27 @@
   font-style: normal;
   font-display: block;   /* the wordmark must not render in a fallback face */
 }
+
+/**
+ * Allison — SIL OFL, via Google Fonts. The handwriting on the site, and
+ * it says exactly two things: "Designer", written under the struck-out
+ * "man" on screen one, and "Let's work together?" at the end of screen
+ * two. Both are the page speaking as a person rather than narrating,
+ * which is the only reason a third face is allowed on a page that has
+ * been strict about two.
+ *
+ * 3 KB, because it is subset to the nineteen characters those two
+ * lines actually use. Adding a word to either means re-subsetting —
+ * the source is @fontsource/allison and the glyph set is
+ * "Designer Let's work together?" plus the curly apostrophe.
+ *
+ * font-display: block. Both lines animate in, and a fallback script
+ * face swapping under a settling word reflows it mid-reveal.
+ */
+@font-face {
+  font-family: 'Allison';
+  src: url('../fonts/Allison.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}

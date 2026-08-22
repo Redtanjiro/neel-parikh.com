@@ -42,6 +42,7 @@
   var fill    = document.getElementById('progress-fill');
   var nav     = document.querySelector('.chrome__nav');
   var blackout = document.getElementById('blackout');
+  var isle    = document.getElementById('isle');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -121,11 +122,20 @@
      glide and has finished by the time the line starts. Scrolling
      is what uncovers the place. Light change is atmosphere and can
      share the travel; text is information and can't. */
-  var REVEAL = [1, 1, 1, 1, 1, 0, 0];   /* one entry per step, 0..LAST */
+  var REVEAL = [1, 1, 1];   /* one entry per step, 0..LAST */
 
   /* Step at which the frame becomes visible — also the point from which
-     the video is worth decoding. */
+     the video is worth decoding.
+
+     NOTHING IS LIT ANY MORE. Both screens are black frames: screen one
+     puts the ASCII island on top of the blackout, screen two puts type
+     on it. The real place doesn't arrive until the tail, where the
+     blackout is scrubbed rather than stepped — see applyDissolve. So
+     there is no step whose REVEAL is 0, and indexOf returns -1; falling
+     back to LAST is what keeps the video and the dither buffering on
+     the right beat instead of from the first frame. */
   var LIT = REVEAL.indexOf(0);
+  if (LIT < 0) LIT = null;   /* resolved to LAST once the markup is read */
 
   /* ---------------------------------------------------------
      Phrases
@@ -143,6 +153,12 @@
     b._lines = Array.prototype.slice.call(b.querySelectorAll('.line'));
     b._in  = parseInt(b.dataset.in, 10);
     b._out = b.dataset.out ? parseInt(b.dataset.out, 10) : Infinity;
+    /* Offsets IN SECONDS inside the step, not scroll positions. A step
+       with these is spoken rather than pulled: see SEQ_STEP below.
+       _off is what lets a line leave without the step changing, which
+       is how screen two clears its own frame halfway through. */
+    b._at  = b.dataset.at  ? parseFloat(b.dataset.at)  : 0;
+    b._off = b.dataset.off ? parseFloat(b.dataset.off) : null;
     b._shown = false;
     b._faded = false;
     /* Blur depth scales with type size — 8px reads as soft on a 40px
@@ -158,6 +174,46 @@
      handoff. Derived from the markup so adding a line to index.html is
      the only edit needed to lengthen the story. */
   var LAST = phrases.reduce(function (m, b) { return Math.max(m, b._in); }, 0);
+  if (LIT === null) LIT = LAST;
+
+  /* ---------------------------------------------------------
+     The spoken step
+
+     One step on this page doesn't wait for you. Its lines arrive on a
+     timer, the first two leave again, and the answer lands on the
+     cleared frame — four beats for one gesture instead of four
+     gestures. Derived from the markup: the step is whichever one holds
+     a phrase that leaves inside itself, because only a timed step can
+     have one.
+
+     It plays ONCE. Scrolling back to screen one and down again lands on
+     the state it finished in — an animation you have already watched
+     replaying every time you pass it is a page repeating itself, and
+     the second viewing is never the one that was designed.
+     --------------------------------------------------------- */
+  var SEQ_STEP = (function () {
+    var s = -1;
+    phrases.forEach(function (b) { if (b._off != null) s = b._in; });
+    return s;
+  })();
+  var seqPlayed  = false;
+  var seqTl      = null;
+  var seqStarted = 0;
+
+  /* A deliberate scroll during the sequence fast-forwards it to its end
+     rather than being swallowed — the rule about never trapping the
+     reader outranks the rule about not outrunning the story. The grace
+     period is the momentum of the gesture that STARTED the sequence:
+     without it, one firm flick opens screen two and its own tail
+     immediately skips to the end of it. */
+  var SKIP_GRACE = 1100;
+
+  function seqLive() { return !!(seqTl && seqTl.isActive()); }
+  function seqSkip() {
+    if (!seqLive()) return;
+    if (performance.now() - seqStarted < SKIP_GRACE) return;
+    seqTl.progress(1);
+  }
 
   function liveAt(b, i) { return i >= b._in && i < b._out; }
 
@@ -366,6 +422,23 @@
     }
   }
 
+  /* ---------------------------------------------------------
+     The correction on screen one
+
+     "man" is struck through and "Designer" written under it. Both are
+     CSS transitions on one attribute rather than tweens: they are
+     predetermined, they fire once, and the second is a handwriting face
+     arriving late on purpose. The timeline only says when.
+     --------------------------------------------------------- */
+  var cutPh  = document.querySelector('.phrase[data-cut]');
+  var CUT_AT = 0.62;   /* after the line has resolved, not under it */
+
+  function setCut(on) {
+    if (!cutPh) return;
+    if (on) cutPh.setAttribute('data-cut-on', '');
+    else cutPh.removeAttribute('data-cut-on');
+  }
+
   var chromeShown = false;
 
   function showChrome(instant, delaySec) {
@@ -432,14 +505,35 @@
      the story on. 2.2 screens felt like the page had stopped
      responding. 1.9 gives about five wheel notches of standing room,
      which is enough to notice the files and reach for one. */
-  var TAIL = 1.9;
-  var GAPS = [1, 1, 1, 1.3, 1, 1, TAIL];
+  var TAIL = 2.6;
+  /* 0->1, 1->2, then the tail. Two entries and a tail, because there
+     are two screens. 1.15 on the second: the crossing into screen two
+     is the only gesture left in the story, and it is worth a fraction
+     more travel than the one that opens it. */
+  var GAPS = [1, 1.15, TAIL];
 
-  /* Both expressed as a fraction of the tail, derived from TAIL rather
-     than typed in — so retuning the dwell doesn't silently retune the
-     dissolve with it. 1/TAIL is exactly one viewport height. */
-  var DISSOLVE_END = 1 / TAIL;
-  var DESK_AT      = 1.25 / TAIL;
+  /* The tail is longer than it was, because it now carries a step that
+     used to be a step. The blackout used to lift on beat 5, one pull
+     like everything else. There is no beat 5 any more, so the reveal
+     moved into the scrub: you scroll, and the black comes off the
+     picture in your hand rather than between two held frames.
+
+     Four things across it, in order, each a fraction of the tail so
+     retuning the dwell doesn't silently retune the rest:
+
+       0.00 - 0.62   the blackout lifts, the story text goes with it
+       0.62 - 1.72   the plate dissolves to the halftone
+       1.95          the files land on it
+       1.95 - 2.60   dwell - the desktop simply held there, hoverable
+
+     Dwell is load-bearing and it is also the thing to keep short.
+     Hovering a folder while the frame under it is still resolving is
+     unusable, so there has to be somewhere to stand afterwards - but
+     every notch of dwell is a scroll that changes nothing on screen. */
+  var LIFT_END  = 0.62 / TAIL;
+  var DIS_START = 0.62 / TAIL;
+  var DISSOLVE_END = 1.72 / TAIL;
+  var DESK_AT      = 1.95 / TAIL;
   var TOTAL = GAPS.reduce(function (a, b) { return a + b; }, 0);
   var STOPS = (function () {
     var pts = [0], run = 0;
@@ -468,14 +562,25 @@
     var tl = gsap.timeline();
     var entering = null;
 
-    /* Reveal runs at position 0 — it belongs to the travel, and it has
+    /* Three ways to arrive at a step, and only the first one performs:
+         first visit          the timed beats play
+         come back to it      settle - hard-set to the state it ended in
+         jumped / reduced     hard-set, same as it always did
+       `flat` is all three collapsed: no offsets, no within-step exits,
+       just the resting frame. */
+    var isSeq  = (i === SEQ_STEP);
+    var settle = isSeq && seqPlayed;
+    if (isSeq) seqPlayed = true;
+    var flat = jumped || reduced || settle;
+
+    /* Reveal runs at position 0 - it belongs to the travel, and it has
        resolved by the time the line starts. */
     var lvl = REVEAL[i] != null ? REVEAL[i] : 0;
     if (jumped) {
       gsap.set(blackout, { opacity: lvl });
     } else {
       /* Still fades under reduced-motion, just faster. Reduced motion
-         means less movement, not no transitions — an opacity change
+         means less movement, not no transitions - an opacity change
          isn't vestibular, and a full-screen black rectangle snapping
          on and off is far more jarring than a fade. */
       tl.to(blackout, {
@@ -487,18 +592,28 @@
     }
 
     phrases.forEach(function (b) {
-      var show = liveAt(b, i);
+      var live = liveAt(b, i);
+      /* A phrase that leaves inside its own step is not part of that
+         step's RESTING state. So when the sequence isn't playing -
+         settled, jumped, reduced - those lines never appear at all,
+         and what you get is the frame the sequence ends on. */
+      var show = live && !(flat && b._off != null);
 
       if (show !== b._shown) {
         b._shown = show;
-        var sub = show ? enterPhrase(b, jumped) : exitPhrase(b, jumped);
-        if (show) { entering = sub; b._faded = false; }
-        tl.add(sub, show ? at : 0);
+        var sub = show ? enterPhrase(b, flat) : exitPhrase(b, jumped || settle);
+        /* The FIRST line in, not the last: the lock is released by
+           whichever line the reader is about to read. A step whose
+           later beats are seconds away must not hold the page for all
+           of them - the sequence keeps playing after the lock lifts,
+           and a scroll into it skips to the end. */
+        if (show && !entering) entering = sub;
+        tl.add(sub, show ? (flat ? at : at + b._at) : 0);
         return;
       }
 
       /* Still on screen, but no longer the line being spoken. It settles
-         back so the newest phrase owns the frame — the earlier fragment
+         back so the newest phrase owns the frame - the earlier fragment
          is still there and still legible (0.55 on black is ~6:1), it has
          just stopped being the thing you're reading. */
       if (!show) return;
@@ -507,22 +622,69 @@
       b._faded = faded;
       tl.to(b, {
         opacity: faded ? 0.55 : 1,
-        duration: jumped ? 0 : 0.4,
+        duration: (jumped || settle) ? 0 : 0.4,
         ease: EASE_OUT,
         overwrite: 'auto'
       }, at);
     });
 
-    /* >=, not ===. Dragging the scrollbar into the tail resolves to a
-       stop index past LAST, and an equality test hid the chrome the
-       moment you got there — a nav bar that vanishes on the last screen
-       of the hero and comes back below it is a flicker, not a reveal. */
-    if (i >= LAST) showChrome(jumped, at); else hideChrome();
+    /* The within-step exits. Screen two clears its own diagonal before
+       the answer arrives, so the payoff lands on an empty frame instead
+       of underneath the question. */
+    if (!flat) {
+      phrases.forEach(function (b) {
+        if (!liveAt(b, i) || b._off == null || !b._shown) return;
+        var ex = exitPhrase(b);
+        ex.eventCallback('onStart', function () { b._shown = false; });
+        tl.add(ex, at + b._off);
+      });
+    }
+
+    /* The strike through "man" and the word written under it. CSS owns
+       both - they are two transitions on one attribute - so the timeline
+       only has to say when. Late enough that the line has resolved
+       first: the sentence is read, and then it is corrected. */
+    if (cutPh) {
+      if (liveAt(cutPh, i)) tl.call(setCut, [true], flat ? at : at + CUT_AT);
+      else tl.call(setCut, [false], 0);
+    }
+
+    /* The island. Same optical language as the type - it racks into
+       focus rather than fading up - because it is the first thing the
+       page shows and it should arrive the way the lines do. */
+    if (isle) {
+      var on = (i === 1);
+      var to = { opacity: on ? 1 : 0, ease: EASE_OUT, overwrite: 'auto',
+                 duration: jumped ? 0 : (on ? (reduced ? 0.35 : IN_DUR + 0.25) : OUT_DUR) };
+      if (!reduced) {
+        to.scale = on ? 1 : 1.04;
+        to.filter = on ? 'blur(0px)' : 'blur(12px)';
+      }
+      tl.to(isle, to, on ? at : 0);
+    }
+
+    /* The chrome is NOT born on a step any more. It used to arrive with
+       the wordmark, which was the moment the story stopped and the site
+       started; there is no wordmark now, and the equivalent moment is
+       the black coming off the picture in the tail. Both screens are
+       black frames with type on them and a nav bar over either one is
+       furniture on a title card. See applyDissolve. */
+    hideChrome();
 
     pumpVideo(i);
 
     active = i;
     refreshSteps();
+
+    /* The spoken step hands back the WHOLE timeline, not the first line
+       in it - the lock is meant to last as long as the sequence, and
+       seqTl is what a scroll during it fast-forwards. */
+    if (isSeq && !flat) {
+      seqTl = tl;
+      seqStarted = performance.now();
+      return tl;
+    }
+    seqTl = null;
     return entering || tl;
   }
 
@@ -643,18 +805,30 @@
   function applyDissolve(tp) {
     tp = clamp01(tp);
 
-    /* The dissolve occupies the FIRST SCREEN of the tail, not the whole
-       of it. The rest is the desktop being held there. Mapping the
-       crossfade across the full tail instead stretched a one-gesture
-       transition over three and it stopped reading as a change at all. */
-    var p = clamp01(tp / DISSOLVE_END);
+    /* Two moves, one after the other, neither occupying the whole tail.
+       The lift comes off first and the dissolve follows it - the real
+       island has to be on screen as a photograph for a moment before
+       the machine's version of it arrives, or the two just cross-fade
+       into each other and the middle state is never seen. */
+    var lift = clamp01(tp / LIFT_END);
+    var p = clamp01((tp - DIS_START) / (DISSOLVE_END - DIS_START));
 
-    /* The picture change leads and the text leaves behind it — the frame
-       has already started turning by the time the wordmark begins to go,
-       so the two don't read as a single crossfade. */
+    /* The blackout is the whole first half of the page, so this is the
+       page's one reveal and it belongs to the scroll rather than to a
+       step. The type leaves slightly ahead of it (x1.35): the frame
+       should be opening onto a picture, not onto the last line of the
+       story sitting over one. */
+    if (blackout) blackout.style.opacity = 1 - lift;
+    if (isle) isle.style.opacity = 0;
+    if (stage) stage.style.opacity = 1 - clamp01(lift * 1.35);
+
+    /* The nav arrives with the frame it sits on, not before it. Both
+       calls guard internally, so this can be written every scroll
+       frame without thrashing. */
+    if (lift > 0.85) showChrome(false, 0); else hideChrome();
+
     dither.style.opacity = p;
     if (ditherwash) ditherwash.style.opacity = p;
-    if (stage) stage.style.opacity = 1 - clamp01(p * 1.6);
 
     /* Atmosphere rides the same travel. The halftone is its own grade —
        a scrim and a vignette on top of it are the previous shot's
@@ -887,6 +1061,17 @@
     if (!inPin()) return;
     var dir = e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0);
     if (!dir) return;
+    /* Checked BEFORE the hand-back below. The spoken step is the last
+       one, so `next > LAST` is true throughout it - and without this
+       the page would happily scroll on into the reveal while screen two
+       was still halfway through saying its sentence. */
+    if (seqLive()) {
+      e.preventDefault();
+      lastInput = performance.now();
+      if (isMomentumTail(e.deltaY)) return;
+      if (dir > 0) seqSkip();
+      return;
+    }
     var next = active + dir;
     if (next < 0 || next > LAST) { prevDelta = e.deltaY; return; }  // hand back to the page
     e.preventDefault();
@@ -901,6 +1086,14 @@
     if (!inPin() || touchY === null) return;
     var dy = touchY - e.touches[0].clientY;
     var dir = dy > 0 ? 1 : -1;
+    if (seqLive()) {
+      e.preventDefault();
+      if (Math.abs(dy) < 45) return;
+      touchY = e.touches[0].clientY;
+      lastInput = performance.now();
+      if (dir > 0) seqSkip();
+      return;
+    }
     var next = active + dir;
     if (next < 0 || next > LAST) return;
     e.preventDefault();
@@ -922,6 +1115,12 @@
     if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
     var dir = KEYS[e.key];
     if (!dir) return;
+    if (seqLive()) {
+      e.preventDefault();
+      lastInput = performance.now();
+      if (dir > 0) seqSkip();
+      return;
+    }
     var next = active + dir;
     if (next < 0 || next > LAST) return;
     e.preventDefault();
