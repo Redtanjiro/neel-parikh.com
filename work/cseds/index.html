@@ -352,6 +352,60 @@ a{color:inherit}
   .device .screen > img{transform:none!important}
 }
 
+
+/* the tally is a facts row, not a results row — say so */
+.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
+  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--ink-45)}
+
+/* a reader who is convinced needs somewhere to go */
+.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
+  padding-bottom:2px;transition:border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
+
+/* ══════════════════════════════════════════════════════════════════
+   DIAGRAMS
+   Where the page has been describing a decision in prose, draw it
+   instead. Authored SVG, project palette, no screenshots of Figma.
+   The rejected route is drawn and dimmed; the chosen one carries the
+   accent. Both are labelled with why.
+   ══════════════════════════════════════════════════════════════════ */
+.diagram{margin:0}
+.diagram .board{position:relative;width:100%;background:var(--deep);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
+.diagram svg{width:100%;height:auto;display:block;overflow:visible}
+
+.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;fill:var(--ink-45)}
+.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
+.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
+.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
+.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
+
+/* the rejected route */
+.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
+.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:rgba(251,247,240,.38)}
+
+/* the route taken */
+.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
+.dg-in .dg-step-lbl{fill:var(--ink)}
+.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
+.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:var(--accent)}
+
+/* reveal: the rejected route first, then the chosen one over it */
+[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
+  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
+[data-reveal].is-in .dg-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -381,9 +435,10 @@ a{color:inherit}
     </dl>
   </div>
 
+  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
   <div class="tally" data-reveal data-stagger>
-    <div><p class="n rise"><span data-count="3">0</span></p><p class="lab rise d1">Business lines, one shell</p></div>
-    <div><p class="n rise d1"><span data-count="4">0</span></p><p class="lab rise d2">Page templates</p></div>
+    <div><p class="n rise"><span data-count="4">0</span></p><p class="lab rise d1">Page templates</p></div>
+    <div><p class="n rise d1"><span data-count="3">0</span></p><p class="lab rise d2">Business lines they carry</p></div>
     <div><p class="n rise d2"><span data-count="30">0</span><sup>+</sup></p><p class="lab rise d3">Years of catalogue</p></div>
   </div>
 </header>
@@ -402,7 +457,7 @@ a{color:inherit}
     <p class="dossier-mark rise">CSEDS <span>; TLDR</span></p>
     <div class="dossier-body">
       <dl class="facts">
-        <div><dt class="rise">Role</dt><dd class="rise">Product designer</dd></div>
+        <div><dt class="rise">Role</dt><dd class="rise">Product &amp; web design —<br>solo, direct with<br>the founder</dd></div>
         <div><dt class="rise d1">Industry</dt><dd class="rise d1">Civil &amp; structural<br>engineering</dd></div>
         <div><dt class="rise d2">Client</dt><dd class="rise d2">CSEDS Australia</dd></div>
         <div><dt class="rise d3">Timeline</dt><dd class="rise d3">A few weeks</dd></div>
@@ -474,10 +529,10 @@ a{color:inherit}
         <div><dt class="rise">Deliverables</dt><dd class="rise">Landing, product,<br>software, mobile</dd></div>
         <div><dt class="rise d1">System</dt><dd class="rise d1">One grid, one type<br>scale, three accents</dd></div>
         <div><dt class="rise d2">Live at</dt><dd class="rise d2">csedsaust.com.au</dd></div>
-        <div><dt class="rise d3">Tools</dt><dd class="rise d3">Figma</dd></div>
+        <div><dt class="rise d3">Built by</dt><dd class="rise d3">Me — designed<br>and built</dd></div>
       </dl>
       <div class="impacts">
-        <div class="impact rise d1"><b>1</b><small>Grid, three accents</small></div>
+        <div class="impact rise d1"><b>3</b><small>Accents, one grid</small></div>
         <div class="impact rise d2"><b>30+</b><small>Years, made navigable</small></div>
       </div>
     </div>
@@ -492,6 +547,60 @@ a{color:inherit}
         <p class="prose">Every template shares the same header, the same left-aligned display type, the same pill label, the same feature list with its check marks, the same footer. <strong>The only thing that moves between them is the accent</strong> — steel blue for products, oxide red for software.</p>
         <p class="prose">It is a small move and it does a lot of work. A visitor two scrolls into the software page knows they are somewhere specific without being told, and a visitor moving between sections never feels like they have left the company.</p>
       </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The two versions that lost</h2>
+      <div class="rise d1">
+        <p class="prose">Both alternatives were real options, and both fail for a reason worth drawing.</p>
+      </div>
+      <figure class="diagram rise d2" style="margin:0">
+        <div class="board">
+    <svg viewBox="0 0 1000 426" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Three ways to hold three businesses under one name.">
+<g class="dg-out">
+      <text class="dg-title" x="8" y="20">Flatten them into one</text>
+      <rect class="dg-step" x="8.0" y="34" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="163.3" y="67.0" text-anchor="middle">One voice</text>
+      <path class="dg-arrow" d="M323.7 62.0H335.7m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="344.7" y="34" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="500.0" y="67.0" text-anchor="middle">One template</text>
+      <path class="dg-arrow" d="M660.3 62.0H672.3m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="681.3" y="34" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="836.7" y="59.0" text-anchor="middle">Everyone reads</text>
+      <text class="dg-step-lbl" x="836.7" y="76.0" text-anchor="middle">somebody else&#8217;s page</text>
+      <text class="dg-verdict-out" x="8" y="116">Rejected · a council specifier and a licence buyer get the same page</text>
+      </g>
+      <g class="dg-out">
+      <text class="dg-title" x="8" y="166">Split them into three</text>
+      <rect class="dg-step" x="8.0" y="180" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="163.3" y="213.0" text-anchor="middle">Three sites</text>
+      <path class="dg-arrow" d="M323.7 208.0H335.7m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="344.7" y="180" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="500.0" y="213.0" text-anchor="middle">Three identities</text>
+      <path class="dg-arrow" d="M660.3 208.0H672.3m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="681.3" y="180" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="836.7" y="205.0" text-anchor="middle">A thirty-year firm looks</text>
+      <text class="dg-step-lbl" x="836.7" y="222.0" text-anchor="middle">like three small ones</text>
+      <text class="dg-verdict-out" x="8" y="262">Rejected · the age and the range stop counting for anything</text>
+      </g>
+      <g class="dg-in">
+      <text class="dg-title" x="8" y="312">One shell, one variable</text>
+      <rect class="dg-step" x="8.0" y="326" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="163.3" y="359.0" text-anchor="middle">One shell</text>
+      <path class="dg-arrow" d="M323.7 354.0H335.7m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="344.7" y="326" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="500.0" y="351.0" text-anchor="middle">One</text>
+      <text class="dg-step-lbl" x="500.0" y="368.0" text-anchor="middle">variable moves</text>
+      <path class="dg-arrow" d="M660.3 354.0H672.3m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="681.3" y="326" width="310.7" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="836.7" y="351.0" text-anchor="middle">Each line reads</text>
+      <text class="dg-step-lbl" x="836.7" y="368.0" text-anchor="middle">as its own</text>
+      <text class="dg-verdict-in" x="8" y="408">Taken · three businesses, and still visibly one company</text>
+      </g>
+    </svg>
+        </div>
+        <figcaption class="cap">Two rejected routes, and the one that shipped</figcaption>
+      </figure>
     </section>
 
     <section class="beat" data-line="products" data-reveal>
@@ -603,8 +712,16 @@ a{color:inherit}
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">The outcome</h2>
       <div class="rise d1">
-        <p class="prose lead">Four templates, not four pages.</p>
-        <p class="prose">CSEDS can add the next product, or the next piece of software, without asking anyone to design anything. That mattered more than any single screen — this is a firm that has been adding things to its catalogue for thirty years and will keep doing it.</p>
+        <p class="prose lead">It is live at csedsaust.com.au, and the next product does not need me.</p>
+        <p class="prose">That was the actual brief underneath the stated one. A firm that has spent thirty years adding things to its catalogue will keep adding things to it, and the test of this work is not how the launch looked — it is whether the fifth product page can be made by someone who was never in the room.</p>
+        <p class="prose"><strong>I designed and built it.</strong> That is the reason the template argument is more than a diagram: the thing that had to survive contact with a real build was a rule I had to implement myself, so there was nowhere for a nice idea to hide.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What this case study doesn't have</h2>
+      <div class="rise d1">
+        <p class="prose">No before-and-after traffic, no enquiry numbers, and <strong>no user testing</strong>. I also don't have a capture of the old site, so the "before" here is described rather than shown. The strongest evidence I can offer is that the site is live and you can go and use it.</p>
         <p class="prose">The part I'd push harder next time is the consulting line. It got the shell and the grid, but not the same argument the other two got — it sells on judgement, and judgement is the hardest thing to put in a feature list.</p>
       </div>
     </section>
@@ -620,17 +737,22 @@ a{color:inherit}
 
 <!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
 <section class="credits">
-  <div><h4>Design</h4>Neel Parikh</div>
+  <div><h4>Role</h4>Product &amp; web design — Neel Parikh</div>
   <div><h4>Client</h4>CSEDS Australia Pty Limited — Belrose, Sydney</div>
   <div><h4>Scope</h4>Landing page, product template, software template, mobile</div>
-  <div><h4>Tools</h4>Figma</div>
+  <div><h4>Build</h4>Designed and built by me — Figma to live site</div>
+
+<section class="contact">
+  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
+  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  <a href="/#work">See the rest of the work</a>
 </section>
 
 </main>
 
-<a class="next" href="/work/emf-ace/" aria-label="Next project: EMF ACE">
-  <img src="/work/emf-ace/img/room-gala.jpg" alt="">
-  <span class="lbl"><small>Next project</small><strong>EMF ACE</strong></span>
+<a class="next" href="/work/into-yesterday/" aria-label="Next project: Into Yesterday">
+  <img src="/work/into-yesterday/img/hero.jpg" alt="">
+  <span class="lbl"><small>Next project</small><strong>Into Yesterday</strong></span>
 </a>
 
 <script>

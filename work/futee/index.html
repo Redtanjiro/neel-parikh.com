@@ -316,6 +316,60 @@ a{color:inherit}
   .device .screen > img{transform:none!important}
 }
 
+
+/* the tally is a facts row, not a results row — say so */
+.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
+  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--ink-45)}
+
+/* a reader who is convinced needs somewhere to go */
+.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
+  padding-bottom:2px;transition:border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
+
+/* ══════════════════════════════════════════════════════════════════
+   DIAGRAMS
+   Where the page has been describing a decision in prose, draw it
+   instead. Authored SVG, project palette, no screenshots of Figma.
+   The rejected route is drawn and dimmed; the chosen one carries the
+   accent. Both are labelled with why.
+   ══════════════════════════════════════════════════════════════════ */
+.diagram{margin:0}
+.diagram .board{position:relative;width:100%;background:var(--deep);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
+.diagram svg{width:100%;height:auto;display:block;overflow:visible}
+
+.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;fill:var(--ink-45)}
+.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
+.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
+.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
+.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
+
+/* the rejected route */
+.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
+.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:rgba(251,247,240,.38)}
+
+/* the route taken */
+.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
+.dg-in .dg-step-lbl{fill:var(--ink)}
+.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
+.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:var(--accent)}
+
+/* reveal: the rejected route first, then the chosen one over it */
+[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
+  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
+[data-reveal].is-in .dg-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -337,26 +391,18 @@ a{color:inherit}
     <p class="hero-tagline">A matchmaking platform for people who play football <em>for the love of it</em>.</p>
 
     <dl class="meta">
-      <div><dt>Role</dt><dd>UX research, UI design,<br>visual identity</dd></div>
+      <div><dt>Role</dt><dd>UX research, UI design,<br>identity</dd></div>
       <div><dt>Year</dt><dd>2021 — 2022</dd></div>
       <div><dt>Scope</dt><dd>Web platform &amp; iOS app,<br>17 screens</dd></div>
-      <div><dt>Context</dt><dd>Bangkok, Thailand<br>Client project</dd></div>
+      <div><dt>Context</dt><dd>Bangkok, Thailand<br>Client project, in a team</dd></div>
     </dl>
   </div>
 
+  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
   <div class="tally" data-reveal data-stagger>
-    <div>
-      <p class="n rise"><span data-count="3">0</span></p>
-      <p class="lab rise d1">Taps from open to confirmed game</p>
-    </div>
-    <div>
-      <p class="n rise d1"><span data-count="17">0</span></p>
-      <p class="lab rise d2">Screens, web &amp; iOS</p>
-    </div>
-    <div>
-      <p class="n rise d2"><span data-count="2">0</span></p>
-      <p class="lab rise d3">Audiences, one funnel</p>
-    </div>
+    <div><p class="n rise"><span data-count="17">0</span></p><p class="lab rise d1">Screens designed, web &amp; iOS</p></div>
+    <div><p class="n rise d1"><span data-count="2">0</span></p><p class="lab rise d2">Personas, journey-mapped</p></div>
+    <div><p class="n rise d2"><span data-count="5">0</span></p><p class="lab rise d3">Research &amp; mapping methods</p></div>
   </div>
 </header>
 
@@ -384,14 +430,14 @@ a{color:inherit}
     <p class="dossier-mark rise">Futee <span>; TLDR</span></p>
     <div class="dossier-body">
       <dl class="facts">
-        <div><dt class="rise">Role</dt><dd class="rise">UX designer</dd></div>
+        <div><dt class="rise">Role</dt><dd class="rise">UX research, UI design, identity</dd></div>
         <div><dt class="rise d1">Industry</dt><dd class="rise d1">Sport &amp; community</dd></div>
         <div><dt class="rise d2">Client</dt><dd class="rise d2">Futee, Bangkok</dd></div>
-        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">14 weeks</dd></div>
+        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">14-week engagement,<br>across 2021—22</dd></div>
       </dl>
       <div class="impacts">
-        <div class="impact rise d1"><b>3 taps</b><small>Open to game</small></div>
-        <div class="impact rise d2"><b>2 → 1</b><small>Audiences, one funnel</small></div>
+        <div class="impact rise d1"><b>17</b><small>Screens, web &amp; iOS</small></div>
+        <div class="impact rise d2"><b>2</b><small>Audiences, one funnel</small></div>
       </div>
     </div>
   </aside>
@@ -401,7 +447,8 @@ a{color:inherit}
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">Summary</h2>
       <div class="rise d1">
-        <p class="prose lead">Futee is an all-in-one platform for finding, creating and joining football games in Bangkok. I ran the research, designed the product, and built the visual identity across a web platform and an iOS app.</p>
+        <p class="prose lead">Futee is an all-in-one platform for finding, creating and joining football games in Bangkok, across a web platform and an iOS app.</p>
+        <p class="prose"><strong>This was a team project, not a solo one.</strong> My lane was the UX research, the information architecture, the UI system and the visual identity. The stakeholder and player calls were run by the team together rather than outsourced, and the build was handled afterwards by an external development firm.</p>
         <p class="prose">The whole thing is built for <strong>two people who never speak to each other</strong>: the person creating a game, and the person looking for one. Every screen has to serve both without either noticing the other's needs.</p>
       </div>
     </section>
@@ -456,7 +503,7 @@ a{color:inherit}
       </dl>
       <div class="impacts">
         <div class="impact rise d1"><b>17</b><small>Screens shipped</small></div>
-        <div class="impact rise d2"><b>0</b><small>Features without a quote</small></div>
+        <div class="impact rise d2"><b>2</b><small>Quotes → shipped features</small></div>
       </div>
     </div>
   </aside>
@@ -469,6 +516,53 @@ a{color:inherit}
         <p class="prose">Every finding was inverted into a feature, one at a time. <em>"Finding a good game is a coin flip"</em> became ratings visible before you apply. <em>"I don't know if I'm in"</em> became a squad list that fills in front of you.</p>
         <p class="prose"><strong>Nothing entered the product that couldn't be traced back to a quote.</strong> It also meant the one place research contradicted the brief — create-then-fill, rather than fill-then-create — was an easy argument to win.</p>
       </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The one argument with the brief</h2>
+      <div class="rise d1">
+        <p class="prose">The brief assumed you gather a squad and then book something. Research said the opposite — so this is the decision drawn out, including the version that lost.</p>
+      </div>
+      <figure class="diagram rise d2" style="margin:0">
+        <div class="board">
+    <svg viewBox="0 0 1000 280" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Two possible orders for making a game. The brief assumed fill-then-create; the research pointed to create-then-fill.">
+<g class="dg-out">
+      <text class="dg-title" x="8" y="20">Fill, then create — what the brief assumed</text>
+      <rect class="dg-step" x="8.0" y="34" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="121.2" y="67.0" text-anchor="middle">Find players</text>
+      <path class="dg-arrow" d="M239.5 62.0H251.5m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="260.5" y="34" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="373.8" y="59.0" text-anchor="middle">Agree</text>
+      <text class="dg-step-lbl" x="373.8" y="76.0" text-anchor="middle">a time</text>
+      <path class="dg-arrow" d="M492.0 62.0H504.0m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="513.0" y="34" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="626.2" y="59.0" text-anchor="middle">Book</text>
+      <text class="dg-step-lbl" x="626.2" y="76.0" text-anchor="middle">a pitch</text>
+      <path class="dg-arrow" d="M744.5 62.0H756.5m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="765.5" y="34" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="878.8" y="67.0" text-anchor="middle">Game exists</text>
+      <text class="dg-verdict-out" x="8" y="116">Rejected · nothing exists until everyone agrees, and nobody knows if they are in</text>
+      </g>
+      <g class="dg-in">
+      <text class="dg-title" x="8" y="166">Create, then fill — what the research pointed to</text>
+      <rect class="dg-step" x="8.0" y="180" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="121.2" y="205.0" text-anchor="middle">Pick date</text>
+      <text class="dg-step-lbl" x="121.2" y="222.0" text-anchor="middle">and pitch</text>
+      <path class="dg-arrow" d="M239.5 208.0H251.5m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="260.5" y="180" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="373.8" y="213.0" text-anchor="middle">Game exists</text>
+      <path class="dg-arrow" d="M492.0 208.0H504.0m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="513.0" y="180" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="626.2" y="213.0" text-anchor="middle">Players join</text>
+      <path class="dg-arrow" d="M744.5 208.0H756.5m-5,-4 5,4-5,4"/>
+      <rect class="dg-step" x="765.5" y="180" width="226.5" height="56" rx="3"/>
+      <text class="dg-step-lbl" x="878.8" y="213.0" text-anchor="middle">Squad fills</text>
+      <text class="dg-verdict-in" x="8" y="262">Taken · the game is real at step one; joining is a tap, not a negotiation</text>
+      </g>
+    </svg>
+        </div>
+        <figcaption class="cap">The rejected order is drawn, not just mentioned</figcaption>
+      </figure>
     </section>
 
     <section class="beat" data-reveal>
@@ -554,19 +648,60 @@ a{color:inherit}
   <figcaption class="cap">The system, end to end — 17 screens, web &amp; iOS</figcaption>
 </figure>
 
+<!-- ══ 05c · OUTCOME ═══════════════════════════════════════════ -->
+<section class="run" id="outcome">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Futee <span>; end</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Delivered</dt><dd class="rise">Research, IA, UI system,<br>17 screens</dd></div>
+        <div><dt class="rise d1">Handed to</dt><dd class="rise d1">Futee, Bangkok</dd></div>
+        <div><dt class="rise d2">Built by</dt><dd class="rise d2">An external firm,<br>after handover</dd></div>
+        <div><dt class="rise d3">Year</dt><dd class="rise d3">2021 — 2022</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>2</b><small>Audiences, one funnel</small></div>
+        <div class="impact rise d2"><b>17</b><small>Screens handed over</small></div>
+      </div>
+    </div>
+  </aside>
+  <div class="track">
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What went over</h2>
+      <div class="rise d1">
+        <p class="prose lead">It went to the stakeholders as a system, not a screen set.</p>
+        <p class="prose">Two personas, two journeys, a sitemap traceable back to research, and a UI that holds the same rules whether you are organising a game or joining one. <strong>Create-then-fill — the one place research contradicted the brief — was adopted without argument</strong>, because the journey map made the case before I did.</p>
+        <p class="prose">It was handed over and <strong>built by an external development firm</strong>. It ran, and it has since been taken down. I don't have usage figures from the period it was live, and I'd rather say that than imply a launch I can't evidence.</p>
+      </div>
+    </section>
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What this case study doesn't have</h2>
+      <div class="rise d1">
+        <p class="prose">Worth saying plainly, because a research-led case study should be held to it: <strong>there is no usability testing shown here</strong>, and no post-launch numbers. The evidence on this page is research → decision, not design → measured result. I also no longer have the participant counts from the questionnaire or the calls.</p>
+        <p class="prose">If I ran it again, a five-person test on the create-then-fill flow would come before the visual system — that flow was the one real disagreement with the brief, and it is the one thing I argued rather than proved.</p>
+      </div>
+    </section>
+  </div>
+</section>
+
 <!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
 <section class="credits">
-  <div><h4>Design</h4>Neel Parikh</div>
+  <div><h4>Role</h4>UX research, UI design, identity — Neel Parikh</div>
   <div><h4>Client</h4>Futee — Bangkok</div>
   <div><h4>Methods</h4>Desk research, questionnaire, ecosystem mapping, card sorting, journey mapping</div>
   <div><h4>Tools</h4>Figma, Illustrator</div>
+
+<section class="contact">
+  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
+  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  <a href="/#work">See the rest of the work</a>
 </section>
 
 </main>
 
-<a class="next" href="#" aria-label="Next project">
-  <img src="img/illo-player.jpg" alt="">
-  <span class="lbl"><small>Next project</small><strong>Marooned</strong></span>
+<a class="next" href="/work/emf-ace/" aria-label="Next project: EMF ACE">
+  <img src="/work/emf-ace/img/room-gala.jpg" alt="">
+  <span class="lbl"><small>Next project</small><strong>EMF ACE</strong></span>
 </a>
 
 <script>

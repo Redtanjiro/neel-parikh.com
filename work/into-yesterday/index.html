@@ -4,17 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Into Yesterday — Neel Parikh</title>
-<meta name="description" content="Into Yesterday — a 3D short film about memory as a maze you can walk back into. Concept, direction, modelling and original score. UNSW, 2025.">
+<meta name="description" content="Into Yesterday — a 20x20m immersive walk-through installation designed for Barangaroo Reserve as a Vivid Sydney proposal. UNSW coursework, 2025.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 /* ══════════════════════════════════════════════════════════════════
    INTO YESTERDAY — MARK 5 SKELETON
-   Same structure as Futee, EMF and CSEDS. The palette, the copy, the
-   media and the project-only block at the bottom are what differ —
-   and this one leans hardest on that block.
+   Same structure as Futee, EMF and CSEDS. Palette, copy, media and the
+   project-only block differ — this one leans hardest on that block.
 
      00  hero        full-bleed photograph, wordmark, meta row,
                      outcome numbers
@@ -39,9 +37,9 @@
   --ink-45:rgba(251,247,240,.46);
   --rule:rgba(251,247,240,.20);
 
-  /* ── the film's own colours, taken off the clay and the render ── */
-  --wax:#F2B15A;              /* the lit maze wall */
-  --ember:#E0722C;            /* its shadow side */
+  /* ── the installation's own colours, off the lit walls and orbs ── */
+  --wax:#F2B15A;
+  --ember:#E0722C;
   --gem-red:#D0402F;
   --gem-blue:#5566E0;
   --gem-violet:#9A55D6;
@@ -330,6 +328,11 @@ a{color:inherit}
    visit. Walls grow first, then the way in traces through them. */
 .maze{padding:var(--sec) var(--pad) 0}
 .maze .frame{position:relative;width:100%;aspect-ratio:16/9;background:var(--deep);overflow:hidden}
+.maze svg .ann .pin{fill:none;stroke:var(--wax);stroke-width:2}
+.maze svg .ann .lbl{fill:var(--ink-45);font-family:var(--mono);font-size:13px;letter-spacing:.14em}
+.maze svg .ann .lbl.end{text-anchor:end}
+.maze svg .ann .lbl.mid{text-anchor:middle}
+.maze svg .ann .scale{stroke:rgba(251,247,240,.32);stroke-width:1.5}
 .maze svg{position:absolute;inset:0;width:100%;height:100%}
 .maze .walls{fill:none;stroke:rgba(242,177,90,.34);stroke-width:2;stroke-linecap:square}
 .maze .path{fill:none;stroke:var(--wax);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;
@@ -388,6 +391,138 @@ a{color:inherit}
   .gems{display:none}
 }
 
+/* ── 5 · THE ZONES · every dial turns the same way ───────────────
+   Four steps, each bar filling further than the last. Fires once on
+   entry; under reduced motion the bars are simply already full. */
+.zones{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.7vw,24px)}
+.zone{border-top:1px solid var(--rule);padding-top:14px}
+.zone .zn{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--wax);margin:0 0 9px}
+.zone .zt{font-family:var(--display);font-weight:700;font-size:clamp(14px,1.25vw,17px);
+  letter-spacing:-.015em;margin:0 0 9px;line-height:1.15}
+.zone .zd{font-family:var(--ui);font-size:12px;line-height:1.5;color:var(--ink-45);margin:0 0 18px}
+.zone .bar{display:block;height:3px;background:rgba(251,247,240,.12);position:relative;overflow:hidden}
+.zone .bar::after{content:"";position:absolute;inset:0 auto 0 0;width:0;
+  background:linear-gradient(90deg,var(--ember),var(--wax));
+  box-shadow:0 0 10px rgba(242,177,90,.55);
+  transition:width 1000ms var(--ease-out);transition-delay:var(--d,0ms)}
+.zones.is-lit .zone .bar::after{width:calc(var(--z) * 100%)}
+.zone:nth-child(1){--d:0ms}.zone:nth-child(2){--d:130ms}
+.zone:nth-child(3){--d:260ms}.zone:nth-child(4){--d:390ms}
+@media (max-width:760px){ .zones{grid-template-columns:1fr 1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .zone .bar::after{transition:none;width:calc(var(--z) * 100%)}
+}
+
+/* the tally is a facts row, not a results row — say so */
+.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
+  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--ink-45)}
+
+/* a reader who is convinced needs somewhere to go */
+.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
+  padding-bottom:2px;transition:border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   DEVICE FRAMES
+   A screenshot is a document; a device frame makes it a screen. The
+   page inside scrolls, driven by the reader's own scroll position —
+   no autoplay, no loop, nothing to wait for, and it reverses when
+   they scroll back up. Frames are drawn, not photographed, so they
+   inherit the palette and cost nothing to load.
+   ══════════════════════════════════════════════════════════════════ */
+
+.device{position:relative}
+.device .screen{position:relative;overflow:hidden;background:var(--deep)}
+.device .screen > img{width:100%;min-height:100%;object-fit:cover;object-position:50% 0;
+  display:block;will-change:transform}
+
+/* the page keeps moving past the frame edge — a hairline says so */
+.device .screen::after{content:"";position:absolute;inset:auto 0 0 0;height:38px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.28));pointer-events:none}
+
+/* ── browser ── */
+.device.browser{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:#131313}
+.device.browser .bar{display:flex;align-items:center;gap:7px;padding:10px 13px;
+  background:#191919;border-bottom:1px solid var(--rule)}
+.device.browser .dot{width:9px;height:9px;border-radius:50%;background:rgba(251,247,240,.20);flex:none}
+.device.browser .url{margin-left:9px;flex:1;min-width:0;height:19px;border-radius:100px;
+  background:rgba(251,247,240,.07);display:flex;align-items:center;padding:0 11px;
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-45);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.device.browser .screen{aspect-ratio:16/10}
+
+/* ── phone ── */
+.device.phone{width:min(290px,100%);margin-inline:auto;border:1px solid var(--rule);
+  border-radius:36px;padding:10px;background:#0D0D0D}
+.device.phone .screen{aspect-ratio:9/19;border-radius:27px}
+.device.phone .screen::after{border-radius:0 0 27px 27px}
+.device.phone .notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);
+  width:62px;height:5px;border-radius:100px;background:rgba(251,247,240,.16);z-index:2}
+
+/* ── laptop ── */
+.device.laptop .lid{border:1px solid var(--rule);border-radius:11px 11px 3px 3px;
+  padding:11px 11px 13px;background:#131313}
+.device.laptop .screen{aspect-ratio:16/10;border-radius:3px}
+.device.laptop .base{height:11px;margin:0 -5%;border-radius:0 0 13px 13px;
+  background:linear-gradient(180deg,#242424,#111);border:1px solid var(--rule);border-top:none}
+.device.laptop .base::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  margin-top:1px;width:15%;height:3px;border-radius:0 0 6px 6px;background:rgba(251,247,240,.10)}
+
+/* a pair of phones sits tighter than a pair of anything else */
+.pair.phones{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,30px)}
+@media (max-width:560px){ .pair.phones{grid-template-columns:1fr} }
+
+@media (prefers-reduced-motion:reduce){
+  .device .screen > img{transform:none!important}
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   DIAGRAMS
+   Where the page has been describing a decision in prose, draw it
+   instead. Authored SVG, project palette, no screenshots of Figma.
+   The rejected route is drawn and dimmed; the chosen one carries the
+   accent. Both are labelled with why.
+   ══════════════════════════════════════════════════════════════════ */
+.diagram{margin:0}
+.diagram .board{position:relative;width:100%;background:var(--deep);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
+.diagram svg{width:100%;height:auto;display:block;overflow:visible}
+
+.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;fill:var(--ink-45)}
+.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
+.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
+.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
+.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
+
+/* the rejected route */
+.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
+.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:rgba(251,247,240,.38)}
+
+/* the route taken */
+.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
+.dg-in .dg-step-lbl{fill:var(--ink)}
+.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
+.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:var(--accent)}
+
+/* reveal: the rejected route first, then the chosen one over it */
+[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
+  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
+[data-reveal].is-in .dg-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -403,31 +538,31 @@ a{color:inherit}
   <div class="hero-bg" aria-hidden="true"><img src="img/hero.jpg" alt=""></div>
   <div class="hero-inner">
     <h1 class="hero-title">Into Yesterday</h1>
-    <p class="hero-tagline">A memory is a maze you can <em>walk back into</em>. Getting out is the hard part.</p>
+    <p class="hero-tagline">A maze at Barangaroo that walks you back into a <em>childhood summer</em>.</p>
     <dl class="meta">
-      <div><dt>Role</dt><dd>Concept, direction, 3D,<br>sound — solo</dd></div>
+      <div><dt>Role</dt><dd>Concept, spatial design,<br>3D, sound — solo</dd></div>
       <div><dt>Year</dt><dd>2025</dd></div>
-      <div><dt>Scope</dt><dd>Short film — boards, model,<br>render, score</dd></div>
-      <div><dt>Context</dt><dd>UNSW<br>Studio brief</dd></div>
+      <div><dt>Scope</dt><dd>Immersive installation —<br>proposal to render</dd></div>
+      <div><dt>Context</dt><dd>UNSW brief, set as a<br>Vivid Sydney proposal</dd></div>
     </dl>
   </div>
+  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
   <div class="tally" data-reveal data-stagger>
-    <div><p class="n rise"><span data-count="9">0</span></p><p class="lab rise d1">Clay studies before a single render</p></div>
-    <div><p class="n rise d1"><span data-count="3">0</span></p><p class="lab rise d2">Crafts in one film</p></div>
-    <div><p class="n rise d2"><span data-count="1">0</span></p><p class="lab rise d3">Maze, built from nothing</p></div>
+    <div><p class="n rise"><span data-count="20">0</span><sup>m</sup></p><p class="lab rise d1">Metres a side — a 20 × 20 m footprint</p></div>
+    <div><p class="n rise d1"><span data-count="4">0</span></p><p class="lab rise d2">Zones of immersion</p></div>
+    <div><p class="n rise d2"><span data-count="8">0</span></p><p class="lab rise d3">Beats in the walk</p></div>
   </div>
 </header>
 
-<!-- ══ 01 · SET-PIECE · THE SCRUB ══════════════════════════════
-     Scroll takes you out of the present and into the memory. -->
-<section class="scrub" data-scrub aria-label="The present dissolving into the past">
+<!-- ══ 01 · SET-PIECE · THE SCRUB ══════════════════════════════ -->
+<section class="scrub" data-scrub aria-label="Barangaroo tonight, dissolving into the memory">
   <div class="stage">
-    <div class="layer now"><img src="img/now.jpg" alt="A night city waterfront, figures walking a stone shoreline."></div>
-    <div class="layer then"><img src="img/cover.jpg" alt="The same warmth from inside the memory — a lit wall and gems on dark water."></div>
+    <div class="layer now"><img src="img/now.jpg" alt="Barangaroo at night — the stone steps down to the water, city towers behind."></div>
+    <div class="layer then"><img src="img/cover.jpg" alt="Inside the installation — lit walls and memory orbs floating on dark water."></div>
     <div class="bloom" aria-hidden="true"></div>
     <div class="vignette" aria-hidden="true"></div>
     <div class="marks" aria-hidden="true">
-      <span class="mark a">Tonight</span>
+      <span class="mark a">Barangaroo</span>
       <span class="mark b">Yesterday</span>
     </div>
     <div class="rail" aria-hidden="true"></div>
@@ -442,14 +577,14 @@ a{color:inherit}
     <p class="dossier-mark rise">Into Yesterday <span>; TLDR</span></p>
     <div class="dossier-body">
       <dl class="facts">
-        <div><dt class="rise">Role</dt><dd class="rise">Everything</dd></div>
-        <div><dt class="rise d1">Medium</dt><dd class="rise d1">3D short film</dd></div>
-        <div><dt class="rise d2">Context</dt><dd class="rise d2">UNSW studio</dd></div>
-        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">One semester</dd></div>
+        <div><dt class="rise">Role</dt><dd class="rise">Concept, spatial design,<br>3D, sound</dd></div>
+        <div><dt class="rise d1">Type</dt><dd class="rise d1">Immersive walk-through<br>installation</dd></div>
+        <div><dt class="rise d2">Site</dt><dd class="rise d2">Barangaroo Reserve,<br>Sydney</dd></div>
+        <div><dt class="rise d3">Status</dt><dd class="rise d3">Coursework — not<br>submitted to Vivid</dd></div>
       </dl>
       <div class="impacts">
-        <div class="impact rise d1"><b>1</b><small>Maker, every craft</small></div>
-        <div class="impact rise d2"><b>9</b><small>Clay studies</small></div>
+        <div class="impact rise d1"><b>4</b><small>Zones of immersion</small></div>
+        <div class="impact rise d2"><b>3</b><small>Senses, five systems</small></div>
       </div>
     </div>
   </aside>
@@ -459,34 +594,50 @@ a{color:inherit}
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">Summary</h2>
       <div class="rise d1">
-        <p class="prose lead">A short film about going back to a memory on purpose, and finding it has a floor plan.</p>
-        <p class="prose">I made all of it: the concept, the boards, the model, the lighting, the render and the score. It started as clay — nine small tiles of colour and texture made by hand — and ended as a lit maze standing in dark grass beside black water.</p>
+        <p class="prose lead">A walk-through experience that takes you back to your childhood summers, and leaves you at the water reflecting on them.</p>
+        <p class="prose">It begins as a maze and ends at a waterside clearing where glowing orbs — memories — float gently on the surface. Roughly <strong>20 by 20 metres</strong>, sited on the steps that lead down into the water at Barangaroo Reserve, and built to be experienced at night, when the lighting throws a sunset-coloured gradient across the walls and the water.</p>
+        <p class="prose">Mine end to end: the concept, the site logic, the maze, the lighting, the 3D and the soundscape.</p>
       </div>
     </section>
 
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">The idea</h2>
       <div class="rise d1">
-        <p class="prose lead">Memory is navigable. That's the problem with it.</p>
-        <p class="prose">You don't drift into the past — you <em>go</em>, deliberately, and you know the turns. The maze is warm and lit from inside because that's how the memory advertises itself. <strong>The gems in the water are the parts you can see and can't reach:</strong> bright, close, on the other side of a wall you built.</p>
-        <p class="prose">Everything in the film follows from that one image. The walls glow. The grass outside doesn't.</p>
+        <p class="prose lead">Not summer. <em>The idea of the perfect summer.</em></p>
+        <p class="prose">I picked something I had a personal connection to, because I wanted to be able to tell whether it was working. The brief was immersive design; the thing I actually wanted to build was the feeling of a summer that has already happened and can only be returned to.</p>
+        <p class="prose">A memory isn't a picture. It's a temperature, a sound, the length of the grass. <strong>So the installation doesn't show you anything — it changes the air around you until you remember on your own.</strong></p>
       </div>
     </section>
 
     <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Where it started</h2>
+      <h2 class="h-beat rise">The site</h2>
       <div class="stack">
         <div class="rise d1">
-          <p class="prose">Before any 3D, I made the palette by hand — clay pressed into small square tiles, photographed outside on grass and stone. Fast, physical, and impossible to fake in a colour picker. The film's whole range of amber, oxide red and bruised blue came out of these.</p>
+          <p class="prose">The steps that lead down into the water at Barangaroo Reserve. Wide open landscape, open views across the harbour, grassy hills above — and heavy, mixed foot traffic: families, tourists, office workers on their way home.</p>
+          <p class="prose">The glow carries from a long way off, from the walkways at either end and from the hills looking down. <strong>People find it before they know what it is.</strong></p>
+        </div>
+        <figure class="rise d2" style="margin:0">
+          <div class="shot"><img src="img/now.jpg" alt="The site — stone steps into the water at Barangaroo, city towers behind."></div>
+          <figcaption class="cap">The site as it is tonight</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Where the language came from</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Before this I made nine mixed-media tiles pulling apart the <em>Skyfall</em> title sequence — one per narrative code: colour, symbolism, contrast, layers, character, texture, perspective, repetition, form. Paper, clay, foil and paint, all by hand.</p>
+          <p class="prose">I didn't carry the meanings across. <strong>I carried what they taught me to notice</strong> — that warmth reads as safety, that layers can be a person, that repetition with small variation is how a thing gets a rhythm.</p>
         </div>
         <div class="clay rise d2">
-          <figure style="margin:0"><div class="shot"><img src="img/clay-1.jpg" alt="Nine clay tiles laid out on white paper on grass."></div></figure>
-          <figure style="margin:0"><div class="shot"><img src="img/clay-2.jpg" alt="The same tiles rearranged, photographed on stone steps."></div></figure>
-          <figure style="margin:0"><div class="shot"><img src="img/clay-3.jpg" alt="Individual clay studies in red, blue and yellow."></div></figure>
+          <figure style="margin:0"><div class="shot"><img src="img/clay-1.jpg" alt="Nine mixed-media tiles laid out on white paper on grass."></div></figure>
+          <figure style="margin:0"><div class="shot"><img src="img/clay-2.jpg" alt="The tiles rearranged, photographed on stone steps."></div></figure>
+          <figure style="margin:0"><div class="shot"><img src="img/clay-3.jpg" alt="Individual tiles in red, blue and yellow clay, paper and foil."></div></figure>
         </div>
         <figure class="rise d3" style="margin:0">
-          <div class="shot"><img src="img/clay-swatches.jpg" alt="A single clay tile grid — the source of the film's palette."></div>
-          <figcaption class="cap">The palette, before it was a palette</figcaption>
+          <div class="shot"><img src="img/clay-swatches.jpg" alt="A single tile — nine clay circles with tickers, the repetition study."></div>
+          <figcaption class="cap">Repetition — "tempo". Nine clay circles, each a beat further round</figcaption>
         </figure>
       </div>
     </section>
@@ -494,16 +645,16 @@ a{color:inherit}
   </div>
 </section>
 
-<!-- ══ 03 · SET-PIECE · THE MAZE DRAWS ITSELF ══════════════════ -->
-<section class="maze" data-maze aria-label="A maze drawing itself, then the route through it">
+<!-- ══ 03 · SET-PIECE · THE MAZE PLAN ══════════════════════════ -->
+<section class="maze" data-maze aria-label="The maze plan drawing itself, then the single route through it">
   <div class="frame">
-    <svg preserveAspectRatio="none" aria-hidden="true">
+    <svg preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <path class="walls"></path>
       <path class="path"></path>
     </svg>
     <span class="halo" aria-hidden="true"></span>
   </div>
-  <p class="cap">The plan is always simple once you're outside it</p>
+  <p class="cap">One entrance, one way through — the bottleneck is the point</p>
 </section>
 
 <!-- ══ 04 · RUN — dossier pinned RIGHT ═════════════════════════ -->
@@ -513,13 +664,13 @@ a{color:inherit}
     <div class="dossier-body">
       <dl class="facts">
         <div><dt class="rise">Modelled in</dt><dd class="rise">Blender</dd></div>
-        <div><dt class="rise d1">Boards</dt><dd class="rise d1">Hand-drawn</dd></div>
-        <div><dt class="rise d2">Score</dt><dd class="rise d2">Original,<br>GarageBand</dd></div>
-        <div><dt class="rise d3">Palette</dt><dd class="rise d3">Clay, photographed</dd></div>
+        <div><dt class="rise d1">Sound</dt><dd class="rise d1">Original — the first<br>music I've made</dd></div>
+        <div><dt class="rise d2">Senses</dt><dd class="rise d2">Sight, sound, touch —<br>light, audio, grass,<br>heat, motion</dd></div>
+        <div><dt class="rise d3">Access</dt><dd class="rise d3">Non-slip paths,<br>wheelchair access</dd></div>
       </dl>
       <div class="impacts">
-        <div class="impact rise d1"><b>4</b><small>Frames, one walk</small></div>
-        <div class="impact rise d2"><b>0</b><small>Stock assets</small></div>
+        <div class="impact rise d1"><b>8</b><small>Beats in the walk</small></div>
+        <div class="impact rise d2"><b>90</b><small>Metres of route</small></div>
       </div>
     </div>
   </aside>
@@ -530,11 +681,103 @@ a{color:inherit}
       <h2 class="h-beat rise">Reference</h2>
       <div class="stack">
         <div class="rise d1">
-          <p class="prose">The look sits between two things that shouldn't go together: the soft, sunlit nostalgia of a kid on a hill, and the hard geometry of a floor plan seen from above. The moodboard holds both so the film could keep checking itself against them.</p>
+          <p class="prose"><em>Rain Room</em> by Random International — water and sensor tracking, an environment that responds to you being in it rather than performing at you. And floating interactive installation work, for how an object on water behaves once people are allowed near it.</p>
+          <p class="prose">The moodboard is the target: soft sunset skies, warm summer breeze, gentle reflections off the water. I kept checking the renders against it.</p>
         </div>
         <div class="pair">
-          <figure class="rise d1" style="margin:0"><div class="shot"><img src="img/moodboard.jpg" alt="Moodboard — a child watching a sunset over the sea."></div><figcaption class="cap">Warmth</figcaption></figure>
-          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/group.jpg" alt="Collected film references and colour studies."></div><figcaption class="cap">Reference</figcaption></figure>
+          <figure class="rise d1" style="margin:0"><div class="shot"><img src="img/moodboard.jpg" alt="Moodboard — a child watching a sunset over the sea."></div><figcaption class="cap">The feeling being aimed at — my own illustration</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/group.jpg" alt="Reference images and colour studies."></div><figcaption class="cap">Reference</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Four zones, one direction</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Nothing in the maze is a display. Everything is a dial — light, grass, air temperature, how close the music is — and every dial turns the same way the further in you go.</p>
+        <p class="prose">It's the same instinct as the EMF lockup and the CSEDS shell: <em>build the rule, not the piece.</em> Set one thing that never moves, then let everything else be a value you change.</p>
+        </div>
+        <figure class="diagram rise d2" style="margin:0 0 clamp(20px,2.6vw,34px)">
+          <div class="board">
+    <svg viewBox="0 0 1000 222" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four dials — light, grass, air and sound — each rising across the four zones.">
+      <g class="dg-in">
+      <text class="dg-title" x="8.0" y="20">Light</text>
+      <line x1="8.0" y1="166" x2="231.5" y2="166" stroke="var(--rule)" stroke-width="1"/>
+      <rect x="8.0" y="142.2" width="47.9" height="23.8" rx="3" fill="var(--accent)" opacity="0.43"/>
+      <text class="dg-note" x="31.9" y="184" text-anchor="middle">1</text>
+      <rect x="63.9" y="110.6" width="47.9" height="55.4" rx="3" fill="var(--accent)" opacity="0.59"/>
+      <text class="dg-note" x="87.8" y="184" text-anchor="middle">2</text>
+      <rect x="119.8" y="71.0" width="47.9" height="95.0" rx="3" fill="var(--accent)" opacity="0.80"/>
+      <text class="dg-note" x="143.7" y="184" text-anchor="middle">3</text>
+      <rect x="175.6" y="34.0" width="47.9" height="132.0" rx="3" fill="var(--accent)" opacity="1.00"/>
+      <text class="dg-note" x="199.6" y="184" text-anchor="middle">4</text>
+      <text class="dg-note" x="8.0" y="206">Dim glow → Full bloom</text>
+      </g>
+      <g class="dg-in">
+      <text class="dg-title" x="261.5" y="20">Grass</text>
+      <line x1="261.5" y1="166" x2="485.0" y2="166" stroke="var(--rule)" stroke-width="1"/>
+      <rect x="261.5" y="146.2" width="47.9" height="19.8" rx="3" fill="var(--accent)" opacity="0.40"/>
+      <text class="dg-note" x="285.4" y="184" text-anchor="middle">1</text>
+      <rect x="317.4" y="113.2" width="47.9" height="52.8" rx="3" fill="var(--accent)" opacity="0.58"/>
+      <text class="dg-note" x="341.3" y="184" text-anchor="middle">2</text>
+      <rect x="373.2" y="63.0" width="47.9" height="103.0" rx="3" fill="var(--accent)" opacity="0.85"/>
+      <text class="dg-note" x="397.2" y="184" text-anchor="middle">3</text>
+      <rect x="429.1" y="34.0" width="47.9" height="132.0" rx="3" fill="var(--accent)" opacity="1.00"/>
+      <text class="dg-note" x="453.1" y="184" text-anchor="middle">4</text>
+      <text class="dg-note" x="261.5" y="206">Ankle → Past the knee</text>
+      </g>
+      <g class="dg-in">
+      <text class="dg-title" x="515.0" y="20">Air</text>
+      <line x1="515.0" y1="166" x2="738.5" y2="166" stroke="var(--rule)" stroke-width="1"/>
+      <rect x="515.0" y="150.2" width="47.9" height="15.8" rx="3" fill="var(--accent)" opacity="0.38"/>
+      <text class="dg-note" x="538.9" y="184" text-anchor="middle">1</text>
+      <rect x="570.9" y="115.8" width="47.9" height="50.2" rx="3" fill="var(--accent)" opacity="0.57"/>
+      <text class="dg-note" x="594.8" y="184" text-anchor="middle">2</text>
+      <rect x="626.8" y="73.6" width="47.9" height="92.4" rx="3" fill="var(--accent)" opacity="0.79"/>
+      <text class="dg-note" x="650.7" y="184" text-anchor="middle">3</text>
+      <rect x="682.6" y="34.0" width="47.9" height="132.0" rx="3" fill="var(--accent)" opacity="1.00"/>
+      <text class="dg-note" x="706.6" y="184" text-anchor="middle">4</text>
+      <text class="dg-note" x="515.0" y="206">Harbour cold → Summer warm</text>
+      </g>
+      <g class="dg-in">
+      <text class="dg-title" x="768.5" y="20">Sound</text>
+      <line x1="768.5" y1="166" x2="992.0" y2="166" stroke="var(--rule)" stroke-width="1"/>
+      <rect x="768.5" y="139.6" width="47.9" height="26.4" rx="3" fill="var(--accent)" opacity="0.44"/>
+      <text class="dg-note" x="792.4" y="184" text-anchor="middle">1</text>
+      <rect x="824.4" y="106.6" width="47.9" height="59.4" rx="3" fill="var(--accent)" opacity="0.61"/>
+      <text class="dg-note" x="848.3" y="184" text-anchor="middle">2</text>
+      <rect x="880.2" y="67.0" width="47.9" height="99.0" rx="3" fill="var(--accent)" opacity="0.82"/>
+      <text class="dg-note" x="904.2" y="184" text-anchor="middle">3</text>
+      <rect x="936.1" y="34.0" width="47.9" height="132.0" rx="3" fill="var(--accent)" opacity="1.00"/>
+      <text class="dg-note" x="960.1" y="184" text-anchor="middle">4</text>
+      <text class="dg-note" x="768.5" y="206">Barely there → Resolved</text>
+      </g>
+    </svg>
+          </div>
+          <figcaption class="cap">Design intent across zones 1–4, not measured values</figcaption>
+        </figure>
+        <div class="zones rise d3" data-zones>
+          <div class="zone" style="--z:.28">
+            <p class="zn">01</p><p class="zt">Low immersion</p>
+            <p class="zd">Faint music. Short grass. Air barely warmer than the harbour.</p><span class="bar"></span>
+          </div>
+          <div class="zone" style="--z:.54">
+            <p class="zn">02</p><p class="zt">Mild immersion</p>
+            <p class="zd">Lights brighter, breeze warmer, the music a little louder.</p><span class="bar"></span>
+          </div>
+          <div class="zone" style="--z:.82">
+            <p class="zn">03</p><p class="zt">High immersion</p>
+            <p class="zd">Grass past the ankle. Summer air. Familiar, and none of it yours.</p><span class="bar"></span>
+          </div>
+          <div class="zone" style="--z:1">
+            <p class="zn">04</p><p class="zt">Reflection</p>
+            <p class="zd">You step out. The lights stay behind you. Only the orbs, bobbing on the water.</p><span class="bar"></span>
+          </div>
+        </div>
+        <div class="rise d3">
+          <p class="prose">The single entrance does two jobs. It meters the crowd, and it means <strong>nobody is ever walking towards you</strong> — you get the thing to yourself even though you queued for it.</p>
+          <p class="prose">Roughly what that costs, on my own numbers: a ~90 m route walked slowly at about 0.6 m/s is a <strong>2½-minute transit</strong>. Holding ~25 people inside at a time for personal space, that is <strong>in the order of 500–600 people an hour</strong>. Vivid runs about six hours a night, so call it 3,000–3,500 a night. <em>These are my estimates from the plan, not measured figures</em> — and the throughput is the number I would put in front of a festival operations team first, because it is the one that decides whether the piece is viable at all.</p>
         </div>
       </div>
     </section>
@@ -543,37 +786,46 @@ a{color:inherit}
       <h2 class="h-beat rise">Building it</h2>
       <div class="stack">
         <div class="rise d1">
-          <p class="prose">The maze is one modelled object, lit from within so the walls carry the light rather than receive it. Everything else in frame — the grass, the stone edge, the water, the gems — exists to be the thing the maze is <em>not</em>.</p>
+          <p class="prose">The first maze felt right and was structurally a mess — broken geometry everywhere — so I rebuilt it a different way and re-lit it with the grass in place. <strong>That was the lesson of the whole project:</strong> I stopped trying to decide on paper whether an idea would work and started making it badly to find out.</p>
         </div>
         <div class="pair">
           <figure class="rise d1" style="margin:0"><div class="shot"><img src="img/blender-1.jpg" alt="The maze modelled in Blender, grey clay render with camera rig."></div><figcaption class="cap">Grey box</figcaption></figure>
-          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/blender-2.jpg" alt="Blender viewport — the character spheres on a plane."></div><figcaption class="cap">Blocking</figcaption></figure>
+          <figure class="rise d2" style="margin:0"><div class="shot"><img src="img/blender-2.jpg" alt="Blender viewport — the memory orbs blocked out on a plane."></div><figcaption class="cap">Orbs, blocked out</figcaption></figure>
         </div>
         <figure class="rise d3" style="margin:0">
-          <div class="shot"><img src="img/maze-aerial.jpg" alt="The finished maze, lit, seen from above on dark ground."></div>
-          <figcaption class="cap">Lit</figcaption>
+          <div class="shot"><img src="img/maze-aerial.jpg" alt="The finished maze, lit, seen from above beside the water."></div>
+          <figcaption class="cap">Lit, grassed, sitting on the water's edge</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The sound</h2>
+      <div class="rise d1">
+        <p class="prose lead">"The feeling of rediscovery."</p>
+        <p class="prose">The first piece of music I have ever made. It plays faintly through the whole maze — you walk towards it without being told to — and only resolves when you come out and see the orbs. <strong>The soundtrack is the wayfinding.</strong></p>
       </div>
     </section>
 
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">The walk</h2>
       <div class="rise d1">
-        <p class="prose">Four boards, and each one is closer than the last. The camera never cuts away and never turns around — the only direction available is further in. <strong>Keep scrolling and you go with it.</strong></p>
+        <p class="prose">Eight beats, from noticing it to leaving it: arrival, walking in, exploring, the past, the summers gone, all roads lead there, core memory, reflection. Each one warmer, louder, and further from the harbour you came in from.</p>
+        <p class="prose"><strong>Keep scrolling and you go with it.</strong></p>
       </div>
     </section>
 
   </div>
 </section>
 
-<!-- ══ SET-PIECE · THE FLIPBOOK ════════════════════════════════ -->
-<section class="walk" data-walk aria-label="Four storyboard frames, walking deeper into the maze">
+<!-- ══ SET-PIECE · THE WALK ════════════════════════════════════ -->
+<section class="walk" data-walk aria-label="Four frames, walking deeper into the maze">
   <div class="stage">
     <div class="deck">
-      <figure><img src="img/sb-1.jpg" alt="Board one — the maze from outside, a figure at its mouth."></figure>
-      <figure><img src="img/sb-2.jpg" alt="Board two — inside the first corridor, looking down its length."></figure>
-      <figure><img src="img/sb-3.jpg" alt="Board three — deeper, the figure smaller against the wall."></figure>
-      <figure><img src="img/sb-4.jpg" alt="Board four — the far end, the figure almost gone."></figure>
+      <figure><img src="img/sb-1.jpg" alt="The maze from outside, a figure at its mouth."></figure>
+      <figure><img src="img/sb-2.jpg" alt="Inside the first corridor, looking down its length."></figure>
+      <figure><img src="img/sb-3.jpg" alt="Deeper in, the figure smaller against the lit wall."></figure>
+      <figure><img src="img/sb-4.jpg" alt="The far end, the figure almost gone into the light."></figure>
       <p class="count"><b>01</b> / 04 — further in</p>
       <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     </div>
@@ -586,31 +838,40 @@ a{color:inherit}
     <p class="dossier-mark rise">Into Yesterday <span>; end</span></p>
     <div class="dossier-body">
       <dl class="facts">
-        <div><dt class="rise">Shown</dt><dd class="rise">UNSW studio</dd></div>
-        <div><dt class="rise d1">Runtime</dt><dd class="rise d1">Short</dd></div>
-        <div><dt class="rise d2">Made by</dt><dd class="rise d2">One person</dd></div>
-        <div><dt class="rise d3">Year</dt><dd class="rise d3">2025</dd></div>
+        <div><dt class="rise">Delivered</dt><dd class="rise">Poster, moodboard,<br>storyboard</dd></div>
+        <div><dt class="rise d1">Plus</dt><dd class="rise d1">Soundscape,<br>3D animation</dd></div>
+        <div><dt class="rise d2">Audience</dt><dd class="rise d2">All ages — aimed at<br>students &amp; families</dd></div>
+        <div><dt class="rise d3">Result</dt><dd class="rise d3">High Distinction</dd></div>
       </dl>
       <div class="impacts">
-        <div class="impact rise d1"><b>3</b><small>Crafts, one voice</small></div>
-        <div class="impact rise d2"><b>1</b><small>Image, followed all the way</small></div>
+        <div class="impact rise d1"><b>9</b><small>Tiles that led here</small></div>
+        <div class="impact rise d2"><b>9</b><small>Tiles before any 3D</small></div>
       </div>
     </div>
   </aside>
   <div class="track">
     <section class="beat" data-reveal>
-      <h2 class="h-beat rise">What I'd keep</h2>
+      <h2 class="h-beat rise">What I took from it</h2>
       <div class="rise d1">
-        <p class="prose lead">Making the palette out of clay before opening Blender.</p>
-        <p class="prose">It meant every colour decision was already made, by hand, in a medium that pushes back — so the render had something to be faithful to instead of something to invent. I'd do that first on every project now, 3D or not.</p>
-        <p class="prose">What I'd change: the film states its image beautifully and then holds it. <strong>It needed one moment where the maze does something the audience doesn't expect</strong> — a wall that moves, a light that goes out. The idea was strong enough to survive being tested, and I never tested it.</p>
+        <p class="prose lead">It was awarded a High Distinction. The more useful outcome was the working method it forced on me.</p>
+        <p class="prose"><strong>Stop deciding whether it will work. Start making it badly and find out.</strong></p>
+        <p class="prose">I over-plan, and this course left no room for that. I started this concept several ways, and each time I hit a point in the making where the mistake became obvious — a faster and more honest answer than any amount of thinking about it. The other thing that worked: letting an idea sit for a day before touching it again.</p>
+        <p class="prose">The animation is limited by the machine I made it on, and I'd rather say that than pretend otherwise. <strong>The idea is bigger than the render of it</strong> — and the render still has to carry it, so that's the part to fix next.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What this case study doesn't have</h2>
+      <div class="rise d1">
+        <p class="prose">This is coursework and it stops where coursework stops. <strong>Nobody has walked through it</strong> — there is no prototype of a zone, no test of the soundscape on a listener, and the throughput figure is arithmetic from my own plan rather than an observed rate.</p>
+        <p class="prose">If it went further, the first thing I'd build is not a better render. It's one corridor at full height with the light, the grass and the heat running, and ten people walking it.</p>
       </div>
     </section>
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">The poster</h2>
       <figure class="rise d1" style="margin:0">
-        <div class="shot"><img src="img/poster-alt.jpg" alt="Alternate poster — the warm disc bleeding over a night city."></div>
-        <figcaption class="cap">Tonight, with yesterday leaking into it</figcaption>
+        <div class="shot"><img src="img/poster-alt.jpg" alt="Poster — the warm disc of the installation bleeding over Barangaroo at night."></div>
+        <figcaption class="cap">Barangaroo, with yesterday leaking into it</figcaption>
       </figure>
     </section>
   </div>
@@ -618,10 +879,16 @@ a{color:inherit}
 
 <!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
 <section class="credits">
-  <div><h4>Everything</h4>Neel Parikh</div>
-  <div><h4>Context</h4>UNSW — studio brief, 2025</div>
-  <div><h4>Made with</h4>Clay, Blender, GarageBand</div>
-  <div><h4>Score</h4>Original</div>
+  <div><h4>Role</h4>Concept, spatial design, 3D, sound — Neel Parikh, solo</div>
+  <div><h4>Context</h4>UNSW — Term 2, Year 1, 2025. Awarded a High Distinction.</div>
+  <div><h4>Framed for</h4>Vivid Sydney — Barangaroo Reserve. Academic proposal; not submitted.</div>
+  <div><h4>Made with</h4>Clay and paper, Blender, GarageBand</div>
+</section>
+
+<section class="contact">
+  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
+  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  <a href="/#work">See the rest of the work</a>
 </section>
 
 </main>
@@ -781,7 +1048,7 @@ const SCROLLERS = [];
   const pathEl  = svg.querySelector('.path');
   const halo    = host.querySelector('.halo');
 
-  const COLS = 22, ROWS = 12, S = 40;
+  const COLS = 16, ROWS = 16, S = 40;   /* a square plan — the real footprint is 20 × 20 m */
   const W = COLS * S, H = ROWS * S;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
@@ -848,6 +1115,24 @@ const SCROLLERS = [];
   }).join('');
   pathEl.setAttribute('d', pd);
 
+  /* ── plan annotation: this is a drawing of a real footprint ── */
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (t, a) => { const e = document.createElementNS(NS, t);
+    for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const g = mk('g', { class:'ann' });
+  /* entry, top-left cell; exit, bottom-right */
+  g.appendChild(mk('circle', { cx:S/2, cy:S/2, r:7, class:'pin' }));
+  const t1 = mk('text', { x:S/2 + 14, y:S/2 + 4, class:'lbl' }); t1.textContent = 'ENTRY'; g.appendChild(t1);
+  g.appendChild(mk('circle', { cx:W - S/2, cy:H - S/2, r:7, class:'pin' }));
+  const t2 = mk('text', { x:W - S/2 - 14, y:H - S/2 + 4, class:'lbl end' }); t2.textContent = 'EXIT'; g.appendChild(t2);
+  /* scale bar — the full width of the plan is 20 m */
+  const y0 = H + 26;
+  g.appendChild(mk('line', { x1:0, y1:y0, x2:W, y2:y0, class:'scale' }));
+  [0, W/2, W].forEach(x => g.appendChild(mk('line', { x1:x, y1:y0 - 5, x2:x, y2:y0 + 5, class:'scale' })));
+  const t3 = mk('text', { x:W/2, y:y0 + 20, class:'lbl mid' }); t3.textContent = '20 m'; g.appendChild(t3);
+  svg.setAttribute('viewBox', `-8 -8 ${W + 16} ${H + 68}`);
+  svg.appendChild(g);
+
   if (REDUCED) { host.classList.add('is-done'); return; }
 
   const wLen = wallsEl.getTotalLength(), pLen = pathEl.getTotalLength();
@@ -857,10 +1142,8 @@ const SCROLLERS = [];
   SCROLLERS.push(() => {
     const r = host.getBoundingClientRect();
     if (r.bottom < -100 || r.top > innerHeight + 100) return;
-    /* spread the draw across the frame's whole pass, so it is still
-       drawing while the reader is looking at it rather than finishing
-       before it arrives */
-    const p = Math.min(Math.max((innerHeight - r.top) / (innerHeight + r.height), 0), 1);
+    /* the frame's own pass through the middle of the screen */
+    const p = Math.min(Math.max((innerHeight * .88 - r.top) / (innerHeight * .78), 0), 1);
     const wallP = Math.min(p / .55, 1);            /* walls first */
     const pathP = Math.max((p - .38) / .62, 0);    /* then the way in */
     wallsEl.style.strokeDashoffset = wLen * (1 - wallP);
@@ -959,6 +1242,53 @@ const SCROLLERS = [];
     live = e.isIntersecting;
     if (live) raf = requestAnimationFrame(draw); else cancelAnimationFrame(raf);
   }, { threshold:0 }).observe(host);
+})();
+
+/* ── 5 · the zones ─────────────────────────────────────────────── */
+(function zones(){
+  const el = document.querySelector('[data-zones]');
+  if (!el) return;
+  if (REDUCED) { el.classList.add('is-lit'); return; }
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    el.classList.add('is-lit');
+    io.disconnect();
+  }, { threshold:0.35 });
+  io.observe(el);
+})();
+
+
+/* ── device frames: the page inside scrolls with the reader ────────
+   Progress is measured across the frame's whole travel through the
+   viewport, so the internal scroll finishes exactly as the frame
+   leaves. Transform only, rAF-throttled, passive, and inert under
+   prefers-reduced-motion. */
+(function deviceScroll(){
+  const frames = [...document.querySelectorAll('[data-scrollshot]')];
+  if (!frames.length || REDUCED) return;
+
+  let ticking = false;
+  const run = () => {
+    const vh = innerHeight;
+    frames.forEach(f => {
+      const r = f.getBoundingClientRect();
+      if (r.bottom < -160 || r.top > vh + 160) return;
+      const img = f.querySelector('img');
+      if (!img) return;
+      const travel = img.offsetHeight - f.clientHeight;
+      if (travel <= 4) return;
+      /* 0 as the frame's top edge reaches the bottom of the screen,
+         1 as its bottom edge clears the top */
+      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
+      /* ease so the ends settle rather than clip */
+      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
+    });
+    ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
+  addEventListener('resize', run);
+  run();
 })();
 
 </script>

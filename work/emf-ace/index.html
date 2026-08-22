@@ -368,6 +368,60 @@ a{color:inherit}
   .device .screen > img{transform:none!important}
 }
 
+
+/* the tally is a facts row, not a results row — say so */
+.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
+  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--ink-45)}
+
+/* a reader who is convinced needs somewhere to go */
+.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
+  padding-bottom:2px;transition:border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
+
+/* ══════════════════════════════════════════════════════════════════
+   DIAGRAMS
+   Where the page has been describing a decision in prose, draw it
+   instead. Authored SVG, project palette, no screenshots of Figma.
+   The rejected route is drawn and dimmed; the chosen one carries the
+   accent. Both are labelled with why.
+   ══════════════════════════════════════════════════════════════════ */
+.diagram{margin:0}
+.diagram .board{position:relative;width:100%;background:var(--deep);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
+.diagram svg{width:100%;height:auto;display:block;overflow:visible}
+
+.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;fill:var(--ink-45)}
+.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
+.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
+.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
+.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
+
+/* the rejected route */
+.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
+.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:rgba(251,247,240,.38)}
+
+/* the route taken */
+.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
+.dg-in .dg-step-lbl{fill:var(--ink)}
+.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
+.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:var(--accent)}
+
+/* reveal: the rejected route first, then the chosen one over it */
+[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
+  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
+[data-reveal].is-in .dg-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -397,19 +451,11 @@ a{color:inherit}
     </dl>
   </div>
 
+  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
   <div class="tally" data-reveal data-stagger>
-    <div>
-      <p class="n rise"><span data-count="1000">0</span><sup>+</sup></p>
-      <p class="lab rise d1">Individual creatives</p>
-    </div>
-    <div>
-      <p class="n rise d1"><span data-count="3">0</span></p>
-      <p class="lab rise d2">Venues, none visited</p>
-    </div>
-    <div>
-      <p class="n rise d2"><span data-count="1">0</span></p>
-      <p class="lab rise d3">Day on the ground before opening</p>
-    </div>
+    <div><p class="n rise"><span data-count="1000">0</span><sup>+</sup></p><p class="lab rise d1">Creatives exported</p></div>
+    <div><p class="n rise d1"><span data-count="3">0</span></p><p class="lab rise d2">Venues, none of them visited</p></div>
+    <div><p class="n rise d2"><span data-count="12">0</span></p><p class="lab rise d3">Approvers, equal authority</p></div>
   </div>
 </header>
 
@@ -445,7 +491,7 @@ a{color:inherit}
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">Summary</h2>
       <div class="rise d1">
-        <p class="prose lead">EMF — one of India's largest event bodies — hired us to brand their ACE awards weekend in Abu Dhabi, end to end.</p>
+        <p class="prose lead">EMF hired us to brand their ACE awards weekend in Abu Dhabi, end to end.</p>
         <p class="prose">Environmental branding, social, YouTube ads, award designs, attendee packages, welcome letters, the magazine. I led the design out of Media Mushroom as one of two designers on it.</p>
       </div>
     </section>
@@ -464,6 +510,7 @@ a{color:inherit}
       <div class="stack">
         <div class="rise d1">
           <p class="prose">Volume is the whole argument, so here it is before the explanation. A sample of the thousand-odd pieces — teasers, countdowns, panels, venues, milestones — every one of them made to the same rules.</p>
+          <p class="prose"><strong>The desert scenes are generative.</strong> This was 2024 and the first wave of usable image generation, and I used it as a production tool on the backgrounds while the lockup, the type, the composition and the art direction stayed hand-made. Worth naming rather than leaving for someone to notice: the system had to hold a rule over imagery I hadn't drawn, which is exactly the test it was built for.</p>
         </div>
         <div class="wall rise d2">
           <figure><div class="shot"><img src="img/emf-teaser-desert-final.png" alt="Desert teaser creative with the ACE lockup."></div><figcaption class="cap">Teaser</figcaption></figure>
@@ -502,13 +549,13 @@ a{color:inherit}
     <div class="dossier-body">
       <dl class="facts">
         <div><dt class="rise">Studio</dt><dd class="rise">Media Mushroom</dd></div>
-        <div><dt class="rise d1">Deliverables</dt><dd class="rise d1">Environmental, social,<br>film, print</dd></div>
+        <div><dt class="rise d1">Deliverables</dt><dd class="rise d1">Environmental, social,<br>film, print — designed<br>in-house</dd></div>
         <div><dt class="rise d2">Venues</dt><dd class="rise d2">Ritz-Carlton, Emirates<br>Palace, Ferrari World</dd></div>
         <div><dt class="rise d3">Team</dt><dd class="rise d3">2 designers</dd></div>
       </dl>
       <div class="impacts">
         <div class="impact rise d1"><b>3</b><small>Venues, none visited</small></div>
-        <div class="impact rise d2"><b>1 day</b><small>On the ground</small></div>
+        <div class="impact rise d2"><b>4</b><small>Formats: print, film,<br>social, environmental</small></div>
       </div>
     </div>
   </aside>
@@ -522,6 +569,35 @@ a{color:inherit}
         <p class="prose">With that volume and that many approvers, no individual piece could be defended on its own merits. So the work went into the system instead: <strong>a fixed lockup</strong> — the ace wordmark, the 11 Glorious Years mark, the dates — that never moved, on anything. <strong>One palette and one light:</strong> violet, gold, and a desert horizon. Every brief resolved into those.</p>
         <p class="prose">The test was simple. A piece made in an hour at 11pm had to look like it belonged to the same weekend as one that took two days — <em>without anyone holding its hand.</em></p>
       </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The rule, drawn</h2>
+      <figure class="diagram rise d1" style="margin:0">
+        <div class="board">
+    <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The fixed lockup: three elements never move; everything else is a variable.">
+      <g class="dg-in">
+        <text class="dg-title" x="8" y="20">Never moves — on any of the 1000+</text>
+        <rect class="dg-step" x="8" y="34" width="300" height="196" rx="3"/>
+        <text class="dg-step-lbl" x="158" y="74" text-anchor="middle">ace wordmark</text>
+        <line x1="40" y1="96" x2="276" y2="96" stroke="var(--rule)" stroke-width="1"/>
+        <text class="dg-step-lbl" x="158" y="130" text-anchor="middle">11 Glorious Years</text>
+        <line x1="40" y1="152" x2="276" y2="152" stroke="var(--rule)" stroke-width="1"/>
+        <text class="dg-step-lbl" x="158" y="186" text-anchor="middle">26 · 27 · 28 July</text>
+        <text class="dg-verdict-in" x="8" y="256">The rule</text>
+      </g>
+      <g class="dg-out">
+        <text class="dg-title" x="360" y="20">Everything else — free to change</text>
+        <rect class="dg-step" x="360" y="34" width="632" height="196" rx="3"/>
+        <text class="dg-step-lbl" x="676.0" y="96" text-anchor="middle">Photography · illustration · generative backgrounds</text>
+        <text class="dg-step-lbl" x="676.0" y="130" text-anchor="middle">Format · crop · language · headline</text>
+        <text class="dg-step-lbl" x="676.0" y="164" text-anchor="middle">Who made it · how long it took</text>
+        <text class="dg-verdict-out" x="360" y="256">The variables</text>
+      </g>
+    </svg>
+        </div>
+        <figcaption class="cap">Three fixed elements on the left; everything a brief could throw at it on the right</figcaption>
+      </figure>
     </section>
 
     <section class="beat" data-reveal>
@@ -581,9 +657,18 @@ a{color:inherit}
     <section class="beat" data-reveal>
       <h2 class="h-beat rise">The outcome</h2>
       <div class="rise d1">
-        <p class="prose lead">It shipped, across three venues, on time.</p>
+        <p class="prose lead">It shipped, across three venues, on time — to a room of <strong>500–800 people</strong>.</p>
+        <p class="prose">The weekend generated in the order of <strong>₹1–2 crore</strong> for the client. Both figures are theirs, not mine, and I'm reporting them as given rather than as something design can take credit for on its own.</p>
         <p class="prose">And I'd structure it differently now. I ran it the way I'd run any project — piece by piece, approval by approval — and the workload compounded faster than the process could carry.</p>
         <p class="prose"><strong>A job that scales this fast, with this many people holding a veto, needs its governance designed on day one alongside the identity.</strong> That's the lesson I actually took from it.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What this case study doesn't have</h2>
+      <div class="rise d1">
+        <p class="prose">The review process here was twelve approvers and a deadline, not research: <strong>nothing on this page was user-tested</strong>. The date-fix section is the closest thing to a validation loop, and it is a system catching an error rather than a test proving a decision.</p>
+        <p class="prose">The counts — the creatives, the approvers — are mine from working on it, not pulled from a reporting tool. Attendance and revenue are the client's figures.</p>
       </div>
     </section>
 
@@ -607,14 +692,19 @@ a{color:inherit}
   <div><h4>Role</h4>Design Lead — identity system, environmental, social, print</div>
   <div><h4>Studio</h4>Media Mushroom</div>
   <div><h4>Client</h4>EMF Global — ACE Abu Dhabi 2024</div>
-  <div><h4>Team</h4>2 designers, 3 months</div>
+  <div><h4>Team</h4>2 designers, 3 months. Digital and print assets made in-house; production and install delivered with a partner team on the ground overseas.</div>
+
+<section class="contact">
+  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
+  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  <a href="/#work">See the rest of the work</a>
 </section>
 
 </main>
 
-<a class="next" href="/work/futee/" aria-label="Next project: Futee">
-  <img src="/work/futee/img/hero-floodlight.jpg" alt="">
-  <span class="lbl"><small>Next project</small><strong>Futee</strong></span>
+<a class="next" href="/work/cseds/" aria-label="Next project: CSEDS">
+  <img src="/work/cseds/img/landing-01.jpg" alt="">
+  <span class="lbl"><small>Next project</small><strong>CSEDS</strong></span>
 </a>
 
 <script>
