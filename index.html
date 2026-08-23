@@ -24,6 +24,55 @@
 </head>
 <body>
 
+<!-- Desktop icons — one <symbol> per case study, referenced by the
+     folder cards below via <use>. Colour lives on each <use>'s own
+     style="color:..." since currentColor resolves through the
+     reference, not the symbol. See media/icons/README.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="icon-futee" viewBox="0 0 32 32">
+<g fill="currentColor" stroke="#0B0A0C" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke">
+    <rect x="14.4" y="10" width="3.2" height="15.4"/>
+    <rect x="8.6" y="25" width="14.8" height="3.4" rx="1.2"/>
+    <g transform="rotate(-17 15 8.6)">
+      <path d="M6.2 3.8h18.4l-2 9.6H8.2z"/>
+    </g>
+  </g>
+  <g fill="#0B0A0C" transform="rotate(-17 15 8.6)">
+    <rect x="8.6" y="6" width="13.6" height="2" rx=".9"/>
+    <rect x="9.2" y="9.6" width="12.4" height="2" rx=".9"/>
+  </g>
+</symbol>
+<symbol id="icon-emf" viewBox="0 0 32 32">
+<g fill="currentColor" stroke="#0B0A0C" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke">
+    <rect x="3.4" y="9" width="12.4" height="18" rx="1.6" transform="rotate(-9 9.6 18)"/>
+    <rect x="16.2" y="9" width="12.4" height="18" rx="1.6" transform="rotate(9 22.4 18)"/>
+    <rect x="9.8" y="5.4" width="12.4" height="19.4" rx="1.6"/>
+  </g>
+  <g fill="#0B0A0C">
+    <rect x="12.4" y="9.2" width="7.2" height="1.8" rx=".9"/>
+    <rect x="12.4" y="12.4" width="7.2" height="1.8" rx=".9"/>
+    <circle cx="16" cy="19.2" r="2.5"/>
+  </g>
+</symbol>
+<symbol id="icon-cseds" viewBox="0 0 32 32">
+<g stroke="#0B0A0C" stroke-width="2.6" paint-order="stroke">
+    <circle cx="10.4" cy="20.8" r="7.2" fill="#6C9BDA"/>
+    <circle cx="21.6" cy="20.8" r="7.2" fill="#D2543C"/>
+    <circle cx="16" cy="10.6" r="7.2" fill="#FBF7F0"/>
+  </g>
+</symbol>
+<symbol id="icon-into-yesterday" viewBox="0 0 32 32">
+<g fill="none" stroke="#0B0A0C" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 13V4h24v9"/><path d="M28 20v8H4v-8"/><path d="M10 13v15"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 13V4h24v9"/><path d="M28 20v8H4v-8"/><path d="M10 13v15"/>
+  </g>
+  <path d="M2.6 16.5H7V8.5h7v13h6v-5h9.4" fill="none" stroke="#0B0A0C" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2.6 16.5H7V8.5h7v13h6v-5h9.4" fill="none" stroke="#E0722C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</defs></svg>
+
 <a class="skip" href="#work">Skip to work</a>
 
 <!-- Site chrome. Born at beat 5, then persistent — so it sits outside
@@ -219,7 +268,7 @@
               <img class="folder__sheet" src="work/futee/Journey%20map.png" alt="" width="2270" height="1268" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/futee/PERSONA%20-%20Light.png" alt="" width="2270" height="1191" loading="lazy" decoding="async">
             </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#F2E338"><use href="#icon-futee"></use></svg>
           </span>
           <span class="folder__name">Futee</span>
           <span class="folder__meta">Product · 2022</span>
@@ -234,7 +283,7 @@
               <img class="folder__sheet" src="work/emf-ace/img/emf-500-registered.png" alt="" width="478" height="478" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/emf-ace/img/emf-panel-global-design-fusion.png" alt="" width="462" height="462" loading="lazy" decoding="async">
             </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#E4BC6B"><use href="#icon-emf"></use></svg>
           </span>
           <span class="folder__name">EMF ACE</span>
           <span class="folder__meta">Brand · 2024</span>
@@ -249,7 +298,7 @@
               <img class="folder__sheet" src="work/cseds/img/product-01.jpg" alt="" width="1199" height="1551" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/cseds/img/software-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
             </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true"><use href="#icon-cseds"></use></svg>
           </span>
           <span class="folder__name">CSEDS</span>
           <span class="folder__meta">Web · 2025</span>
@@ -264,7 +313,7 @@
               <img class="folder__sheet" src="work/into-yesterday/img/clay-1.jpg" alt="" width="1600" height="1200" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/into-yesterday/img/sb-1.jpg" alt="" width="1171" height="574" loading="lazy" decoding="async">
             </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#F2B15A"><use href="#icon-into-yesterday"></use></svg>
           </span>
           <span class="folder__name">Into Yesterday</span>
           <span class="folder__meta">Film · 2025</span>

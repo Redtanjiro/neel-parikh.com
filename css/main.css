@@ -909,10 +909,15 @@ img, video { display: block; max-width: 100%; }
    No pixelated rendering — the source art is a dithered 512px bitmap
    and nearest-neighbour downscaling to 100px destroys the pattern. */
 .folder__img {
+  display: block;
   position: relative;
   z-index: 2;
   width: 100%; height: auto;
-  filter: drop-shadow(0 6px 14px rgba(16,19,14,.55));
+  /* The four case-study icons are flat vector pictograms with their own
+     dark keyline baked in (see the sprite defs), so they don't need the
+     soft ambient shadow the raster folder art wore to read as sitting
+     above the fan. A hard 1px echo plus a little ambient lift is enough. */
+  filter: drop-shadow(0 3px 0 rgba(0,0,0,.45)) drop-shadow(0 6px 14px rgba(0,0,0,.35));
   transition: transform 200ms var(--ease-ui);
 }
 
