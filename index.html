@@ -90,14 +90,26 @@
          The real place is still down there, and it arrives when the
          blackout lifts in the tail. Idea first, then the thing.
 
-         eager, not lazy: it is the first picture on the site and it is
-         due one gesture in. 104 KB as webp, jpg behind it for Safari
-         builds old enough to need it. -->
+         mp4 FIRST, as on the dither layer below and for the same
+         reason: the plate is dense high-frequency glitch noise and VP9
+         handles it worse than x264 does — 699 KB against 511 KB on the
+         same five seconds — so h264 is the one nearly everyone gets and
+         the webm is the fallback for builds without it.
+
+         preload="auto", unusually for a second video on the page: it is
+         the first picture on the site and it is due one gesture in, so
+         there is no lead time to buy later. It plays only on screen one
+         — hero.js starts and stops it with the step — and under reduced
+         motion it never plays at all and the poster is the plate. -->
     <div class="hero__isle" id="isle" aria-hidden="true">
-      <picture>
-        <source srcset="media/isle.webp" type="image/webp">
-        <img src="media/isle.jpg" alt="" width="1200" height="814" decoding="async">
-      </picture>
+      <video class="hero__isle-clip" id="isle-clip"
+             poster="media/isle-poster.jpg"
+             muted loop playsinline preload="auto"
+             width="1000" height="690"
+             aria-hidden="true" tabindex="-1">
+        <source src="media/isle.mp4" type="video/mp4">
+        <source src="media/isle.webm" type="video/webm">
+      </video>
     </div>
 
     <div class="hero__grain"></div>
@@ -145,19 +157,19 @@
          rather than under the question.
 
            0.00  all by their self,
-           1.15  one must seek
-           2.70  both leave
-           3.35  a piece of the / Continent
-           4.75  Let's work together?
+           0.65  one must seek
+           1.45  both leave
+           1.95  a piece of the / Continent
+           3.15  Let's work together?
 
          The gap before the last line is deliberate and it is the one
          number here worth protecting: the sentence has finished, and
          the ask is a separate thing said after it. -->
-    <div class="phrase pos--tl" data-in="2" data-at="0" data-off="2.7">
+    <div class="phrase pos--tl" data-in="2" data-at="0" data-off="1.45">
       <span class="line line--body">all by their self,</span>
     </div>
 
-    <div class="phrase pos--br" data-in="2" data-at="1.15" data-off="2.7">
+    <div class="phrase pos--br" data-in="2" data-at="0.65" data-off="1.45">
       <span class="line line--body">one must seek</span>
     </div>
 
@@ -165,12 +177,12 @@
          then the word 70ms later. --split widens the gap between them:
          at the default 1.4vh "a piece of the" sits on top of Continent
          like a kicker, and it's meant to be a beat before it. -->
-    <div class="phrase pos--mid phrase--split" data-in="2" data-at="3.35">
+    <div class="phrase pos--mid phrase--split" data-in="2" data-at="1.95">
       <span class="line line--body">a piece of the</span>
       <span class="line line--hero">Continent</span>
     </div>
 
-    <div class="phrase pos--ask" data-in="2" data-at="4.75">
+    <div class="phrase pos--ask" data-in="2" data-at="3.15">
       <span class="line line--hand">Let&#8217;s work together?</span>
     </div>
 

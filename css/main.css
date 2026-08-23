@@ -236,9 +236,9 @@ img, video { display: block; max-width: 100%; }
    the machine's reading of the place first, then the place.
 
    mix-blend-mode: screen because the plate is a bright figure on a
-   black ground: screen over #000 is the identity, so the file's own
-   black never shows as a box edge no matter how the jpeg fallback
-   compresses the noise around the palms.
+   black ground: screen over #000 is the identity, so the encode's own
+   black never shows as a box edge however hard the codec has had to
+   work on the noise around the palms.
 
    Initial state lives here, not in JS - hero.js tweens TO focus, and a
    `to` tween needs somewhere to come from. */
@@ -251,7 +251,7 @@ img, video { display: block; max-width: 100%; }
   filter: blur(12px);
   will-change: opacity, transform, filter;
 }
-.hero__isle img {
+.hero__isle video {
   width: clamp(300px, 37vw, 620px);
   height: auto;
   /* Above centre, because the line and the word written under it take
@@ -1365,7 +1365,7 @@ img, video { display: block; max-width: 100%; }
   .pos--mid.phrase--split { transform: translateY(-3svh); }
   .pos--ask { transform: translateY(24svh); }
   .pos--name { transform: translateY(23svh); }
-  .hero__isle img { width: min(74vw, 340px); transform: translateY(-7svh); }
+  .hero__isle video { width: min(74vw, 340px); transform: translateY(-7svh); }
   .hand { font-size: 1.35em; }
   /* Tracked-out and nowrap, so this is the widest thing on the page by
      some way. At the shared clamp's floor it ran under the step ledger

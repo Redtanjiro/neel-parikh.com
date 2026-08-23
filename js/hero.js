@@ -43,6 +43,7 @@
   var nav     = document.querySelector('.chrome__nav');
   var blackout = document.getElementById('blackout');
   var isle    = document.getElementById('isle');
+  var isleClip = document.getElementById('isle-clip');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -89,8 +90,13 @@
      would have given the same read at the cost of a layout pass every
      frame. filter + transform + opacity are all GPU.
      --------------------------------------------------------- */
-  var IN_DUR  = 0.7;
-  var OUT_DUR = 0.4;
+  /* Trimmed from 0.70 / 0.40. Screen two says four things on one
+     gesture now, so the reveals have to be quick enough that the
+     sequence reads as speech rather than as four separate arrivals -
+     and the same crispness suits screen one. Below about 0.5 the focus
+     pull stops being legible as a rack and just looks like a fade. */
+  var IN_DUR  = 0.62;
+  var OUT_DUR = 0.34;
   var SCALE_IN  = 1.06;   // entrance start
   var SCALE_OUT = 1.03;   // exit end — recedes, doesn't retreat as far
   var STAGGER = 0.07;   // 70ms — past ~80ms three lines stop reading as one pulse
@@ -206,7 +212,7 @@
      period is the momentum of the gesture that STARTED the sequence:
      without it, one firm flick opens screen two and its own tail
      immediately skips to the end of it. */
-  var SKIP_GRACE = 1100;
+  var SKIP_GRACE = 850;
 
   function seqLive() { return !!(seqTl && seqTl.isActive()); }
   function seqSkip() {
@@ -661,6 +667,15 @@
         to.filter = on ? 'blur(0px)' : 'blur(12px)';
       }
       tl.to(isle, to, on ? at : 0);
+
+      /* The plate is a five-second loop and it is only ever looked at
+         on screen one. Decoding it behind the reveal, or under the
+         desktop, is heat for nothing. Reduced motion never starts it,
+         which leaves the poster - the sequence survives as a still. */
+      if (isleClip && !reduced) {
+        if (on) { var pl = isleClip.play(); if (pl && pl.catch) pl.catch(function () {}); }
+        else if (!isleClip.paused) isleClip.pause();
+      }
     }
 
     /* The chrome is NOT born on a step any more. It used to arrive with
@@ -820,6 +835,7 @@
        story sitting over one. */
     if (blackout) blackout.style.opacity = 1 - lift;
     if (isle) isle.style.opacity = 0;
+    if (isleClip && !isleClip.paused) isleClip.pause();
     if (stage) stage.style.opacity = 1 - clamp01(lift * 1.35);
 
     /* The nav arrives with the frame it sits on, not before it. Both
