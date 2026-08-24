@@ -92,6 +92,20 @@
      person - the correction over "man", and the ask at the end.
      Allison, subset to the nineteen characters those two need. */
   --font-hand: 'Allison', 'Snell Roundhand', 'Segoe Script', cursive;
+
+  /* The three lamps on screen two, as rgb triplets so the alpha can be
+     set per stop. Sampled from the frames rather than picked: a warm
+     yellow that reads as a torch, then an amber and a rose far enough
+     apart in hue that the overlaps are visibly different colours and
+     not just brighter. */
+  --lamp-y: 233, 217, 138;
+  --lamp-a: 242, 162, 104;
+  --lamp-r: 224, 143, 166;
+
+  /* The only saturated colour on the site, and it appears exactly once:
+     the rule under the name. Everything else here is sampled off the
+     footage; this is a decision. */
+  --wire: #3F8AE2;
   --font-work: 'Sprat', Georgia, 'Times New Roman', serif;
   --font-ui: ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -260,6 +274,60 @@ img, video { display: block; max-width: 100%; }
   mix-blend-mode: screen;
 }
 
+/* ---------- the lights ----------
+   Above the blackout, below the type. mix-blend-mode: screen is doing
+   the real work — three overlapping circles painted normally are a
+   stack, and a stack has a top one; screened, they ADD, which is what
+   light does and what the figure has to mean. Over #000 screen is the
+   identity, so the frame stays black wherever they are not.
+
+   64cqw across, sized off the frame rather than the viewport, so the
+   composition survives every width without a breakpoint. */
+.hero__lamps { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.hero__lamp {
+  position: absolute; left: 50%; top: 50%;
+  width: 64vw; height: 64vw; margin: -32vw 0 0 -32vw;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 900ms var(--ease-out), transform 1100ms var(--ease-out);
+}
+.hero__lamp--y { background: radial-gradient(circle closest-side,
+  rgba(var(--lamp-y), .60), rgba(var(--lamp-y), .22) 44%, rgba(var(--lamp-y), 0) 72%); }
+.hero__lamp--a { background: radial-gradient(circle closest-side,
+  rgba(var(--lamp-a), .58), rgba(var(--lamp-a), .20) 44%, rgba(var(--lamp-a), 0) 72%); }
+.hero__lamp--r { background: radial-gradient(circle closest-side,
+  rgba(var(--lamp-r), .56), rgba(var(--lamp-r), .20) 44%, rgba(var(--lamp-r), 0) 72%); }
+
+/* Darts and holds, not a drift. Something looking for a thing moves in
+   quick decisive jumps and then stops to look; a smooth glide across
+   the frame reads as ambience, which is the opposite of searching.
+   The holds are what sell it — take them out and the same path is just
+   a slow float. */
+@keyframes hero-hunt {
+  0%   { transform: translate(-27vw, -15svh) scale(.60); }
+  13%  { transform: translate(-27vw, -15svh) scale(.60); }
+  25%  { transform: translate( 19vw,  17svh) scale(.70); }
+  36%  { transform: translate( 19vw,  17svh) scale(.70); }
+  48%  { transform: translate( 29vw, -19svh) scale(.56); }
+  57%  { transform: translate( 29vw, -19svh) scale(.56); }
+  70%  { transform: translate(-15vw,  11svh) scale(.66); }
+  79%  { transform: translate(-15vw,  11svh) scale(.66); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+.hero__lamp--y[data-hunt] { opacity: 1; animation: hero-hunt 2.15s var(--ease-move) forwards; }
+.hero__lamp--y[data-hold] { opacity: 1; transform: translate(0, 0) scale(1); }
+
+/* The other two come in from off-frame and settle into a shallow
+   TRIANGLE, not a row. Three circles on one axis merge into a single
+   wide blob and the figure stops being a Venn; offsetting the arrivals
+   vertically keeps every lobe and every overlap readable. */
+.hero__lamp--a { transform: translate(-96vw,  7svh) scale(.96); }
+.hero__lamp--r { transform: translate( 96vw, -5svh) scale(.92); }
+.hero__lamp--a[data-on] { opacity: 1; transform: translate(-20vw,  7svh) scale(.96); }
+.hero__lamp--r[data-on] { opacity: 1; transform: translate( 20vw, -5svh) scale(.92); }
+
 /* Static grain. Dialled back from .05 to .025 now the hero is the ASCII
    treatment — that frame is already dense high-frequency texture, and
    grain on top of it is noise on noise. It still does its original job
@@ -385,6 +453,33 @@ img, video { display: block; max-width: 100%; }
    other; the gap is the beat between them. */
 .phrase--split { gap: clamp(1.25rem, 5vh, 3.5rem); }
 
+/* Screen two's two lines share one position: the light finds the first
+   one there and the second one replaces it in the same place, so the
+   Venn resolves rather than the sentence moving. */
+.pos--lit { max-width: none; }
+/* One line each. Both of these are short sentences that are meant to be
+   read across the frame in a single sweep of light; broken over two
+   lines the Venn is lighting a paragraph. */
+.line.line--lit { white-space: nowrap; }
+
+/* Allison has a small x-height for its em, so the script has to be set
+   much larger than the roman beside it to carry the same optical
+   weight. line-height: 0 keeps a 2.45em glyph from opening up the line
+   box it is sitting in. */
+.line.line--lit { font-size: clamp(1.35rem, 4vw, 3.6rem); }
+.line--lit em {
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-size: 2.45em;
+  line-height: 0;
+  position: relative;
+  top: .06em;
+}
+.line--lit b { font-weight: 750; }
+/* The answer is set larger than the question. Same position, more
+   voice — it is the line the whole page has been walking towards. */
+.line.line--tog { font-size: clamp(1.5rem, 4.15vw, 3.8rem); }
+
 /* Screen one's line sits low, under the island. Screen two's ask sits
    lower still - it is the last thing on the page before the desktop,
    and the gap above it is the pause the sentence ended on. */
@@ -410,19 +505,27 @@ img, video { display: block; max-width: 100%; }
   white-space: nowrap;
 }
 .cut del { text-decoration: none; }
+
+/* TWO strokes, at slightly different heights, angles and lengths, drawn
+   130ms apart. One clean rule through a word reads as typography — a
+   strikethrough, a state, something the stylesheet did. Two crossed by
+   hand read as a person disagreeing with the quote, which is the whole
+   joke and the reason this is drawn rather than text-decoration. */
+.cut::before,
 .cut::after {
   content: '';
   position: absolute;
-  left: -.14em; right: -.14em;
-  top: 50%;
-  height: .05em;
+  height: .045em;
   min-height: 1px;
   background: currentColor;
-  transform: translateY(-50%) scaleX(0);
+  transform: translateY(-50%) rotate(var(--rot)) scaleX(0);
   transform-origin: 0 50%;
-  transition: transform 520ms var(--ease-move);
+  transition: transform 430ms var(--ease-move);
 }
-.phrase[data-cut-on] .cut::after { transform: translateY(-50%) scaleX(1); }
+.cut::before { top: 45%; left: -.20em; right: -.13em; --rot: -1.3deg; }
+.cut::after  { top: 59%; left: -.12em; right: -.22em; --rot:  .9deg; transition-delay: 130ms; }
+.phrase[data-cut-on] .cut::before,
+.phrase[data-cut-on] .cut::after { transform: translateY(-50%) rotate(var(--rot)) scaleX(1); }
 
 /* Absolutely positioned inside .cut, not laid out beside it, so it
    lands under the struck word at every width without a single
@@ -542,6 +645,104 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* The display word needs air beneath it before the sub-line lands. */
+
+/* ---------- the name ----------
+   Lives in the pinned tail, on the footage, between the black lifting
+   and the halftone arriving. Absolutely positioned inside .hero rather
+   than in .hero__stage, because the stage is scrubbed to zero across
+   exactly the stretch where this has to be at full strength.
+
+   13vw and nowrap: it is meant to reach for both edges of the frame the
+   way it does in the storyboard, and Panchang is wide enough to get
+   there without being stretched. */
+.hero__name {
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-52%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 620ms var(--ease-out), visibility 0s linear .62s;
+}
+.hero[data-name] .hero__name { opacity: 1; visibility: visible; transition-delay: 0s, 0s; }
+
+.hero__name-line {
+  font-family: var(--font-display);
+  /* 11vw, not 13. At 13 the name is wider than the frame and both ends
+     are cut off — which reads as a mistake rather than as a crop. This
+     is the width it has in the storyboard: reaching for both edges and
+     stopping just short of them. */
+  font-size: clamp(2.2rem, 11vw, 11rem);
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: .92;
+  white-space: nowrap;
+  text-shadow: var(--halo);
+  transform: translateY(.14em);
+  transition: transform 780ms var(--ease-out);
+}
+.hero[data-name] .hero__name-line { transform: none; }
+
+/* Draws out from the centre once the name has landed. Full bleed on
+   purpose — a rule that stops where the type stops is an underline, and
+   this is a horizon. */
+.hero__wire {
+  position: absolute;
+  left: -6vw; right: -6vw;
+  bottom: -.06em;
+  height: 3px;
+  background: var(--wire);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 760ms var(--ease-move) 240ms;
+}
+.hero[data-name] .hero__wire { transform: scaleX(1); }
+
+/* ---------- the way back ----------
+   The frame steps back to ask. A veil on its own left the question
+   sitting on top of the wordmark with neither of them readable;
+   blurring what is behind it is what turns it into a question ABOUT the
+   page rather than a caption ON it. */
+.hero__gate {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .80);
+  -webkit-backdrop-filter: blur(11px) saturate(.5);
+  backdrop-filter: blur(11px) saturate(.5);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 320ms var(--ease-out), visibility 0s linear .32s;
+}
+.hero[data-gate] .hero__gate { opacity: 1; visibility: visible; transition-delay: 0s, 0s; }
+.hero__gate-q {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.6vw, 2.4rem);
+  font-weight: 500;
+  color: var(--ink);
+  transform: translateY(.5rem);
+  transition: transform 420ms var(--ease-out);
+}
+.hero__gate-h {
+  margin-top: .9rem;
+  font-family: var(--font-ui);
+  font-size: var(--type-label);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transform: translateY(.5rem);
+  transition: transform 420ms var(--ease-out) 60ms;
+}
+.hero[data-gate] .hero__gate-q,
+.hero[data-gate] .hero__gate-h { transform: none; }
 
 /* ---------- chrome (born at beat 5, then persistent) ----------
    Fixed, and a sibling of .hero rather than a child of it. As an
@@ -789,6 +990,20 @@ img, video { display: block; max-width: 100%; }
   }
   .phrase[data-cut-on] .hand { transform: none; }
   .hero__isle { transform: none; filter: none; }
+
+  /* The beam stops hunting. A large soft object darting around the
+     frame is exactly the kind of movement the setting exists to
+     remove — so it simply appears where it was going to end up, and
+     the other two fade in beside it rather than flying in. The figure
+     survives intact as three states. */
+  .hero__lamp--y[data-hunt] { animation: none; transform: translate(0, 0) scale(1); }
+  .hero__lamp--a, .hero__lamp--r { transform: none; }
+  .hero__lamp--a[data-on] { transform: translate(-20vw,  7svh) scale(.96); }
+  .hero__lamp--r[data-on] { transform: translate( 20vw, -5svh) scale(.92); }
+  .hero__lamp { transition: opacity 400ms linear; }
+  .hero__name-line, .hero__gate-q, .hero__gate-h { transform: none !important; }
+  .hero__wire { transition: opacity 300ms linear 200ms; transform: scaleX(1); opacity: 0; }
+  .hero[data-name] .hero__wire { opacity: 1; }
 }
 
 /* =========================================================
@@ -1056,13 +1271,14 @@ img, video { display: block; max-width: 100%; }
    scheme on a page whose every value was sampled from one photograph. */
 .about {
   --bd: 2px;
-  width: clamp(248px, 25vw, 330px);
+  width: clamp(300px, 34vw, 460px);
   border: var(--bd) solid var(--ink);
   /* Solid, unblurred, offset. A blurred shadow is a lighting model and
      these machines didn't have one — they had a second rectangle. */
   box-shadow: 5px 5px 0 rgba(16, 19, 14, .55);
   background: var(--deep);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  position: relative;
 
   /* Hidden until the desktop exists, exactly like the folders.
      Without this it is an opaque window sitting on the black opening
@@ -1083,8 +1299,17 @@ img, video { display: block; max-width: 100%; }
     transform 380ms var(--ease-pop) 300ms;
 }
 .hero[data-desk] .about { opacity: 1; transform: none; }
+/* Close/reopen, not close/gone. A shorter, un-delayed pair — this is a
+   direct response to a click, not an arrival on the desktop. */
+.about.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(.97);
+  transition: opacity 200ms var(--ease-ui), transform 200ms var(--ease-ui);
+}
 
-/* Inverted title bar, the way every one of these looked. */
+/* Inverted title bar, the way every one of these looked. Draggable —
+   see the pointer handlers in hero.js — so it's furniture you can move,
+   not a picture of furniture. */
 .about__bar {
   display: flex;
   align-items: center;
@@ -1094,143 +1319,208 @@ img, video { display: block; max-width: 100%; }
   background: var(--ink);
   color: var(--void);
   border-bottom: var(--bd) solid var(--ink);
+  cursor: grab;
+  touch-action: none;
 }
+.about__bar.is-dragging { cursor: grabbing; }
 .about__title {
   font-size: .6875rem;
   letter-spacing: .04em;
 }
-/* Three hollow squares. They are not buttons and never pretend to be —
-   no hover, no cursor change, nothing to click. Furniture that responds
-   to the mouse but does nothing is worse than furniture that doesn't. */
-.about__controls { display: flex; gap: 4px; }
-.about__controls i {
-  width: 9px; height: 9px;
+
+/* Three hollow squares, the way there always were — but two of them do
+   something now. The middle one still doesn't: furniture that responds
+   to the mouse but does nothing is worse than furniture that doesn't,
+   and there is nothing here for a maximise to do. */
+.about__btns { display: flex; gap: 4px; }
+.about__ctrl {
+  position: relative;
+  width: 13px; height: 13px;
   border: 2px solid var(--void);
+  background: none;
+  padding: 0;
 }
-.about__controls .is-close { background: var(--void); }
-
-.about__body { padding: 12px; }
-
-/* The sprite panel. Sunken by inverting the border weight — light on
-   two sides, dark on two — which is the entire visual vocabulary those
-   interfaces had for depth. */
-.about__screen {
-  border: var(--bd) solid var(--ink);
+.about__ctrl--dot { cursor: default; }
+.about__ctrl--min, .about__ctrl--close { cursor: pointer; }
+.about__ctrl--min::before {
+  content: ''; position: absolute; left: 1px; right: 1px; top: 50%; height: 2px;
+  background: var(--void); transform: translateY(-50%);
+}
+.about__ctrl--close::before, .about__ctrl--close::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px;
   background: var(--void);
-  padding: 10px 8px 0;
+}
+.about__ctrl--close::before { transform: translateY(-50%) rotate(45deg); }
+.about__ctrl--close::after  { transform: translateY(-50%) rotate(-45deg); }
+@media (hover: hover) and (pointer: fine) {
+  .about__ctrl--min:hover, .about__ctrl--close:hover { background: rgba(16, 19, 14, .28); }
+}
+
+.about__body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(14px, 2.4vw, 26px);
+  padding: 14px;
+  align-items: start;
+}
+
+/* ---------- the sprite stage ---------- */
+.about__stage {
+  position: relative;
+  width: var(--about-sw, 132px);
+  height: calc(var(--about-sh, 165px) + 26px);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
+.about__cap {
+  position: absolute;
+  top: -2px; left: 0; right: 0;
+  text-align: center;
+  font-size: .5625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 240, .4);
+}
+/* 6x3 grid, 256x320 cells, stepped by background-position from JS;
+   --about-col / --about-row are the frame's place in it. Every pose is
+   bottom-aligned in its cell (see media/icons — sorry, media/sprites —
+   README), so switching poses never shifts his feet.
 
-/* 265 x 72 strip, five 53px cells. Stepped by background-position from
-   JS; --pose is the frame index.
-
-   image-rendering: pixelated is the whole point — the sprite is authored
-   at 72px tall and shown at 216, so the browser must be told to keep the
-   pixels square instead of smoothing them into the painting this was
-   before it was quantised. */
+   image-rendering: pixelated is the whole point — the sheet is authored
+   larger than it's shown here, so the browser has to be told to keep
+   the pixels square instead of smoothing them into a blur. */
 .about__sprite {
-  width: 159px;                       /* 53 x 3 */
-  height: 216px;                      /* 72 x 3 */
-  background-image: url('../media/neel-sprite.png');
-  background-size: 795px 216px;       /* 265 x 3 */
-  background-position: calc(var(--pose, 0) * -159px) 0;
+  width: var(--about-sw, 132px);
+  height: var(--about-sh, 165px);
+  background-image: url('../media/neel-sprites.webp');
   background-repeat: no-repeat;
+  background-size: calc(var(--about-sw, 132px) * 6) calc(var(--about-sh, 165px) * 3);
+  background-position: calc(var(--about-col, 0) * var(--about-sw, 132px) * -1) calc(var(--about-row, 0) * var(--about-sh, 165px) * -1);
   image-rendering: pixelated;
+  animation: about-bob 2.6s var(--ease-ui) infinite;
+  margin-bottom: 18px;
+}
+/* A quick settle on top of the idle bob, fired by JS on every pose
+   change — the frame swap alone read as a slide-show; this is what
+   makes it read as him moving. */
+.about__sprite.is-hop { animation: about-bob 2.6s var(--ease-ui) infinite, about-hop 340ms var(--ease-pop); }
+@keyframes about-bob  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes about-hop  { 0% { transform: translateY(0); } 38% { transform: translateY(-9px); } 100% { transform: translateY(0); } }
+
+.about__shadow {
+  position: absolute;
+  bottom: 22px; left: 50%;
+  width: 56%; height: 8px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.6), transparent 72%);
+  animation: about-shadow 2.6s var(--ease-ui) infinite;
+}
+@keyframes about-shadow {
+  0%, 100% { transform: translateX(-50%) scaleX(1); opacity: .9; }
+  50%      { transform: translateX(-50%) scaleX(.88); opacity: .7; }
+}
+.about__floor {
+  position: absolute;
+  left: 4px; right: 4px; bottom: 26px;
+  height: var(--bd);
+  background: rgba(251, 247, 240, .18);
 }
 
+/* ---------- the text side ---------- */
+.about__who { min-width: 0; }
 .about__name {
-  margin-top: 12px;
   font-family: var(--font-work);
-  font-size: 1.35rem;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
   font-weight: 300;
-  line-height: 1;
+  line-height: 1.1;
   color: var(--ink);
 }
-.about__role {
-  margin-top: 5px;
-  font-size: .625rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .75);
-}
+.about__role-word { color: rgba(251, 247, 240, .75); }
 .about__bio {
-  margin-top: 10px;
+  margin-top: 8px;
   font-family: var(--font-display);
   font-size: .8125rem;
   font-weight: 300;
   line-height: 1.45;
   color: rgba(251, 247, 240, .8);
+  max-width: 42ch;
 }
 
-/* A rule of dashes, not a border — the border would be a hairline and a
-   hairline is the one thing a bitmap interface cannot draw. */
-.about__now {
-  margin-top: 12px;
-  padding-top: 10px;
+/* Six lines, each one a fact and a pose at once. Hover or focus MOVES
+   the sprite; the caption above the stage says which pose in words for
+   anyone landing on a fact without having read the ones before it. A
+   click PINS it — leaving the list with the mouse then settles back to
+   the pin rather than to idle, so the chosen pose survives the pointer
+   moving on. Same click un-pins. */
+.about__facts {
+  list-style: none;
+  margin: 12px 0 0;
+  padding-top: 8px;
   border-top: var(--bd) dashed rgba(251, 247, 240, .3);
 }
-.about__label {
-  font-size: .5625rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .5);
-}
-/* Fixed height for two lines. The captions are different lengths and the
-   window resizing under your cursor as you press Next is the tell that
-   this is a web page pretending, rather than a window. */
-.about__caption {
-  margin-top: 4px;
-  min-height: 2.6em;
+.about__facts li + li { margin-top: 1px; }
+.about__fact {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: rgba(251, 247, 240, .7);
+  font-family: var(--font-ui);
   font-size: .75rem;
-  line-height: 1.3;
-  color: var(--ink);
-}
-
-/* Track position. Five segments, one per pose — a player's progress bar
-   put to honest use as an index. */
-.about__track {
-  display: flex;
-  gap: 3px;
-  margin-top: 4px;
-}
-.about__track i {
-  flex: 1;
-  height: 6px;
-  border: 2px solid rgba(251, 247, 240, .35);
-}
-.about__track i.is-on {
-  background: var(--folder-teal, #74E8E8);
-  border-color: var(--folder-teal, #74E8E8);
-}
-
-.about__transport {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-}
-/* Real buttons, and both of them do something. The window has no play,
-   pause or shuffle because there is nothing here to play, pause or
-   shuffle — a transport of five dead glyphs and two live ones would be
-   set dressing. */
-.about__btn {
-  flex: 1;
-  padding: 7px 0;
-  border: var(--bd) solid var(--ink);
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: .6875rem;
-  line-height: 1;
+  line-height: 1.4;
   cursor: pointer;
-  transition: background-color 120ms linear, color 120ms linear;
+  transition: color 150ms linear, background-color 150ms linear;
+}
+.about__k {
+  font-size: .625rem;
+  letter-spacing: .1em;
+  color: rgba(251, 247, 240, .32);
+  transition: color 150ms linear;
 }
 @media (hover: hover) and (pointer: fine) {
-  .about__btn:hover { background: var(--ink); color: var(--void); }
+  .about__fact:hover { color: var(--ink); background: rgba(251, 247, 240, .06); }
+  .about__fact:hover .about__k { color: var(--folder-teal, #74E8E8); }
 }
-/* Inverts on press, like a real one. No scale — these windows had no
-   transforms, and a button that shrinks is a different decade. */
-.about__btn:active { background: var(--ink); color: var(--void); }
+.about__fact:focus-visible { color: var(--ink); outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: -2px; }
+.about__fact[aria-current="true"] { color: var(--ink); }
+.about__fact[aria-current="true"] .about__k { color: var(--folder-teal, #74E8E8); }
+
+/* Stands in for the window in the same corner while it's closed. A
+   grid item in `.about`'s own cell rather than an absolutely positioned
+   overlay — `.work` is a two-column grid and this is the simplest way
+   to land in the second column without a new positioning context. Its
+   own reveal — arrives after the window has finished closing, not with
+   the folders. */
+.about__reopen {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: end;
+  border: var(--bd) solid var(--ink);
+  background: var(--deep);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  padding: 8px 12px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms var(--ease-ui), transform 220ms var(--ease-ui);
+}
+.about__reopen[hidden] { display: none; }
+.about__reopen.is-in { opacity: 1; transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  .about__reopen:hover { background: var(--ink); color: var(--void); }
+}
 
 /* The gutter lives here now. It used to come from `.work { padding: … 6vw }`,
    which went when the plate took over the section — leaving the footer
@@ -1335,6 +1625,14 @@ img, video { display: block; max-width: 100%; }
     transition: opacity 250ms linear calc(var(--i) * 40ms);
   }
   .about { transform: none; transition: opacity 250ms linear 260ms; }
+  .about.is-closing { transform: none; transition: opacity 200ms linear; }
+  /* The idle bob, the shadow's breathing and the hop all go — a sprite
+     that changes pose on hover is information changing; a sprite that
+     never stops moving between poses is the ambient motion this page
+     has refused everywhere else. It still changes pose, it just holds
+     each one still. */
+  .about__sprite, .about__sprite.is-hop, .about__shadow { animation: none; }
+  .about__reopen { transform: none; transition: opacity 200ms linear; }
 
   /* The fan is a large positional move by definition, so the travel
      goes — but the sheets stay, because they're the actual content of
@@ -1365,6 +1663,32 @@ img, video { display: block; max-width: 100%; }
      absolutely positioned under the struck word, so a wrap drops the
      second line straight through it. Sized to fit 20 characters in a
      390px frame rather than left to the shared line clamp. */
+  .hero__lamp { width: 128vw; height: 128vw; margin: -64vw 0 0 -64vw; }
+  @keyframes hero-hunt {
+    0%   { transform: translate(-22vw, -15svh) scale(.60); }
+    13%  { transform: translate(-22vw, -15svh) scale(.60); }
+    25%  { transform: translate( 16vw,  17svh) scale(.70); }
+    36%  { transform: translate( 16vw,  17svh) scale(.70); }
+    48%  { transform: translate( 22vw, -19svh) scale(.56); }
+    57%  { transform: translate( 22vw, -19svh) scale(.56); }
+    70%  { transform: translate(-12vw,  11svh) scale(.66); }
+    79%  { transform: translate(-12vw,  11svh) scale(.66); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+  /* The figure turns on its side. Three lamps offset along the X axis
+     of a 16:9 frame become one blob in a portrait one — there simply
+     isn't the width. Stacked on the diagonal instead, the same three
+     circles read as three again, and the overlaps land where the line
+     of type is. */
+  .hero__lamp--a { transform: translate(-140vw, -20svh) scale(.96); }
+  .hero__lamp--r { transform: translate( 140vw,  20svh) scale(.92); }
+  .hero__lamp--a[data-on] { transform: translate(-19vw, -20svh) scale(.96); }
+  .hero__lamp--r[data-on] { transform: translate( 19vw,  20svh) scale(.92); }
+  /* The name reaches both edges of a phone the way it reaches for both
+     edges of a desktop frame — same gesture, and 11vw is not it here. */
+  .hero__name-line { font-size: clamp(1.8rem, 9.4vw, 11rem); }
+  .line.line--lit { font-size: clamp(1.05rem, 4.9vw, 3.2rem); }
+  .line.line--tog { font-size: clamp(1.1rem, 5.3vw, 3.9rem); }
   .pos--isle { transform: translateY(13svh); max-width: none; }
   .pos--isle .line { white-space: nowrap; font-size: clamp(1rem, 5.4vw, 2.5rem); }
   .pos--mid.phrase--split { transform: translateY(-3svh); }
@@ -1419,22 +1743,23 @@ img, video { display: block; max-width: 100%; }
   .about { width: 100%; max-width: 38rem; }
   .hero__ditherwash { background: rgba(16,19,14,.76); }
 
-  /* Stacked, the window has width to spare and no height to spare — so
-     it turns on its side: sprite beside the text instead of above it.
-     Same window, laid out the way the space is shaped. */
-  .about__body {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 12px;
-    align-items: start;
+  /* Already sprite-beside-text at every width — narrower here just
+     means a smaller stage and a shorter reach for the bio, not a
+     different shape. Same window, same layout, less of it. */
+  .about__stage { width: 96px; height: 130px; }
+  .about__sprite {
+    width: 96px; height: 120px;
+    background-size: calc(96px * 6) calc(120px * 3);
+    background-position: calc(var(--about-col, 0) * -96px) calc(var(--about-row, 0) * -120px);
   }
-  .about__screen { grid-row: 1 / span 3; padding: 8px 6px 0; }
-  .about__sprite { width: 106px; height: 144px; background-size: 530px 144px;
-                   background-position: calc(var(--pose, 0) * -106px) 0; }
-  .about__name { margin-top: 0; }
-  .about__bio { display: none; }   /* the caption is doing this job here */
-  .about__now { grid-column: 2; margin-top: 4px; }
-  .about__track, .about__transport { grid-column: 1 / -1; }
+  .about__shadow { bottom: 16px; }
+  .about__floor { bottom: 20px; }
+  .about__bio { max-width: none; }
+  .about__fact { font-size: .6875rem; }
+  /* .work collapses to one column here, so .about__reopen's desktop
+     placement in "column 2" has nothing to sit in — it follows .about
+     into the single centred column instead. */
+  .about__reopen { grid-column: 1; justify-self: center; }
 
   /* The desktop icon sizes are driven by vw, which collapses to the
      clamp floor the moment the row count drops — six across at 1400px
@@ -1478,6 +1803,11 @@ img, video { display: block; max-width: 100%; }
    two islands stacked on one another with no blackout between them is
    worse than one. */
 .no-js .hero__isle { display: none; }
+.no-js .hero__lamps { display: none; }
+.no-js .hero__gate { display: none; }
+.no-js .hero__name { position: static; opacity: 1; visibility: visible; transform: none; padding: 8vh 6vw 0; }
+.no-js .hero__name-line { transform: none; }
+.no-js .hero__wire { position: static; display: block; transform: none; margin-top: .4em; }
 .no-js .cut::after { transform: translateY(-50%) scaleX(1); }
 .no-js .hand {
   position: static; display: inline; opacity: 1; transform: none;

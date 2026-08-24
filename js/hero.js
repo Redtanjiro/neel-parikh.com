@@ -44,6 +44,12 @@
   var blackout = document.getElementById('blackout');
   var isle    = document.getElementById('isle');
   var isleClip = document.getElementById('isle-clip');
+  var lamps   = document.querySelector('.hero__lamps');
+  var lampY   = document.getElementById('lamp-y');
+  var lampA   = document.getElementById('lamp-a');
+  var lampR   = document.getElementById('lamp-r');
+  var nameEl  = document.getElementById('hero-name');
+  var gateEl  = document.getElementById('gate');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -128,7 +134,7 @@
      glide and has finished by the time the line starts. Scrolling
      is what uncovers the place. Light change is atmosphere and can
      share the travel; text is information and can't. */
-  var REVEAL = [1, 1, 1];   /* one entry per step, 0..LAST */
+  var REVEAL = [1, 1];   /* one entry per step, 0..LAST */
 
   /* Step at which the frame becomes visible — also the point from which
      the video is worth decoding.
@@ -213,6 +219,60 @@
      without it, one firm flick opens screen two and its own tail
      immediately skips to the end of it. */
   var SKIP_GRACE = 850;
+
+  /* ---------------------------------------------------------
+     The lamps
+
+     Screen two's beats that are NOT lines of copy. They live here
+     rather than in the markup for the same reason the phrases live in
+     the markup: a phrase is a sentence and belongs with the writing, a
+     lamp is a piece of staging and belongs with the machine.
+
+     Offsets are seconds into the step, on the same clock as data-at —
+     which now covers the whole story, island included, because there is
+     only one step left to be on.
+     --------------------------------------------------------- */
+  var ISLE_OFF = 2.40;   /* the island leaves before the beam arrives */
+
+  var LIGHTS = [
+    { at: 2.85, fn: function () { lampY.removeAttribute('data-hold'); lampY.setAttribute('data-hunt', ''); } },
+    { at: 5.00, fn: function () { lampY.removeAttribute('data-hunt'); lampY.setAttribute('data-hold', ''); } },
+    { at: 5.95, fn: function () { lampA.setAttribute('data-on', ''); } },
+    { at: 6.13, fn: function () { lampR.setAttribute('data-on', ''); } }
+  ];
+
+  /* One tween description, both directions, so the island cannot drift
+     out of sync with itself between the entrance and the exit. */
+  function isleTo(on, instant) {
+    var to = {
+      opacity: on ? 1 : 0,
+      ease: EASE_OUT,
+      overwrite: 'auto',
+      duration: instant ? 0 : (on ? (reduced ? 0.35 : IN_DUR + 0.25) : OUT_DUR)
+    };
+    if (!reduced) {
+      to.scale  = on ? 1 : 1.04;
+      to.filter = on ? 'blur(0px)' : 'blur(12px)';
+    }
+    return to;
+  }
+
+  function lampsOff() {
+    if (!lampY) return;
+    lampY.removeAttribute('data-hunt');
+    lampY.removeAttribute('data-hold');
+    lampA.removeAttribute('data-on');
+    lampR.removeAttribute('data-on');
+  }
+  function lampsRest() {
+    /* Where the sequence ends up: all three on, none of them moving.
+       Used when the step is settled into rather than played. */
+    if (!lampY) return;
+    lampY.removeAttribute('data-hunt');
+    lampY.setAttribute('data-hold', '');
+    lampA.setAttribute('data-on', '');
+    lampR.setAttribute('data-on', '');
+  }
 
   function seqLive() { return !!(seqTl && seqTl.isActive()); }
   function seqSkip() {
@@ -420,7 +480,11 @@
 
   function refreshSteps() {
     if (!steps) return;
-    if (cueGone && !deskOn && active >= 1) steps.setAttribute('data-show', '');
+    /* Suppressed at one dot. The ledger exists to answer "how long does
+       this mean to hold me", and one-of-one answers nothing the scroll
+       cue has not already said. It comes back the moment the story is
+       more than one gesture long, because the count is derived. */
+    if (dots.length > 1 && cueGone && !deskOn && active >= 1) steps.setAttribute('data-show', '');
     else steps.removeAttribute('data-show');
     var lit = stepDot[active];
     for (var i = 0; i < dots.length; i++) {
@@ -511,12 +575,10 @@
      the story on. 2.2 screens felt like the page had stopped
      responding. 1.9 gives about five wheel notches of standing room,
      which is enough to notice the files and reach for one. */
-  var TAIL = 2.6;
-  /* 0->1, 1->2, then the tail. Two entries and a tail, because there
-     are two screens. 1.15 on the second: the crossing into screen two
-     is the only gesture left in the story, and it is worth a fraction
-     more travel than the one that opens it. */
-  var GAPS = [1, 1.15, TAIL];
+  var TAIL = 3.3;
+  /* 0->1, then the tail. One entry, because there is one gesture: the
+     loader hands over to the story and the story runs itself. */
+  var GAPS = [1, TAIL];
 
   /* The tail is longer than it was, because it now carries a step that
      used to be a step. The blackout used to lift on beat 5, one pull
@@ -528,18 +590,26 @@
      retuning the dwell doesn't silently retune the rest:
 
        0.00 - 0.62   the blackout lifts, the story text goes with it
-       0.62 - 1.72   the plate dissolves to the halftone
-       1.95          the files land on it
-       1.95 - 2.60   dwell - the desktop simply held there, hoverable
+       0.40 - 1.40   the name, on the footage, with its rule
+       1.30 - 2.35   the plate dissolves to the halftone
+       2.60          the files land on it
+       2.60 - 3.30   dwell - the desktop simply held there, hoverable
+
+     The name overlaps the lift on purpose. It has to arrive WITH the
+     picture rather than onto a picture that is already there: waiting
+     for the black to finish coming off made it read as a caption being
+     added to a photograph.
 
      Dwell is load-bearing and it is also the thing to keep short.
      Hovering a folder while the frame under it is still resolving is
      unusable, so there has to be somewhere to stand afterwards - but
      every notch of dwell is a scroll that changes nothing on screen. */
   var LIFT_END  = 0.62 / TAIL;
-  var DIS_START = 0.62 / TAIL;
-  var DISSOLVE_END = 1.72 / TAIL;
-  var DESK_AT      = 1.95 / TAIL;
+  var NAME_IN   = 0.40 / TAIL;   /* arrives as the black comes off, not after it */
+  var NAME_OUT  = 1.40 / TAIL;   /* leaves as the halftone starts */
+  var DIS_START = 1.30 / TAIL;
+  var DISSOLVE_END = 2.35 / TAIL;
+  var DESK_AT      = 2.60 / TAIL;
   var TOTAL = GAPS.reduce(function (a, b) { return a + b; }, 0);
   var STOPS = (function () {
     var pts = [0], run = 0;
@@ -646,35 +716,60 @@
       });
     }
 
+    /* The lamps. Same clock as the phrases, so retiming one beat can't
+       silently desynchronise the light from the line it is lighting.
+       On a settle or a jump they hard-set to the state the sequence
+       ends in — the copy does the same thing two blocks up. */
+    if (lampY) {
+      if (!isSeq) { tl.call(lampsOff, null, 0); }
+      else if (flat) { tl.call(lampsRest, null, at); }
+      else {
+        tl.call(lampsOff, null, 0);
+        LIGHTS.forEach(function (L) { tl.call(L.fn, null, at + L.at); });
+      }
+    }
+
     /* The strike through "man" and the word written under it. CSS owns
        both - they are two transitions on one attribute - so the timeline
        only has to say when. Late enough that the line has resolved
        first: the sentence is read, and then it is corrected. */
     if (cutPh) {
-      if (liveAt(cutPh, i)) tl.call(setCut, [true], flat ? at : at + CUT_AT);
-      else tl.call(setCut, [false], 0);
+      if (liveAt(cutPh, i) && !flat) {
+        tl.call(setCut, [true], at + CUT_AT);
+        tl.call(setCut, [false], at + ISLE_OFF + OUT_DUR);   /* off with the line it belongs to */
+      } else {
+        tl.call(setCut, [false], 0);
+      }
     }
 
-    /* The island. Same optical language as the type - it racks into
-       focus rather than fading up - because it is the first thing the
-       page shows and it should arrive the way the lines do. */
-    if (isle) {
-      var on = (i === 1);
-      var to = { opacity: on ? 1 : 0, ease: EASE_OUT, overwrite: 'auto',
-                 duration: jumped ? 0 : (on ? (reduced ? 0.35 : IN_DUR + 0.25) : OUT_DUR) };
-      if (!reduced) {
-        to.scale = on ? 1 : 1.04;
-        to.filter = on ? 'blur(0px)' : 'blur(12px)';
-      }
-      tl.to(isle, to, on ? at : 0);
+    /* The island. It used to own a step; now it owns the first two and
+       a half seconds of the only one, and it LEAVES inside that step so
+       the beam has an empty frame to search. Same optical language as
+       the type either way — it racks into focus rather than fading up,
+       because it is the first thing the page shows.
 
-      /* The plate is a five-second loop and it is only ever looked at
-         on screen one. Decoding it behind the reveal, or under the
-         desktop, is heat for nothing. Reduced motion never starts it,
-         which leaves the poster - the sequence survives as a still. */
+       On a settle or a jump it is simply not there: the resting state
+       of this step is the Venn, and the island is four beats before
+       that. Same rule the phrases with a data-off follow. */
+    if (isle) {
+      var showIsle = (i === SEQ_STEP) && !flat;
+      if (showIsle) {
+        tl.to(isle, isleTo(true), at);
+        tl.to(isle, isleTo(false), at + ISLE_OFF);
+      } else {
+        tl.to(isle, isleTo(false, jumped || flat), 0);
+      }
+
+      /* The plate is a five-second loop and it is only looked at for
+         the first beats of the run. Decoding it under the lights, the
+         reveal or the desktop is heat for nothing. Reduced motion never
+         starts it, which leaves the poster — the sequence survives as
+         a still. */
       if (isleClip && !reduced) {
-        if (on) { var pl = isleClip.play(); if (pl && pl.catch) pl.catch(function () {}); }
-        else if (!isleClip.paused) isleClip.pause();
+        if (showIsle) {
+          var pl = isleClip.play(); if (pl && pl.catch) pl.catch(function () {});
+          tl.call(function () { if (!isleClip.paused) isleClip.pause(); }, null, at + ISLE_OFF);
+        } else if (!isleClip.paused) { isleClip.pause(); }
       }
     }
 
@@ -725,7 +820,11 @@
     }
 
     if (!video) return;
-    var want = i >= LIT - 1;
+    /* LIT is the last step now, so LIT - 1 is the loader — and the
+       loader is a black frame that can sit there for a while. Clamped
+       so the decode still starts a step early wherever there is a step
+       to be early in, and never on the first frame of the site. */
+    var want = i >= Math.max(1, LIT - 1);
     if (want && video.paused) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
     else if (!want && !video.paused) video.pause();
   }
@@ -804,6 +903,15 @@
 
   var ditherLive = false;
 
+  var nameOn = false;
+  function setName(on) {
+    on = !!on;
+    if (on === nameOn || !hero) return;
+    nameOn = on;
+    if (on) hero.setAttribute('data-name', '');
+    else hero.removeAttribute('data-name');
+  }
+
   /* One attribute, and CSS owns everything that follows from it — the
      pop, the stagger, and whether the folders are clickable at all. */
   function setDesk(on) {
@@ -836,6 +944,24 @@
     if (blackout) blackout.style.opacity = 1 - lift;
     if (isle) isle.style.opacity = 0;
     if (isleClip && !isleClip.paused) isleClip.pause();
+
+    /* The lights leave with the type, on the same curve — three
+       coloured lamps still burning over a photograph is a much muddier
+       picture than the one this is meant to be.
+
+       SCRUBBED, not switched. Turning them off with lampsOff() here
+       looked identical and was wrong: the glide back into the story
+       passes through the top of the tail, so the switch fired a frame
+       after the step machine had just turned them on, and coming back
+       through the gate under reduced motion — where the sequence
+       hard-sets rather than playing — left the Venn with no lights in
+       it. A scrubbed opacity reverses cleanly because it is a function
+       of position rather than an event. */
+    if (lamps) lamps.style.opacity = 1 - clamp01(lift * 1.35);
+
+    /* The name is scrubbed, not stepped: two attribute writes, guarded
+       so this can run every scroll frame without thrashing. */
+    setName(tp >= NAME_IN && tp < NAME_OUT);
     if (stage) stage.style.opacity = 1 - clamp01(lift * 1.35);
 
     /* The nav arrives with the frame it sits on, not before it. Both
@@ -908,48 +1034,133 @@
      animating the scroll under someone who just pressed Tab is the kind
      of helpfulness that loses people. */
   /* ---------------------------------------------------------
-     The About window's transport
+     The About window
 
-     Five poses in one 265x72 strip, stepped by background-position. No
-     timer, no autoplay: it moves when you press a button and not
-     otherwise. An avatar cycling on its own would be the third piece of
-     ambient motion this page has refused, and it would be doing it right
-     next to six things you're meant to be reading.
+     Eighteen poses on a 6x3 sheet, stepped by background-position. No
+     timer, no autoplay: the sprite moves because you're reading, not on
+     its own — an avatar cycling by itself would be the third piece of
+     ambient motion this page has refused, and it would be doing it
+     right next to six things you're meant to be reading.
 
-     Wraps in both directions. A transport that greys out at the ends is
-     a transport telling you it's a list, and the poses aren't ordered.
+     Hover or focus on a fact MOVES the sprite; the caption above the
+     stage names the pose for anyone who lands on a fact without having
+     read the ones before it. A click PINS the pose, so moving the mouse
+     off the list doesn't reset it — the second click un-pins. Leaving
+     the whole list settles back to the pin if there is one, idle if
+     there isn't.
      --------------------------------------------------------- */
-  var CAPTIONS = [
-    'Listening to something loud',
-    'Cross-legged, shipping something',
-    'Reading, probably about type',
-    'Third coffee of the day',
-    'It finally built'
-  ];
+  var FRAMES = ['idle', 'walk-1', 'back', 'walk-2', 'walk-3', 'desk',
+    'mug', 'think', 'laptop-floor', 'walk-phone', 'backpack', 'headphones',
+    'clipboard', 'cheer', 'sit-ground', 'crouch', 'stance', 'cast'];
 
-  var sprite  = document.getElementById('about-sprite');
-  var caption = document.getElementById('about-caption');
-  var about   = document.getElementById('about');
-  var pose    = 0;
+  var about      = document.getElementById('about');
+  var aboutBar   = document.getElementById('about-bar');
+  var aboutSprite = document.getElementById('about-sprite');
+  var aboutCap   = document.getElementById('about-cap');
+  var aboutFacts = about ? [].slice.call(about.querySelectorAll('.about__fact')) : [];
+  var aboutMin   = document.getElementById('about-min');
+  var aboutClose = document.getElementById('about-close');
+  var aboutReopen = document.getElementById('about-reopen');
 
-  function setPose(i) {
-    pose = ((i % CAPTIONS.length) + CAPTIONS.length) % CAPTIONS.length;
-    if (sprite)  sprite.style.setProperty('--pose', pose);
-    if (caption) caption.textContent = CAPTIONS[pose];
-    if (!about) return;
-    var segs = about.querySelectorAll('.about__track i');
-    for (var n = 0; n < segs.length; n++) {
-      segs[n].classList.toggle('is-on', n === pose);
-    }
+  var poseName = 'idle', pinnedFact = null;
+
+  function setAboutPose(name, hop) {
+    if (name === poseName || !aboutSprite) return;
+    poseName = name;
+    var i = FRAMES.indexOf(name); if (i < 0) i = 0;
+    aboutSprite.style.setProperty('--about-col', i % 6);
+    aboutSprite.style.setProperty('--about-row', Math.floor(i / 6));
+    if (aboutCap) aboutCap.textContent = name.replace(/-/g, ' ');
+    if (hop === false || reduced) return;
+    aboutSprite.classList.remove('is-hop');
+    void aboutSprite.offsetWidth;   /* restart the animation */
+    aboutSprite.classList.add('is-hop');
   }
 
-  if (about) {
-    setPose(0);
-    about.addEventListener('click', function (e) {
-      var btn = e.target.closest ? e.target.closest('.about__btn') : null;
-      if (!btn) return;
-      setPose(pose + parseInt(btn.dataset.step, 10));
+  if (about && aboutSprite) {
+    setAboutPose('idle', false);
+
+    aboutFacts.forEach(function (f) {
+      f.addEventListener('mouseenter', function () { setAboutPose(f.dataset.pose); });
+      f.addEventListener('focus', function () { setAboutPose(f.dataset.pose); });
+      f.addEventListener('click', function () {
+        pinnedFact = (pinnedFact === f) ? null : f;
+        aboutFacts.forEach(function (o) { o.setAttribute('aria-current', o === pinnedFact ? 'true' : 'false'); });
+        setAboutPose(f.dataset.pose);
+      });
     });
+    var factsList = document.getElementById('about-facts');
+    if (factsList) {
+      factsList.addEventListener('mouseleave', function () {
+        setAboutPose(pinnedFact ? pinnedFact.dataset.pose : 'idle');
+      });
+    }
+
+    /* ---------------------------------------------------------
+       Close, and the way back in
+
+       Minimise and close do the same thing — there is nothing here for
+       them to do differently. The window fades and scales down, then
+       leaves the layout entirely so `.about__reopen` can take its cell;
+       reopening puts it back at rest, not mid-transition. */
+    function closeAbout() {
+      about.classList.add('is-closing');
+      setTimeout(function () {
+        about.hidden = true;
+        about.classList.remove('is-closing');
+        /* Back to its grid cell, not wherever it was dragged to — a
+           reopened window starting at rest is the same courtesy a
+           freshly-arrived one gets. */
+        about.style.position = about.style.left = about.style.top = '';
+        if (aboutReopen) {
+          aboutReopen.hidden = false;
+          requestAnimationFrame(function () { aboutReopen.classList.add('is-in'); });
+        }
+      }, reduced ? 0 : 200);
+    }
+    if (aboutMin) aboutMin.addEventListener('click', closeAbout);
+    if (aboutClose) aboutClose.addEventListener('click', closeAbout);
+    if (aboutReopen) {
+      aboutReopen.addEventListener('click', function () {
+        aboutReopen.classList.remove('is-in');
+        aboutReopen.hidden = true;
+        about.hidden = false;
+      });
+    }
+
+    /* ---------------------------------------------------------
+       Dragging the window by its bar
+
+       Clamped to the desktop it's sitting on (`.work`), not to the
+       viewport — the window can't be dragged out from under the folders
+       it shares the plate with. Skipped on touch/narrow layouts, where
+       `.about` isn't positioned for it (see the mobile rules in
+       main.css) and a drag would fight the page's own scroll. */
+    var aboutDrag = null;
+    if (aboutBar) {
+      aboutBar.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('button')) return;
+        if (window.matchMedia('(max-width: 820px)').matches) return;
+        var r = about.getBoundingClientRect(), d = work.getBoundingClientRect();
+        aboutDrag = { x: e.clientX, y: e.clientY, l: r.left - d.left, t: r.top - d.top,
+          dw: d.width, dh: d.height, ww: r.width, wh: r.height };
+        about.style.position = 'absolute';
+        about.style.left = aboutDrag.l + 'px';
+        about.style.top = aboutDrag.t + 'px';
+        aboutBar.classList.add('is-dragging');
+        aboutBar.setPointerCapture(e.pointerId);
+      });
+      aboutBar.addEventListener('pointermove', function (e) {
+        if (!aboutDrag) return;
+        var l = Math.max(0, Math.min(aboutDrag.dw - aboutDrag.ww, aboutDrag.l + e.clientX - aboutDrag.x));
+        var t = Math.max(0, Math.min(aboutDrag.dh - aboutDrag.wh, aboutDrag.t + e.clientY - aboutDrag.y));
+        about.style.left = l + 'px';
+        about.style.top = t + 'px';
+      });
+      ['pointerup', 'pointercancel'].forEach(function (ev) {
+        aboutBar.addEventListener(ev, function () { aboutDrag = null; aboutBar.classList.remove('is-dragging'); });
+      });
+    }
   }
 
   function scrollForTail(f) {
@@ -963,6 +1174,83 @@
       window.scrollTo(0, Math.round(scrollForTail(DESK_AT)) + 2);
       ScrollTrigger.update();
     });
+  }
+
+  /* ---------------------------------------------------------
+     The way back
+
+     Above the tail the page scrolls freely; below it the story is
+     gated. Crossing that line upward drops you into a five-second
+     animation you have already watched, and on a trackpad it is very
+     easy to do without meaning to. So the crossing asks first.
+
+     The first upward gesture at the boundary is spent on the question
+     and nothing moves. The second one goes — and going resets
+     seqPlayed, because the whole point of coming back is to watch it,
+     and the play-once rule would otherwise hand you its last frame.
+
+     Disarms on any downward input and on its own after GATE_HOLD, so
+     nobody returns to the tab much later and falls straight through a
+     question they have forgotten answering.
+     --------------------------------------------------------- */
+  var GATE_HOLD  = 7000;
+  /* The momentum of the gesture that armed it. Without this, one firm
+     flick upward arms the gate on its first event and walks straight
+     through it on its second — which is precisely the accident the gate
+     exists to prevent. Same problem, same shape of fix, as SKIP_GRACE. */
+  var GATE_GRACE = 650;
+  var gateArmed  = false;
+  var gateArmedAt = 0;
+  var gateTimer  = null;
+
+  function armGate() {
+    gateArmed = true;
+    gateArmedAt = performance.now();
+    if (hero) hero.setAttribute('data-gate', '');
+    clearTimeout(gateTimer);
+    gateTimer = setTimeout(disarmGate, GATE_HOLD);
+  }
+  function disarmGate() {
+    if (!gateArmed) return;
+    gateArmed = false;
+    clearTimeout(gateTimer);
+    if (hero) hero.removeAttribute('data-gate');
+  }
+
+  /* True when this gesture was spent on the question rather than on
+     moving. Called first by every input handler. */
+  /* The tail is not a step, and going UP through it should be as free
+     as going down through it was. It never was: with active pinned at
+     LAST, an upward gesture anywhere in the tail resolved to `next =
+     LAST - 1`, which is in range, so the step machine grabbed it and
+     glided the page from the desktop back to screen one in one jump.
+     Nothing above the boundary should be gated in either direction. */
+  function freeUp(dir) {
+    if (dir >= 0 || active < LAST) return false;
+    var y = window.scrollY || window.pageYOffset;
+    return y > scrollForBeat(LAST) + 6;
+  }
+
+  function gateHolds(dir, mag) {
+    if (dir >= 0) { disarmGate(); return false; }
+    if (!inPin() || active < LAST) { disarmGate(); return false; }
+
+    /* The zone has to be wider than the boundary itself. Scrolling is
+       native through the tail, so a single wheel event can start above
+       the line and finish below it — check the position AFTER this
+       gesture would land, not the one it started from. Capped at most
+       of a screen so ordinary scrolling around the desktop is never
+       inside it. */
+    var reach = Math.min(Math.max(160, (mag || 0) * 2), window.innerHeight * 0.9);
+    var y = window.scrollY || window.pageYOffset;
+    if (y > scrollForBeat(LAST) + reach) return false;   /* still well inside the tail */
+
+    if (!gateArmed) { armGate(); return true; }
+    if (performance.now() - gateArmedAt < GATE_GRACE) return true;   /* same gesture, still arriving */
+
+    disarmGate();
+    replaySeq();   /* the point of coming back is to watch it, not to be handed its last frame */
+    return true;
   }
 
   /* ---------------------------------------------------------
@@ -1038,6 +1326,28 @@
      gesture that already advanced you.
 
      A line now holds until you deliberately scroll again. */
+  /* Coming back through the gate has to REPLAY, and the step machine
+     will not re-enter a step it is already on. So the run is torn down
+     to its first frame — every phrase hidden, the lamps out, the cut
+     undrawn — and `active` is invalidated so applyStep rebuilds rather
+     than early-returning. Anything short of this leaves the last line
+     of the Venn on screen while the island fades up underneath it. */
+  function replaySeq() {
+    phrases.forEach(function (b) {
+      if (b._in !== SEQ_STEP) return;
+      gsap.set(b, { opacity: 0, visibility: 'hidden' });
+      b._lines.forEach(function (l) { busy(l, false); });
+      b._shown = false;
+      b._faded = false;
+    });
+    lampsOff();
+    setCut(false);
+    if (isle) gsap.set(isle, { opacity: 0 });
+    seqPlayed = false;
+    active = -1;
+    goToBeat(SEQ_STEP);
+  }
+
   function step(dir) {
     var next = active + dir;
     if (next < 0 || next > LAST) return false;   // let the page scroll out
@@ -1077,6 +1387,8 @@
     if (!inPin()) return;
     var dir = e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0);
     if (!dir) return;
+    if (gateHolds(dir, Math.abs(e.deltaY))) { e.preventDefault(); lastInput = performance.now(); return; }
+    if (freeUp(dir)) { prevDelta = e.deltaY; return; }   // hand the tail back to the page
     /* Checked BEFORE the hand-back below. The spoken step is the last
        one, so `next > LAST` is true throughout it - and without this
        the page would happily scroll on into the reveal while screen two
@@ -1102,6 +1414,13 @@
     if (!inPin() || touchY === null) return;
     var dy = touchY - e.touches[0].clientY;
     var dir = dy > 0 ? 1 : -1;
+    if (Math.abs(dy) >= 45 && gateHolds(dir, Math.abs(dy) * 3)) {
+      e.preventDefault();
+      touchY = e.touches[0].clientY;
+      lastInput = performance.now();
+      return;
+    }
+    if (freeUp(dir)) return;
     if (seqLive()) {
       e.preventDefault();
       if (Math.abs(dy) < 45) return;
@@ -1131,6 +1450,8 @@
     if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
     var dir = KEYS[e.key];
     if (!dir) return;
+    if (gateHolds(dir, window.innerHeight * 0.5)) { e.preventDefault(); lastInput = performance.now(); return; }
+    if (freeUp(dir)) return;
     if (seqLive()) {
       e.preventDefault();
       lastInput = performance.now();

@@ -161,6 +161,22 @@
       </video>
     </div>
 
+    <!-- ============ THE LIGHTS ============
+         Screen two's whole set piece. Three lamps, screen-blended, so
+         where they overlap they ADD rather than stack — which is the
+         argument the frame is making and the reason these cannot be
+         three flat circles with the blend faked into the fill. Screen
+         over #000 is the identity, so the frame stays black everywhere
+         they aren't and the blackout underneath still does its job.
+
+         Decorative, every one of them: the sentence they light is real
+         text a few elements down. -->
+    <div class="hero__lamps" aria-hidden="true">
+      <i class="hero__lamp hero__lamp--y" id="lamp-y"></i>
+      <i class="hero__lamp hero__lamp--a" id="lamp-a"></i>
+      <i class="hero__lamp hero__lamp--r" id="lamp-r"></i>
+    </div>
+
     <div class="hero__grain"></div>
   </div>
 
@@ -172,16 +188,30 @@
        data-at  = seconds into that step before it arrives
        data-off = seconds into that step when it leaves again
 
-       TWO SCROLLS, NOT SIX. One gesture used to buy one line, which
-       made the story six gestures long and asked the reader to keep
-       pulling a lever to be told the rest of a sentence. Screen one is
-       the claim; screen two says the whole of the rest of it on its
-       own, and the only thing a gesture buys now is the crossing
-       between them.
+       ONE SCROLL. Not six, and no longer two: every phrase below is
+       data-in="1", and everything that happens after the first gesture
+       happens on a timer. The reader is asked for one thing, once, and
+       then the page talks.
 
-       Which is why data-at exists. Inside a step the beats are TIMED,
+       Which is what data-at is for. Inside a step the beats are TIMED,
        not scrolled — the page speaks a paragraph instead of handing
-       out one word per pull. See SEQ_STEP in hero.js. -->
+       out one word per pull. See SEQ_STEP in hero.js.
+
+       The whole run, in seconds from the landing:
+
+         0.00  No man is an island…
+         0.62  the two strokes are drawn through "man"
+         0.92  Designer is written under them
+         2.40  the island and the line leave
+         2.85  a beam comes on and starts searching
+         5.00  it settles — found
+         5.25  all by their Self,
+         5.95  two more lights, from the left and the right
+         7.40  lets work together.
+
+       Eight seconds is a long time to hold somebody, so it is held
+       SKIPPABLE: a deliberate scroll after the first second runs the
+       sequence to its end rather than being swallowed. See seqSkip. -->
   <div class="hero__stage">
 
     <!-- ============ SCREEN ONE ============
@@ -195,46 +225,48 @@
          screen reader gets "No man Designer is an island", which is
          what the frame says. The strike is drawn rather than
          text-decoration so it can be animated; see .cut in main.css. -->
-    <div class="phrase pos--isle" data-in="1" data-out="2" data-cut>
+    <div class="phrase pos--isle" data-in="1" data-at="0" data-off="2.40" data-cut>
       <span class="line line--body">No <span class="cut"><del>man</del><ins class="hand">Designer</ins></span> is an island&#8230;</span>
     </div>
 
-    <!-- ============ SCREEN TWO ============
-         Four beats on a timer. The first two are the diagonal — one
-         thought held apart across the frame — and they CLEAR before
-         the answer arrives, so the payoff lands on an empty screen
-         rather than under the question.
+    <!-- ============ THE LIGHTS ============
+         The frame empties, a beam comes on and hunts for something,
+         finds the sentence, and then two more lights arrive and the
+         three of them overlap into the answer.
 
-           0.00  all by their self,
-           0.65  one must seek
-           1.45  both leave
-           1.95  a piece of the / Continent
-           3.15  Let's work together?
+         The beam has to be given time to look. Under about two seconds
+         it reads as a light switching on in the middle of the frame,
+         which is a different and much worse idea — the searching is the
+         part that earns the Venn, and the reason the island is cleared
+         out of the way first rather than dissolving under it.
 
-         The gap before the last line is deliberate and it is the one
-         number here worth protecting: the sentence has finished, and
-         the ask is a separate thing said after it. -->
-    <div class="phrase pos--tl" data-in="2" data-at="0" data-off="1.45">
-      <span class="line line--body">all by their self,</span>
+         The lamp cues and the island's exit live in hero.js (CUES)
+         because they are not phrases; the three that are phrases carry
+         their own offsets here. -->
+    <div class="phrase pos--lit" data-in="1" data-at="5.25" data-off="7.15">
+      <span class="line line--body line--lit">all by their <em>Self</em>,</span>
     </div>
 
-    <div class="phrase pos--br" data-in="2" data-at="0.65" data-off="1.45">
-      <span class="line line--body">one must seek</span>
+    <div class="phrase pos--lit" data-in="1" data-at="7.40">
+      <span class="line line--body line--lit line--tog">lets work <b>together</b>.</span>
     </div>
 
-    <!-- Two lines in one phrase, so the stagger hands you the set-up and
-         then the word 70ms later. --split widens the gap between them:
-         at the default 1.4vh "a piece of the" sits on top of Continent
-         like a kicker, and it's meant to be a beat before it. -->
-    <div class="phrase pos--mid phrase--split" data-in="2" data-at="1.95">
-      <span class="line line--body">a piece of the</span>
-      <span class="line line--hero">Continent</span>
-    </div>
+  </div>
 
-    <div class="phrase pos--ask" data-in="2" data-at="3.15">
-      <span class="line line--hand">Let&#8217;s work together?</span>
-    </div>
+  <!-- ============ THE NAME ============
+       NOT A PHRASE, and not a step. It lives in the pinned tail, where
+       the blackout comes off and the real footage arrives, and it is
+       scrubbed by the scroll rather than fired by a gesture — see
+       NAME_IN / NAME_OUT in hero.js. Making it a `.phrase` would have
+       given it a data-in, which is what LAST is derived from, which
+       would have added a third dot to a two-dot ledger and a third
+       gated scroll to a page whose whole point is that it has two.
 
+       The rule under it is the only saturated colour on the site. It
+       draws out from the centre after the name has landed. -->
+  <div class="hero__name" id="hero-name">
+    <span class="hero__name-line">Neel Parikh</span>
+    <span class="hero__wire" aria-hidden="true"></span>
   </div>
 
   <!-- ============ THE DESKTOP ============
@@ -357,11 +389,13 @@
          made them on the right — which is the argument the whole page is
          making, so it should be visible in one frame rather than two.
 
-         Shaped as a media player on purpose. A player is a window whose
-         entire job is to tell you what someone is doing right now, which
-         is what an About section is for and almost never says. The
-         transport is real: each press steps the sprite and the caption
-         together. Nothing here is a button that does nothing.
+         Six facts instead of a media-player transport. Each one is a
+         real sentence and a pose at once: hovering or focusing it moves
+         the sprite through eighteen frames, so reading the list is what
+         drives the animation rather than a separate prev/next control
+         next to it. A click pins the pose against the pointer leaving.
+         Draggable by its bar, closeable, reopenable — see the pointer
+         handlers and closeAbout/reopen in hero.js.
 
          Bitmap treatment, site palette. Hard 2px borders, no radii, one
          solid unblurred drop shadow, monospace chrome. NOT a pixel
@@ -370,49 +404,49 @@
          actually uses and the scroll cue's digit grid is already set in
          it, so the register was on the page before this window was. -->
     <aside class="about" id="about" aria-label="About Neel">
-      <div class="about__bar">
-        <span class="about__title">about.exe</span>
-        <span class="about__controls" aria-hidden="true">
-          <i></i><i></i><i class="is-close"></i>
+      <div class="about__bar" id="about-bar">
+        <span class="about__title">about-me</span>
+        <span class="about__btns">
+          <button class="about__ctrl about__ctrl--min" type="button" id="about-min" aria-label="Minimise"></button>
+          <span class="about__ctrl about__ctrl--dot" aria-hidden="true"></span>
+          <button class="about__ctrl about__ctrl--close" type="button" id="about-close" aria-label="Close"></button>
         </span>
       </div>
 
       <div class="about__body">
-        <!-- The sprite is decorative: the caption below carries every bit
-             of meaning it has, and describing five near-identical poses
-             to a screen reader is noise. -->
-        <div class="about__screen">
+        <!-- The sprite is decorative: each fact's own text carries the
+             meaning, and describing eighteen near-identical poses to a
+             screen reader is noise. -->
+        <div class="about__stage">
+          <span class="about__cap" id="about-cap" aria-hidden="true">idle</span>
           <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
+          <span class="about__shadow" aria-hidden="true"></span>
+          <span class="about__floor" aria-hidden="true"></span>
         </div>
 
-        <p class="about__name">Neel Parikh</p>
-        <p class="about__role">Product designer · Sydney</p>
-        <!-- SWAP ME. The one line here that should be yours. It's the
-             page's own joke rather than a claim about the work, which is
-             why it's safe as a default. -->
-        <p class="about__bio">A team of one, looking for a bigger boat.</p>
+        <div class="about__who">
+          <p class="about__name">Neel Parikh <span class="about__role-word">— Designer</span></p>
+          <!-- SWAP ME. The one paragraph here that should be yours. -->
+          <p class="about__bio">I make things that explain themselves. Mostly interfaces, occasionally a maze. This site is hand-written — no framework, no page builder, no template underneath.</p>
 
-        <div class="about__now">
-          <span class="about__label">Now</span>
-          <p class="about__caption" id="about-caption" aria-live="polite">Listening to something loud</p>
-        </div>
-
-        <div class="about__track" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i>
-        </div>
-
-        <div class="about__transport">
-          <button class="about__btn" type="button" data-step="-1" aria-controls="about-caption">
-            <span aria-hidden="true">&#9664;&#9664;</span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="about__btn" type="button" data-step="1" aria-controls="about-caption">
-            <span aria-hidden="true">&#9654;&#9654;</span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          <!-- Hover or focus moves the sprite; a click PINS the pose so
+               leaving the list with the mouse doesn't reset it. Same pin
+               toggles off on a second click. See setPose in hero.js. -->
+          <ul class="about__facts" id="about-facts">
+            <li><button class="about__fact" type="button" data-pose="think"><span class="about__k">01</span><span>Starts with the question, not the layout.</span></button></li>
+            <li><button class="about__fact" type="button" data-pose="desk"><span class="about__k">02</span><span>Designs it, then writes the HTML, CSS and JS myself.</span></button></li>
+            <li><button class="about__fact" type="button" data-pose="laptop-floor"><span class="about__k">03</span><span>Four case studies live in here — Futee, EMF, CSEDS, Into Yesterday.</span></button></li>
+            <li><button class="about__fact" type="button" data-pose="headphones"><span class="about__k">04</span><span>There is always something playing.</span></button></li>
+            <li><button class="about__fact" type="button" data-pose="mug"><span class="about__k">05</span><span>The mug is never empty.</span></button></li>
+            <li><button class="about__fact" type="button" data-pose="cheer"><span class="about__k">06</span><span>Let&#8217;s work together?</span></button></li>
+          </ul>
         </div>
       </div>
     </aside>
+
+    <!-- Stands in for the window while it's closed, in the same corner
+         of the desk. See close()/reopen in hero.js. -->
+    <button class="about__reopen" type="button" id="about-reopen" hidden>Open about-me</button>
   </main>
 
   <!-- Scroll cue. The tumbling digit grid is decorative, not a loading
@@ -431,6 +465,25 @@
     <svg width="10" height="26" viewBox="0 0 10 26" fill="none" aria-hidden="true">
       <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
     </svg>
+  </div>
+
+  <!-- ============ THE WAY BACK ============
+       Scrolling up out of the desktop lands you back in a five-second
+       animation you have already watched, and it is very easy to do by
+       accident on a trackpad. So the first attempt up only asks; the
+       second one goes, and going resets the sequence so it actually
+       plays rather than settling to its last frame.
+
+       A question rather than a dialog: no buttons, nothing to dismiss,
+       and the answer is the same gesture you already made. It disarms
+       on any downward input and on its own after a few seconds, so
+       nobody comes back to the tab an hour later and falls through it.
+
+       aria-live so the question is announced when it appears; the frame
+       behind it is inert while it is up. -->
+  <div class="hero__gate" id="gate" aria-live="polite">
+    <p class="hero__gate-q">See the island again?</p>
+    <p class="hero__gate-h">Scroll up once more</p>
   </div>
 
   <!-- The step ledger. One dot per line, filled as you go. Replaced a
