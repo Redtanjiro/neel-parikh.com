@@ -102,6 +102,10 @@
   --lamp-a: 242, 162, 104;
   --lamp-r: 224, 143, 166;
 
+  /* The only saturated colour on the site, and it appears exactly once:
+     the rule under the name. Everything else here is sampled off the
+     footage; this is a decision. */
+  --wire: #3F8AE2;
   --font-work: 'Sprat', Georgia, 'Times New Roman', serif;
   --font-ui: ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -301,18 +305,33 @@ img, video { display: block; max-width: 100%; }
    the frame reads as ambience, which is the opposite of searching.
    The holds are what sell it — take them out and the same path is just
    a slow float. */
+/* IT LOOPS, and it begins and ends at the rest pose. Both matter and
+   for the same reason: the scroll decides how long you watch the beam,
+   so it has to survive being watched for an arbitrary length of time
+   without a seam, and it has to be handed off to the settled state from
+   wherever it happens to be. A run that ended somewhere else would jump
+   at the loop point and jump again at the handoff.
+
+   3.4s rather than 2.15s because a loop is read differently from a
+   one-shot: the same darts at the same speed feel frantic when they
+   come round again, and the holds are what make it read as looking. */
 @keyframes hero-hunt {
-  0%   { transform: translate(-27vw, -15svh) scale(.60); }
-  13%  { transform: translate(-27vw, -15svh) scale(.60); }
-  25%  { transform: translate( 19vw,  17svh) scale(.70); }
-  36%  { transform: translate( 19vw,  17svh) scale(.70); }
-  48%  { transform: translate( 29vw, -19svh) scale(.56); }
-  57%  { transform: translate( 29vw, -19svh) scale(.56); }
-  70%  { transform: translate(-15vw,  11svh) scale(.66); }
-  79%  { transform: translate(-15vw,  11svh) scale(.66); }
-  100% { transform: translate(0, 0) scale(1); }
+  0%   { transform: translate(0, 0) scale(.62); }
+  8%   { transform: translate(0, 0) scale(.62); }
+  22%  { transform: translate(-26vw, -14svh) scale(.58); }
+  32%  { transform: translate(-26vw, -14svh) scale(.58); }
+  46%  { transform: translate( 19vw,  16svh) scale(.68); }
+  56%  { transform: translate( 19vw,  16svh) scale(.68); }
+  70%  { transform: translate( 28vw, -18svh) scale(.55); }
+  78%  { transform: translate( 28vw, -18svh) scale(.55); }
+  92%  { transform: translate(0, 0) scale(.62); }
+  100% { transform: translate(0, 0) scale(.62); }
 }
-.hero__lamp--y[data-hunt] { opacity: 1; animation: hero-hunt 2.15s var(--ease-move) forwards; }
+.hero__lamp--y[data-hunt] { opacity: 1; animation: hero-hunt 3.4s var(--ease-move) infinite; }
+/* The pose the loop starts and ends on. hero.js parks the beam here for
+   one transition before handing it back to the animation, so the
+   handoff has nothing to jump across. */
+.hero__lamp--y[data-rest] { opacity: 1; transform: translate(0, 0) scale(.62); }
 .hero__lamp--y[data-hold] { opacity: 1; transform: translate(0, 0) scale(1); }
 
 /* The other two come in from off-frame and settle into a shallow
@@ -684,46 +703,20 @@ img, video { display: block; max-width: 100%; }
 }
 .hero[data-name] .hero__name-line { transform: none; }
 
-/* ---------- the way back ----------
-   The frame steps back to ask. A veil on its own left the question
-   sitting on top of the wordmark with neither of them readable;
-   blurring what is behind it is what turns it into a question ABOUT the
-   page rather than a caption ON it. */
-.hero__gate {
+/* Draws out from the centre once the name has landed. Full bleed on
+   purpose — a rule that stops where the type stops is an underline, and
+   this is a horizon. */
+.hero__wire {
   position: absolute;
-  inset: 0;
-  z-index: 12;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 0, 0, .80);
-  -webkit-backdrop-filter: blur(11px) saturate(.5);
-  backdrop-filter: blur(11px) saturate(.5);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 320ms var(--ease-out), visibility 0s linear .32s;
+  left: -6vw; right: -6vw;
+  bottom: -.06em;
+  height: 3px;
+  background: var(--wire);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 760ms var(--ease-move) 240ms;
 }
-.hero[data-gate] .hero__gate { opacity: 1; visibility: visible; transition-delay: 0s, 0s; }
-.hero__gate-q {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.6vw, 2.4rem);
-  font-weight: 500;
-  color: var(--ink);
-  transform: translateY(.5rem);
-  transition: transform 420ms var(--ease-out);
-}
-.hero__gate-h {
-  margin-top: .9rem;
-  font-family: var(--font-ui);
-  font-size: var(--type-label);
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-  transform: translateY(.5rem);
-  transition: transform 420ms var(--ease-out) 60ms;
-}
-.hero[data-gate] .hero__gate-q,
-.hero[data-gate] .hero__gate-h { transform: none; }
+.hero[data-name] .hero__wire { transform: scaleX(1); }
 
 /* ---------- chrome (born at beat 5, then persistent) ----------
    Fixed, and a sibling of .hero rather than a child of it. As an
@@ -740,9 +733,33 @@ img, video { display: block; max-width: 100%; }
   gap: 1rem;
   padding: 1.6rem 6vw;
   text-shadow: var(--halo);
-  opacity: 0;
-  visibility: hidden;
 }
+
+/* TWO STATES, and the default one is not "gone".
+
+   The bar is always present because the NAV is always present: it is
+   the reader's only visible evidence, during the loader and the whole
+   story, that there is a portfolio behind them. Measured before this
+   changed: zero visible ways out for the first eleven seconds.
+
+   What waits for the picture is the furniture — the mark and the
+   reading rule, which have nothing to say over a black frame — and the
+   backing gradient, which exists to protect type from a near-white
+   halftone that is not on screen yet. hero.js sets data-full when the
+   black comes off. */
+.chrome__mark,
+.chrome__rule,
+.chrome::before { opacity: 0; transition: opacity 300ms var(--ease-ui); }
+.chrome[data-full] .chrome__mark,
+.chrome[data-full] .chrome__rule,
+.chrome[data-full]::before { opacity: 1; }
+
+/* Quiet while the story runs, full strength once there is a page to
+   navigate. It is an exit, not an invitation. */
+.chrome__nav a { opacity: .62; transition: opacity 300ms var(--ease-ui), color 200ms linear; }
+.chrome[data-full] .chrome__nav a { opacity: 1; }
+.chrome__nav a:hover,
+.chrome__nav a:focus-visible { opacity: 1; }
 /* Guarantees legibility over whatever ends up under it — and what ends
    up under it got much brighter. The chrome is born on the last step of
    the hero, and one gesture later the frame dissolves into the halftone,
@@ -817,45 +834,9 @@ img, video { display: block; max-width: 100%; }
    colour is the whole transition — on a page arguing that one thing
    moves at a time, the progress indicator is the last place to spend a
    second movement. */
-.hero__steps {
-  position: absolute;
-  top: 50%;
-  right: 4vw;
-  z-index: 4;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(1.1rem, 3svh, 2.1rem);
-  /* A statement, not a control. Clicking a dot does nothing, so it
-     never takes the pointer and never suggests it might. */
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 260ms var(--ease-ui);
-}
-.hero__steps[data-show] { opacity: 1; }
+/* The step ledger is gone with the gated scroll — the scrollbar
+   answers "how long is this" now, and answers it continuously. */
 
-.hero__steps i {
-  display: block;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  /* .3 on black is quiet enough to ignore and present enough to count.
-     .22 was right against the black setup frames and vanished on the lit
-     island at step 5, which is the one frame where the ledger has real
-     competition. The shadow is doing the same job — these end up over
-     near-white halftone, not over nothing. */
-  background: rgba(251, 247, 240, .3);
-  filter: drop-shadow(0 1px 5px rgba(16, 19, 14, .95));
-  transition: background-color 200ms var(--ease-ui),
-              transform 200ms var(--ease-ui);
-}
-/* Filled and fractionally larger. Size alone would be too quiet and
-   colour alone reads flat at 7px; together the active dot is findable
-   without a glance costing anything. */
-.hero__steps i.is-on {
-  background: var(--ink);
-  transform: scale(1.5);
-}
 
 /* ---------- manual play (reduced motion) ---------- */
 /* ---------- scroll cue + matrix ----------
@@ -891,6 +872,32 @@ img, video { display: block; max-width: 100%; }
 }
 .hero__cue[hidden] { display: none; }   /* keeps the animation off the compositor until it's wanted */
 .hero__cue[data-show] { opacity: 1; }
+
+/* COMPACT. The digit grid was for the empty frame — it made a black
+   screen read as alive. Over lit type it is clutter, so it goes on the
+   first scroll and what survives is a word and an arrow. */
+.hero__cue[data-compact] { gap: .45rem; }
+.hero__cue[data-compact] .matrix { display: none; }
+
+/* READY and WAIT — the whole reason the cue outlives the first scroll.
+
+   Each beat of the story holds the scroll while it lands. A page that
+   refuses to move and does not say so is broken; a page that refuses
+   and says why is paced. So the arrow breathes while the page will
+   take another gesture and stops dead while it will not, and the
+   whole cue drops to a quarter strength so the difference is legible
+   at the edge of vision rather than needing to be looked at. */
+.hero__cue svg {
+  animation: cue-breathe 1.7s var(--ease-move) infinite;
+  transition: opacity 220ms linear;
+}
+.hero__cue[data-show][data-wait] { opacity: .26; }
+.hero__cue[data-wait] svg { animation: none; opacity: .5; }
+
+@keyframes cue-breathe {
+  0%, 100% { transform: translateY(0);   opacity: .5; }
+  50%      { transform: translateY(4px); opacity: 1;  }
+}
 
 .matrix {
   width: 72px;
@@ -982,7 +989,14 @@ img, video { display: block; max-width: 100%; }
   .hero__lamp--a[data-on] { transform: translate(-20vw,  7svh) scale(.96); }
   .hero__lamp--r[data-on] { transform: translate( 20vw, -5svh) scale(.92); }
   .hero__lamp { transition: opacity 400ms linear; }
-  .hero__name-line, .hero__gate-q, .hero__gate-h { transform: none !important; }
+  .hero__name-line { transform: none !important; }
+  /* The cue keeps both states — they carry information, and a reader
+     who has asked for less motion still needs to know whether the
+     page will move. It just stops travelling to say so. */
+  .hero__cue svg { animation: none; opacity: 1; transform: none; }
+  .hero__cue[data-wait] svg { opacity: .5; }
+  .hero__wire { transition: opacity 300ms linear 200ms; transform: scaleX(1); opacity: 0; }
+  .hero[data-name] .hero__wire { opacity: 1; }
 }
 
 /* =========================================================
@@ -1103,15 +1117,10 @@ img, video { display: block; max-width: 100%; }
    No pixelated rendering — the source art is a dithered 512px bitmap
    and nearest-neighbour downscaling to 100px destroys the pattern. */
 .folder__img {
-  display: block;
   position: relative;
   z-index: 2;
   width: 100%; height: auto;
-  /* The four case-study icons are flat vector pictograms with their own
-     dark keyline baked in (see the sprite defs), so they don't need the
-     soft ambient shadow the raster folder art wore to read as sitting
-     above the fan. A hard 1px echo plus a little ambient lift is enough. */
-  filter: drop-shadow(0 3px 0 rgba(0,0,0,.45)) drop-shadow(0 6px 14px rgba(0,0,0,.35));
+  filter: drop-shadow(0 6px 14px rgba(16,19,14,.55));
   transition: transform 200ms var(--ease-ui);
 }
 
@@ -1250,14 +1259,13 @@ img, video { display: block; max-width: 100%; }
    scheme on a page whose every value was sampled from one photograph. */
 .about {
   --bd: 2px;
-  width: clamp(300px, 34vw, 460px);
+  width: clamp(248px, 25vw, 330px);
   border: var(--bd) solid var(--ink);
   /* Solid, unblurred, offset. A blurred shadow is a lighting model and
      these machines didn't have one — they had a second rectangle. */
   box-shadow: 5px 5px 0 rgba(16, 19, 14, .55);
   background: var(--deep);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  position: relative;
 
   /* Hidden until the desktop exists, exactly like the folders.
      Without this it is an opaque window sitting on the black opening
@@ -1278,17 +1286,8 @@ img, video { display: block; max-width: 100%; }
     transform 380ms var(--ease-pop) 300ms;
 }
 .hero[data-desk] .about { opacity: 1; transform: none; }
-/* Close/reopen, not close/gone. A shorter, un-delayed pair — this is a
-   direct response to a click, not an arrival on the desktop. */
-.about.is-closing {
-  opacity: 0;
-  transform: translateY(8px) scale(.97);
-  transition: opacity 200ms var(--ease-ui), transform 200ms var(--ease-ui);
-}
 
-/* Inverted title bar, the way every one of these looked. Draggable —
-   see the pointer handlers in hero.js — so it's furniture you can move,
-   not a picture of furniture. */
+/* Inverted title bar, the way every one of these looked. */
 .about__bar {
   display: flex;
   align-items: center;
@@ -1298,208 +1297,143 @@ img, video { display: block; max-width: 100%; }
   background: var(--ink);
   color: var(--void);
   border-bottom: var(--bd) solid var(--ink);
-  cursor: grab;
-  touch-action: none;
 }
-.about__bar.is-dragging { cursor: grabbing; }
 .about__title {
   font-size: .6875rem;
   letter-spacing: .04em;
 }
-
-/* Three hollow squares, the way there always were — but two of them do
-   something now. The middle one still doesn't: furniture that responds
-   to the mouse but does nothing is worse than furniture that doesn't,
-   and there is nothing here for a maximise to do. */
-.about__btns { display: flex; gap: 4px; }
-.about__ctrl {
-  position: relative;
-  width: 13px; height: 13px;
+/* Three hollow squares. They are not buttons and never pretend to be —
+   no hover, no cursor change, nothing to click. Furniture that responds
+   to the mouse but does nothing is worse than furniture that doesn't. */
+.about__controls { display: flex; gap: 4px; }
+.about__controls i {
+  width: 9px; height: 9px;
   border: 2px solid var(--void);
-  background: none;
-  padding: 0;
 }
-.about__ctrl--dot { cursor: default; }
-.about__ctrl--min, .about__ctrl--close { cursor: pointer; }
-.about__ctrl--min::before {
-  content: ''; position: absolute; left: 1px; right: 1px; top: 50%; height: 2px;
-  background: var(--void); transform: translateY(-50%);
-}
-.about__ctrl--close::before, .about__ctrl--close::after {
-  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px;
+.about__controls .is-close { background: var(--void); }
+
+.about__body { padding: 12px; }
+
+/* The sprite panel. Sunken by inverting the border weight — light on
+   two sides, dark on two — which is the entire visual vocabulary those
+   interfaces had for depth. */
+.about__screen {
+  border: var(--bd) solid var(--ink);
   background: var(--void);
-}
-.about__ctrl--close::before { transform: translateY(-50%) rotate(45deg); }
-.about__ctrl--close::after  { transform: translateY(-50%) rotate(-45deg); }
-@media (hover: hover) and (pointer: fine) {
-  .about__ctrl--min:hover, .about__ctrl--close:hover { background: rgba(16, 19, 14, .28); }
-}
-
-.about__body {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: clamp(14px, 2.4vw, 26px);
-  padding: 14px;
-  align-items: start;
-}
-
-/* ---------- the sprite stage ---------- */
-.about__stage {
-  position: relative;
-  width: var(--about-sw, 132px);
-  height: calc(var(--about-sh, 165px) + 26px);
+  padding: 10px 8px 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
 }
-.about__cap {
-  position: absolute;
-  top: -2px; left: 0; right: 0;
-  text-align: center;
-  font-size: .5625rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .4);
-}
-/* 6x3 grid, 256x320 cells, stepped by background-position from JS;
-   --about-col / --about-row are the frame's place in it. Every pose is
-   bottom-aligned in its cell (see media/icons — sorry, media/sprites —
-   README), so switching poses never shifts his feet.
 
-   image-rendering: pixelated is the whole point — the sheet is authored
-   larger than it's shown here, so the browser has to be told to keep
-   the pixels square instead of smoothing them into a blur. */
+/* 265 x 72 strip, five 53px cells. Stepped by background-position from
+   JS; --pose is the frame index.
+
+   image-rendering: pixelated is the whole point — the sprite is authored
+   at 72px tall and shown at 216, so the browser must be told to keep the
+   pixels square instead of smoothing them into the painting this was
+   before it was quantised. */
 .about__sprite {
-  width: var(--about-sw, 132px);
-  height: var(--about-sh, 165px);
-  background-image: url('../media/neel-sprites.webp');
+  width: 159px;                       /* 53 x 3 */
+  height: 216px;                      /* 72 x 3 */
+  background-image: url('../media/neel-sprite.png');
+  background-size: 795px 216px;       /* 265 x 3 */
+  background-position: calc(var(--pose, 0) * -159px) 0;
   background-repeat: no-repeat;
-  background-size: calc(var(--about-sw, 132px) * 6) calc(var(--about-sh, 165px) * 3);
-  background-position: calc(var(--about-col, 0) * var(--about-sw, 132px) * -1) calc(var(--about-row, 0) * var(--about-sh, 165px) * -1);
   image-rendering: pixelated;
-  animation: about-bob 2.6s var(--ease-ui) infinite;
-  margin-bottom: 18px;
-}
-/* A quick settle on top of the idle bob, fired by JS on every pose
-   change — the frame swap alone read as a slide-show; this is what
-   makes it read as him moving. */
-.about__sprite.is-hop { animation: about-bob 2.6s var(--ease-ui) infinite, about-hop 340ms var(--ease-pop); }
-@keyframes about-bob  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes about-hop  { 0% { transform: translateY(0); } 38% { transform: translateY(-9px); } 100% { transform: translateY(0); } }
-
-.about__shadow {
-  position: absolute;
-  bottom: 22px; left: 50%;
-  width: 56%; height: 8px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,.6), transparent 72%);
-  animation: about-shadow 2.6s var(--ease-ui) infinite;
-}
-@keyframes about-shadow {
-  0%, 100% { transform: translateX(-50%) scaleX(1); opacity: .9; }
-  50%      { transform: translateX(-50%) scaleX(.88); opacity: .7; }
-}
-.about__floor {
-  position: absolute;
-  left: 4px; right: 4px; bottom: 26px;
-  height: var(--bd);
-  background: rgba(251, 247, 240, .18);
 }
 
-/* ---------- the text side ---------- */
-.about__who { min-width: 0; }
 .about__name {
+  margin-top: 12px;
   font-family: var(--font-work);
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-size: 1.35rem;
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1;
   color: var(--ink);
 }
-.about__role-word { color: rgba(251, 247, 240, .75); }
+.about__role {
+  margin-top: 5px;
+  font-size: .625rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 240, .75);
+}
 .about__bio {
-  margin-top: 8px;
+  margin-top: 10px;
   font-family: var(--font-display);
   font-size: .8125rem;
   font-weight: 300;
   line-height: 1.45;
   color: rgba(251, 247, 240, .8);
-  max-width: 42ch;
 }
 
-/* Six lines, each one a fact and a pose at once. Hover or focus MOVES
-   the sprite; the caption above the stage says which pose in words for
-   anyone landing on a fact without having read the ones before it. A
-   click PINS it — leaving the list with the mouse then settles back to
-   the pin rather than to idle, so the chosen pose survives the pointer
-   moving on. Same click un-pins. */
-.about__facts {
-  list-style: none;
-  margin: 12px 0 0;
-  padding-top: 8px;
+/* A rule of dashes, not a border — the border would be a hairline and a
+   hairline is the one thing a bitmap interface cannot draw. */
+.about__now {
+  margin-top: 12px;
+  padding-top: 10px;
   border-top: var(--bd) dashed rgba(251, 247, 240, .3);
 }
-.about__facts li + li { margin-top: 1px; }
-.about__fact {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px;
-  align-items: baseline;
-  width: 100%;
-  padding: 6px 4px;
-  border: 0;
-  background: none;
-  text-align: left;
-  color: rgba(251, 247, 240, .7);
-  font-family: var(--font-ui);
+.about__label {
+  font-size: .5625rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 240, .5);
+}
+/* Fixed height for two lines. The captions are different lengths and the
+   window resizing under your cursor as you press Next is the tell that
+   this is a web page pretending, rather than a window. */
+.about__caption {
+  margin-top: 4px;
+  min-height: 2.6em;
   font-size: .75rem;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: color 150ms linear, background-color 150ms linear;
-}
-.about__k {
-  font-size: .625rem;
-  letter-spacing: .1em;
-  color: rgba(251, 247, 240, .32);
-  transition: color 150ms linear;
-}
-@media (hover: hover) and (pointer: fine) {
-  .about__fact:hover { color: var(--ink); background: rgba(251, 247, 240, .06); }
-  .about__fact:hover .about__k { color: var(--folder-teal, #74E8E8); }
-}
-.about__fact:focus-visible { color: var(--ink); outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: -2px; }
-.about__fact[aria-current="true"] { color: var(--ink); }
-.about__fact[aria-current="true"] .about__k { color: var(--folder-teal, #74E8E8); }
-
-/* Stands in for the window in the same corner while it's closed. A
-   grid item in `.about`'s own cell rather than an absolutely positioned
-   overlay — `.work` is a two-column grid and this is the simplest way
-   to land in the second column without a new positioning context. Its
-   own reveal — arrives after the window has finished closing, not with
-   the folders. */
-.about__reopen {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
-  align-self: end;
-  border: var(--bd) solid var(--ink);
-  background: var(--deep);
+  line-height: 1.3;
   color: var(--ink);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Track position. Five segments, one per pose — a player's progress bar
+   put to honest use as an index. */
+.about__track {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+.about__track i {
+  flex: 1;
+  height: 6px;
+  border: 2px solid rgba(251, 247, 240, .35);
+}
+.about__track i.is-on {
+  background: var(--folder-teal, #74E8E8);
+  border-color: var(--folder-teal, #74E8E8);
+}
+
+.about__transport {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+/* Real buttons, and both of them do something. The window has no play,
+   pause or shuffle because there is nothing here to play, pause or
+   shuffle — a transport of five dead glyphs and two live ones would be
+   set dressing. */
+.about__btn {
+  flex: 1;
+  padding: 7px 0;
+  border: var(--bd) solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
   font-size: .6875rem;
-  letter-spacing: .04em;
-  padding: 8px 12px;
+  line-height: 1;
   cursor: pointer;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 220ms var(--ease-ui), transform 220ms var(--ease-ui);
+  transition: background-color 120ms linear, color 120ms linear;
 }
-.about__reopen[hidden] { display: none; }
-.about__reopen.is-in { opacity: 1; transform: none; }
 @media (hover: hover) and (pointer: fine) {
-  .about__reopen:hover { background: var(--ink); color: var(--void); }
+  .about__btn:hover { background: var(--ink); color: var(--void); }
 }
+/* Inverts on press, like a real one. No scale — these windows had no
+   transforms, and a button that shrinks is a different decade. */
+.about__btn:active { background: var(--ink); color: var(--void); }
 
 /* The gutter lives here now. It used to come from `.work { padding: … 6vw }`,
    which went when the plate took over the section — leaving the footer
@@ -1604,14 +1538,6 @@ img, video { display: block; max-width: 100%; }
     transition: opacity 250ms linear calc(var(--i) * 40ms);
   }
   .about { transform: none; transition: opacity 250ms linear 260ms; }
-  .about.is-closing { transform: none; transition: opacity 200ms linear; }
-  /* The idle bob, the shadow's breathing and the hop all go — a sprite
-     that changes pose on hover is information changing; a sprite that
-     never stops moving between poses is the ambient motion this page
-     has refused everywhere else. It still changes pose, it just holds
-     each one still. */
-  .about__sprite, .about__sprite.is-hop, .about__shadow { animation: none; }
-  .about__reopen { transform: none; transition: opacity 200ms linear; }
 
   /* The fan is a large positional move by definition, so the travel
      goes — but the sheets stay, because they're the actual content of
@@ -1644,15 +1570,16 @@ img, video { display: block; max-width: 100%; }
      390px frame rather than left to the shared line clamp. */
   .hero__lamp { width: 128vw; height: 128vw; margin: -64vw 0 0 -64vw; }
   @keyframes hero-hunt {
-    0%   { transform: translate(-22vw, -15svh) scale(.60); }
-    13%  { transform: translate(-22vw, -15svh) scale(.60); }
-    25%  { transform: translate( 16vw,  17svh) scale(.70); }
-    36%  { transform: translate( 16vw,  17svh) scale(.70); }
-    48%  { transform: translate( 22vw, -19svh) scale(.56); }
-    57%  { transform: translate( 22vw, -19svh) scale(.56); }
-    70%  { transform: translate(-12vw,  11svh) scale(.66); }
-    79%  { transform: translate(-12vw,  11svh) scale(.66); }
-    100% { transform: translate(0, 0) scale(1); }
+    0%   { transform: translate(0, 0) scale(.62); }
+    8%   { transform: translate(0, 0) scale(.62); }
+    22%  { transform: translate(-20vw, -16svh) scale(.58); }
+    32%  { transform: translate(-20vw, -16svh) scale(.58); }
+    46%  { transform: translate( 15vw,  18svh) scale(.68); }
+    56%  { transform: translate( 15vw,  18svh) scale(.68); }
+    70%  { transform: translate( 20vw, -20svh) scale(.55); }
+    78%  { transform: translate( 20vw, -20svh) scale(.55); }
+    92%  { transform: translate(0, 0) scale(.62); }
+    100% { transform: translate(0, 0) scale(.62); }
   }
   /* The figure turns on its side. Three lamps offset along the X axis
      of a 16:9 frame become one blob in a portrait one — there simply
@@ -1722,23 +1649,22 @@ img, video { display: block; max-width: 100%; }
   .about { width: 100%; max-width: 38rem; }
   .hero__ditherwash { background: rgba(16,19,14,.76); }
 
-  /* Already sprite-beside-text at every width — narrower here just
-     means a smaller stage and a shorter reach for the bio, not a
-     different shape. Same window, same layout, less of it. */
-  .about__stage { width: 96px; height: 130px; }
-  .about__sprite {
-    width: 96px; height: 120px;
-    background-size: calc(96px * 6) calc(120px * 3);
-    background-position: calc(var(--about-col, 0) * -96px) calc(var(--about-row, 0) * -120px);
+  /* Stacked, the window has width to spare and no height to spare — so
+     it turns on its side: sprite beside the text instead of above it.
+     Same window, laid out the way the space is shaped. */
+  .about__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
   }
-  .about__shadow { bottom: 16px; }
-  .about__floor { bottom: 20px; }
-  .about__bio { max-width: none; }
-  .about__fact { font-size: .6875rem; }
-  /* .work collapses to one column here, so .about__reopen's desktop
-     placement in "column 2" has nothing to sit in — it follows .about
-     into the single centred column instead. */
-  .about__reopen { grid-column: 1; justify-self: center; }
+  .about__screen { grid-row: 1 / span 3; padding: 8px 6px 0; }
+  .about__sprite { width: 106px; height: 144px; background-size: 530px 144px;
+                   background-position: calc(var(--pose, 0) * -106px) 0; }
+  .about__name { margin-top: 0; }
+  .about__bio { display: none; }   /* the caption is doing this job here */
+  .about__now { grid-column: 2; margin-top: 4px; }
+  .about__track, .about__transport { grid-column: 1 / -1; }
 
   /* The desktop icon sizes are driven by vw, which collapses to the
      clamp floor the moment the row count drops — six across at 1400px
@@ -1783,9 +1709,9 @@ img, video { display: block; max-width: 100%; }
    worse than one. */
 .no-js .hero__isle { display: none; }
 .no-js .hero__lamps { display: none; }
-.no-js .hero__gate { display: none; }
 .no-js .hero__name { position: static; opacity: 1; visibility: visible; transform: none; padding: 8vh 6vw 0; }
 .no-js .hero__name-line { transform: none; }
+.no-js .hero__wire { position: static; display: block; transform: none; margin-top: .4em; }
 .no-js .cut::after { transform: translateY(-50%) scaleX(1); }
 .no-js .hand {
   position: static; display: inline; opacity: 1; transform: none;
@@ -1801,6 +1727,7 @@ img, video { display: block; max-width: 100%; }
    punched one fragment of the sentence up through the picture. */
 .no-js .hero__stage { position: relative; z-index: 2; display: block; padding: 0 6vw; }
 .no-js .chrome { opacity: 1; visibility: visible; }
+.no-js .chrome__mark, .no-js .chrome__rule, .no-js .chrome::before { opacity: 1; }
 .no-js .hero__blackout { opacity: 0; }   /* JS owns the reveal; without it, don't hide the frame */
 .no-js .hero__dither, .no-js .hero__ditherwash { display: none; }
 .no-js .work {

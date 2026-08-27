@@ -24,62 +24,26 @@
 </head>
 <body>
 
-<!-- Desktop icons — one <symbol> per case study, referenced by the
-     folder cards below via <use>. Colour lives on each <use>'s own
-     style="color:..." since currentColor resolves through the
-     reference, not the symbol. See media/icons/README.md. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="icon-futee" viewBox="0 0 32 32">
-<g fill="currentColor" stroke="#0B0A0C" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke">
-    <rect x="14.4" y="10" width="3.2" height="15.4"/>
-    <rect x="8.6" y="25" width="14.8" height="3.4" rx="1.2"/>
-    <g transform="rotate(-17 15 8.6)">
-      <path d="M6.2 3.8h18.4l-2 9.6H8.2z"/>
-    </g>
-  </g>
-  <g fill="#0B0A0C" transform="rotate(-17 15 8.6)">
-    <rect x="8.6" y="6" width="13.6" height="2" rx=".9"/>
-    <rect x="9.2" y="9.6" width="12.4" height="2" rx=".9"/>
-  </g>
-</symbol>
-<symbol id="icon-emf" viewBox="0 0 32 32">
-<g fill="currentColor" stroke="#0B0A0C" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke">
-    <rect x="3.4" y="9" width="12.4" height="18" rx="1.6" transform="rotate(-9 9.6 18)"/>
-    <rect x="16.2" y="9" width="12.4" height="18" rx="1.6" transform="rotate(9 22.4 18)"/>
-    <rect x="9.8" y="5.4" width="12.4" height="19.4" rx="1.6"/>
-  </g>
-  <g fill="#0B0A0C">
-    <rect x="12.4" y="9.2" width="7.2" height="1.8" rx=".9"/>
-    <rect x="12.4" y="12.4" width="7.2" height="1.8" rx=".9"/>
-    <circle cx="16" cy="19.2" r="2.5"/>
-  </g>
-</symbol>
-<symbol id="icon-cseds" viewBox="0 0 32 32">
-<g stroke="#0B0A0C" stroke-width="2.6" paint-order="stroke">
-    <circle cx="10.4" cy="20.8" r="7.2" fill="#6C9BDA"/>
-    <circle cx="21.6" cy="20.8" r="7.2" fill="#D2543C"/>
-    <circle cx="16" cy="10.6" r="7.2" fill="#FBF7F0"/>
-  </g>
-</symbol>
-<symbol id="icon-into-yesterday" viewBox="0 0 32 32">
-<g fill="none" stroke="#0B0A0C" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4 13V4h24v9"/><path d="M28 20v8H4v-8"/><path d="M10 13v15"/>
-  </g>
-  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4 13V4h24v9"/><path d="M28 20v8H4v-8"/><path d="M10 13v15"/>
-  </g>
-  <path d="M2.6 16.5H7V8.5h7v13h6v-5h9.4" fill="none" stroke="#0B0A0C" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M2.6 16.5H7V8.5h7v13h6v-5h9.4" fill="none" stroke="#E0722C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-</symbol>
-</defs></svg>
-
 <a class="skip" href="#work">Skip to work</a>
 
-<!-- Site chrome. Born at beat 5, then persistent — so it sits outside
-     .hero and is fixed, rather than scrolling away with it. -->
+<!-- Site chrome. Fixed, and a sibling of .hero rather than a child, so
+     it does not scroll away with the pin.
+
+     TWO STATES. The nav is visible from the very first frame: for the
+     whole loader and the whole story there used to be no visible way
+     out and no evidence that a portfolio existed behind them, which
+     asked a first-time reader to take the entire site on trust. The
+     mark and the reading rule still wait for the picture — those are
+     furniture. The nav is an exit, and an exit nobody can see is not
+     one. See data-full in hero.js. -->
 <header class="chrome" id="chrome">
   <div class="chrome__rule"><span class="chrome__rule-fill" id="progress-fill"></span></div>
-  <span class="chrome__mark" id="chrome-mark">Marooned.</span>
+  <!-- The persistent mark is the NAME now, not the joke. "Marooned." was
+       doing a wordmark's job on a page that had no other one; the tail
+       gives the name a full-bleed moment, and the header is what carries
+       it for the rest of the visit. Two sizes of one thing, which is
+       what a mark is for. -->
+  <span class="chrome__mark" id="chrome-mark">Neel Parikh</span>
   <nav class="chrome__nav">
     <a href="#work">Work</a>
     <a href="mailto:neelparikh7@gmail.com">Contact</a>
@@ -183,38 +147,35 @@
   <!-- (chrome lives outside .hero — see css) -->
   <!-- The script. Every line is real text in the DOM.
 
-       data-in  = the scroll step this phrase appears on
-       data-out = the step it leaves on (omit to stay for good)
-       data-at  = seconds into that step before it arrives
-       data-off = seconds into that step when it leaves again
+       data-at  = screens of scroll, from the top of the story, at which
+                  this phrase arrives
+       data-off = screens at which it leaves again (omit to stay)
 
-       ONE SCROLL. Not six, and no longer two: every phrase below is
-       data-in="1", and everything that happens after the first gesture
-       happens on a timer. The reader is asked for one thing, once, and
-       then the page talks.
+       SCREENS, NOT SECONDS. These were seconds when the story ran on a
+       clock. It runs on the scroll position now, so the numbers changed
+       meaning: one screen is one viewport of scrolling, and a value
+       reads directly as "how far down". Retiming the piece is editing
+       these — nothing in hero.js needs to know.
 
-       Which is what data-at is for. Inside a step the beats are TIMED,
-       not scrolled — the page speaks a paragraph instead of handing
-       out one word per pull. See SEQ_STEP in hero.js.
+       The whole story, in screens from the top of the pin:
 
-       The whole run, in seconds from the landing:
+         0.20  No man is an island…
+         0.45  the two strokes, then Designer under them
+         0.85  the island and the line leave
+         1.00  a beam comes on and starts searching
+         1.75  it settles — found
+         1.90  all by their Self,
+         2.35  two more lights, from the left and the right
+         2.60  all by their Self, leaves
+         2.85  lets work together.
+         3.35  the story ends and the reveal begins
 
-         0.00  No man is an island…
-         0.62  the two strokes are drawn through "man"
-         0.92  Designer is written under them
-         2.40  the island and the line leave
-         2.85  a beam comes on and starts searching
-         5.00  it settles — found
-         5.25  all by their Self,
-         5.95  two more lights, from the left and the right
-         7.40  lets work together.
-
-       Eight seconds is a long time to hold somebody, so it is held
-       SKIPPABLE: a deliberate scroll after the first second runs the
-       sequence to its end rather than being swallowed. See seqSkip. -->
+       No lock and no skip: crossing a number forward plays its beat,
+       crossing it backward unplays it, and scrolling fast is what
+       skipping looks like. -->
   <div class="hero__stage">
 
-    <!-- ============ SCREEN ONE ============
+    <!-- ============ THE CLAIM ============
          The island, the claim, and the correction. "man" is struck
          through and "Designer" written under it in Allison, which is
          the whole joke of the site made in one gesture: the quote is
@@ -224,8 +185,11 @@
          is exactly the pair of elements HTML already has for it, and a
          screen reader gets "No man Designer is an island", which is
          what the frame says. The strike is drawn rather than
-         text-decoration so it can be animated; see .cut in main.css. -->
-    <div class="phrase pos--isle" data-in="1" data-at="0" data-off="2.40" data-cut>
+         text-decoration so it can be animated; see .cut in main.css.
+
+         The island plate rides this phrase's two numbers, so there is
+         one place to retime the opening rather than two. -->
+    <div class="phrase pos--isle" data-at="0.20" data-off="0.85" data-cut>
       <span class="line line--body">No <span class="cut"><del>man</del><ins class="hand">Designer</ins></span> is an island&#8230;</span>
     </div>
 
@@ -234,24 +198,23 @@
          finds the sentence, and then two more lights arrive and the
          three of them overlap into the answer.
 
-         The beam has to be given time to look. Under about two seconds
-         it reads as a light switching on in the middle of the frame,
-         which is a different and much worse idea — the searching is the
-         part that earns the Venn, and the reason the island is cleared
-         out of the way first rather than dissolving under it.
+         The beam's PATH is the one thing on the page still running on
+         its own clock, and deliberately: darts and holds only read as
+         searching when they are timed. Scrubbed, every hold becomes a
+         stretch of scrolling where nothing happens. So the scroll
+         controls how long you watch it, not where it points.
 
-         The lamp cues and the island's exit live in hero.js (CUES)
-         because they are not phrases; the three that are phrases carry
-         their own offsets here. -->
-    <div class="phrase pos--lit" data-in="1" data-at="5.25" data-off="7.15">
+         The lamp cues live in hero.js (BEAM_ON / BEAM_HOLD /
+         LIGHTS_AT) because they are staging, not sentences. -->
+    <div class="phrase pos--lit" data-at="1.90" data-off="2.60">
       <span class="line line--body line--lit">all by their <em>Self</em>,</span>
     </div>
 
-    <div class="phrase pos--lit" data-in="1" data-at="7.40">
+    <div class="phrase pos--lit" data-at="2.85">
       <span class="line line--body line--lit line--tog">lets work <b>together</b>.</span>
     </div>
 
-  </div>
+  </div><!-- /.hero__stage -->
 
   <!-- ============ THE NAME ============
        NOT A PHRASE, and not a step. It lives in the pinned tail, where
@@ -260,9 +223,13 @@
        NAME_IN / NAME_OUT in hero.js. Making it a `.phrase` would have
        given it a data-in, which is what LAST is derived from, which
        would have added a third dot to a two-dot ledger and a third
-       gated scroll to a page whose whole point is that it has two. -->
+       gated scroll to a page whose whole point is that it has two.
+
+       The rule under it is the only saturated colour on the site. It
+       draws out from the centre after the name has landed. -->
   <div class="hero__name" id="hero-name">
     <span class="hero__name-line">Neel Parikh</span>
+    <span class="hero__wire" aria-hidden="true"></span>
   </div>
 
   <!-- ============ THE DESKTOP ============
@@ -296,7 +263,7 @@
               <img class="folder__sheet" src="work/futee/Journey%20map.png" alt="" width="2270" height="1268" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/futee/PERSONA%20-%20Light.png" alt="" width="2270" height="1191" loading="lazy" decoding="async">
             </span>
-            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#F2E338"><use href="#icon-futee"></use></svg>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
           </span>
           <span class="folder__name">Futee</span>
           <span class="folder__meta">Product · 2022</span>
@@ -311,7 +278,7 @@
               <img class="folder__sheet" src="work/emf-ace/img/emf-500-registered.png" alt="" width="478" height="478" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/emf-ace/img/emf-panel-global-design-fusion.png" alt="" width="462" height="462" loading="lazy" decoding="async">
             </span>
-            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#E4BC6B"><use href="#icon-emf"></use></svg>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
           </span>
           <span class="folder__name">EMF ACE</span>
           <span class="folder__meta">Brand · 2024</span>
@@ -326,7 +293,7 @@
               <img class="folder__sheet" src="work/cseds/img/product-01.jpg" alt="" width="1199" height="1551" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/cseds/img/software-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
             </span>
-            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true"><use href="#icon-cseds"></use></svg>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
           </span>
           <span class="folder__name">CSEDS</span>
           <span class="folder__meta">Web · 2025</span>
@@ -341,40 +308,10 @@
               <img class="folder__sheet" src="work/into-yesterday/img/clay-1.jpg" alt="" width="1600" height="1200" loading="lazy" decoding="async">
               <img class="folder__sheet" src="work/into-yesterday/img/sb-1.jpg" alt="" width="1171" height="574" loading="lazy" decoding="async">
             </span>
-            <svg class="folder__img" viewBox="0 0 32 32" width="116" height="116" aria-hidden="true" style="color:#F2B15A"><use href="#icon-into-yesterday"></use></svg>
+            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
           </span>
           <span class="folder__name">Into Yesterday</span>
           <span class="folder__meta">Film · 2025</span>
-        </a>
-      </li>
-
-      <li class="folder" style="--i:4">
-        <a class="folder__link" href="work/project-five/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">Project Five</span>
-          <span class="folder__meta">Motion · 2024</span>
-        </a>
-      </li>
-
-      <li class="folder" style="--i:5">
-        <a class="folder__link" href="work/project-six/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="media/placeholder/sheet-3.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="media/placeholder/sheet-2.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="media/placeholder/sheet-1.svg" alt="" width="320" height="240" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">Project Six</span>
-          <span class="folder__meta">Research · 2024</span>
         </a>
       </li>
 
@@ -385,13 +322,11 @@
          made them on the right — which is the argument the whole page is
          making, so it should be visible in one frame rather than two.
 
-         Six facts instead of a media-player transport. Each one is a
-         real sentence and a pose at once: hovering or focusing it moves
-         the sprite through eighteen frames, so reading the list is what
-         drives the animation rather than a separate prev/next control
-         next to it. A click pins the pose against the pointer leaving.
-         Draggable by its bar, closeable, reopenable — see the pointer
-         handlers and closeAbout/reopen in hero.js.
+         Shaped as a media player on purpose. A player is a window whose
+         entire job is to tell you what someone is doing right now, which
+         is what an About section is for and almost never says. The
+         transport is real: each press steps the sprite and the caption
+         together. Nothing here is a button that does nothing.
 
          Bitmap treatment, site palette. Hard 2px borders, no radii, one
          solid unblurred drop shadow, monospace chrome. NOT a pixel
@@ -400,49 +335,49 @@
          actually uses and the scroll cue's digit grid is already set in
          it, so the register was on the page before this window was. -->
     <aside class="about" id="about" aria-label="About Neel">
-      <div class="about__bar" id="about-bar">
-        <span class="about__title">about-me</span>
-        <span class="about__btns">
-          <button class="about__ctrl about__ctrl--min" type="button" id="about-min" aria-label="Minimise"></button>
-          <span class="about__ctrl about__ctrl--dot" aria-hidden="true"></span>
-          <button class="about__ctrl about__ctrl--close" type="button" id="about-close" aria-label="Close"></button>
+      <div class="about__bar">
+        <span class="about__title">about.exe</span>
+        <span class="about__controls" aria-hidden="true">
+          <i></i><i></i><i class="is-close"></i>
         </span>
       </div>
 
       <div class="about__body">
-        <!-- The sprite is decorative: each fact's own text carries the
-             meaning, and describing eighteen near-identical poses to a
-             screen reader is noise. -->
-        <div class="about__stage">
-          <span class="about__cap" id="about-cap" aria-hidden="true">idle</span>
+        <!-- The sprite is decorative: the caption below carries every bit
+             of meaning it has, and describing five near-identical poses
+             to a screen reader is noise. -->
+        <div class="about__screen">
           <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
-          <span class="about__shadow" aria-hidden="true"></span>
-          <span class="about__floor" aria-hidden="true"></span>
         </div>
 
-        <div class="about__who">
-          <p class="about__name">Neel Parikh <span class="about__role-word">— Designer</span></p>
-          <!-- SWAP ME. The one paragraph here that should be yours. -->
-          <p class="about__bio">I make things that explain themselves. Mostly interfaces, occasionally a maze. This site is hand-written — no framework, no page builder, no template underneath.</p>
+        <p class="about__name">Neel Parikh</p>
+        <p class="about__role">Product designer · Sydney</p>
+        <!-- SWAP ME. The one line here that should be yours. It's the
+             page's own joke rather than a claim about the work, which is
+             why it's safe as a default. -->
+        <p class="about__bio">A team of one, looking for a bigger boat.</p>
 
-          <!-- Hover or focus moves the sprite; a click PINS the pose so
-               leaving the list with the mouse doesn't reset it. Same pin
-               toggles off on a second click. See setPose in hero.js. -->
-          <ul class="about__facts" id="about-facts">
-            <li><button class="about__fact" type="button" data-pose="think"><span class="about__k">01</span><span>Starts with the question, not the layout.</span></button></li>
-            <li><button class="about__fact" type="button" data-pose="desk"><span class="about__k">02</span><span>Designs it, then writes the HTML, CSS and JS myself.</span></button></li>
-            <li><button class="about__fact" type="button" data-pose="laptop-floor"><span class="about__k">03</span><span>Four case studies live in here — Futee, EMF, CSEDS, Into Yesterday.</span></button></li>
-            <li><button class="about__fact" type="button" data-pose="headphones"><span class="about__k">04</span><span>There is always something playing.</span></button></li>
-            <li><button class="about__fact" type="button" data-pose="mug"><span class="about__k">05</span><span>The mug is never empty.</span></button></li>
-            <li><button class="about__fact" type="button" data-pose="cheer"><span class="about__k">06</span><span>Let&#8217;s work together?</span></button></li>
-          </ul>
+        <div class="about__now">
+          <span class="about__label">Now</span>
+          <p class="about__caption" id="about-caption" aria-live="polite">Listening to something loud</p>
+        </div>
+
+        <div class="about__track" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="about__transport">
+          <button class="about__btn" type="button" data-step="-1" aria-controls="about-caption">
+            <span aria-hidden="true">&#9664;&#9664;</span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="about__btn" type="button" data-step="1" aria-controls="about-caption">
+            <span aria-hidden="true">&#9654;&#9654;</span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
       </div>
     </aside>
-
-    <!-- Stands in for the window while it's closed, in the same corner
-         of the desk. See close()/reopen in hero.js. -->
-    <button class="about__reopen" type="button" id="about-reopen" hidden>Open about-me</button>
   </main>
 
   <!-- Scroll cue. The tumbling digit grid is decorative, not a loading
@@ -463,37 +398,11 @@
     </svg>
   </div>
 
-  <!-- ============ THE WAY BACK ============
-       Scrolling up out of the desktop lands you back in a five-second
-       animation you have already watched, and it is very easy to do by
-       accident on a trackpad. So the first attempt up only asks; the
-       second one goes, and going resets the sequence so it actually
-       plays rather than settling to its last frame.
+  <!-- The step ledger is gone with the gated scroll. It answered "how
+       long does this mean to hold me", which was a fair question when
+       the page was holding you; the scrollbar answers it now, and it
+       answers it continuously. -->
 
-       A question rather than a dialog: no buttons, nothing to dismiss,
-       and the answer is the same gesture you already made. It disarms
-       on any downward input and on its own after a few seconds, so
-       nobody comes back to the tab an hour later and falls through it.
-
-       aria-live so the question is announced when it appears; the frame
-       behind it is inert while it is up. -->
-  <div class="hero__gate" id="gate" aria-live="polite">
-    <p class="hero__gate-q">See the island again?</p>
-    <p class="hero__gate-h">Scroll up once more</p>
-  </div>
-
-  <!-- The step ledger. One dot per line, filled as you go. Replaced a
-       chevron, which said "there is more" — half the answer. The real
-       question in a gated scroll is how long it means to hold you.
-
-       Empty on purpose: hero.js builds the dots from LAST, which is
-       itself derived from the phrases above. Adding a line to the story
-       stays a single edit to this file, and the ledger lengthens with it.
-
-       Decorative. Every line it counts is already real text in the DOM a
-       few elements up, so there is nothing here a screen reader hasn't
-       been given properly. -->
-  <div class="hero__steps" id="steps" aria-hidden="true"></div>
 </section>
 
 <!-- Everything below the hero. Which is now only this — the files live
