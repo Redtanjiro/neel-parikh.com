@@ -1259,7 +1259,8 @@ img, video { display: block; max-width: 100%; }
    scheme on a page whose every value was sampled from one photograph. */
 .about {
   --bd: 2px;
-  width: clamp(248px, 25vw, 330px);
+  --about-sw: 116px;                  /* sprite width; height and the sheet math derive from it */
+  width: clamp(268px, 27vw, 380px);
   border: var(--bd) solid var(--ink);
   /* Solid, unblurred, offset. A blurred shadow is a lighting model and
      these machines didn't have one — they had a second rectangle. */
@@ -1286,6 +1287,7 @@ img, video { display: block; max-width: 100%; }
     transform 380ms var(--ease-pop) 300ms;
 }
 .hero[data-desk] .about { opacity: 1; transform: none; }
+.about[hidden] { display: none; }
 
 /* Inverted title bar, the way every one of these looked. */
 .about__bar {
@@ -1302,17 +1304,64 @@ img, video { display: block; max-width: 100%; }
   font-size: .6875rem;
   letter-spacing: .04em;
 }
-/* Three hollow squares. They are not buttons and never pretend to be —
-   no hover, no cursor change, nothing to click. Furniture that responds
-   to the mouse but does nothing is worse than furniture that doesn't. */
+/* Two of the three squares work now — a direct response to the window
+   being closeable and reopenable. The middle one still doesn't: there
+   is nothing here for a maximise to do, and furniture that responds to
+   the mouse but does nothing is worse than furniture that doesn't. */
 .about__controls { display: flex; gap: 4px; }
-.about__controls i {
-  width: 9px; height: 9px;
+.about__ctrl {
+  width: 13px; height: 13px;
+  padding: 0;
   border: 2px solid var(--void);
+  background: none;
+  cursor: default;
 }
-.about__controls .is-close { background: var(--void); }
+.about__ctrl i { display: block; width: 100%; height: 100%; }
+.about__ctrl--min, .about__ctrl--close { cursor: pointer; }
+.about__ctrl--close i { background: var(--void); }
+@media (hover: hover) and (pointer: fine) {
+  .about__ctrl--min:hover, .about__ctrl--close:hover { background: rgba(251, 247, 240, .28); }
+}
+.about__ctrl:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
+
+/* ---------- tabs ----------
+   A real tablist: arrow keys, Home/End, roving tabindex (see hero.js).
+   Two-line labels ("Experi-/ence") because this window is narrow by
+   design — the corner of a desktop, not a panel of its own. */
+.about__tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: var(--bd) dashed rgba(251, 247, 240, .3);
+}
+.about__tab {
+  border: 0;
+  border-right: 1px solid rgba(251, 247, 240, .18);
+  background: none;
+  padding: 8px 3px 7px;
+  cursor: pointer;
+  color: rgba(251, 247, 240, .4);
+  font: inherit;
+  font-size: .5625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  position: relative;
+  transition: color 150ms linear;
+}
+.about__tab:last-child { border-right: 0; }
+.about__tab[aria-selected="true"] { color: var(--ink); }
+.about__tab[aria-selected="true"]::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
+  background: var(--folder-teal, #74E8E8);
+}
+@media (hover: hover) and (pointer: fine) {
+  .about__tab:hover { color: var(--ink); }
+}
+.about__tab:focus-visible { outline: none; color: var(--ink); box-shadow: inset 0 0 0 2px var(--folder-teal, #74E8E8); }
 
 .about__body { padding: 12px; }
+
+.about__stage { display: flex; flex-direction: column; align-items: center; }
 
 /* The sprite panel. Sunken by inverting the border weight — light on
    two sides, dark on two — which is the entire visual vocabulary those
@@ -1320,120 +1369,128 @@ img, video { display: block; max-width: 100%; }
 .about__screen {
   border: var(--bd) solid var(--ink);
   background: var(--void);
-  padding: 10px 8px 0;
+  padding: 8px 6px 0;
+  /* No explicit width: the global `border-box` reset means a fixed
+     width here would count its own padding against the sprite inside
+     it, shrinking the sprite by exactly that padding — and then the
+     background-position math, which assumes the sprite's rendered box
+     IS --about-sw, would be reading off a misaligned frame. Sizing to
+     content instead means the screen is always exactly the sprite's
+     size plus its own frame, never fighting it. */
   display: flex;
   justify-content: center;
 }
 
-/* 265 x 72 strip, five 53px cells. Stepped by background-position from
-   JS; --pose is the frame index.
+/* 6x3 grid, 256x320 cells, stepped by background-position from JS;
+   --about-col / --about-row are the frame's place in it. Every pose is
+   bottom-aligned in its cell, so switching poses never shifts his feet.
 
-   image-rendering: pixelated is the whole point — the sprite is authored
-   at 72px tall and shown at 216, so the browser must be told to keep the
-   pixels square instead of smoothing them into the painting this was
-   before it was quantised. */
+   image-rendering: pixelated is the whole point — the sheet is authored
+   larger than it's shown here, so the browser has to be told to keep
+   the pixels square instead of smoothing them into a blur. */
 .about__sprite {
-  width: 159px;                       /* 53 x 3 */
-  height: 216px;                      /* 72 x 3 */
-  background-image: url('../media/neel-sprite.png');
-  background-size: 795px 216px;       /* 265 x 3 */
-  background-position: calc(var(--pose, 0) * -159px) 0;
+  width: var(--about-sw);
+  height: calc(var(--about-sw) * 1.25);
+  background-image: url('../media/neel-sprites.webp');
   background-repeat: no-repeat;
+  background-size: calc(var(--about-sw) * 6) calc(var(--about-sw) * 3.75);
+  background-position:
+    calc(var(--about-col, 0) * var(--about-sw) * -1)
+    calc(var(--about-row, 0) * var(--about-sw) * -1.25);
   image-rendering: pixelated;
+  animation: about-bob 2.6s var(--ease-ui) infinite;
+}
+/* A quick settle on top of the idle bob, fired by JS on every pose
+   change — the frame swap alone read as a slide-show; this is what
+   makes it read as him moving. */
+.about__sprite.is-hop { animation: about-bob 2.6s var(--ease-ui) infinite, about-hop 340ms var(--ease-pop); }
+@keyframes about-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes about-hop { 0% { transform: translateY(0); } 38% { transform: translateY(-9px); } 100% { transform: translateY(0); } }
+
+.about__cap {
+  margin-top: 6px;
+  font-size: .5625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 240, .4);
 }
 
-.about__name {
-  margin-top: 12px;
+/* ---------- the panes ---------- */
+.about__panes { margin-top: 14px; min-width: 0; }
+.about__panel[hidden] { display: none; }
+.about__h {
   font-family: var(--font-work);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 300;
-  line-height: 1;
+  line-height: 1.1;
+  margin: 0 0 6px;
   color: var(--ink);
 }
-.about__role {
-  margin-top: 5px;
-  font-size: .625rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .75);
-}
-.about__bio {
-  margin-top: 10px;
+.about__lede {
+  margin: 0 0 12px;
   font-family: var(--font-display);
-  font-size: .8125rem;
+  font-size: .75rem;
   font-weight: 300;
-  line-height: 1.45;
+  line-height: 1.5;
   color: rgba(251, 247, 240, .8);
 }
 
-/* A rule of dashes, not a border — the border would be a hairline and a
-   hairline is the one thing a bitmap interface cannot draw. */
-.about__now {
-  margin-top: 12px;
-  padding-top: 10px;
+/* labelled rows — about me, contact */
+.about__rows {
+  list-style: none; margin: 0; padding: 10px 0 0;
   border-top: var(--bd) dashed rgba(251, 247, 240, .3);
+  display: grid; gap: 8px;
 }
-.about__label {
-  font-size: .5625rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .5);
+.about__rows li {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: baseline;
+  font-family: var(--font-display); font-size: .75rem; line-height: 1.45; color: rgba(251, 247, 240, .8);
 }
-/* Fixed height for two lines. The captions are different lengths and the
-   window resizing under your cursor as you press Next is the tell that
-   this is a web page pretending, rather than a window. */
-.about__caption {
-  margin-top: 4px;
-  min-height: 2.6em;
-  font-size: .75rem;
-  line-height: 1.3;
-  color: var(--ink);
+.about__rows b {
+  font-size: .5625rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 500;
+  color: var(--folder-teal, #74E8E8);
 }
+.about__rows a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(251, 247, 240, .3); }
+.about__rows a:hover { color: var(--folder-teal, #74E8E8); border-bottom-color: var(--folder-teal, #74E8E8); }
+.about__rows a:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
 
-/* Track position. Five segments, one per pose — a player's progress bar
-   put to honest use as an index. */
-.about__track {
-  display: flex;
-  gap: 3px;
-  margin-top: 4px;
-}
-.about__track i {
-  flex: 1;
-  height: 6px;
-  border: 2px solid rgba(251, 247, 240, .35);
-}
-.about__track i.is-on {
-  background: var(--folder-teal, #74E8E8);
-  border-color: var(--folder-teal, #74E8E8);
-}
+/* timeline — experience, studies */
+.about__tl { list-style: none; margin: 0; padding: 10px 0 0; border-top: var(--bd) dashed rgba(251, 247, 240, .3); }
+.about__tl li { padding: 9px 0; }
+.about__tl li + li { border-top: 1px dashed rgba(251, 247, 240, .18); }
+.about__when { display: block; font-size: .5625rem; letter-spacing: .08em; color: var(--folder-teal, #74E8E8); }
+.about__role-t { font-family: var(--font-work); font-weight: 300; font-size: .9375rem; line-height: 1.2; margin: 3px 0 0; color: var(--ink); }
+.about__where { font-size: .5625rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(251, 247, 240, .4); margin: 3px 0 4px; }
+.about__desc { font-family: var(--font-display); font-size: .6875rem; font-weight: 300; line-height: 1.5; color: rgba(251, 247, 240, .75); margin: 0; }
 
-.about__transport {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-}
-/* Real buttons, and both of them do something. The window has no play,
-   pause or shuffle because there is nothing here to play, pause or
-   shuffle — a transport of five dead glyphs and two live ones would be
-   set dressing. */
-.about__btn {
-  flex: 1;
-  padding: 7px 0;
+/* Stands in for the window in the same corner while it's closed. A
+   grid item in `.work`'s own cell rather than an absolutely positioned
+   overlay — `.work` is a two-column grid and this is the simplest way
+   to land in the second column without a new positioning context. Its
+   own reveal — arrives after the window has finished closing, not with
+   the folders. */
+.about__reopen {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: end;
   border: var(--bd) solid var(--ink);
-  background: transparent;
+  background: var(--deep);
   color: var(--ink);
-  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: .6875rem;
-  line-height: 1;
+  letter-spacing: .04em;
+  padding: 8px 12px;
   cursor: pointer;
-  transition: background-color 120ms linear, color 120ms linear;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms var(--ease-ui), transform 220ms var(--ease-ui);
 }
+.about__reopen[hidden] { display: none; }
+.about__reopen.is-in { opacity: 1; transform: none; }
 @media (hover: hover) and (pointer: fine) {
-  .about__btn:hover { background: var(--ink); color: var(--void); }
+  .about__reopen:hover { background: var(--ink); color: var(--void); }
 }
-/* Inverts on press, like a real one. No scale — these windows had no
-   transforms, and a button that shrinks is a different decade. */
-.about__btn:active { background: var(--ink); color: var(--void); }
+.about__reopen:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
 
 /* The gutter lives here now. It used to come from `.work { padding: … 6vw }`,
    which went when the plate took over the section — leaving the footer
@@ -1538,6 +1595,12 @@ img, video { display: block; max-width: 100%; }
     transition: opacity 250ms linear calc(var(--i) * 40ms);
   }
   .about { transform: none; transition: opacity 250ms linear 260ms; }
+  /* The idle bob and the hop both go — a sprite that never stops moving
+     between poses is the ambient motion this page has refused
+     everywhere else. It still changes pose on tab change, it just holds
+     each one still rather than breathing. */
+  .about__sprite, .about__sprite.is-hop { animation: none; }
+  .about__reopen { transform: none; transition: opacity 200ms linear; }
 
   /* The fan is a large positional move by definition, so the travel
      goes — but the sheets stay, because they're the actual content of
@@ -1650,21 +1713,20 @@ img, video { display: block; max-width: 100%; }
   .hero__ditherwash { background: rgba(16,19,14,.76); }
 
   /* Stacked, the window has width to spare and no height to spare — so
-     it turns on its side: sprite beside the text instead of above it.
-     Same window, laid out the way the space is shaped. */
+     it turns on its side: sprite beside the tab content instead of
+     above it. Same window, laid out the way the space is shaped. The
+     wider frame earns a bigger sprite — --about-sw is the only value
+     that needs to change; the sheet math derives from it. */
+  .about { --about-sw: 140px; }
   .about__body {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 12px;
+    gap: 16px;
     align-items: start;
   }
-  .about__screen { grid-row: 1 / span 3; padding: 8px 6px 0; }
-  .about__sprite { width: 106px; height: 144px; background-size: 530px 144px;
-                   background-position: calc(var(--pose, 0) * -106px) 0; }
-  .about__name { margin-top: 0; }
-  .about__bio { display: none; }   /* the caption is doing this job here */
-  .about__now { grid-column: 2; margin-top: 4px; }
-  .about__track, .about__transport { grid-column: 1 / -1; }
+  .about__stage { grid-row: 1 / -1; }
+  .about__panes { grid-column: 2; margin-top: 0; }
+  .about__reopen { grid-column: 1; justify-self: center; }
 
   /* The desktop icon sizes are driven by vw, which collapses to the
      clamp floor the moment the row count drops — six across at 1400px
@@ -1687,10 +1749,8 @@ img, video { display: block; max-width: 100%; }
   .folder__name { font-size: clamp(.85rem, 3.6vw, 1.05rem); min-height: 1.3em; }
   .folder__meta { font-size: .5625rem; }
   .folder__sheet { width: clamp(88px, 26vw, 130px); }
-  .about__sprite { width: 79px; height: 108px; background-size: 397px 108px;
-                   background-position: calc(var(--pose, 0) * -79px) 0; }
-  .about__name { font-size: 1.15rem; }
-  .about__caption { min-height: 2.4em; font-size: .6875rem; }
+  .about { --about-sw: 96px; }
+  .about__h { font-size: 1.05rem; }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
      is the only thing in the shot with a silhouette. Bias down. */
   .hero__dither { object-position: 50% 58%; }

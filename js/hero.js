@@ -888,41 +888,110 @@
   }
 
   /* ---------------------------------------------------------
-     The About window's transport
+     The About window's tabs
 
-     Five poses in one 265x72 strip, stepped by background-position. No
-     timer, no autoplay: it moves when you press a button and not
-     otherwise. Wraps in both directions — a transport that greys out at
-     the ends is telling you it is a list, and the poses aren't ordered.
+     Eighteen poses in one 6x3, 256x320-cell sheet (media/sprites/README.md
+     has the frame table). Four tabs, each pinned to a resting pose it
+     snaps to on selection and a second pose it drifts to after a few
+     seconds — enough life to say the window is alive without that life
+     ever being the answer to the question the tab is asking.
+
+     A real ARIA tablist: arrow keys, Home/End, roving tabindex, one
+     panel visible at a time — see the markup in index.html. Close hides
+     the window and shows a reopen chip in its place (`.about__reopen`);
+     reopen restores whichever tab was open, not tab zero, because
+     reopening isn't restarting.
      --------------------------------------------------------- */
-  var CAPTIONS = [
-    'Listening to something loud',
-    'Cross-legged, shipping something',
-    'Reading, probably about type',
-    'Third coffee of the day',
-    'It finally built'
+  var FRAMES = [
+    'idle', 'walk-1', 'back', 'walk-2', 'walk-3', 'desk',
+    'mug', 'think', 'laptop-floor', 'walk-phone', 'backpack', 'headphones',
+    'clipboard', 'cheer', 'sit-ground', 'crouch', 'stance', 'cast'
   ];
+  /* One pose per tab that shows what the panel is about, then a slower
+     second pose. */
+  var ABOUT_TABS = [
+    { poses: ['idle', 'headphones'] },        /* about me   */
+    { poses: ['desk', 'mug'] },               /* experience */
+    { poses: ['clipboard', 'laptop-floor'] }, /* studies    */
+    { poses: ['cheer', 'walk-phone'] }        /* contact    */
+  ];
+  var DRIFT_MS = 5200;
 
-  var sprite  = document.getElementById('about-sprite');
-  var caption = document.getElementById('about-caption');
-  var about   = document.getElementById('about');
-  var pose    = 0;
+  var about       = document.getElementById('about');
+  var aboutSprite = document.getElementById('about-sprite');
+  var aboutCap    = document.getElementById('about-caption');
+  var aboutReopen = document.getElementById('about-reopen');
+  var aboutTabs   = about ? Array.prototype.slice.call(about.querySelectorAll('.about__tab')) : [];
+  var aboutPanels = aboutTabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+  var aboutActive = 0, aboutSub = 0, aboutDrift = null, aboutLastTab = 0;
 
-  function setPose(i) {
-    pose = ((i % CAPTIONS.length) + CAPTIONS.length) % CAPTIONS.length;
-    if (sprite)  sprite.style.setProperty('--pose', pose);
-    if (caption) caption.textContent = CAPTIONS[pose];
-    if (!about) return;
-    var segs = about.querySelectorAll('.about__track i');
-    for (var n = 0; n < segs.length; n++) segs[n].classList.toggle('is-on', n === pose);
+  function aboutPose(pose, hop) {
+    var i = FRAMES.indexOf(pose); if (i < 0) i = 0;
+    if (aboutSprite) {
+      aboutSprite.style.setProperty('--about-col', i % 6);
+      aboutSprite.style.setProperty('--about-row', Math.floor(i / 6));
+      if (hop && !reduced) {
+        aboutSprite.classList.remove('is-hop');
+        void aboutSprite.offsetWidth;
+        aboutSprite.classList.add('is-hop');
+      }
+    }
+    if (aboutCap) aboutCap.textContent = pose.replace(/-/g, ' ');
   }
+  function aboutDriftStart() {
+    clearInterval(aboutDrift);
+    if (reduced) return;   /* the drift is ambient motion; reduced motion holds the resting pose */
+    aboutDrift = setInterval(function () {
+      aboutSub = (aboutSub + 1) % ABOUT_TABS[aboutActive].poses.length;
+      aboutPose(ABOUT_TABS[aboutActive].poses[aboutSub], false);
+    }, DRIFT_MS);
+  }
+  function aboutSelect(n, focus) {
+    aboutActive = n; aboutSub = 0; aboutLastTab = n;
+    aboutTabs.forEach(function (t, i) {
+      t.setAttribute('aria-selected', i === n ? 'true' : 'false');
+      t.tabIndex = i === n ? 0 : -1;
+    });
+    aboutPanels.forEach(function (p, i) { if (p) p.hidden = i !== n; });
+    aboutPose(ABOUT_TABS[n].poses[0], true);
+    aboutDriftStart();
+    if (focus) aboutTabs[n].focus();
+  }
+  aboutTabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { aboutSelect(i); });
+    t.addEventListener('keydown', function (e) {
+      var k = e.key, n = null;
+      if (k === 'ArrowRight' || k === 'ArrowDown') n = (i + 1) % aboutTabs.length;
+      if (k === 'ArrowLeft'  || k === 'ArrowUp')   n = (i - 1 + aboutTabs.length) % aboutTabs.length;
+      if (k === 'Home') n = 0;
+      if (k === 'End')  n = aboutTabs.length - 1;
+      if (n !== null) { e.preventDefault(); aboutSelect(n, true); }
+    });
+  });
+  if (about && aboutTabs.length) aboutSelect(0);
 
+  /* Close/reopen, not close/gone — matching every other control on this
+     page. Close stops the drift, hides the window and brings in a small
+     reopen chip in the same desktop cell; reopen restores the tab that
+     was open when it closed. */
   if (about) {
-    setPose(0);
-    about.addEventListener('click', function (e) {
-      var btn = e.target.closest ? e.target.closest('.about__btn') : null;
-      if (!btn) return;
-      setPose(pose + parseInt(btn.dataset.step, 10));
+    Array.prototype.slice.call(about.querySelectorAll('[data-about-close]')).forEach(function (b) {
+      b.addEventListener('click', function () {
+        clearInterval(aboutDrift);
+        about.hidden = true;
+        if (aboutReopen) {
+          aboutReopen.hidden = false;
+          requestAnimationFrame(function () { aboutReopen.classList.add('is-in'); });
+        }
+      });
+    });
+  }
+  if (aboutReopen) {
+    aboutReopen.addEventListener('click', function () {
+      aboutReopen.classList.remove('is-in');
+      setTimeout(function () { aboutReopen.hidden = true; }, 220);
+      about.hidden = false;
+      aboutSelect(aboutLastTab, true);
     });
   }
 

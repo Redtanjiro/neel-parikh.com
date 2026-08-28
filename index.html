@@ -322,62 +322,132 @@
          made them on the right — which is the argument the whole page is
          making, so it should be visible in one frame rather than two.
 
-         Shaped as a media player on purpose. A player is a window whose
-         entire job is to tell you what someone is doing right now, which
-         is what an About section is for and almost never says. The
-         transport is real: each press steps the sprite and the caption
-         together. Nothing here is a button that does nothing.
+         Four tabs now — about me, experience, studies, contact — a real
+         ARIA tablist (arrow keys, Home/End, roving tabindex) rather than a
+         two-button transport, because there was more true to say than a
+         caption could carry. Each tab still pairs with a pose, and drifts
+         to a second one after a few seconds, so the window keeps a little
+         life without that life ever being the answer to the question the
+         tab is asking.
 
          Bitmap treatment, site palette. Hard 2px borders, no radii, one
          solid unblurred drop shadow, monospace chrome. NOT a pixel
          webfont — that would be a fourth face and another download on a
          page already carrying two videos. Monospace is what a terminal
          actually uses and the scroll cue's digit grid is already set in
-         it, so the register was on the page before this window was. -->
+         it, so the register was on the page before this window was.
+
+         Close hides the window and hands off to a small reopen chip in
+         the same desktop cell — close/reopen, not close/gone, matching
+         every other control on this page. -->
     <aside class="about" id="about" aria-label="About Neel">
       <div class="about__bar">
         <span class="about__title">about.exe</span>
-        <span class="about__controls" aria-hidden="true">
-          <i></i><i></i><i class="is-close"></i>
+        <span class="about__controls">
+          <button type="button" class="about__ctrl" aria-hidden="true" tabindex="-1"><i aria-hidden="true"></i></button>
+          <button type="button" class="about__ctrl about__ctrl--min" aria-label="Minimise" data-about-close><i aria-hidden="true"></i></button>
+          <button type="button" class="about__ctrl about__ctrl--close" aria-label="Close" data-about-close><i aria-hidden="true"></i></button>
         </span>
+      </div>
+
+      <div class="about__tabs" role="tablist" aria-label="About sections">
+        <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About<br>me</button>
+        <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experi-<br>ence</button>
+        <button class="about__tab" role="tab" id="about-t2" aria-controls="about-p2" aria-selected="false" tabindex="-1">Studies</button>
+        <button class="about__tab" role="tab" id="about-t3" aria-controls="about-p3" aria-selected="false" tabindex="-1">Contact</button>
       </div>
 
       <div class="about__body">
         <!-- The sprite is decorative: the caption below carries every bit
-             of meaning it has, and describing five near-identical poses
-             to a screen reader is noise. -->
-        <div class="about__screen">
-          <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
+             of meaning it has, and describing eighteen near-identical
+             poses to a screen reader is noise. -->
+        <div class="about__stage">
+          <div class="about__screen">
+            <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
+          </div>
+          <p class="about__cap" id="about-caption" aria-live="polite">idle</p>
         </div>
 
-        <p class="about__name">Neel Parikh</p>
-        <p class="about__role">Product designer · Sydney</p>
-        <!-- SWAP ME. The one line here that should be yours. It's the
-             page's own joke rather than a claim about the work, which is
-             why it's safe as a default. -->
-        <p class="about__bio">A team of one, looking for a bigger boat.</p>
+        <div class="about__panes">
+          <div class="about__panel" role="tabpanel" id="about-p0" aria-labelledby="about-t0">
+            <h3 class="about__h">Neel Parikh</h3>
+            <p class="about__lede">Designer. I make things that explain themselves — mostly interfaces, occasionally a maze. This site is hand-written: no framework, no template underneath.</p>
+            <ul class="about__rows">
+              <li><b>Based</b><span>Sydney, NSW</span></li>
+              <li><b>Works in</b><span>Product and brand design, motion, and the front-end that carries them</span></li>
+              <li><b>Right now</b><span>Four case studies live in here — Futee, EMF ACE, CSEDS, Into Yesterday</span></li>
+            </ul>
+          </div>
 
-        <div class="about__now">
-          <span class="about__label">Now</span>
-          <p class="about__caption" id="about-caption" aria-live="polite">Listening to something loud</p>
-        </div>
+          <div class="about__panel" role="tabpanel" id="about-p1" aria-labelledby="about-t1" hidden>
+            <h3 class="about__h">Experience</h3>
+            <ol class="about__tl">
+              <li>
+                <span class="about__when">Mar 2026 — now</span>
+                <div>
+                  <p class="about__role-t">Marketing &amp; Engagement Ambassador</p>
+                  <p class="about__where">UNSW Founders · Sydney</p>
+                  <p class="about__desc">Content and community across the UNSW Founders brand, feeding student insight back into campaigns.</p>
+                </div>
+              </li>
+              <li>
+                <span class="about__when">2023 — 25</span>
+                <div>
+                  <p class="about__role-t">Design Lead</p>
+                  <p class="about__where">Media Mushroom · India</p>
+                  <p class="about__desc">Directed brand and the EMF ACE event site — led a 5-person team across 50+ vendors and 10–15 concurrent campaigns.</p>
+                </div>
+              </li>
+              <li>
+                <span class="about__when">2020 — 22</span>
+                <div>
+                  <p class="about__role-t">Visual &amp; UX Designer</p>
+                  <p class="about__where">Idealoft Studio · India</p>
+                  <p class="about__desc">Wireframes through interactive prototypes for B2B and banking clients, including ICICI Bank and Yes Bank.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
 
-        <div class="about__track" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i>
-        </div>
+          <div class="about__panel" role="tabpanel" id="about-p2" aria-labelledby="about-t2" hidden>
+            <h3 class="about__h">Studies</h3>
+            <ol class="about__tl">
+              <li>
+                <span class="about__when">2025 — now</span>
+                <div>
+                  <p class="about__role-t">Master of Design, Interaction &amp; Immersive</p>
+                  <p class="about__where">UNSW · Sydney</p>
+                  <p class="about__desc">Human-centred UX methods, interaction and immersive design. Dean's List award recipient.</p>
+                </div>
+              </li>
+              <li>
+                <span class="about__when">2019 — 23</span>
+                <div>
+                  <p class="about__role-t">Bachelor of Design</p>
+                  <p class="about__where">Anant National University · India</p>
+                  <p class="about__desc">Major in Interaction Design, minor in Graphic Design.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
 
-        <div class="about__transport">
-          <button class="about__btn" type="button" data-step="-1" aria-controls="about-caption">
-            <span aria-hidden="true">&#9664;&#9664;</span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="about__btn" type="button" data-step="1" aria-controls="about-caption">
-            <span aria-hidden="true">&#9654;&#9654;</span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          <div class="about__panel" role="tabpanel" id="about-p3" aria-labelledby="about-t3" hidden>
+            <h3 class="about__h">Contact</h3>
+            <ul class="about__rows">
+              <li><b>Email</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
+              <li><b>Elsewhere</b><span><a href="https://www.linkedin.com/in/neel-parikh-413b16169/" target="_blank" rel="noopener">LinkedIn</a></span></li>
+              <li><b>Open to</b><span>Product and brand work, and case studies that need a story</span></li>
+              <li><b>Reply</b><span>Usually within a day</span></li>
+            </ul>
+          </div>
         </div>
       </div>
     </aside>
+
+    <!-- Stands in for the window in the same corner while it's closed —
+         see .about__reopen in main.css and the close/reopen wiring in
+         hero.js. -->
+    <button type="button" class="about__reopen" id="about-reopen" hidden>Reopen — about.exe</button>
   </main>
 
   <!-- Scroll cue. The tumbling digit grid is decorative, not a loading
