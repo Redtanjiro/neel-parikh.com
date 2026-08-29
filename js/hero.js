@@ -449,14 +449,21 @@
      Past that it IS a skip, and skips stay honoured. Someone who
      throws 6000px at a page in one gesture is not asking to be shown
      anything.
-     --------------------------------------------------------- */
+
+     NOTE ON RETIMING: on every ordinary viewport height the actual pin
+     length is set by the 6200px FLOOR below, not by TOTAL*innerHeight —
+     so TOTAL only changes how that fixed pixel budget is SPLIT, not how
+     long the whole thing is. Shrinking TAIL alone therefore makes the
+     run to the desktop LONGER, not shorter (less of the fixed budget is
+     "screens", so each screen and every fixed absolute offset within it
+     costs more pixels). To actually shorten the trip, move the floor. */
   var STORY = 3.35;
   var TAIL  = 3.90;
   var TOTAL = STORY + TAIL;
 
   /* The tail, in fractions of itself:
        0.00 - 0.62   the blackout lifts, the story text goes with it
-       0.40 - 1.40   the name, on the footage, with its rule
+       0.40 - 1.40   the name, on the footage
        1.30 - 2.35   the plate dissolves to the halftone
        2.60          the files land on it
        2.60 - 3.90   dwell — the desktop held there, hoverable
@@ -795,9 +802,21 @@
        longer than one gesture, and "one gesture" is measured in
        pixels, not viewports — a 700px-tall laptop window would put the
        whole pin inside 5000px and hand a single fling the entire
-       story. 7600 is above a hard trackpad fling; the screens figure
-       wins on anything tall enough not to need it. */
-    end: function () { return '+=' + Math.max(window.innerHeight * TOTAL, 7600); },
+       story. 6200 stays above a hard trackpad fling (~5000px) with
+       real margin; the screens figure wins on anything tall enough not
+       to need it.
+
+       THIS FLOOR IS THE ACTUAL LENGTH on ordinary viewports — cut down
+       from 7600 on explicit feedback that the run to the desktop after
+       the name landed felt too long. It matters more than STORY/TAIL
+       here: on any viewport short enough for the floor to be binding
+       (most of them), retiming STORY or TAIL only changes how this
+       fixed budget is split between them, not how long the whole trip
+       is — shrinking TAIL alone would in fact make the desktop arrive
+       LATER, because the same fixed pixels then buy fewer "screens" and
+       every absolute offset inside the tail costs more of them. Moving
+       this number is what actually shortens the trip. */
+    end: function () { return '+=' + Math.max(window.innerHeight * TOTAL, 6200); },
     pin: true,
     pinSpacing: true,
     anticipatePin: 1,

@@ -102,10 +102,6 @@
   --lamp-a: 242, 162, 104;
   --lamp-r: 224, 143, 166;
 
-  /* The only saturated colour on the site, and it appears exactly once:
-     the rule under the name. Everything else here is sampled off the
-     footage; this is a decision. */
-  --wire: #3F8AE2;
   --font-work: 'Sprat', Georgia, 'Times New Roman', serif;
   --font-ui: ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -703,21 +699,6 @@ img, video { display: block; max-width: 100%; }
 }
 .hero[data-name] .hero__name-line { transform: none; }
 
-/* Draws out from the centre once the name has landed. Full bleed on
-   purpose — a rule that stops where the type stops is an underline, and
-   this is a horizon. */
-.hero__wire {
-  position: absolute;
-  left: -6vw; right: -6vw;
-  bottom: -.06em;
-  height: 3px;
-  background: var(--wire);
-  transform: scaleX(0);
-  transform-origin: 50% 50%;
-  transition: transform 760ms var(--ease-move) 240ms;
-}
-.hero[data-name] .hero__wire { transform: scaleX(1); }
-
 /* ---------- chrome (born at beat 5, then persistent) ----------
    Fixed, and a sibling of .hero rather than a child of it. As an
    absolutely-positioned child it scrolled away with the hero the moment
@@ -1135,8 +1116,6 @@ img, video { display: block; max-width: 100%; }
      between the two options was never carried by the motion. */
   .door__arrow, .door__opt--skip { animation: none; transform: none; }
   .door__opt--skip { opacity: .6; }
-  .hero__wire { transition: opacity 300ms linear 200ms; transform: scaleX(1); opacity: 0; }
-  .hero[data-name] .hero__wire { opacity: 1; }
 }
 
 /* =========================================================
@@ -1917,7 +1896,6 @@ img, video { display: block; max-width: 100%; }
 .no-js .hero__door { display: none; }
 .no-js .hero__name { position: static; opacity: 1; visibility: visible; transform: none; padding: 8vh 6vw 0; }
 .no-js .hero__name-line { transform: none; }
-.no-js .hero__wire { position: static; display: block; transform: none; margin-top: .4em; }
 .no-js .cut::after { transform: translateY(-50%) scaleX(1); }
 .no-js .hand {
   position: static; display: inline; opacity: 1; transform: none;
