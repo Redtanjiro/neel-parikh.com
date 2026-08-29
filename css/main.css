@@ -894,10 +894,11 @@ html.is-opening body {
    cue takes it over and the door is gone. One instrument at a time.
 
    The two options are deliberately NOT symmetrical in weight. The
-   story is the default and reads brighter; the skip is quieter and
-   sits under it, which is the honest hierarchy — most people should
-   scroll, and the ones who need out should find the door without
-   being pushed through it. */
+   story is the default and reads brighter; the skip is quieter. It
+   sits ABOVE the story option now, not because it's the one most
+   readers should take — it isn't — but so the exit is the first thing
+   read on the frame rather than a second thought below the button
+   most people are about to press. */
 .hero__door {
   position: absolute;
   inset: 0;
