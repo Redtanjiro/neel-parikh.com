@@ -46,6 +46,7 @@
   var hero       = document.getElementById('hero');
   var work       = document.getElementById('work');
   var cue        = document.getElementById('cue');
+  var door       = document.getElementById('door');
   var chrome     = document.getElementById('chrome');
   var mark       = document.getElementById('chrome-mark');
   var fill       = document.getElementById('progress-fill');
@@ -851,6 +852,33 @@
      point into the pinned hero jump to the scroll position where the
      desktop exists, rather than to an element that is inside a pin and
      therefore not where the browser thinks it is. */
+  /* ---------------------------------------------------------
+     THE NAME LANDING
+
+     Where escaping the story puts you: the title card, with the real
+     footage behind it, one beat before the plate begins to dissolve.
+
+     NOT the desktop. Somebody who skips an opening sequence has not
+     asked to be dropped into a folder grid with no idea what they are
+     looking at — they have asked to stop watching. So they arrive at
+     the frame the story was travelling towards anyway, and scroll on
+     into the work from there under their own steam. It is the
+     difference between skipping a title sequence and skipping a film.
+
+     0.85 screens into the tail, arithmetic on the tail constants:
+     the blackout has fully lifted (LIFT_END 0.62), the name is at
+     strength (NAME_IN 0.40 → NAME_OUT 1.40) and the dissolve has not
+     started (DIS_START 1.30). The one frame in the tail where the
+     picture is doing exactly one thing. */
+  var NAME_LANDING = STORY + 0.85;
+
+  function goToName() {
+    sticky = false;              /* never gate somebody on their way out */
+    settle(NAME_LANDING);
+    window.scrollTo(0, Math.round(scrollForScreens(NAME_LANDING)) + 2);
+    doorShow(false);
+  }
+
   function jumpToWork() {
     var y = Math.round(scrollForScreens(STORY + DESK_AT * TAIL)) + 2;
     /* An exit is a decision, not a gesture: the governor is not
@@ -1056,12 +1084,86 @@
   /* Called every frame the picture moves. The cue belongs to the
      story: it arrives with the first frame of it and leaves at the
      last, and it never appears over the reveal or the desktop. */
+  /* The cue belongs to the story: it arrives once the door has been
+     answered and the sequence is under way, and leaves at the last
+     beat. Two instruments, never both on screen at once. */
   function cuePlace() {
     if (!cue) return;
-    cueShow(cueReady && shown < STORY - 0.03);
+    cueShow(cueReady && doorDone && shown < STORY - 0.03);
   }
 
   var cueReady = false;
+
+  /* ---------------------------------------------------------
+     THE DOOR
+
+     Shown on the opening frame only, and gone the moment the reader
+     has answered it — by clicking either option, by pressing Escape,
+     or simply by scrolling, which is itself one of the two answers.
+
+     It never blocks the scroll. `pointer-events: none` on the
+     container with `auto` on the two buttons means the frame behind
+     is still a scrollable page: the door OFFERS the gesture, it does
+     not stand in front of it.
+     --------------------------------------------------------- */
+  /* doorDone gates the cue as well as the door, so a page with no door
+     element in it must start already answered or the cue never shows. */
+  var doorOn = false, doorDone = !door;
+
+  function doorShow(on) {
+    if (!door || on === doorOn) return;
+    doorOn = on;
+    if (on) {
+      door.hidden = false;
+      requestAnimationFrame(function () { door.setAttribute('data-show', ''); });
+    } else {
+      doorDone = true;
+      door.removeAttribute('data-show');
+      setTimeout(function () { if (!doorOn) door.hidden = true; }, 460);
+    }
+  }
+
+  if (door) {
+    /* Same 600ms the cue used to wait: long enough that it arrives
+       rather than having always been there. */
+    setTimeout(function () {
+      if (doorDone || shown > 0.05) return;
+      doorShow(true);
+    }, 600);
+
+    var storyBtn = document.getElementById('door-story');
+    var skipBtn  = document.getElementById('door-skip');
+
+    /* Clicking the story option does what scrolling would have done —
+       it walks to the first beat and hands over to the gate. On a
+       phone this is the whole difference between an opening the
+       reader can start and one they have to guess at. */
+    if (storyBtn) storyBtn.addEventListener('click', function () {
+      doorShow(false);
+      var first = BEATS.length ? BEATS[0].at + EPS : 0.25;
+      window.scrollTo(0, Math.ceil(scrollForScreens(first)));
+      ScrollTrigger.update();
+    });
+
+    if (skipBtn) skipBtn.addEventListener('click', goToName);
+
+    /* Any real scroll answers the question too. */
+    ['wheel', 'touchmove', 'keydown'].forEach(function (ev) {
+      window.addEventListener(ev, function () { doorShow(false); }, { passive: true });
+    });
+  }
+
+  /* ESCAPE, for the whole length of the story and not only on the
+     opening frame. It is the one keystroke every reader already knows
+     the meaning of, and a reader who wants out three beats in wants
+     out exactly as much as one who wanted out at the door. Past the
+     story there is nothing to escape from, so it stops. */
+  window.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    if (shown >= STORY) return;
+    e.preventDefault();
+    goToName();
+  });
 
   if (cue) {
     /* 600ms: long enough that it arrives rather than having always
@@ -1069,11 +1171,6 @@
        burn its welcome. */
     setTimeout(function () { cueReady = true; cuePlace(); }, 600);
 
-    ['wheel', 'touchstart', 'keydown'].forEach(function (ev) {
-      window.addEventListener(ev, function () {
-        cue.setAttribute('data-compact', '');
-      }, { passive: true, once: true });
-    });
   }
 
   /* Fonts settle after layout — refresh so pin distances stay correct. */

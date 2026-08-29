@@ -855,6 +855,142 @@ img, video { display: block; max-width: 100%; }
    colour on a site whose palette is sampled entirely from one
    photograph. Binary digits fit now the hero is the ASCII treatment —
    the cue and the film are the same idea. */
+/* =========================================================
+   THE DOOR
+   =========================================================
+   Two answers to one question, centred on the opening frame.
+
+   Centred rather than tucked at the bottom because it is not a hint,
+   it is a fork: the reader is choosing between two versions of the
+   site and the choice deserves the middle of the screen. The bottom
+   of the frame stays empty until the story starts, at which point the
+   cue takes it over and the door is gone. One instrument at a time.
+
+   The two options are deliberately NOT symmetrical in weight. The
+   story is the default and reads brighter; the skip is quieter and
+   sits under it, which is the honest hierarchy — most people should
+   scroll, and the ones who need out should find the door without
+   being pushed through it. */
+.hero__door {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Room between the two, so the story option's arrow reads as
+     belonging to the story option rather than pointing at the skip. */
+  gap: 3.2rem;
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+  /* The frame behind is still scrollable — the door offers the scroll,
+     it does not intercept it. Only the two buttons take pointer. */
+  pointer-events: none;
+}
+.hero__door[hidden] { display: none; }
+.hero__door[data-show] { opacity: 1; }
+
+.door__opt {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .7rem;
+  margin: 0;
+  padding: .5rem 1.2rem;
+  border: 0;
+  background: none;
+  color: var(--ink-dim);
+  /* `inherit` on a button inherits from the page, not the design —
+     and the page's UI face is not the face this site speaks in. The
+     door is the first type anybody reads here; it has to be Panchang
+     like every other sentence in the sequence. */
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.35rem, 3.2vw, 2.5rem);
+  line-height: 1.25;
+  letter-spacing: var(--track-line);
+  text-align: center;
+  text-shadow: var(--halo);
+  cursor: pointer;
+  transition: color 260ms var(--ease-ui), opacity 260ms var(--ease-ui);
+}
+
+/* BOB for the story — downward, in the direction of the gesture it is
+   asking for. The arrow carries it; the words stay put, because type
+   that moves is type you re-read rather than read. */
+.door__opt--story { color: var(--ink); }
+.door__arrow { animation: door-bob 1.8s var(--ease-move) infinite; }
+
+@keyframes door-bob {
+  0%, 100% { transform: translateY(0);   opacity: .55; }
+  50%      { transform: translateY(5px); opacity: 1;   }
+}
+
+/* PULSE for the skip — no direction, because it is not asking you to
+   travel. Slower than the bob and out of phase with it, so the two
+   never beat together and read as one blinking object.
+
+   OPACITY ONLY, NEVER SCALE. It is a tap target, and a tap target that
+   is still breathing when the finger arrives has moved out from under
+   it. A button may change how it looks; it may not change where it is.
+   (This also stopped the automated click test dead — Playwright will
+   not click an element that never comes to rest, which is a fair proxy
+   for a thumb.) */
+.door__opt--skip { animation: door-pulse 2.6s var(--ease-move) infinite; font-size: clamp(1.1rem, 2.4vw, 1.8rem); }
+
+@keyframes door-pulse {
+  0%, 100% { opacity: .42; }
+  50%      { opacity: .82; }
+}
+
+/* Hover and focus stop the animation dead and go to full strength.
+   A thing that keeps pulsing while you are pointing at it has not
+   noticed you. */
+.door__opt:hover,
+.door__opt:focus-visible { color: var(--ink); opacity: 1; animation-play-state: paused; }
+.door__opt:hover .door__arrow,
+.door__opt:focus-visible .door__arrow { animation-play-state: paused; opacity: 1; }
+.door__opt:focus-visible { outline: 1px solid var(--ink-dim); outline-offset: .5rem; }
+
+/* The key, drawn as a key. */
+.door__kbd {
+  display: inline-block;
+  padding: .06em .5em .12em;
+  margin: 0 .12em;
+  border: 1px solid currentColor;
+  border-radius: .3em;
+  /* The UI face, deliberately: a key is a piece of hardware, not a
+     line of the writing, and setting it in the display face would
+     make it read as a word in the sentence rather than a thing you
+     press. Small caps at the UI scale, the same as the nav. */
+  font-family: var(--font-ui);
+  font-size: .52em;
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  opacity: .7;
+  text-shadow: none;
+  vertical-align: .16em;
+}
+
+/* Copy that tells the truth about the pointer it is under. "click esc"
+   is nonsense on a phone. */
+.door__line--touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .door__line--desk  { display: none; }
+  .door__line--touch { display: inline; }
+}
+
+@media (max-width: 640px) {
+  .hero__door { gap: 1.1rem; padding: 0 8vw; }
+  .door__opt  { font-size: clamp(1.25rem, 6.4vw, 1.9rem); }
+  .door__opt--skip { font-size: clamp(1rem, 4.6vw, 1.4rem); }
+  /* A tap target, not a line of text. */
+  .door__opt { min-height: 48px; padding: .8rem 1.2rem; }
+}
+
 .hero__cue {
   position: absolute;
   left: 50%; bottom: 5svh;
@@ -995,6 +1131,10 @@ img, video { display: block; max-width: 100%; }
      page will move. It just stops travelling to say so. */
   .hero__cue svg { animation: none; opacity: 1; transform: none; }
   .hero__cue[data-wait] svg { opacity: .5; }
+  /* The door stops moving but keeps its hierarchy — the difference
+     between the two options was never carried by the motion. */
+  .door__arrow, .door__opt--skip { animation: none; transform: none; }
+  .door__opt--skip { opacity: .6; }
   .hero__wire { transition: opacity 300ms linear 200ms; transform: scaleX(1); opacity: 0; }
   .hero[data-name] .hero__wire { opacity: 1; }
 }
@@ -1365,18 +1505,17 @@ img, video { display: block; max-width: 100%; }
 
 /* The sprite panel. Sunken by inverting the border weight — light on
    two sides, dark on two — which is the entire visual vocabulary those
-   interfaces had for depth. */
+   interfaces had for depth. No explicit width: the global `border-box`
+   reset means a fixed width here would count its own padding against
+   the sprite inside it, shrinking the sprite by exactly that padding —
+   and then the background-position math, which assumes the sprite's
+   rendered box IS --about-sw, would be reading off a misaligned frame.
+   Sizing to content instead means the screen is always exactly the
+   sprite's size plus its own frame, never fighting it. */
 .about__screen {
   border: var(--bd) solid var(--ink);
   background: var(--void);
   padding: 8px 6px 0;
-  /* No explicit width: the global `border-box` reset means a fixed
-     width here would count its own padding against the sprite inside
-     it, shrinking the sprite by exactly that padding — and then the
-     background-position math, which assumes the sprite's rendered box
-     IS --about-sw, would be reading off a misaligned frame. Sizing to
-     content instead means the screen is always exactly the sprite's
-     size plus its own frame, never fighting it. */
   display: flex;
   justify-content: center;
 }
@@ -1713,6 +1852,9 @@ img, video { display: block; max-width: 100%; }
   .hero__ditherwash { background: rgba(16,19,14,.76); }
 
   /* Stacked, the window has width to spare and no height to spare — so
+     it turns on its side: sprite beside the text instead of above it.
+     Same window, laid out the way the space is shaped. */
+  /* Stacked, the window has width to spare and no height to spare — so
      it turns on its side: sprite beside the tab content instead of
      above it. Same window, laid out the way the space is shaped. The
      wider frame earns a bigger sprite — --about-sw is the only value
@@ -1769,6 +1911,10 @@ img, video { display: block; max-width: 100%; }
    worse than one. */
 .no-js .hero__isle { display: none; }
 .no-js .hero__lamps { display: none; }
+/* The door offers a choice between two behaviours that both need JS.
+   Without it the page is a flat document and there is nothing to
+   choose between. */
+.no-js .hero__door { display: none; }
 .no-js .hero__name { position: static; opacity: 1; visibility: visible; transform: none; padding: 8vh 6vw 0; }
 .no-js .hero__name-line { transform: none; }
 .no-js .hero__wire { position: static; display: block; transform: none; margin-top: .4em; }
