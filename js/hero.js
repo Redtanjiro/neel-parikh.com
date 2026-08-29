@@ -91,6 +91,7 @@
   var stage      = document.querySelector('.hero__stage');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var handedOff = false;
 
   function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
   function playSafe(v)  { if (v && v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } }
@@ -132,6 +133,36 @@
      the opening plays over a site scrolled to its footer, and the
      handoff's scrollTo fights the restore. */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  /* ---------------------------------------------------------
+     WHAT SITS BEHIND THE LID
+
+     The dissolve at the end is a crossfade between two documents: the
+     hero fades out, and whatever is behind it is what it fades TO. So
+     the thing behind it has to be the halftone plate.
+
+     Adding the title card broke exactly that, and invisibly. The card
+     became the top of .site, the scroll is pinned at 0 for the length
+     of the opening, so the desk sat one whole viewport below the fold
+     and the hero spent the entire dissolve fading onto the title
+     card — the same footage, which reads as a fade to nothing — before
+     hard-cutting to the desktop at the handoff.
+
+     So while the lid is down, .site is offset by exactly one title card
+     and the desk is the screen underneath. At the handoff the offset
+     comes off and the scroll goes to the same number in the same frame,
+     which puts the desk in an identical screen position: the reader
+     sees the dissolve finish and nothing else.
+
+     Measured rather than 100svh. The card is sized in svh and the
+     locked body is sized to the live viewport, and on a phone those
+     are the same number only while the URL bar is showing. */
+  function siteOffset() {
+    if (!site || !title || handedOff) return;
+    site.style.transform = 'translateY(' + (-title.offsetHeight) + 'px)';
+  }
+  siteOffset();
+  window.addEventListener('resize', siteOffset);
 
   if (video && !reduced) playSafe(video);
 
@@ -647,7 +678,7 @@
      scrollbar behave like this, and this is the thing they were
      imitating.
      ========================================================= */
-  var clock = 0, running = false, raf = 0, lastT = 0, handedOff = false;
+  var clock = 0, running = false, raf = 0, lastT = 0;
 
   function setRail(f) {
     if (railFill) railFill.style.transform = 'scaleX(' + f.toFixed(4) + ')';
@@ -708,11 +739,18 @@
     }
 
     /* And the page underneath becomes the page. */
+    var titleH = title ? title.offsetHeight : 0;
+    if (site) site.style.transform = '';
     root.classList.remove('is-opening');
     if (site) {
       site.removeAttribute('aria-hidden');
       site.removeAttribute('inert');
     }
+    /* Force the layout the unlocked body implies before scrolling into
+       it — the document only has a scrollable height once the fixed
+       positioning is off, and scrollTo against a stale one silently
+       clamps to zero. */
+    void document.documentElement.scrollHeight;
 
     /* LANDING ON THE DESKTOP, WITH THE TITLE CARD ABOVE IT.
 
@@ -732,7 +770,7 @@
        Instant, and read after the unlock so the layout is the unlocked
        one. A smooth scroll here would animate the reader away from the
        frame they were just delivered to. */
-    if (title) window.scrollTo(0, title.offsetHeight);
+    window.scrollTo(0, titleH);
 
     showChrome();
     watchTitle();
