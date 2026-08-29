@@ -4,13 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Neel Parikh — Designer</title>
-<meta name="description" content="A designer without a team is, well, marooned. Selected work by Neel Parikh.">
+<!-- "A designer without a team is, well, marooned" was the joke the old
+     hero concept was built around; that hero is gone, and a joke with
+     no punchline left in the one place on the site that is pure literal
+     search text just reads as filler. Say what the work is instead. -->
+<meta name="description" content="Neel Parikh — interaction and product designer in Sydney. Four years in industry, ex-Design Lead at Media Mushroom. I hand-illustrate and hand-code what I design. Open to product, interaction and design engineering roles.">
 
 <meta property="og:title" content="Neel Parikh — Designer">
-<meta property="og:description" content="A designer without a team is, well, marooned.">
+<meta property="og:description" content="Interaction and product designer in Sydney. Four years in industry, ex-Design Lead at Media Mushroom — hand-illustrated, hand-coded. Open to product, interaction and design engineering roles.">
 <meta property="og:image" content="https://neel-parikh.com/media/hero-poster.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://neel-parikh.com/">
+<link rel="icon" href="media/favicon.svg" type="image/svg+xml">
 
 <link rel="preload" href="fonts/Panchang-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Allison.woff2" as="font" type="font/woff2" crossorigin>
@@ -74,11 +80,15 @@
          The real place is still down there, and it arrives when the
          blackout lifts in the tail. Idea first, then the thing.
 
-         mp4 FIRST, as on the dither layer below and for the same
-         reason: the plate is dense high-frequency glitch noise and VP9
-         handles it worse than x264 does — 699 KB against 511 KB on the
-         same five seconds — so h264 is the one nearly everyone gets and
-         the webm is the fallback for builds without it.
+         h264 ONLY — no webm alternate. There used to be one, "for
+         builds without proprietary codecs"; the real effect was
+         Chromium fetching both encodes, since a <video> with several
+         <source>s downloads the first one it can play rather than
+         negotiating, and every browser this audience uses can play
+         h264. That was ~2.5 MB of duplicate download across this
+         element and the dither layer below, nobody watching a frame of
+         it. Putting the alternate back means finding the source
+         re-selection problem first, not just re-adding the tag.
 
          preload="auto", unusually for a second video on the page: it is
          the first picture on the site and it is due one gesture in, so
@@ -92,7 +102,6 @@
              width="1000" height="690"
              aria-hidden="true" tabindex="-1">
         <source src="media/isle.mp4" type="video/mp4">
-        <source src="media/isle.webm" type="video/webm">
       </video>
     </div>
 
@@ -138,7 +147,7 @@
          1.90  all by their Self,
          2.35  two more lights, from the left and the right
          2.60  all by their Self, leaves
-         2.85  lets work together.
+         2.85  let’s work together.
          3.35  the story ends and the reveal begins
 
        No lock and no skip: crossing a number forward plays its beat,
@@ -182,7 +191,7 @@
     </div>
 
     <div class="phrase pos--lit" data-at="2.85">
-      <span class="line line--body line--lit line--tog">lets work <b>together</b>.</span>
+      <span class="line line--body line--lit line--tog">let&#8217;s work <b>together</b>.</span>
     </div>
 
   </div><!-- /.hero__stage -->
@@ -324,10 +333,15 @@
          so the crossfade costs one video rather than two identical ones
          on two layers.
 
-         mp4 FIRST, unusually. The halftone is dense high-frequency noise
-         and VP9 handles it badly — 1.9 MB against x264's 1.45 MB on the
-         same frame — so h264 is the one nearly everyone gets and the
-         webm is the fallback for builds without proprietary codecs.
+         h264 ONLY — no webm alternate. There used to be one, "for
+         builds without proprietary codecs"; the real effect was
+         Chromium fetching both encodes, since a <video> with several
+         <source>s downloads the first one it can play rather than
+         negotiating, and every browser this audience uses can play
+         h264. That was ~2.5 MB of duplicate download across this
+         element and the island clip above, nobody watching a frame of
+         it. Putting the alternate back means finding the source
+         re-selection problem first, not just re-adding the tag.
 
          preload="none", asked for by hero.js a couple of seconds before
          the dissolve. The poster is real, not decorative: it is what the
@@ -339,7 +353,6 @@
              muted loop playsinline preload="none"
              aria-hidden="true" tabindex="-1">
         <source src="media/dither.mp4" type="video/mp4">
-        <source src="media/dither.webm" type="video/webm">
       </video>
       <div class="desk__wash"></div>
     </div>
@@ -352,9 +365,9 @@
           <a class="folder__link" href="work/futee/">
             <span class="folder__icon">
               <span class="folder__spill" aria-hidden="true">
-                <img class="folder__sheet" src="work/futee/Group%201000002954.png" alt="" width="2270" height="1712" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/futee/Journey%20map.png" alt="" width="2270" height="1268" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/futee/PERSONA%20-%20Light.png" alt="" width="2270" height="1191" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/group-1000002954.webp" alt="" width="420" height="317" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/journey-map.webp" alt="" width="420" height="235" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/persona-light.webp" alt="" width="420" height="220" loading="lazy" decoding="async">
               </span>
               <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
             </span>
@@ -367,9 +380,9 @@
           <a class="folder__link" href="work/emf-ace/">
             <span class="folder__icon">
               <span class="folder__spill" aria-hidden="true">
-                <img class="folder__sheet" src="work/emf-ace/img/emf-teaser-desert-final.png" alt="" width="461" height="461" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/emf-ace/img/emf-500-registered.png" alt="" width="478" height="478" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/emf-ace/img/emf-panel-global-design-fusion.png" alt="" width="462" height="462" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/emf-teaser-desert-final.webp" alt="" width="420" height="420" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/emf-500-registered.webp" alt="" width="420" height="420" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/emf-panel-global-design-fusion.webp" alt="" width="420" height="420" loading="lazy" decoding="async">
               </span>
               <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
             </span>
@@ -382,9 +395,9 @@
           <a class="folder__link" href="work/cseds/">
             <span class="folder__icon">
               <span class="folder__spill" aria-hidden="true">
-                <img class="folder__sheet" src="work/cseds/img/landing-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/cseds/img/product-01.jpg" alt="" width="1199" height="1551" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/cseds/img/software-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/landing-01.webp" alt="" width="420" height="551" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/product-01.webp" alt="" width="420" height="543" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/software-01.webp" alt="" width="420" height="551" loading="lazy" decoding="async">
               </span>
               <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
             </span>
@@ -397,9 +410,9 @@
           <a class="folder__link" href="work/into-yesterday/">
             <span class="folder__icon">
               <span class="folder__spill" aria-hidden="true">
-                <img class="folder__sheet" src="work/into-yesterday/img/maze-aerial.jpg" alt="" width="1920" height="1080" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/into-yesterday/img/clay-1.jpg" alt="" width="1600" height="1200" loading="lazy" decoding="async">
-                <img class="folder__sheet" src="work/into-yesterday/img/sb-1.jpg" alt="" width="1171" height="574" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/maze-aerial.webp" alt="" width="420" height="236" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/clay-1.webp" alt="" width="420" height="315" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="media/spill/sb-1.webp" alt="" width="420" height="206" loading="lazy" decoding="async">
               </span>
               <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
             </span>
@@ -444,8 +457,8 @@
         </div>
 
         <div class="about__tabs" role="tablist" aria-label="About sections">
-          <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About<br>me</button>
-          <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experi-<br>ence</button>
+          <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About</button>
+          <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experience</button>
           <button class="about__tab" role="tab" id="about-t2" aria-controls="about-p2" aria-selected="false" tabindex="-1">Studies</button>
           <button class="about__tab" role="tab" id="about-t3" aria-controls="about-p3" aria-selected="false" tabindex="-1">Contact</button>
         </div>

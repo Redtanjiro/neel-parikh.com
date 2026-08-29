@@ -536,8 +536,24 @@ html.is-opening body {
 
 /* Screen one's line sits low, under the island. Screen two's ask sits
    lower still - it is the last thing on the page before the desktop,
-   and the gap above it is the pause the sentence ended on. */
-.pos--isle { transform: translateY(16svh); }
+   and the gap above it is the pause the sentence ended on.
+
+   NOWRAP AT EVERY WIDTH, viewport-sized rather than measured in ch.
+   .phrase's inherited 60ch measure resolves against the *phrase's*
+   font-size — 16px, since .phrase never sets one — not the 37px+ the
+   line actually renders at, so it came out around 534px and broke
+   "No man is an island…" over two lines from about 1024px up. That
+   would be a ragged break on its own, but .hand (the "Designer"
+   script) is absolutely positioned UNDER the struck word at a fixed
+   offset from .cut — so a wrap doesn't just look bad, it draws the
+   correction straight through whatever the second line turned out to
+   be. One line, sized to the viewport so it can't wrap into it. */
+.pos--isle { transform: translateY(16svh); max-width: none; }
+.pos--isle .line {
+  white-space: nowrap;
+  max-width: none;
+  font-size: clamp(1.25rem, 3.6vw, 2.9rem);
+}
 .pos--mid.phrase--split { transform: translateY(-4svh); }
 .pos--ask { transform: translateY(28svh); }
 
@@ -833,8 +849,16 @@ html.is-opening body {
   text-transform: uppercase;
   color: var(--ink-dim);
 }
+/* The two nav links are the only exits on the page for the whole
+   opening, and at 45x15/69x15 they were well under the 44px touch
+   floor. Padding grows the hit area; the equal-and-opposite margin
+   pulls the box back to where it was, so the flex row's spacing and
+   the type's own visual position don't move — only what registers a
+   tap does. */
 .chrome__nav a {
   display: inline-block;
+  padding: 15px 10px;
+  margin: -15px -10px;
   transition: color 180ms var(--ease-ui), transform 140ms var(--ease-ui);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -1082,6 +1106,11 @@ html.is-opening body {
   flex: none;
   margin: 0;
   padding: .55rem .2rem;
+  /* Was 44px only below 640px — this is the fire exit for the whole
+     opening, at every width, not just on a phone. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   border: 0;
   background: none;
   color: var(--ink-dim);
@@ -1266,7 +1295,12 @@ html.is-opening body {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: clamp(1.5rem, 4vw, 4.5rem);
-  padding: 0 6vw 10svh;
+  /* Top padding clears the fixed chrome. .work is bottom-aligned
+     (align-items: end), so on a tall frame this costs nothing — but on
+     a short laptop the window's top edge travels up with the frame
+     height, and without room reserved above it lands behind "WORK
+     CONTACT" instead of under it. */
+  padding: clamp(72px, 11svh, 108px) 6vw 10svh;
   /* Nothing here is clickable until it's visible. Without this the
      folders are an invisible hit area over the whole lower half of the
      hero for the entire story. */
@@ -1509,6 +1543,17 @@ html.is-opening body {
   transition:
     opacity 240ms var(--ease-ui) 300ms,
     transform 380ms var(--ease-pop) 300ms;
+
+  /* The window is bottom-aligned in its cell (.work's align-items:end),
+     so a short frame doesn't push its bottom edge down — it pushes its
+     TOP edge up, into the chrome. Rather than let the window grow past
+     the space it's given, it's bounded by it (max-height: 100%) and
+     becomes a column flex box, so the one part of it with room to lose
+     — the tab content — is the part that yields. */
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  min-height: 0;
 }
 .site[data-desk] .about { opacity: 1; transform: none; }
 .about[hidden] { display: none; }
@@ -1532,13 +1577,30 @@ html.is-opening body {
    being closeable and reopenable. The middle one still doesn't: there
    is nothing here for a maximise to do, and furniture that responds to
    the mouse but does nothing is worse than furniture that doesn't. */
-.about__controls { display: flex; gap: 4px; }
+/* 32px, not the original 4px. Each control's own hit area (below) is
+   44px, centred on a 13px square — the gap has to put their CENTRES at
+   least 44px apart or two "different" controls answer the same tap.
+   13px square + 31px gap = 44px centre-to-centre is the minimum; 32px
+   is that plus a hair of margin, kept as a gap increase rather than
+   shrinking the areas themselves. */
+.about__controls { display: flex; gap: 32px; }
 .about__ctrl {
+  position: relative;
   width: 13px; height: 13px;
   padding: 0;
   border: 2px solid var(--void);
   background: none;
   cursor: default;
+}
+/* The square stays 13px — the window's proportions need it small — so
+   the hit area is a separate, invisible 44px square centred on it via
+   a pseudo-element instead of growing the control itself. */
+.about__ctrl::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
 }
 .about__ctrl i { display: block; width: 100%; height: 100%; }
 .about__ctrl--min, .about__ctrl--close { cursor: pointer; }
@@ -1550,8 +1612,12 @@ html.is-opening body {
 
 /* ---------- tabs ----------
    A real tablist: arrow keys, Home/End, roving tabindex (see hero.js).
-   Two-line labels ("Experi-/ence") because this window is narrow by
-   design — the corner of a desktop, not a panel of its own. */
+   One line each, always — a hard <br> in "Experi-/ence" read as a
+   rendering bug rather than a layout choice (and made that one tab two
+   lines while its neighbours stayed one). white-space: nowrap holds the
+   line; if "Experience" ever overflows its cell at the narrowest width
+   the window gets, the letter-spacing and size are the levers, at that
+   breakpoint only — not a break. */
 .about__tabs {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1569,6 +1635,12 @@ html.is-opening body {
   letter-spacing: .1em;
   text-transform: uppercase;
   line-height: 1.3;
+  white-space: nowrap;
+  hyphens: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   transition: color 150ms linear;
 }
@@ -1583,7 +1655,7 @@ html.is-opening body {
 }
 .about__tab:focus-visible { outline: none; color: var(--ink); box-shadow: inset 0 0 0 2px var(--folder-teal, #74E8E8); }
 
-.about__body { padding: 12px; }
+.about__body { padding: 12px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
 .about__stage { display: flex; flex-direction: column; align-items: center; }
 
@@ -1639,7 +1711,13 @@ html.is-opening body {
 }
 
 /* ---------- the panes ---------- */
-.about__panes { margin-top: 14px; min-width: 0; }
+/* flex: 1 + overflow-y: auto is the yield T2 needs: on a short laptop
+   the window is bounded by .about's own max-height (its parent cell,
+   ultimately the chrome-cleared padding above), and this is the one
+   part of the window with text long enough to need more room than
+   that sometimes allows. A short internal scroll here is correct; a
+   sentence cut off at the frame's edge is not. */
+.about__panes { margin-top: 14px; min-width: 0; flex: 1; min-height: 4rem; overflow-y: auto; overscroll-behavior: contain; }
 .about__panel[hidden] { display: none; }
 .about__h {
   font-family: var(--font-work);
@@ -1970,13 +2048,31 @@ html.is-opening body {
 /* Below 1000px the two columns become two rows: files first, then the
    person. Work before bio at every width — the order is the argument. */
 @media (max-width: 1000px) {
+  /* .desk is a fixed-height, overflow:hidden box — a shape that can only
+     express "this content fits" or "this content is cropped", never
+     "this content is taller than the screen". Below 1000px .work is one
+     centred column instead of two side by side, and on a short or narrow
+     phone its stacked content is routinely taller than 100svh. Centred
+     inside a box that clips, the overflow is cut at BOTH ends — which is
+     why row one went negative at the top while the about window ran off
+     the bottom. So down here .work leaves `position: absolute` (which
+     had made it exactly as tall as .desk, no taller) and becomes a normal
+     flow element again: .desk grows to fit it, and it is `.desk`'s own
+     min-height, not a hard cap, that keeps most viewports resolving in
+     one screen without a scroll. */
+  .desk { height: auto; min-height: 100svh; overflow: visible; }
   .work {
+    position: relative; inset: auto;
     grid-template-columns: minmax(0, 1fr);
-    align-content: center;
+    /* start, not center — centring a box taller than its container is
+       what turns overflow into clipping at both ends instead of one. */
+    align-content: start;
     align-items: stretch;
     justify-items: center;
     gap: clamp(1.25rem, 3.5svh, 2.5rem);
-    padding: 8svh 6vw;
+    padding:
+      calc(72px + env(safe-area-inset-top, 0px)) 6vw
+      calc(6svh + env(safe-area-inset-bottom, 0px));
   }
   /* Same cap on both so the files and the window line up as one block.
      38rem, not 34: Sprat Extended is a wide face and "Project Three"
@@ -2020,7 +2116,16 @@ html.is-opening body {
    one unbroken string. Two columns costs a row of height the window can
    spare and gives every label the width it actually needs. */
 @media (max-width: 560px) {
-  .work { padding: 5svh 5vw; gap: 1.1rem; }
+  /* Same top-clearing padding as the 1000px step, kept in sync here —
+     this rule's own specificity would otherwise win and silently undo
+     it below 560px, which is exactly the width the chrome-clearance
+     matters most at. */
+  .work {
+    padding:
+      calc(72px + env(safe-area-inset-top, 0px)) 5vw
+      calc(6svh + env(safe-area-inset-bottom, 0px));
+    gap: 1.1rem;
+  }
   .work__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.1rem; }
   .folder__icon { width: clamp(58px, 17vw, 84px); }
   .folder__name { font-size: clamp(.85rem, 3.6vw, 1.05rem); min-height: 1.3em; }
@@ -2031,6 +2136,18 @@ html.is-opening body {
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
      is the only thing in the shot with a silhouette. Bias down. */
   .desk__dither { object-position: 50% 58%; }
+}
+
+/* Short AND narrow — a phone in the hand, not a phone on a stand. At
+   this size the desk's own min-height rarely resolves in one screen
+   without help, so this step trims the sprite, the icons and the
+   window's own padding to buy back what it can before falling back to
+   the internal scroll. */
+@media (max-width: 560px) and (max-height: 730px) {
+  .about { --about-sw: 76px; }
+  .folder__icon { width: clamp(48px, 14vw, 68px); }
+  .about__body { padding: 9px; }
+  .work { gap: .75rem; }
 }
 
 /* NO-JS — and this is the other thing the separation bought.

@@ -36,3 +36,7 @@ fonts/Sprat-ExtendedBold.woff2
 # Calfine source (only the shipped woff2 is committed)
 calfine/
 calfine.zip
+
+# tools/check.py's own output — a screenshot for manual review, not a
+# repo artifact
+tools/t4-self-beat.png
