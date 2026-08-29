@@ -62,35 +62,6 @@
       <source src="media/hero.mp4" type="video/mp4">
     </video>
 
-    <!-- The dither. Same island, colder read — the machine's version of
-         the place. Stacked directly on the hero plate at identical
-         framing so the swap is a dissolve in place, not a cut to a new
-         shot. Opacity is scrubbed across the pinned tail after the
-         wordmark lands; see applyDissolve in hero.js.
-
-         THIS IS ALSO THE WORK SECTION. The dissolve resolves into the
-         screen the files sit on — one plate, not a picture and then a
-         second copy of the same picture below it. See main.work below.
-
-         mp4 FIRST, unusually. The halftone is dense high-frequency noise
-         and VP9 handles it badly — 1.9 MB against x264's 1.45 MB on the
-         same frame — so the order is reversed from the hero above and
-         h264 is the one nearly everyone gets. The webm stays as the
-         fallback for builds without proprietary codecs.
-
-         preload="none", loaded on purpose two steps out: hero.js calls
-         load() at the island reveal, so it's buffered by the time the
-         dissolve starts. And the poster is real, not decorative — it's
-         what the layer shows if the buffer isn't ready, and without it
-         a slow connection crossfades the frame to nothing. -->
-    <video class="hero__dither" id="hero-dither"
-           poster="media/dither-poster.jpg"
-           muted loop playsinline preload="none"
-           aria-hidden="true" tabindex="-1">
-      <source src="media/dither.mp4" type="video/mp4">
-      <source src="media/dither.webm" type="video/webm">
-    </video>
-    <div class="hero__ditherwash" id="hero-ditherwash"></div>
 
     <div class="hero__scrim"></div>
     <div class="hero__vignette"></div>
@@ -228,223 +199,6 @@
     <span class="hero__name-line">Neel Parikh</span>
   </div>
 
-  <!-- ============ THE DESKTOP ============
-       This is not a second screen. The dissolve above resolves INTO the
-       surface the files sit on — the halftone stops being a picture of
-       the island and becomes the thing the island's laptop is showing.
-
-       An earlier version put a second copy of the same footage in its
-       own scrolling section below the hero. It worked, and it was wrong:
-       you scrolled past a full screen of the halftone only to arrive at
-       another full screen of the halftone. The transition was doing all
-       the work and then being repeated. One plate, and the files arrive
-       on it.
-
-       <main> nested in <section> is legal (main may not descend from
-       article/aside/header/footer/nav — section is fine), and it keeps
-       the actual content of the site inside the landmark rather than
-       leaving it stranded in a decorative hero. -->
-  <!-- tabindex="-1" so the skip link actually moves focus here rather
-       than only moving the viewport. The first Tab from it reaches a
-       folder, which fires the focusin jump in hero.js. -->
-  <main class="work" id="work" tabindex="-1">
-    <h2 class="visually-hidden">Selected work</h2>
-    <ul class="work__grid" id="work-grid" aria-label="Selected work">
-
-      <li class="folder" style="--i:0">
-        <a class="folder__link" href="work/futee/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="work/futee/Group%201000002954.png" alt="" width="2270" height="1712" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/futee/Journey%20map.png" alt="" width="2270" height="1268" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/futee/PERSONA%20-%20Light.png" alt="" width="2270" height="1191" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">Futee</span>
-          <span class="folder__meta">Product · 2022</span>
-        </a>
-      </li>
-
-      <li class="folder" style="--i:1">
-        <a class="folder__link" href="work/emf-ace/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="work/emf-ace/img/emf-teaser-desert-final.png" alt="" width="461" height="461" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/emf-ace/img/emf-500-registered.png" alt="" width="478" height="478" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/emf-ace/img/emf-panel-global-design-fusion.png" alt="" width="462" height="462" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">EMF ACE</span>
-          <span class="folder__meta">Brand · 2024</span>
-        </a>
-      </li>
-
-      <li class="folder" style="--i:2">
-        <a class="folder__link" href="work/cseds/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="work/cseds/img/landing-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/cseds/img/product-01.jpg" alt="" width="1199" height="1551" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/cseds/img/software-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">CSEDS</span>
-          <span class="folder__meta">Web · 2025</span>
-        </a>
-      </li>
-
-      <li class="folder" style="--i:3">
-        <a class="folder__link" href="work/into-yesterday/">
-          <span class="folder__icon">
-            <span class="folder__spill" aria-hidden="true">
-              <img class="folder__sheet" src="work/into-yesterday/img/maze-aerial.jpg" alt="" width="1920" height="1080" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/into-yesterday/img/clay-1.jpg" alt="" width="1600" height="1200" loading="lazy" decoding="async">
-              <img class="folder__sheet" src="work/into-yesterday/img/sb-1.jpg" alt="" width="1171" height="574" loading="lazy" decoding="async">
-            </span>
-            <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
-          </span>
-          <span class="folder__name">Into Yesterday</span>
-          <span class="folder__meta">Film · 2025</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <!-- ============ THE ABOUT WINDOW ============
-         The other half of the desktop. Files on the left, the person who
-         made them on the right — which is the argument the whole page is
-         making, so it should be visible in one frame rather than two.
-
-         Four tabs — about me, experience, studies, contact — a real
-         ARIA tablist (arrow keys, Home/End, roving tabindex) rather than a
-         two-button transport, because there was more true to say than a
-         caption could carry. Each tab still pairs with a pose, and drifts
-         to a second one after a few seconds, so the window keeps a little
-         life without that life ever being the answer to the question the
-         tab is asking.
-
-         Bitmap treatment, site palette. Hard 2px borders, no radii, one
-         solid unblurred drop shadow, monospace chrome. NOT a pixel
-         webfont — that would be a fourth face and another download on a
-         page already carrying two videos. Monospace is what a terminal
-         actually uses and the scroll cue's digit grid is already set in
-         it, so the register was on the page before this window was.
-
-         Close hides the window and hands off to a small reopen chip in
-         the same desktop cell — close/reopen, not close/gone, matching
-         every other control on this page. -->
-    <aside class="about" id="about" aria-label="About Neel">
-      <div class="about__bar">
-        <span class="about__title">about.exe</span>
-        <span class="about__controls">
-          <button type="button" class="about__ctrl" aria-hidden="true" tabindex="-1"><i aria-hidden="true"></i></button>
-          <button type="button" class="about__ctrl about__ctrl--min" aria-label="Minimise" data-about-close><i aria-hidden="true"></i></button>
-          <button type="button" class="about__ctrl about__ctrl--close" aria-label="Close" data-about-close><i aria-hidden="true"></i></button>
-        </span>
-      </div>
-
-      <div class="about__tabs" role="tablist" aria-label="About sections">
-        <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About<br>me</button>
-        <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experi-<br>ence</button>
-        <button class="about__tab" role="tab" id="about-t2" aria-controls="about-p2" aria-selected="false" tabindex="-1">Studies</button>
-        <button class="about__tab" role="tab" id="about-t3" aria-controls="about-p3" aria-selected="false" tabindex="-1">Contact</button>
-      </div>
-
-      <div class="about__body">
-        <!-- The sprite is decorative: the caption below carries every bit
-             of meaning it has, and describing eighteen near-identical
-             poses to a screen reader is noise. -->
-        <div class="about__stage">
-          <div class="about__screen">
-            <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
-          </div>
-          <p class="about__cap" id="about-caption" aria-live="polite">idle</p>
-        </div>
-
-        <div class="about__panes">
-          <div class="about__panel" role="tabpanel" id="about-p0" aria-labelledby="about-t0">
-            <h3 class="about__h">Neel Parikh</h3>
-            <p class="about__lede">Designer. I make things that explain themselves — mostly interfaces, occasionally a maze. This site is hand-written: no framework, no template underneath.</p>
-            <ul class="about__rows">
-              <li><b>Based</b><span>Sydney, NSW</span></li>
-              <li><b>Works in</b><span>Product and brand design, motion, and the front-end that carries them</span></li>
-              <li><b>Right now</b><span>Four case studies live in here — Futee, EMF ACE, CSEDS, Into Yesterday</span></li>
-            </ul>
-          </div>
-
-          <div class="about__panel" role="tabpanel" id="about-p1" aria-labelledby="about-t1" hidden>
-            <h3 class="about__h">Experience</h3>
-            <ol class="about__tl">
-              <li>
-                <span class="about__when">Mar 2026 — now</span>
-                <div>
-                  <p class="about__role-t">Marketing &amp; Engagement Ambassador</p>
-                  <p class="about__where">UNSW Founders · Sydney</p>
-                  <p class="about__desc">Content and community across the UNSW Founders brand, feeding student insight back into campaigns.</p>
-                </div>
-              </li>
-              <li>
-                <span class="about__when">2023 — 25</span>
-                <div>
-                  <p class="about__role-t">Design Lead</p>
-                  <p class="about__where">Media Mushroom · India</p>
-                  <p class="about__desc">Directed brand and the EMF ACE event site — led a 5-person team across 50+ vendors and 10–15 concurrent campaigns.</p>
-                </div>
-              </li>
-              <li>
-                <span class="about__when">2020 — 22</span>
-                <div>
-                  <p class="about__role-t">Visual &amp; UX Designer</p>
-                  <p class="about__where">Idealoft Studio · India</p>
-                  <p class="about__desc">Wireframes through interactive prototypes for B2B and banking clients, including ICICI Bank and Yes Bank.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-
-          <div class="about__panel" role="tabpanel" id="about-p2" aria-labelledby="about-t2" hidden>
-            <h3 class="about__h">Studies</h3>
-            <ol class="about__tl">
-              <li>
-                <span class="about__when">2025 — now</span>
-                <div>
-                  <p class="about__role-t">Master of Design, Interaction &amp; Immersive</p>
-                  <p class="about__where">UNSW · Sydney</p>
-                  <p class="about__desc">Human-centred UX methods, interaction and immersive design. Dean's List award recipient.</p>
-                </div>
-              </li>
-              <li>
-                <span class="about__when">2019 — 23</span>
-                <div>
-                  <p class="about__role-t">Bachelor of Design</p>
-                  <p class="about__where">Anant National University · India</p>
-                  <p class="about__desc">Major in Interaction Design, minor in Graphic Design.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-
-          <div class="about__panel" role="tabpanel" id="about-p3" aria-labelledby="about-t3" hidden>
-            <h3 class="about__h">Contact</h3>
-            <ul class="about__rows">
-              <li><b>Email</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
-              <li><b>Elsewhere</b><span><a href="https://www.linkedin.com/in/neel-parikh-413b16169/" target="_blank" rel="noopener">LinkedIn</a></span></li>
-              <li><b>Open to</b><span>Product and brand work, and case studies that need a story</span></li>
-              <li><b>Reply</b><span>Usually within a day</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Stands in for the window in the same corner while it's closed —
-         see .about__reopen in main.css and the close/reopen wiring in
-         hero.js. -->
-    <button type="button" class="about__reopen" id="about-reopen" hidden>Reopen — about.exe</button>
-  </main>
 
   <!-- ============ THE DOOR ============
        The opening frame asks one question and offers two answers. It is
@@ -465,10 +219,16 @@
        downward, in the direction of the gesture it is asking for. The
        skip option PULSES — no direction, because it is not asking you
        to travel, it is asking you to leave. Two motions that mean two
-       different things, rather than one motion applied twice. -->
+       different things, rather than one motion applied twice.
+
+       THE COPY CHANGED WITH THE MECHANISM. It said "scroll to view the
+       story" when the scroll was the clock. The clock is a clock now, so
+       it says "play" — the one verb that is honest about what the button
+       does, and the one the reader already knows costs them a fixed
+       amount of time rather than an unknown number of gestures. -->
   <div class="hero__door" id="door" hidden>
     <button class="door__opt door__opt--story" type="button" id="door-story">
-      <span class="door__line">scroll to view the story</span>
+      <span class="door__line">play the story</span>
       <svg class="door__arrow" width="10" height="26" viewBox="0 0 10 26" fill="none" aria-hidden="true">
         <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
       </svg>
@@ -480,32 +240,317 @@
     </button>
   </div>
 
-  <!-- Scroll cue. It began as a loader decoration — a tumbling digit
-       grid, so a pitch-black opening frame read as alive rather than
-       broken — and the door does that job now, with meaning. What is
-       left is the instrument: a word and an arrow that report whether
-       the page will take another gesture. See cueState in hero.js.
-       (.matrix and .digit are dead CSS from the retired version.) -->
-  <div class="hero__cue" id="cue" aria-hidden="true" hidden>
-    <span>Scroll</span>
-    <svg width="10" height="26" viewBox="0 0 10 26" fill="none" aria-hidden="true">
-      <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
-    </svg>
-  </div>
 
-  <!-- The step ledger is gone with the gated scroll. It answered "how
-       long does this mean to hold me", which was a fair question when
-       the page was holding you; the scrollbar answers it now, and it
-       answers it continuously. -->
+  <!-- ============ THE RAIL ============
+       The story runs on a clock now, so the reader is owed the clock.
+       A hairline that fills across the bottom of the frame for the
+       length of the run — no numbers, because a countdown on a black
+       frame is the loudest thing on it, and what the reader actually
+       wants to know is "how much of this is left", which a bar answers
+       at a glance and a number makes you do arithmetic for.
+
+       Next to it, an exit that stays out for the whole run. The old
+       version's one defensible claim was that there was always a
+       visible way out; a timed sequence needs that more than a scrubbed
+       one did, not less. -->
+  <div class="hero__rail" id="rail" hidden>
+    <div class="hero__rail-track" role="progressbar" aria-label="Opening sequence" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="rail-bar">
+      <span class="hero__rail-fill" id="rail-fill"></span>
+    </div>
+    <button class="hero__bail" type="button" id="bail">
+      <span class="door__line--desk"><kbd class="door__kbd">esc</kbd> skip</span>
+      <span class="door__line--touch">skip</span>
+    </button>
+  </div>
 
 </section>
 
-<!-- Everything below the hero. Which is now only this — the files live
-     on the plate above, so there is no third screen to build. -->
-<footer class="footer">
-  <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
-  <a class="footer__mail" href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
-</footer>
+
+<!-- ============ THE SITE ============
+     Everything that is not the opening, and a separate document from it.
+
+     THIS USED TO LIVE INSIDE THE HERO. The desktop was a layer of the
+     pinned sequence, which meant the animation was welded to the page:
+     the story owned seven thousand pixels of scroll, the work sat on top
+     of it, and scrolling up from the files un-played the story frame by
+     frame. Two different things sharing one scrollbar.
+
+     They are two things now. The hero is a fixed overlay that runs once
+     and unmounts; this is an ordinary page underneath it, with an
+     ordinary scrollbar, which the reader reaches at the top and cannot
+     leave backwards into an animation that is over.
+
+     The halftone plate is HERE rather than in the hero, and that is what
+     makes the dissolve honest: the hero fades out and this is what it
+     fades to. One copy of the video, one crossfade, no seam — instead of
+     the same 1.5 MB frame decoded twice on two layers that had to be
+     kept pixel-identical by hand. -->
+<div class="site" id="site">
+  <!-- ============ THE TITLE CARD ============
+       The top of the site, and the reason there is somewhere to scroll
+       back TO.
+
+       The opening dissolves past this into the desktop — that dissolve
+       is the payoff of the whole piece and it stays — and the reader
+       lands on the files. This screen is then sitting above them, and
+       scrolling up reaches it. So the name is a PLACE rather than a
+       moment: the frame you saw during the reveal is still there, still
+       the real footage, and you can go back and look at it. What you
+       cannot go back into is the animation, which is the distinction
+       Neel asked for.
+
+       IT IS ALSO THE PAGE'S ONLY h1. The old build had none at all —
+       the name lived in a decorative div inside the hero and the site's
+       first heading was a visually-hidden "Selected work". A portfolio
+       whose h1 is a section label is a portfolio with no title.
+
+       THERE IS ONE COPY OF THE FOOTAGE. The <video> is not duplicated
+       here — hero.js MOVES the hero's own element into .title__plate at
+       the handoff, so the clip is downloaded once and only ever decoded
+       in one place. The poster sits behind it as a CSS background, so
+       if the move ever fails this is a still frame rather than a hole. -->
+  <section class="title" id="title">
+    <div class="title__plate" aria-hidden="true"></div>
+    <div class="title__scrim" aria-hidden="true"></div>
+    <div class="title__vignette" aria-hidden="true"></div>
+    <div class="title__grain" aria-hidden="true"></div>
+    <h1 class="title__name">Neel Parikh</h1>
+  </section>
+
+  <section class="desk" id="desk">
+    <!-- The plate the desktop sits on: the same island, as the machine
+         renders it. It is the second half of the dissolve — the hero
+         fades out and this is underneath, already at the right framing —
+         so the crossfade costs one video rather than two identical ones
+         on two layers.
+
+         mp4 FIRST, unusually. The halftone is dense high-frequency noise
+         and VP9 handles it badly — 1.9 MB against x264's 1.45 MB on the
+         same frame — so h264 is the one nearly everyone gets and the
+         webm is the fallback for builds without proprietary codecs.
+
+         preload="none", asked for by hero.js a couple of seconds before
+         the dissolve. The poster is real, not decorative: it is what the
+         layer shows if the buffer is not ready, and without it a slow
+         connection dissolves the frame to nothing. -->
+    <div class="desk__plate" aria-hidden="true">
+      <video class="desk__dither" id="desk-dither"
+             poster="media/dither-poster.jpg"
+             muted loop playsinline preload="none"
+             aria-hidden="true" tabindex="-1">
+        <source src="media/dither.mp4" type="video/mp4">
+        <source src="media/dither.webm" type="video/webm">
+      </video>
+      <div class="desk__wash"></div>
+    </div>
+
+    <main class="work" id="work" tabindex="-1">
+      <h2 class="visually-hidden">Selected work</h2>
+      <ul class="work__grid" id="work-grid" aria-label="Selected work">
+
+        <li class="folder" style="--i:0">
+          <a class="folder__link" href="work/futee/">
+            <span class="folder__icon">
+              <span class="folder__spill" aria-hidden="true">
+                <img class="folder__sheet" src="work/futee/Group%201000002954.png" alt="" width="2270" height="1712" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/futee/Journey%20map.png" alt="" width="2270" height="1268" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/futee/PERSONA%20-%20Light.png" alt="" width="2270" height="1191" loading="lazy" decoding="async">
+              </span>
+              <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            </span>
+            <span class="folder__name">Futee</span>
+            <span class="folder__meta">Product · 2022</span>
+          </a>
+        </li>
+
+        <li class="folder" style="--i:1">
+          <a class="folder__link" href="work/emf-ace/">
+            <span class="folder__icon">
+              <span class="folder__spill" aria-hidden="true">
+                <img class="folder__sheet" src="work/emf-ace/img/emf-teaser-desert-final.png" alt="" width="461" height="461" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/emf-ace/img/emf-500-registered.png" alt="" width="478" height="478" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/emf-ace/img/emf-panel-global-design-fusion.png" alt="" width="462" height="462" loading="lazy" decoding="async">
+              </span>
+              <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            </span>
+            <span class="folder__name">EMF ACE</span>
+            <span class="folder__meta">Brand · 2024</span>
+          </a>
+        </li>
+
+        <li class="folder" style="--i:2">
+          <a class="folder__link" href="work/cseds/">
+            <span class="folder__icon">
+              <span class="folder__spill" aria-hidden="true">
+                <img class="folder__sheet" src="work/cseds/img/landing-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/cseds/img/product-01.jpg" alt="" width="1199" height="1551" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/cseds/img/software-01.jpg" alt="" width="1199" height="1574" loading="lazy" decoding="async">
+              </span>
+              <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            </span>
+            <span class="folder__name">CSEDS</span>
+            <span class="folder__meta">Web · 2025</span>
+          </a>
+        </li>
+
+        <li class="folder" style="--i:3">
+          <a class="folder__link" href="work/into-yesterday/">
+            <span class="folder__icon">
+              <span class="folder__spill" aria-hidden="true">
+                <img class="folder__sheet" src="work/into-yesterday/img/maze-aerial.jpg" alt="" width="1920" height="1080" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/into-yesterday/img/clay-1.jpg" alt="" width="1600" height="1200" loading="lazy" decoding="async">
+                <img class="folder__sheet" src="work/into-yesterday/img/sb-1.jpg" alt="" width="1171" height="574" loading="lazy" decoding="async">
+              </span>
+              <img class="folder__img" src="media/folder.png" alt="" width="512" height="512" decoding="async">
+            </span>
+            <span class="folder__name">Into Yesterday</span>
+            <span class="folder__meta">Film · 2025</span>
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- ============ THE ABOUT WINDOW ============
+           The other half of the desktop. Files on the left, the person who
+           made them on the right — which is the argument the whole page is
+           making, so it should be visible in one frame rather than two.
+
+           Four tabs — about me, experience, studies, contact — a real
+           ARIA tablist (arrow keys, Home/End, roving tabindex) rather than a
+           two-button transport, because there was more true to say than a
+           caption could carry. Each tab still pairs with a pose, and drifts
+           to a second one after a few seconds, so the window keeps a little
+           life without that life ever being the answer to the question the
+           tab is asking.
+
+           Bitmap treatment, site palette. Hard 2px borders, no radii, one
+           solid unblurred drop shadow, monospace chrome. NOT a pixel
+           webfont — that would be a fourth face and another download on a
+           page already carrying two videos. Monospace is what a terminal
+           actually uses and the scroll cue's digit grid is already set in
+           it, so the register was on the page before this window was.
+
+           Close hides the window and hands off to a small reopen chip in
+           the same desktop cell — close/reopen, not close/gone, matching
+           every other control on this page. -->
+      <aside class="about" id="about" aria-label="About Neel">
+        <div class="about__bar">
+          <span class="about__title">about.exe</span>
+          <span class="about__controls">
+            <button type="button" class="about__ctrl" aria-hidden="true" tabindex="-1"><i aria-hidden="true"></i></button>
+            <button type="button" class="about__ctrl about__ctrl--min" aria-label="Minimise" data-about-close><i aria-hidden="true"></i></button>
+            <button type="button" class="about__ctrl about__ctrl--close" aria-label="Close" data-about-close><i aria-hidden="true"></i></button>
+          </span>
+        </div>
+
+        <div class="about__tabs" role="tablist" aria-label="About sections">
+          <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About<br>me</button>
+          <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experi-<br>ence</button>
+          <button class="about__tab" role="tab" id="about-t2" aria-controls="about-p2" aria-selected="false" tabindex="-1">Studies</button>
+          <button class="about__tab" role="tab" id="about-t3" aria-controls="about-p3" aria-selected="false" tabindex="-1">Contact</button>
+        </div>
+
+        <div class="about__body">
+          <!-- The sprite is decorative: the caption below carries every bit
+               of meaning it has, and describing eighteen near-identical
+               poses to a screen reader is noise. -->
+          <div class="about__stage">
+            <div class="about__screen">
+              <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
+            </div>
+            <p class="about__cap" id="about-caption" aria-live="polite">idle</p>
+          </div>
+
+          <div class="about__panes">
+            <div class="about__panel" role="tabpanel" id="about-p0" aria-labelledby="about-t0">
+              <h3 class="about__h">Neel Parikh</h3>
+              <p class="about__lede">Designer. I make things that explain themselves — mostly interfaces, occasionally a maze. This site is hand-written: no framework, no template underneath.</p>
+              <ul class="about__rows">
+                <li><b>Based</b><span>Sydney, NSW</span></li>
+                <li><b>Works in</b><span>Product and brand design, motion, and the front-end that carries them</span></li>
+                <li><b>Right now</b><span>Four case studies live in here — Futee, EMF ACE, CSEDS, Into Yesterday</span></li>
+              </ul>
+            </div>
+
+            <div class="about__panel" role="tabpanel" id="about-p1" aria-labelledby="about-t1" hidden>
+              <h3 class="about__h">Experience</h3>
+              <ol class="about__tl">
+                <li>
+                  <span class="about__when">Mar 2026 — now</span>
+                  <div>
+                    <p class="about__role-t">Marketing &amp; Engagement Ambassador</p>
+                    <p class="about__where">UNSW Founders · Sydney</p>
+                    <p class="about__desc">Content and community across the UNSW Founders brand, feeding student insight back into campaigns.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="about__when">2023 — 25</span>
+                  <div>
+                    <p class="about__role-t">Design Lead</p>
+                    <p class="about__where">Media Mushroom · India</p>
+                    <p class="about__desc">Directed brand and the EMF ACE event site — led a 5-person team across 50+ vendors and 10–15 concurrent campaigns.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="about__when">2020 — 22</span>
+                  <div>
+                    <p class="about__role-t">Visual &amp; UX Designer</p>
+                    <p class="about__where">Idealoft Studio · India</p>
+                    <p class="about__desc">Wireframes through interactive prototypes for B2B and banking clients, including ICICI Bank and Yes Bank.</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
+
+            <div class="about__panel" role="tabpanel" id="about-p2" aria-labelledby="about-t2" hidden>
+              <h3 class="about__h">Studies</h3>
+              <ol class="about__tl">
+                <li>
+                  <span class="about__when">2025 — now</span>
+                  <div>
+                    <p class="about__role-t">Master of Design, Interaction &amp; Immersive</p>
+                    <p class="about__where">UNSW · Sydney</p>
+                    <p class="about__desc">Human-centred UX methods, interaction and immersive design. Dean's List award recipient.</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="about__when">2019 — 23</span>
+                  <div>
+                    <p class="about__role-t">Bachelor of Design</p>
+                    <p class="about__where">Anant National University · India</p>
+                    <p class="about__desc">Major in Interaction Design, minor in Graphic Design.</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
+
+            <div class="about__panel" role="tabpanel" id="about-p3" aria-labelledby="about-t3" hidden>
+              <h3 class="about__h">Contact</h3>
+              <ul class="about__rows">
+                <li><b>Email</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
+                <li><b>Elsewhere</b><span><a href="https://www.linkedin.com/in/neel-parikh-413b16169/" target="_blank" rel="noopener">LinkedIn</a></span></li>
+                <li><b>Open to</b><span>Product and brand work, and case studies that need a story</span></li>
+                <li><b>Reply</b><span>Usually within a day</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Stands in for the window in the same corner while it's closed —
+           see .about__reopen in main.css and the close/reopen wiring in
+           hero.js. -->
+      <button type="button" class="about__reopen" id="about-reopen" hidden>Reopen — about.exe</button>
+    </main>
+
+  </section>
+  <!-- Below the plate. The files live on the plate above, so there is
+       no third screen to build. -->
+  <footer class="footer">
+    <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
+    <a class="footer__mail" href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  </footer>
+</div><!-- /.site -->
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>

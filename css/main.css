@@ -131,11 +131,49 @@ img, video { display: block; max-width: 100%; }
 /* =========================================================
    HERO
    ========================================================= */
+/* A FIXED OVERLAY, NOT A SECTION IN THE FLOW.
+
+   It used to be `position: relative` and pinned by ScrollTrigger across
+   seven thousand pixels, with the whole site sitting inside it. That is
+   what welded the two together: one scrollbar drove an animation and a
+   page at the same time, so scrolling up from the work un-played the
+   story frame by frame and there was no position on the page that was
+   simply "after the opening".
+
+   Now it is a lid. It covers the viewport, runs once on its own clock,
+   and unmounts — and the page underneath it never knew it was there.
+   Nothing about the site's scrolling is the hero's business any more. */
 .hero {
-  position: relative;
-  height: 100svh;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
   width: 100%;
+  height: 100svh;
   overflow: hidden;
+  /* Scrubbed across the dissolve: the hero fading out IS the second
+     half of the crossfade, and the halftone plate it fades to is the
+     top of the site sitting behind it. */
+  will-change: opacity;
+}
+.hero[hidden] { display: none; }
+
+/* The scroll is locked for the length of the opening, and only for that.
+   Not a gate and not a governor — there is nothing to scroll to yet, the
+   sequence is on a clock, and a scrollbar that moves a page nobody can
+   see is noise. It comes off at the handoff and never goes back on.
+
+   position: fixed on the body as well as overflow: hidden, because iOS
+   scrolls the document under an overflow: hidden html quite happily. */
+html.is-opening,
+html.is-opening body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+html.is-opening body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
 }
 
 .hero__media { position: absolute; inset: 0; }
@@ -161,24 +199,27 @@ img, video { display: block; max-width: 100%; }
 
    It sits UNDER the scrim, vignette and grain — those are the page's
    atmosphere and they belong to whatever is showing, not to one clip. */
-.hero__dither {
+.desk__dither {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  opacity: 0;
-  will-change: opacity;
 }
 /* The halftone's own grade, brought in on the same scrub as the clip it
    belongs to. This is the same declaration the Work plate uses — see
    --plate-wash. It has to be, or the handover between them shows. */
-.hero__ditherwash {
+.desk__wash {
   position: absolute; inset: 0;
   pointer-events: none;
   background: var(--plate-wash);
-  opacity: 0;
 }
 
-.hero__scrim {
+/* DECLARED FOR BOTH FRAMES, and it has to be. The title card is the
+   same shot at the same framing as the reveal the reader just watched;
+   any difference in grade between them reads as a second, worse copy
+   of the picture rather than the same place returned to. Same reasoning
+   as --plate-wash, which the halftone and the desktop share. */
+.hero__scrim,
+.title__scrim {
   position: absolute; inset: 0;
   pointer-events: none;
   background:
@@ -210,7 +251,8 @@ img, video { display: block; max-width: 100%; }
 
    Corner-weighted rather than symmetrical because the composition is
    diagonal. If the copy ever moves, these move with it. */
-.hero__vignette {
+.hero__vignette,
+.title__vignette {
   position: absolute; inset: 0;
   pointer-events: none;
   background:
@@ -344,7 +386,8 @@ img, video { display: block; max-width: 100%; }
    grain on top of it is noise on noise. It still does its original job
    of softening compression artefacts, just quietly.
    Static, not animated: animated grain is a per-frame repaint for nothing. */
-.hero__grain {
+.hero__grain,
+.title__grain {
   position: absolute; inset: 0;
   pointer-events: none;
   opacity: .025;
@@ -707,7 +750,10 @@ img, video { display: block; max-width: 100%; }
 .chrome {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 10;
+  /* Above the hero overlay (z 40), because the nav is the reader's one
+     visible exit for the whole opening and an exit underneath the thing
+     you are escaping is not one. */
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -972,50 +1018,97 @@ img, video { display: block; max-width: 100%; }
   .door__opt { min-height: 48px; padding: .8rem 1.2rem; }
 }
 
-.hero__cue {
+/* =========================================================
+   THE RAIL — the clock, made visible
+   =========================================================
+
+   THE SCROLL CUE THAT USED TO LIVE HERE IS GONE, and it went with the
+   thing it reported on. It said READY / WAIT because the page was
+   holding the scroll between beats and a page that refuses to move
+   without saying so is broken. Nothing holds the scroll now — the
+   scroll is simply not the instrument — so there is nothing to report.
+
+   What replaces it answers the only question a timed sequence leaves
+   open: how much longer. A hairline that fills across the bottom of
+   the frame, no numbers on it. A countdown would be the brightest
+   thing on a black frame and would make the reader do arithmetic; a
+   bar is read in the periphery without being looked at.
+
+   Beside it, an exit that stands for the whole run. The old version's
+   one defensible claim was that there was always a visible way out.
+   A sequence the reader cannot pace needs that more than a scrubbed
+   one did, not less. */
+.hero__rail {
   position: absolute;
-  left: 50%; bottom: 5svh;
-  transform: translateX(-50%);
-  z-index: 4;
-  display: flex; flex-direction: column; align-items: center; gap: .85rem;
+  left: 6vw; right: 6vw; bottom: 4.4svh;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+  pointer-events: none;
+}
+.hero__rail[hidden] { display: none; }
+.hero__rail[data-show] { opacity: 1; }
+
+/* 2px, not 1. A hairline over a black frame with grain on it is a
+   suggestion of a line; this has to be readable at the edge of
+   vision, which is the only place it will ever be looked at. */
+.hero__rail-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: rgba(251, 247, 240, .16);
+  overflow: hidden;
+}
+/* transform, not width — width is a layout property and this runs for
+   fifteen seconds at sixty frames a second. scaleX off the left edge. */
+.hero__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* Quiet, and quieter than the door was — the reader has already made
+   the choice this contradicts, so it should be findable rather than
+   competing. No pulse: a thing that blinks for fifteen seconds beside
+   a story is asking you to leave it. */
+.hero__bail {
+  pointer-events: auto;
+  flex: none;
+  margin: 0;
+  padding: .55rem .2rem;
+  border: 0;
+  background: none;
   color: var(--ink-dim);
+  font-family: var(--font-ui);
   font-size: var(--type-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   text-shadow: var(--halo);
-  opacity: 0;
-  transition: opacity 320ms var(--ease-out);
-  pointer-events: none;
+  opacity: .62;
+  cursor: pointer;
+  transition: opacity 200ms var(--ease-ui), color 200ms var(--ease-ui);
 }
-.hero__cue[hidden] { display: none; }   /* keeps the animation off the compositor until it's wanted */
-.hero__cue[data-show] { opacity: 1; }
+.hero__bail:hover,
+.hero__bail:focus-visible { opacity: 1; color: var(--ink); }
+.hero__bail:focus-visible { outline: 1px solid var(--ink-dim); outline-offset: .4rem; }
+.hero__bail .door__kbd { font-size: 1em; vertical-align: .05em; }
 
-/* COMPACT. The digit grid was for the empty frame — it made a black
-   screen read as alive. Over lit type it is clutter, so it goes on the
-   first scroll and what survives is a word and an arrow. */
-.hero__cue[data-compact] { gap: .45rem; }
-.hero__cue[data-compact] .matrix { display: none; }
-
-/* READY and WAIT — the whole reason the cue outlives the first scroll.
-
-   Each beat of the story holds the scroll while it lands. A page that
-   refuses to move and does not say so is broken; a page that refuses
-   and says why is paced. So the arrow breathes while the page will
-   take another gesture and stops dead while it will not, and the
-   whole cue drops to a quarter strength so the difference is legible
-   at the edge of vision rather than needing to be looked at. */
-.hero__cue svg {
-  animation: cue-breathe 1.7s var(--ease-move) infinite;
-  transition: opacity 220ms linear;
-}
-.hero__cue[data-show][data-wait] { opacity: .26; }
-.hero__cue[data-wait] svg { animation: none; opacity: .5; }
-
-@keyframes cue-breathe {
-  0%, 100% { transform: translateY(0);   opacity: .5; }
-  50%      { transform: translateY(4px); opacity: 1;  }
+@media (max-width: 640px) {
+  .hero__rail { left: 8vw; right: 8vw; gap: 1rem; }
+  /* A tap target, not a word. */
+  .hero__bail { min-height: 44px; padding: .8rem .4rem; }
 }
 
+/* Dead CSS from the retired scroll cue's digit grid. The door did its
+   job — making a black opening frame read as alive rather than broken —
+   and the rail does what is left of it. Kept only because .matrix and
+   .digit are still referenced nowhere and removing them is a separate
+   commit. */
 .matrix {
   width: 72px;
   height: 96px;
@@ -1107,11 +1200,10 @@ img, video { display: block; max-width: 100%; }
   .hero__lamp--r[data-on] { transform: translate( 20vw, -5svh) scale(.92); }
   .hero__lamp { transition: opacity 400ms linear; }
   .hero__name-line { transform: none !important; }
-  /* The cue keeps both states — they carry information, and a reader
-     who has asked for less motion still needs to know whether the
-     page will move. It just stops travelling to say so. */
-  .hero__cue svg { animation: none; opacity: 1; transform: none; }
-  .hero__cue[data-wait] svg { opacity: .5; }
+  /* The rail stays. It is information, not decoration — and a reader
+     who has asked for less motion has more reason to want to know how
+     long this runs, not less. It does not travel to say so; it is a
+     bar, and a bar filling is the movement. */
   /* The door stops moving but keeps its hierarchy — the difference
      between the two options was never carried by the motion. */
   .door__arrow, .door__opt--skip { animation: none; transform: none; }
@@ -1153,6 +1245,18 @@ img, video { display: block; max-width: 100%; }
    its contents and the files take whatever is left. A fractional split
    made the window grow on wide screens, and a bitmap window that scales
    with the viewport stops looking like a window. */
+/* One screen: the plate, and the files on it. This box is what .work
+   used to get from the hero it was nested inside — it has its own now,
+   which is the whole separation in two rules. */
+.desk {
+  position: relative;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--void);
+}
+.desk__plate { position: absolute; inset: 0; }
+
 .work {
   position: absolute;
   inset: 0;
@@ -1167,7 +1271,7 @@ img, video { display: block; max-width: 100%; }
      hero for the entire story. */
   pointer-events: none;
 }
-.hero[data-desk] .work { pointer-events: auto; }
+.site[data-desk] .work { pointer-events: auto; }
 
 /* Three across, two rows. Six in a single row spanned the full plate,
    which was fine when nothing shared it; against the window it left the
@@ -1215,7 +1319,7 @@ img, video { display: block; max-width: 100%; }
    has to cross its neighbours rather than slide under them. */
 .folder:hover, .folder:focus-within { z-index: 5; }
 
-.hero[data-desk] .folder { opacity: 1; transform: none; }
+.site[data-desk] .folder { opacity: 1; transform: none; }
 
 .folder__link {
   display: flex;
@@ -1405,7 +1509,7 @@ img, video { display: block; max-width: 100%; }
     opacity 240ms var(--ease-ui) 300ms,
     transform 380ms var(--ease-pop) 300ms;
 }
-.hero[data-desk] .about { opacity: 1; transform: none; }
+.site[data-desk] .about { opacity: 1; transform: none; }
 .about[hidden] { display: none; }
 
 /* Inverted title bar, the way every one of these looked. */
@@ -1651,6 +1755,57 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* =========================================================
+   THE TITLE CARD — the top of the site
+   ========================================================= */
+.title {
+  position: relative;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--void);
+  display: grid;
+  place-items: center;
+  padding: 0 6vw;
+}
+/* The poster as a background, with the moved <video> laid over it. If
+   the handoff's DOM move ever fails, or JS never runs at all, this is a
+   still frame of the same shot rather than a black hole where the site's
+   title is meant to be. */
+.title__plate {
+  position: absolute; inset: 0;
+  background: var(--void) url("../media/hero-poster.jpg") center / cover no-repeat;
+}
+.title__video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* Same size and same weight as the name in the reveal — this is meant
+   to be recognised as the frame you just watched, not as a heading
+   about it. The difference is that it is simply there: no transition,
+   no data-attribute, nothing to arrive. It is a page, not a beat. */
+.title__name {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 11vw, 11rem);
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: .92;
+  white-space: nowrap;
+  text-shadow: var(--halo);
+}
+
+/* TWO SIZES OF ONE THING, which is what a mark is for — so they are
+   never both on screen at once. While the title card is in view the big
+   name is the name and the header's copy stands down; scroll to the
+   desktop and the header picks it up. hero.js sets data-top from an
+   IntersectionObserver on .title. */
+.chrome[data-full][data-top] .chrome__mark { opacity: 0; }
+
+/* =========================================================
    ACCESSIBILITY
    ========================================================= */
 /* fixed, not absolute — as an absolute element it positioned against the
@@ -1828,7 +1983,7 @@ img, video { display: block; max-width: 100%; }
      meta rows at different heights again. */
   .work__grid { row-gap: clamp(1.25rem, 3svh, 2.25rem); max-width: 38rem; }
   .about { width: 100%; max-width: 38rem; }
-  .hero__ditherwash { background: rgba(16,19,14,.76); }
+  .desk__wash { background: rgba(16,19,14,.76); }
 
   /* Stacked, the window has width to spare and no height to spare — so
      it turns on its side: sprite beside the text instead of above it.
@@ -1874,50 +2029,23 @@ img, video { display: block; max-width: 100%; }
   .about__h { font-size: 1.05rem; }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
      is the only thing in the shot with a silhouette. Bias down. */
-  .hero__dither { object-position: 50% 58%; }
+  .desk__dither { object-position: 50% 58%; }
 }
 
-/* No-JS: the story reads as text and the files are a plain list under
-   it. Everything JS would have animated into place is already in place,
-   and the desktop layer stops being a layer — it can't float over a hero
-   that no longer fills the screen. */
-/* No-JS and reduced-motion tails for the two new pieces. Both say the
-   same thing: the correction and the island are content, so they are
-   present - they just stop performing. */
-/* The plate goes. It lives inside .hero__media, which stays absolute
-   here, and the video underneath it is already showing its poster —
-   two islands stacked on one another with no blackout between them is
-   worse than one. */
-.no-js .hero__isle { display: none; }
-.no-js .hero__lamps { display: none; }
-/* The door offers a choice between two behaviours that both need JS.
-   Without it the page is a flat document and there is nothing to
-   choose between. */
-.no-js .hero__door { display: none; }
-.no-js .hero__name { position: static; opacity: 1; visibility: visible; transform: none; padding: 8vh 6vw 0; }
-.no-js .hero__name-line { transform: none; }
-.no-js .cut::after { transform: translateY(-50%) scaleX(1); }
-.no-js .hand {
-  position: static; display: inline; opacity: 1; transform: none;
-  margin-left: .3em;
-}
-.no-js .phrase { opacity: 1; visibility: visible; position: static; transform: none; max-width: none; text-align: left; }
-.no-js .hero { height: auto; padding: 20vh 0; }
-/* relative + z-index, not static. .hero__media is absolutely
-   positioned and comes first in the DOM, so a STATIC stage paints
-   underneath it and the entire story sits behind the video — which is
-   what happened here for as long as this fallback has existed. It only
-   became visible when .cut arrived, because a positioned descendant
-   punched one fragment of the sentence up through the picture. */
-.no-js .hero__stage { position: relative; z-index: 2; display: block; padding: 0 6vw; }
+/* NO-JS — and this is the other thing the separation bought.
+
+   The fallback used to be a small essay: unpin the hero, unstack the
+   phrases, make the absolutely-positioned desktop static, un-hide the
+   name, defuse the blackout — every one of those rules existed because
+   the site lived inside the animation and had to be extracted from it
+   by hand when the animation could not run.
+
+   The site does not live inside the animation any more. So the fallback
+   is: don't show the animation. What is left is an ordinary document
+   with a halftone plate, six files and a footer, which is what the page
+   was underneath all along. */
+.no-js .hero { display: none; }
 .no-js .chrome { opacity: 1; visibility: visible; }
 .no-js .chrome__mark, .no-js .chrome__rule, .no-js .chrome::before { opacity: 1; }
-.no-js .hero__blackout { opacity: 0; }   /* JS owns the reveal; without it, don't hide the frame */
-.no-js .hero__dither, .no-js .hero__ditherwash { display: none; }
-.no-js .work {
-  position: static;
-  padding: 14vh 6vw 6vh;
-  pointer-events: auto;
-}
 .no-js .folder, .no-js .about { opacity: 1; transform: none; }
 .no-js .folder__name, .no-js .folder__meta { text-shadow: none; }
