@@ -192,34 +192,44 @@ html.is-opening body {
    Values are measured, not eyeballed: composited over six frames of the
    loop and checked at every line's text box. Weakening any of the three
    stops drops a line below 4.5:1. */
-/* The dither layer. Identical box and identical object-fit to the plate
-   beneath it, so the crossfade is the same shot re-rendering rather than
-   a cut to a second camera. Opacity is scrubbed by hero.js across the
-   pinned tail; it starts at 0 and it starts paused.
+/* ---------- the backdrop ----------
+   One halftone plate behind the whole site — see .backdrop in index.html
+   for why it is a body-level element rather than a layer of .desk or of
+   the hero. Fixed to the frame: the lid dissolves onto it, and then the
+   name and the desktop sit on the same plate with no seam between them.
 
-   It sits UNDER the scrim, vignette and grain — those are the page's
-   atmosphere and they belong to whatever is showing, not to one clip. */
-.desk__dither {
+   The hero's own scrim / vignette / grain are what the dissolve fades
+   away; this layer carries only the picture and its grade. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--void);
+  overflow: hidden;
+  pointer-events: none;
+}
+.backdrop__dither {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
 }
-/* The halftone's own grade, brought in on the same scrub as the clip it
-   belongs to. This is the same declaration the Work plate uses — see
-   --plate-wash. It has to be, or the handover between them shows. */
-.desk__wash {
+/* The halftone's grade. This is the same declaration the reveal frame is
+   graded against — see --plate-wash — so the frame the dissolve lands on
+   and the frame the reader scrolls back up to are the same picture. */
+.backdrop__wash {
   position: absolute; inset: 0;
   pointer-events: none;
   background: var(--plate-wash);
 }
 
-/* DECLARED FOR BOTH FRAMES, and it has to be. The title card is the
-   same shot at the same framing as the reveal the reader just watched;
-   any difference in grade between them reads as a second, worse copy
-   of the picture rather than the same place returned to. Same reasoning
-   as --plate-wash, which the halftone and the desktop share. */
+/* DECLARED FOR BOTH FRAMES, and it has to be. The reveal frame (.hero)
+   and the plate everything then sits on (.backdrop) carry the same
+   grade; any difference between them reads as a second, worse copy of
+   the picture rather than the same place returned to. On .backdrop it
+   is one continuous layer behind the name AND the desktop — the same
+   reason --plate-wash is shared. */
 .hero__scrim,
-.title__scrim {
+.backdrop__scrim {
   position: absolute; inset: 0;
   pointer-events: none;
   background:
@@ -250,9 +260,13 @@ html.is-opening body {
    and gone by the centre, instead of dimming the whole reveal.
 
    Corner-weighted rather than symmetrical because the composition is
-   diagonal. If the copy ever moves, these move with it. */
-.hero__vignette,
-.title__vignette {
+   diagonal. If the copy ever moves, these move with it.
+
+   Reveal only — .backdrop does not take this. The vignette is anchored
+   to the reveal's diagonal copy; on the plate the name and the desktop
+   sit on, corner darkening would be arbitrary. The scrim and grain
+   carry over to .backdrop; this does not. */
+.hero__vignette {
   position: absolute; inset: 0;
   pointer-events: none;
   background:
@@ -387,7 +401,7 @@ html.is-opening body {
    of softening compression artefacts, just quietly.
    Static, not animated: animated grain is a per-frame repaint for nothing. */
 .hero__grain,
-.title__grain {
+.backdrop__grain {
   position: absolute; inset: 0;
   pointer-events: none;
   opacity: .025;
@@ -1275,17 +1289,15 @@ html.is-opening body {
    its contents and the files take whatever is left. A fractional split
    made the window grow on wide screens, and a bitmap window that scales
    with the viewport stops looking like a window. */
-/* One screen: the plate, and the files on it. This box is what .work
-   used to get from the hero it was nested inside — it has its own now,
-   which is the whole separation in two rules. */
+/* One screen for the files. Transparent — the plate they sit on is
+   .backdrop, fixed behind the whole site, shared with the title card
+   above. This box just gives .work somewhere to be. */
 .desk {
   position: relative;
   height: 100svh;
   width: 100%;
   overflow: hidden;
-  background: var(--void);
 }
-.desk__plate { position: absolute; inset: 0; }
 
 .work {
   position: absolute;
@@ -1841,24 +1853,13 @@ html.is-opening body {
   height: 100svh;
   width: 100%;
   overflow: hidden;
-  background: var(--void);
   display: grid;
   place-items: center;
   padding: 0 6vw;
 }
-/* The poster as a background, with the moved <video> laid over it. If
-   the handoff's DOM move ever fails, or JS never runs at all, this is a
-   still frame of the same shot rather than a black hole where the site's
-   title is meant to be. */
-.title__plate {
-  position: absolute; inset: 0;
-  background: var(--void) url("../media/hero-poster.jpg") center / cover no-repeat;
-}
-.title__video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
+/* No layers of its own — transparent, .backdrop shows through. The
+   plate, its grade, its scrim and its grain are all on .backdrop now,
+   one continuous treatment behind the name and the desktop both. */
 
 /* Same size and same weight as the name in the reveal — this is meant
    to be recognised as the frame you just watched, not as a heading
@@ -2080,7 +2081,7 @@ html.is-opening body {
      meta rows at different heights again. */
   .work__grid { row-gap: clamp(1.25rem, 3svh, 2.25rem); max-width: 38rem; }
   .about { width: 100%; max-width: 38rem; }
-  .desk__wash { background: rgba(16,19,14,.76); }
+  .backdrop__wash { background: rgba(16,19,14,.76); }
 
   /* Stacked, the window has width to spare and no height to spare — so
      it turns on its side: sprite beside the text instead of above it.
@@ -2135,7 +2136,7 @@ html.is-opening body {
   .about__h { font-size: 1.05rem; }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
      is the only thing in the shot with a silhouette. Bias down. */
-  .desk__dither { object-position: 50% 58%; }
+  .backdrop__dither { object-position: 50% 58%; }
 }
 
 /* Short AND narrow — a phone in the hand, not a phone on a stand. At

@@ -32,6 +32,42 @@
 
 <a class="skip" href="#work">Skip to work</a>
 
+<!-- ============ THE BACKDROP ============
+     One halftone plate behind the whole site. The name and the desktop
+     sit on THIS — the machine's read of the island — and the opening's
+     clean footage dissolves into it.
+
+     It used to be two things: a clean-footage title card stacked above a
+     red-halftone desk section, butt-joined, so scrolling between them
+     cut hard from one grade and framing to another. Rejoined now, the
+     way it was before the title card was split out (see 3bb9a38).
+
+     A sibling of .hero and .site, never a child. .site takes a
+     translateY for the length of the opening (siteOffset in hero.js);
+     a transformed ancestor becomes the containing block for a fixed
+     child and drags it off the viewport. At body level this stays
+     locked to the frame — which is also exactly what the reveal needs,
+     since the lid dissolves onto it.
+
+     h264 only, no webm alternate: a <video> with several <source>s
+     downloads the first it can play rather than negotiating, and every
+     browser this audience uses plays h264 — the webm was ~1.5 MB of
+     duplicate fetch for nothing. preload="none"; hero.js asks for it a
+     couple of seconds before the dissolve. The poster is load-bearing:
+     it is what the layer shows before the buffer is ready, and under
+     reduced motion it is the plate — the clip never plays. -->
+<div class="backdrop" aria-hidden="true">
+  <video class="backdrop__dither" id="backdrop-dither"
+         poster="media/dither-poster.jpg"
+         muted loop playsinline preload="none"
+         aria-hidden="true" tabindex="-1">
+    <source src="media/dither.mp4" type="video/mp4">
+  </video>
+  <div class="backdrop__wash"></div>
+  <div class="backdrop__scrim"></div>
+  <div class="backdrop__grain"></div>
+</div>
+
 <!-- Site chrome. Fixed, and a sibling of .hero rather than a child, so
      it does not scroll away with the pin.
 
@@ -289,11 +325,10 @@
      ordinary scrollbar, which the reader reaches at the top and cannot
      leave backwards into an animation that is over.
 
-     The halftone plate is HERE rather than in the hero, and that is what
-     makes the dissolve honest: the hero fades out and this is what it
-     fades to. One copy of the video, one crossfade, no seam — instead of
-     the same 1.5 MB frame decoded twice on two layers that had to be
-     kept pixel-identical by hand. -->
+     The halftone plate is NOT in here and not in the hero either — it is
+     .backdrop, a body-level element behind both, so the hero fades out
+     onto it and the name and the desktop then share it with no seam
+     between them. -->
 <div class="site" id="site">
   <!-- ============ THE TITLE CARD ============
        The top of the site, and the reason there is somewhere to scroll
@@ -303,9 +338,9 @@
        is the payoff of the whole piece and it stays — and the reader
        lands on the files. This screen is then sitting above them, and
        scrolling up reaches it. So the name is a PLACE rather than a
-       moment: the frame you saw during the reveal is still there, still
-       the real footage, and you can go back and look at it. What you
-       cannot go back into is the animation, which is the distinction
+       moment: the same plate you saw the reveal land on is still there,
+       the name at full size, and you can go back and look at it. What
+       you cannot go back into is the animation, which is the distinction
        Neel asked for.
 
        IT IS ALSO THE PAGE'S ONLY h1. The old build had none at all —
@@ -313,50 +348,20 @@
        first heading was a visually-hidden "Selected work". A portfolio
        whose h1 is a section label is a portfolio with no title.
 
-       THERE IS ONE COPY OF THE FOOTAGE. The <video> is not duplicated
-       here — hero.js MOVES the hero's own element into .title__plate at
-       the handoff, so the clip is downloaded once and only ever decoded
-       in one place. The poster sits behind it as a CSS background, so
-       if the move ever fails this is a still frame rather than a hole. -->
+       NO LAYERS OF ITS OWN. The section is transparent — the plate, its
+       grade, its scrim and its grain are all on .backdrop, one
+       continuous treatment behind the name and the desktop both, so
+       there is no edge where one section's atmosphere stops. -->
   <section class="title" id="title">
-    <div class="title__plate" aria-hidden="true"></div>
-    <div class="title__scrim" aria-hidden="true"></div>
-    <div class="title__vignette" aria-hidden="true"></div>
-    <div class="title__grain" aria-hidden="true"></div>
     <h1 class="title__name">Neel Parikh</h1>
   </section>
 
   <section class="desk" id="desk">
-    <!-- The plate the desktop sits on: the same island, as the machine
-         renders it. It is the second half of the dissolve — the hero
-         fades out and this is underneath, already at the right framing —
-         so the crossfade costs one video rather than two identical ones
-         on two layers.
-
-         h264 ONLY — no webm alternate. There used to be one, "for
-         builds without proprietary codecs"; the real effect was
-         Chromium fetching both encodes, since a <video> with several
-         <source>s downloads the first one it can play rather than
-         negotiating, and every browser this audience uses can play
-         h264. That was ~2.5 MB of duplicate download across this
-         element and the island clip above, nobody watching a frame of
-         it. Putting the alternate back means finding the source
-         re-selection problem first, not just re-adding the tag.
-
-         preload="none", asked for by hero.js a couple of seconds before
-         the dissolve. The poster is real, not decorative: it is what the
-         layer shows if the buffer is not ready, and without it a slow
-         connection dissolves the frame to nothing. -->
-    <div class="desk__plate" aria-hidden="true">
-      <video class="desk__dither" id="desk-dither"
-             poster="media/dither-poster.jpg"
-             muted loop playsinline preload="none"
-             aria-hidden="true" tabindex="-1">
-        <source src="media/dither.mp4" type="video/mp4">
-      </video>
-      <div class="desk__wash"></div>
-    </div>
-
+    <!-- The plate the files sit on is .backdrop, a body-level element —
+         not a layer of this section any more. It is one plate shared
+         with the title card above, which is what the dissolve resolves
+         into: the halftone ceasing to be a picture of the island and
+         becoming the thing the island's laptop is showing. -->
     <main class="work" id="work" tabindex="-1">
       <h2 class="visually-hidden">Selected work</h2>
       <ul class="work__grid" id="work-grid" aria-label="Selected work">

@@ -67,11 +67,10 @@
 
   var root       = document.documentElement;
   var video      = document.getElementById('hero-video');
-  var dither     = document.getElementById('desk-dither');
+  var dither     = document.getElementById('backdrop-dither');
   var hero       = document.getElementById('hero');
   var site       = document.getElementById('site');
   var title      = document.getElementById('title');
-  var titlePlate = document.querySelector('.title__plate');
   var work       = document.getElementById('work');
   var door       = document.getElementById('door');
   var rail       = document.getElementById('rail');
@@ -137,22 +136,19 @@
   /* ---------------------------------------------------------
      WHAT SITS BEHIND THE LID
 
-     The dissolve at the end is a crossfade between two documents: the
-     hero fades out, and whatever is behind it is what it fades TO. So
-     the thing behind it has to be the halftone plate.
+     The dissolve at the end is a crossfade: the hero fades out, and
+     whatever is behind it is what it fades TO — so that has to be the
+     halftone plate. It is .backdrop, fixed to the frame at body level,
+     so it is behind the lid at the right framing no matter where the
+     locked page is scrolled. The lid dissolves onto it; the name and
+     the desktop then share it.
 
-     Adding the title card broke exactly that, and invisibly. The card
-     became the top of .site, the scroll is pinned at 0 for the length
-     of the opening, so the desk sat one whole viewport below the fold
-     and the hero spent the entire dissolve fading onto the title
-     card — the same footage, which reads as a fade to nothing — before
-     hard-cutting to the desktop at the handoff.
-
-     So while the lid is down, .site is offset by exactly one title card
-     and the desk is the screen underneath. At the handoff the offset
-     comes off and the scroll goes to the same number in the same frame,
-     which puts the desk in an identical screen position: the reader
-     sees the dissolve finish and nothing else.
+     .site is still offset up by one title card for the length of the
+     opening, so that when the offset comes off at the handoff the
+     scroll can go to the same number and land the reader on the desk
+     (the dissolve resolves INTO the desktop) with the title card a
+     scroll-up above. That is now only a scroll-position trick — the
+     picture behind the lid is .backdrop either way.
 
      Measured rather than 100svh. The card is sized in svh and the
      locked body is sized to the live viewport, and on a phone those
@@ -627,15 +623,16 @@
 
     setName(tp >= NAME_IN && tp < NAME_OUT);
 
-    /* THE DISSOLVE IS NOW A CROSSFADE BETWEEN TWO DOCUMENTS.
+    /* THE DISSOLVE IS A CROSSFADE ONTO .backdrop.
 
        It used to be two stacked <video>s inside the hero, the same
        1.5 MB frame decoded twice on two layers that had to be kept
        pixel-identical by hand or the seam showed. There is one copy
-       now: the halftone plate is the top of the site, sitting behind
-       this lid at the same framing, and the hero simply fades off it.
-       One video, one crossfade, and the seam cannot come back because
-       there is no second image to misalign.
+       now: .backdrop is fixed behind this lid at the same framing, and
+       the hero simply fades off it. One video, one crossfade, and the
+       seam cannot come back because there is no second image to
+       misalign — and the same plate carries straight on under the name
+       and the desktop, so there is no second seam further down either.
 
        The scrim, vignette and grain go with it rather than being
        scrubbed separately — they are children of the thing fading. */
@@ -726,17 +723,9 @@
     pauseSafe(isleClip);
     clearTimeout(beamTimer);
 
-    /* THE FOOTAGE IS HANDED OVER, NOT COPIED.
-
-       The title card needs the same clip the reveal just showed, and
-       the honest way to give it one is to move the element rather than
-       put a second <video> in the markup pointing at the same 2.5 MB
-       file. One download, one decode, and the two can never drift into
-       being subtly different shots. */
-    if (video && titlePlate) {
-      video.className = 'title__video';
-      titlePlate.appendChild(video);
-    }
+    /* The clean footage goes with the lid. It only ever belonged to the
+       reveal — the title card and the desktop both sit on .backdrop
+       (the halftone), which is what the dissolve just landed on. */
 
     /* And the page underneath becomes the page. */
     var titleH = title ? title.offsetHeight : 0;
@@ -786,20 +775,15 @@
   /* ---------------------------------------------------------
      THE TITLE CARD, once the reader owns the page
 
-     Two jobs, both keyed to whether the card is on screen:
-
-       - THE MARK STANDS DOWN. The header carries the name at small
-         size precisely because the big one is not visible; two copies
-         of it in one frame is not a mark, it is a repetition.
-       - THE CLIP ONLY RUNS WHEN IT IS BEING WATCHED. A 1920x1080 loop
-         decoding behind the footer is pure heat, and the reader lands
-         on the desktop, so the common case is that it never plays at
-         all until somebody scrolls up to look at it.
+     One job: THE MARK STANDS DOWN. The header carries the name at small
+     size precisely because the big one is not visible; two copies of it
+     in one frame is not a mark, it is a repetition. (The halftone clip
+     is .backdrop's now and runs for the whole visit, same as the old
+     desk plate did — there is no per-card clip to gate any more.)
      --------------------------------------------------------- */
   function watchTitle() {
     if (!title) return;
-    /* No observer: leave the mark out and the clip paused. Both
-       failures are quiet ones. */
+    /* No observer: leave the mark out. A quiet failure. */
     if (!('IntersectionObserver' in window)) return;
     new IntersectionObserver(function (entries) {
       var onScreen = entries[0].isIntersecting;
@@ -807,8 +791,6 @@
         if (onScreen) chrome.setAttribute('data-top', '');
         else chrome.removeAttribute('data-top');
       }
-      if (reduced || !video) return;
-      if (onScreen) playSafe(video); else pauseSafe(video);
     }, { threshold: 0.35 }).observe(title);
   }
 
@@ -844,6 +826,36 @@
     var skipBtn  = document.getElementById('door-skip');
     if (storyBtn) storyBtn.addEventListener('click', play);
     if (skipBtn)  skipBtn.addEventListener('click', bail);
+
+    /* THE STORY OPTION ALSO ANSWERS A SCROLL. Its copy says "scroll
+       down" and the page is locked, so a reader who does exactly what
+       they are told gets nothing unless this is here. A downward wheel
+       tick, an upward swipe, or Arrow/Page Down while the door is up
+       plays the story — same as the button. Once the run starts, or
+       after a skip, these are dead: play()'s own guard covers it and
+       doorOn gates the rest. Nothing is preventDefaulted — there is
+       nothing to scroll to stop. */
+    var wheelAcc = 0;
+    window.addEventListener('wheel', function (e) {
+      if (handedOff || running || !doorOn || e.deltaY <= 0) return;
+      wheelAcc += e.deltaY;
+      if (wheelAcc > 24) play();
+    }, { passive: true });
+
+    var touchY = null;
+    window.addEventListener('touchstart', function (e) {
+      touchY = (e.touches && e.touches[0]) ? e.touches[0].clientY : null;
+    }, { passive: true });
+    window.addEventListener('touchmove', function (e) {
+      if (handedOff || running || !doorOn || touchY === null) return;
+      var y = (e.touches && e.touches[0]) ? e.touches[0].clientY : null;
+      if (y !== null && touchY - y > 24) play();
+    }, { passive: true });
+
+    window.addEventListener('keydown', function (e) {
+      if (handedOff || running || !doorOn) return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); play(); }
+    });
 
     /* Long enough that it arrives rather than having always been
        there, short enough that black-with-nothing-on-it doesn't burn
