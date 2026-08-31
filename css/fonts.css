@@ -55,19 +55,22 @@
 
 /**
  * Allison — SIL OFL, via Google Fonts. The handwriting on the site, and
- * it says exactly three things: "Designer", written under the struck-out
- * "man" on screen one; "Self" in "all by their Self,"; and "let's work
- * together." at the end. All three are the page speaking as a person
- * rather than narrating, which is the only reason a third face is
- * allowed on a page that has been strict about two.
+ * it says exactly five things: "Designer", written under the struck-out
+ * "man" on screen one; "Self" in "all by their Self,"; "let's work
+ * together." at the end of the intro; and on the title card, the two
+ * accent words the two lines turn on — "Sydney." and "themselves." All
+ * of them are the page speaking as a person rather than narrating,
+ * which is the only reason a third face is allowed on a page that has
+ * been strict about two.
  *
- * 3.9 KB, because it is subset to the twenty-one characters those three
- * strings actually use. Adding a word to any of them means
- * re-subsetting — the source is @fontsource/allison and the glyph set
- * is "Designer Let's work together?" + "Self," + the curly apostrophe.
- * Missing this once already put "Self" half in Allison and half in a
- * fallback serif, mid-word — check the rendered glyph, not just that
- * the build didn't error, before shipping a new string in this face.
+ * 6 KB, subset to the ~26 characters those five strings use. Adding a
+ * word to any of them means re-subsetting — the source is the Google
+ * Fonts latin cut of Allison v13 (X7nl4b88AP2nkbvZCCGa4ebjEgg.woff2),
+ * subset with `pyftsubset --text=',.?DLSefghiklnorstwdymv'
+ * --unicodes=U+0020,U+0027,U+2019`. Missing this once already put
+ * "Self" half in Allison and half in a fallback serif, mid-word —
+ * check the rendered glyph, not just that the build didn't error,
+ * before shipping a new string in this face.
  *
  * font-display: block. Both lines animate in, and a fallback script
  * face swapping under a settling word reflows it mid-reveal.

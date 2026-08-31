@@ -332,28 +332,35 @@
 <div class="site" id="site">
   <!-- ============ THE TITLE CARD ============
        The top of the site, and the reason there is somewhere to scroll
-       back TO.
+       back TO. The opening dissolves past this into the desktop and the
+       reader lands on the files; this sits above them and scrolling up
+       reaches it.
 
-       The opening dissolves past this into the desktop — that dissolve
-       is the payoff of the whole piece and it stays — and the reader
-       lands on the files. This screen is then sitting above them, and
-       scrolling up reaches it. So the name is a PLACE rather than a
-       moment: the same plate you saw the reveal land on is still there,
-       the name at full size, and you can go back and look at it. What
-       you cannot go back into is the animation, which is the distinction
-       Neel asked for.
+       IT READS IN TWO LINES, ON SCROLL. .title is 300svh of scroll
+       budget; .title__stage is a 100svh sticky pane inside it. A
+       ScrollTrigger scrub (setupTitleScroll in hero.js) holds line one,
+       swaps it for line two, then lifts and fades the whole pane as the
+       desk scrolls up under it — the title dissolving into the work
+       rather than ending at a hard edge. Both lines are real text in
+       source order, so a screen reader (and no-JS, and reduced motion)
+       gets them stacked and static; the scrub is enhancement.
 
-       IT IS ALSO THE PAGE'S ONLY h1. The old build had none at all —
-       the name lived in a decorative div inside the hero and the site's
-       first heading was a visually-hidden "Selected work". A portfolio
-       whose h1 is a section label is a portfolio with no title.
+       THE h1 IS STILL "Neel Parikh" — the small standing mark at the
+       top of the pane, not the tagline. A portfolio's title is the
+       person; the tagline is a <p>.
 
-       NO LAYERS OF ITS OWN. The section is transparent — the plate, its
-       grade, its scrim and its grain are all on .backdrop, one
-       continuous treatment behind the name and the desktop both, so
-       there is no edge where one section's atmosphere stops. -->
+       NO LAYERS OF ITS OWN. Transparent — .backdrop shows through, the
+       same continuous plate the desktop sits on. -->
   <section class="title" id="title">
-    <h1 class="title__name">Neel Parikh</h1>
+    <div class="title__stage">
+      <div class="title__inner">
+        <h1 class="title__eyebrow">Neel Parikh</h1>
+        <div class="title__lines">
+          <p class="title__line title__line--1">Interaction &amp; Product Designer, <i class="title__script">Sydney.</i></p>
+          <p class="title__line title__line--2">I make things that explain <i class="title__script">themselves.</i></p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="desk" id="desk">

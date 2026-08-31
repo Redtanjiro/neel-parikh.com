@@ -751,10 +751,10 @@
        thrown away.
 
        The title card sits above them. Scrolling up reaches it: the same
-       shot, the same grade, the name at full size, a real screen they
-       can return to. What is NOT up there is the animation, which is
-       the whole distinction — the lid is gone and the story cannot be
-       re-entered by scrolling.
+       plate, the same grade, the tagline read in two lines on the way
+       up, a real screen they can return to. What is NOT up there is the
+       animation, which is the whole distinction — the lid is gone and
+       the story cannot be re-entered by scrolling.
 
        Instant, and read after the unlock so the layout is the unlocked
        one. A smooth scroll here would animate the reader away from the
@@ -763,6 +763,7 @@
 
     showChrome();
     watchTitle();
+    if (!reduced) setupTitleScroll();
     if (!reduced) playSafe(dither);
 
     /* The files arrive on the plate they were always going to arrive
@@ -775,23 +776,73 @@
   /* ---------------------------------------------------------
      THE TITLE CARD, once the reader owns the page
 
-     One job: THE MARK STANDS DOWN. The header carries the name at small
-     size precisely because the big one is not visible; two copies of it
-     in one frame is not a mark, it is a repetition. (The halftone clip
-     is .backdrop's now and runs for the whole visit, same as the old
-     desk plate did — there is no per-card clip to gate any more.)
+     One job: THE MARK STANDS DOWN. While the title pane is on screen its
+     eyebrow is the "Neel Parikh" mark, so the header's copy of it stands
+     down — two of one mark in a frame is a repetition, not a mark. The
+     observer watches .title__stage (the 100svh sticky pane), not .title
+     (300svh of scroll budget, too tall to ever cross a ratio threshold),
+     and fires on any intersection at all.
      --------------------------------------------------------- */
   function watchTitle() {
-    if (!title) return;
-    /* No observer: leave the mark out. A quiet failure. */
-    if (!('IntersectionObserver' in window)) return;
+    var stage = document.querySelector('.title__stage');
+    if (!stage || !('IntersectionObserver' in window)) return;
     new IntersectionObserver(function (entries) {
       var onScreen = entries[0].isIntersecting;
       if (chrome) {
         if (onScreen) chrome.setAttribute('data-top', '');
         else chrome.removeAttribute('data-top');
       }
-    }, { threshold: 0.35 }).observe(title);
+    }, { threshold: 0 }).observe(stage);
+  }
+
+  /* ---------------------------------------------------------
+     THE TWO LINES, SCRUBBED
+
+     The title pane reads in two lines on the way up, and hands off into
+     the desk rather than ending at an edge. .title is 300svh of scroll
+     budget; .title__stage is a 100svh sticky pane inside it. One
+     scrubbed timeline, its length mapped across .title's whole scroll
+     (top top -> bottom top):
+
+       0.00-0.24  line one, held
+       0.24-0.40  line one lifts out, line two takes its place
+       0.40-0.72  line two, held
+       0.72-1.00  line two and the eyebrow fade and the pane lifts,
+                  while the pane itself is unpinning and scrolling up
+                  and the desk is coming in under it — the fade and the
+                  scroll-away are the same move, so it reads as the
+                  title dissolving into the work rather than cutting
+
+     Reduced motion never gets here (see the handoff); CSS shows both
+     lines stacked and static there and under no-JS. --------------------- */
+  function setupTitleScroll() {
+    var stage = document.querySelector('.title__stage');
+    var l1 = document.querySelector('.title__line--1');
+    var l2 = document.querySelector('.title__line--2');
+    var eyebrow = document.querySelector('.title__eyebrow');
+    if (!title || !stage || !l1 || !l2) return;
+
+    gsap.set(l1, { opacity: 1, yPercent: 0 });
+    gsap.set(l2, { opacity: 0, yPercent: 16 });
+
+    var tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: title,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.3
+      }
+    });
+    tl.to({}, { duration: 0.24 });
+    tl.to(l1, { opacity: 0, yPercent: -16, duration: 0.16 }, '>');
+    tl.to(l2, { opacity: 1, yPercent: 0,   duration: 0.16 }, '<');
+    tl.to({}, { duration: 0.32 });
+    tl.to(l2,      { opacity: 0, yPercent: -16, duration: 0.28 }, '>');
+    tl.to(eyebrow, { opacity: 0,               duration: 0.28 }, '<');
+    tl.to(stage,   { opacity: 0,               duration: 0.28 }, '<');
+
+    ScrollTrigger.refresh();
   }
 
   /* ---------------------------------------------------------

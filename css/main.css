@@ -1846,43 +1846,102 @@ html.is-opening body {
 }
 
 /* =========================================================
-   THE TITLE CARD — the top of the site
+   THE TITLE CARD — the top of the site, read in two lines on scroll
    ========================================================= */
+/* The scroll budget. Not what the reader sees — that is .title__stage,
+   one viewport of it, sticky inside this. The extra height is the
+   distance the line swap and the hand-off into the desk are scrubbed
+   across (setupTitleScroll in hero.js). NO overflow:hidden — it would
+   kill the sticky child; body already uses overflow-x: clip for the
+   same reason. */
 .title {
   position: relative;
-  height: 100svh;
   width: 100%;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  padding: 0 6vw;
+  height: 300svh;
 }
-/* No layers of its own — transparent, .backdrop shows through. The
-   plate, its grade, its scrim and its grain are all on .backdrop now,
-   one continuous treatment behind the name and the desktop both. */
-
-/* Same size and same weight as the name in the reveal — this is meant
-   to be recognised as the frame you just watched, not as a heading
-   about it. The difference is that it is simply there: no transition,
-   no data-attribute, nothing to arrive. It is a page, not a beat. */
-.title__name {
-  position: relative;
+.title__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center start;
+  padding: 0 6vw;
   z-index: 2;
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 11vw, 11rem);
-  font-weight: 600;
-  letter-spacing: -.025em;
-  line-height: .92;
-  white-space: nowrap;
+}
+/* Left-aligned block, ragged right — the tagline is speech, not a
+   headline centred on the frame. */
+.title__inner {
+  position: relative;
+  width: min(100%, 52rem);
   text-shadow: var(--halo);
+}
+/* The standing mark. Small, above the tagline, the same "Neel Parikh"
+   the header carries — while the pane is in view this is it and the
+   header copy stands down (see below). */
+.title__eyebrow {
+  margin: 0 0 clamp(.9rem, 2.6vh, 1.8rem);
+  font-family: var(--font-display);
+  font-size: var(--type-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* The two lines share one grid cell so line two replaces line one in
+   place rather than the block reflowing. */
+.title__lines { display: grid; }
+.title__line {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5.1vw, 4.4rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: var(--track-line);
+  color: var(--ink);
+}
+/* JS sets the real starting state and scrubs from there; this is the
+   no-JS / pre-JS floor so line two is not stacked opaque over line one
+   before setupTitleScroll runs. */
+.title__line--2 { opacity: 0; }
+/* Allison has a small x-height, so the script runs larger than the
+   roman beside it to carry the same weight; line-height: 0 keeps the
+   tall glyph from opening the line box. Same treatment as the intro's
+   "let's work together." */
+.title__script {
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-size: 1.5em;
+  line-height: 0;
+  position: relative;
+  top: .08em;
+  white-space: nowrap;
+}
+
+/* No JS and reduced motion: no scrub. Collapse the scroll budget and
+   let both lines sit in normal flow, stacked and static — less
+   movement, not less content. */
+.no-js .title { height: auto; min-height: 100svh; }
+.no-js .title__stage { position: static; height: auto; min-height: 100svh; }
+.no-js .title__lines { display: block; }
+.no-js .title__line { max-width: 20ch; }
+.no-js .title__line + .title__line { margin-top: clamp(1.4rem, 4vh, 2.6rem); }
+.no-js .title__line--2 { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .title { height: auto; min-height: 100svh; }
+  .title__stage { position: static; height: auto; min-height: 100svh; }
+  .title__lines { display: block; }
+  .title__line { max-width: 20ch; }
+  .title__line + .title__line { margin-top: clamp(1.4rem, 4vh, 2.6rem); }
+  .title__line--2 { opacity: 1; }
 }
 
 /* TWO SIZES OF ONE THING, which is what a mark is for — so they are
-   never both on screen at once. While the title card is in view the big
-   name is the name and the header's copy stands down; scroll to the
+   never both on screen at once. While the title pane is in view the
+   eyebrow is the name and the header's copy stands down; scroll to the
    desktop and the header picks it up. hero.js sets data-top from an
-   IntersectionObserver on .title. */
+   IntersectionObserver on .title__stage. */
 .chrome[data-full][data-top] .chrome__mark { opacity: 0; }
 
 /* =========================================================
