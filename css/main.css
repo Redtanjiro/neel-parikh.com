@@ -1859,6 +1859,53 @@ html.is-opening body {
   width: 100%;
   height: 300svh;
 }
+/* A SCRIM THAT TRAVELS WITH THE TEXT.
+
+   Measured on the real plate at 1280: the eyebrow came out at 2.90:1
+   against the brightest cloud its glyphs actually cross — a fail for
+   13px type, which needs 4.5. The big line was 3.47:1, which passes as
+   large text but with nothing in hand.
+
+   The cause is that --plate-wash is not this pane's gradient. It was
+   tuned for the DESKTOP, whose files live in the lower half, so it is
+   deliberately transparent until 38% and only reaches .40 by 50% — and
+   the intro type sits at roughly 40-60%, precisely in the stretch where
+   the wash has not arrived yet. Deepening the shared wash to fix this
+   would re-grade the desktop to solve a problem the desktop does not
+   have, and that gradient is tuned; see --plate-wash.
+
+   So the type brings its own light with it, the way the story's corner
+   lines do. Anchored to where the words are rather than to the frame,
+   and faded out well before any edge so it reads as the plate being
+   darker there rather than as a panel behind the text.
+
+   Inside .title__stage, so it is scrubbed away with the pane at the end
+   of the timeline and never outlives the words it exists for. */
+.title__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* .52 at the centre, not .72. Both pass; the difference is the
+     picture. At .72 the eyebrow measured 9.62:1 and the cabin had gone
+     to silhouette — headroom bought with the only thing on the plate
+     worth looking at. .52 gives 6.47:1 on the eyebrow and 5.31:1 on the
+     line, which is ~44% over the 4.5 the small type needs, and leaves
+     the island lit.
+
+     The margin is not decoration. This plate is a MOVING image: the
+     figures above are one sampled frame, and the clouds travel, so the
+     brightest frame the eyebrow ever sits on is not necessarily the one
+     that was measured. Anything tuned to land near 4.5 exactly would
+     spend part of the loop below it. */
+  background: radial-gradient(120% 78% at 22% 52%,
+    rgba(16,19,14,.52) 0%,
+    rgba(16,19,14,.38) 34%,
+    rgba(16,19,14,.15) 62%,
+    rgba(16,19,14,0)   84%);
+}
+
 .title__stage {
   position: sticky;
   top: 0;
@@ -1870,9 +1917,25 @@ html.is-opening body {
 }
 /* Left-aligned block, ragged right — the tagline is speech, not a
    headline centred on the frame. */
+/* 70rem, not 52.
+
+   The design draws these as two lines — "Interaction & Product" /
+   "Designer, Sydney." — and 52rem could not hold the first one, so it
+   came apart into three with "Product" stranded in the middle.
+   Measured: at the clamped type size (70px from 1440 up) that phrase
+   wants 1095px, and 52rem is 832.
+
+   It was never the 22ch measure on .title__line doing this. Panchang's
+   zero is wide enough that 22ch computes to ~1848px — the ch cap has
+   not once been the binding constraint on this element at any
+   viewport. Worth knowing before anyone tunes it expecting an effect.
+
+   70rem = 1120px, which clears 1095 wherever the type is at full size
+   and collapses to 100% below that. */
 .title__inner {
   position: relative;
-  width: min(100%, 52rem);
+  z-index: 1;                 /* above .title__stage::before */
+  width: min(100%, 70rem);
   text-shadow: var(--halo);
 }
 /* The standing mark. Small, above the tagline, the same "Neel Parikh"
@@ -1909,6 +1972,22 @@ html.is-opening body {
    roman beside it to carry the same weight; line-height: 0 keeps the
    tall glyph from opening the line box. Same treatment as the intro's
    "let's work together." */
+/* THE SCRIPT WORD BREAKS WITH THE WORD BEFORE IT, NEVER ALONE.
+
+   Allison runs at 1.5em against the roman, so it is the widest thing on
+   the line and the first thing the browser pushes to a new line. That
+   left "Sydney." sitting on its own at the left margin under "Product
+   Designer," — which reads as a third line of the sentence rather than
+   as the accent the layout is built around, and is not the two-line
+   arrangement the design draws.
+
+   The measure is the wrong lever for this: the width that keeps it
+   inline at 1280 pushes it down at 1440 and back up at 1600. Binding it
+   to its neighbour fixes it at every width instead, and says the true
+   thing — "Designer, Sydney." is one phrase and the break belongs in
+   front of it. Same reasoning as .line--lit in the story above. */
+.title__keep { white-space: nowrap; }
+
 .title__script {
   font-family: var(--font-hand);
   font-style: normal;
@@ -1943,6 +2022,40 @@ html.is-opening body {
    desktop and the header picks it up. hero.js sets data-top from an
    IntersectionObserver on .title__stage. */
 .chrome[data-full][data-top] .chrome__mark { opacity: 0; }
+
+/* The landing cue. One arrow, bottom-centre of the sticky pane, gone as
+   soon as the pane answers a scroll — see setupTitleScroll in hero.js,
+   which scrubs its opacity rather than switching it, so scrolling back
+   up brings it honestly back.
+
+   No word beside it. "Scroll" on a page that is plainly a page is an
+   instruction nobody needed; the arrow is doing the only job here,
+   which is to say the frame is not stuck. */
+.title__cue {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5svh;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: var(--ink-dim);
+  opacity: .5;
+  pointer-events: none;
+}
+.title__cue svg { animation: title-cue-bob 1.9s var(--ease-move) infinite; }
+
+@keyframes title-cue-bob {
+  0%, 100% { transform: translateY(0);   opacity: .55; }
+  50%      { transform: translateY(5px); opacity: 1;   }
+}
+
+/* Reduced motion keeps the arrow and drops the bob — it is information,
+   and the setting asks for less travel, not less meaning. It also never
+   gets scrubbed away there (the scrubbed timeline doesn't run under
+   reduced motion), which is correct: the pane is static, so the one
+   thing saying "there is more below" has to stay. */
+@media (prefers-reduced-motion: reduce) {
+  .title__cue svg { animation: none; }
+}
 
 /* =========================================================
    ACCESSIBILITY

@@ -356,9 +356,22 @@
       <div class="title__inner">
         <h1 class="title__eyebrow">Neel Parikh</h1>
         <div class="title__lines">
-          <p class="title__line title__line--1">Interaction &amp; Product Designer, <i class="title__script">Sydney.</i></p>
-          <p class="title__line title__line--2">I make things that explain <i class="title__script">themselves.</i></p>
+          <p class="title__line title__line--1">Interaction &amp; Product <span class="title__keep">Designer, <i class="title__script">Sydney.</i></span></p>
+          <p class="title__line title__line--2">I make things that <span class="title__keep">explain <i class="title__script">themselves.</i></span></p>
         </div>
+      </div>
+
+      <!-- The reader arrives here off a sequence that held the scroll for
+           fourteen seconds, onto a sticky pane whose first line is held
+           still for the first quarter of its travel. For that beat the
+           frame is motionless and the only thing that says the page is
+           theirs again is a scrollbar. So: one arrow, gone the moment
+           the first line starts to move, which is the moment it has
+           stopped being needed. -->
+      <div class="title__cue" id="title-cue" aria-hidden="true">
+        <svg width="10" height="26" viewBox="0 0 10 26" fill="none">
+          <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
+        </svg>
       </div>
     </div>
   </section>

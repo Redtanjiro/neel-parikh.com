@@ -140,25 +140,16 @@
      whatever is behind it is what it fades TO — so that has to be the
      halftone plate. It is .backdrop, fixed to the frame at body level,
      so it is behind the lid at the right framing no matter where the
-     locked page is scrolled. The lid dissolves onto it; the name and
-     the desktop then share it.
+     locked page is scrolled, and no matter where the reader is put
+     down afterwards.
 
-     .site is still offset up by one title card for the length of the
-     opening, so that when the offset comes off at the handoff the
-     scroll can go to the same number and land the reader on the desk
-     (the dissolve resolves INTO the desktop) with the title card a
-     scroll-up above. That is now only a scroll-position trick — the
-     picture behind the lid is .backdrop either way.
-
-     Measured rather than 100svh. The card is sized in svh and the
-     locked body is sized to the live viewport, and on a phone those
-     are the same number only while the URL bar is showing. */
-  function siteOffset() {
-    if (!site || !title || handedOff) return;
-    site.style.transform = 'translateY(' + (-title.offsetHeight) + 'px)';
-  }
-  siteOffset();
-  window.addEventListener('resize', siteOffset);
+     THERE USED TO BE AN OFFSET HERE. .site was pushed up by one title
+     card for the length of the opening so the handoff could land the
+     reader past it, on the desktop, with the card a scroll-up above.
+     It went when the intro did — see THE LANDING in handoff(). Once
+     .backdrop was fixed at body level the offset was doing nothing for
+     the picture; it was only choosing a scroll position, and it was
+     choosing the wrong one. */
 
   if (video && !reduced) playSafe(video);
 
@@ -728,8 +719,6 @@
        (the halftone), which is what the dissolve just landed on. */
 
     /* And the page underneath becomes the page. */
-    var titleH = title ? title.offsetHeight : 0;
-    if (site) site.style.transform = '';
     root.classList.remove('is-opening');
     if (site) {
       site.removeAttribute('aria-hidden');
@@ -741,35 +730,44 @@
        clamps to zero. */
     void document.documentElement.scrollHeight;
 
-    /* LANDING ON THE DESKTOP, WITH THE TITLE CARD ABOVE IT.
+    /* THE LANDING — the top of the intro, and the intro is on the way.
 
-       Not scrollTo(0). The dissolve resolves INTO the desktop — that is
-       the payoff of the whole sequence, the halftone ceasing to be a
-       picture of the island and becoming the thing the island's laptop
-       is showing — so the reader has to arrive there, on the frame the
-       dissolve just landed on, or the last thing the piece does is
-       thrown away.
+       This used to land on the DESKTOP, one title card down, on the
+       reasoning that the dissolve resolves into the desktop and the
+       reader should arrive on the frame it landed on. That reasoning
+       was right about the picture and wrong about the path: .backdrop
+       is fixed, so the plate the dissolve lands on is the same plate at
+       every scroll position, and landing past the intro put the two
+       best lines on the site BEHIND the reader. The scrubbed timeline
+       below runs top-down, so the only way to see it was to scroll up
+       past it and come back — which nobody does.
 
-       The title card sits above them. Scrolling up reaches it: the same
-       plate, the same grade, the tagline read in two lines on the way
-       up, a real screen they can return to. What is NOT up there is the
-       animation, which is the whole distinction — the lid is gone and
-       the story cannot be re-entered by scrolling.
+       So the reader lands at the top and the intro is the path: the
+       plate resolves out of the dissolve, "Interaction & Product
+       Designer, Sydney." is on it, and scrolling reads the second line
+       and then carries the whole pane off into the desktop. Nothing is
+       hidden behind a gesture, and the dissolve still resolves into the
+       surface it always did — the files are just further along it.
 
-       Instant, and read after the unlock so the layout is the unlocked
-       one. A smooth scroll here would animate the reader away from the
-       frame they were just delivered to. */
-    window.scrollTo(0, titleH);
+       Instant, and after the unlock so the layout is the unlocked one.
+       A smooth scroll would animate the reader away from the frame they
+       were just delivered to. */
+    window.scrollTo(0, 0);
 
     showChrome();
     watchTitle();
     if (!reduced) setupTitleScroll();
     if (!reduced) playSafe(dither);
 
-    /* The files arrive on the plate they were always going to arrive
-       on — now that it is a surface the reader owns rather than the
-       last frame of something being played at them. */
-    if (site) requestAnimationFrame(function () { site.setAttribute('data-desk', ''); });
+    /* The files arrive when the DESK does, not at the handoff.
+
+       They used to pop here, which was right while the handoff landed
+       on the desktop. It lands three screens above it now, so firing
+       them here plays the whole entrance — six staggered pops over
+       660ms — to an empty room, and by the time the reader scrolls down
+       the files have simply always been there. An arrival nobody is
+       present for is not an arrival. */
+    watchDesk();
     ScrollTrigger.refresh();
   }
 
@@ -793,6 +791,28 @@
         else chrome.removeAttribute('data-top');
       }
     }, { threshold: 0 }).observe(stage);
+  }
+
+  /* ---------------------------------------------------------
+     THE DESKTOP ARRIVING
+
+     One-shot: the first time the desk is genuinely on screen the files
+     pop, and the observer retires. Not toggled — an entrance that
+     replays every time you scroll past is a tic, not an entrance.
+
+     0.25 rather than 0, because `isIntersecting` at threshold 0 is true
+     the instant a single pixel of the section crosses the fold, which
+     is a good half second before there is anything to look at. */
+  function watchDesk() {
+    var deskEl = document.getElementById('desk');
+    if (!site || !deskEl) return;
+    if (!('IntersectionObserver' in window)) { site.setAttribute('data-desk', ''); return; }
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      site.setAttribute('data-desk', '');
+      io.disconnect();
+    }, { threshold: 0.25 });
+    io.observe(deskEl);
   }
 
   /* ---------------------------------------------------------
@@ -834,6 +854,12 @@
         scrub: 0.3
       }
     });
+    /* The cue is spent as soon as the pane answers a scroll — it exists
+       to say "this moves", and by 0.06 it has. Scrubbed with everything
+       else so scrolling back up brings it honestly back. */
+    var cueEl = document.getElementById('title-cue');
+    if (cueEl) tl.to(cueEl, { opacity: 0, duration: 0.06 }, 0);
+
     tl.to({}, { duration: 0.24 });
     tl.to(l1, { opacity: 0, yPercent: -16, duration: 0.16 }, '>');
     tl.to(l2, { opacity: 1, yPercent: 0,   duration: 0.16 }, '<');

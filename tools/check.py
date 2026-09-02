@@ -104,6 +104,11 @@ def goto_desk(page, base_url):
     page.wait_for_selector("#door", state="attached", timeout=5000)
     page.click('.chrome a[href="#work"]')
     page.wait_for_timeout(4000)
+    # The handoff lands at the top of the title card now, not on the desk
+    # (the two-line intro is the path into the work). Scroll the desk into
+    # view — this also trips the IntersectionObserver that pops the files.
+    page.evaluate("document.getElementById('desk').scrollIntoView({block: 'start'})")
+    page.wait_for_timeout(700)
 
 
 # ---------------------------------------------------------------------------
@@ -778,9 +783,11 @@ def run_full_story_pass(browser, base_url):
         fail("full story", "did not hand off within 20s")
     else:
         ok("full story: door-story -> handoff completes")
-        # data-desk is set from a requestAnimationFrame nested inside
-        # handoff(), a frame after hero.hidden — give it a moment.
-        page.wait_for_timeout(200)
+        # data-desk no longer fires at handoff — the handoff lands on the
+        # title card and the files pop when the desk itself scrolls into
+        # view (watchDesk in hero.js). Scroll to it, then check.
+        page.evaluate("document.getElementById('desk').scrollIntoView({block: 'start'})")
+        page.wait_for_timeout(400)
 
     # rail should climb, not jump backwards (monotonic, allowing for
     # polling granularity/float noise)
