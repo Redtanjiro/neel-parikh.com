@@ -155,23 +155,25 @@ def check_t1(page, vw, vh):
         fail(label, "T1: .about not found")
 
     names = page.eval_on_selector_all(
-        ".folder__name", "els => els.map(e => e.textContent.trim())"
+        ".folder__label", "els => els.map(e => e.textContent.trim())"
     )
     expected = ["Futee", "EMF ACE", "CSEDS", "Into Yesterday"]
     for name in expected:
         if name not in names:
-            fail(label, f"T1: folder name '{name}' missing (found {names})")
+            fail(label, f"T1: folder label '{name}' missing (found {names})")
     for i, f in enumerate(folders):
-        nm = f.query_selector(".folder__name")
+        nm = f.query_selector(".folder__label")
         if nm:
             box = nm.bounding_box()
             if box is None or box["width"] == 0 or box["height"] == 0:
-                fail(label, f"T1: .folder[{i}] .folder__name has zero-size box")
+                fail(label, f"T1: .folder[{i}] .folder__label has zero-size box")
 
     if vw == 1440 and vh == 900:
         tops = sorted(set(round(f.bounding_box()["y"]) for f in folders if f.bounding_box()))
-        # baseline: row1 top=448, row2 top=640 (allow a couple px of AA/measurement slack)
-        expected_rows = [448, 640]
+        # baseline: row1 top=475, row2 top=654 (allow a couple px of AA/measurement
+        # slack). Shifted from 448/640 when the folder icons became Figma
+        # artboards — landscape frame, label above it instead of below.
+        expected_rows = [475, 654]
         for exp in expected_rows:
             if not any(abs(t - exp) <= 3 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
@@ -422,38 +424,38 @@ def run_t5_pass(browser, base_url):
     else:
         ok(f"T5: media/spill/ totals {spill_total/1024:.1f} KB")
 
-    sheets = page.query_selector_all(".folder__sheet")
-    for i, s in enumerate(sheets):
+    shots = page.query_selector_all(".folder__shot")
+    for i, s in enumerate(shots):
         nat_w, attr_w = page.evaluate(
             "(el) => [el.naturalWidth, parseInt(el.getAttribute('width'))]", s
         )
         if nat_w != attr_w:
-            fail("T5", f".folder__sheet[{i}] naturalWidth={nat_w} != width attr={attr_w}")
+            fail("T5", f".folder__shot[{i}] naturalWidth={nat_w} != width attr={attr_w}")
     else:
-        ok(f"T5: all {len(sheets)} .folder__sheet naturalWidth match their width attribute")
+        ok(f"T5: all {len(shots)} .folder__shot naturalWidth match their width attribute")
 
     context.close()
 
-    # --- hover still reveals three sheets per folder, in a hover-capable context ---
+    # --- hover thickens the frame stroke, in a hover-capable context ---
+    # The folder cards are Figma artboards now, not a folder icon with a
+    # fan of sheets — hover is a lift plus a 2px->3px stroke, not a reveal.
     hover_context = browser.new_context(viewport={"width": 1440, "height": 900})
     hpage = hover_context.new_page()
     herrors = []
     attach_error_capture(hpage, "T5-hover", herrors)
     goto_desk(hpage, base_url)
-    first_link = hpage.query_selector(".folder__link")
-    if first_link:
-        first_link.hover()
+    first_frame = hpage.query_selector(".folder:first-child .folder__frame")
+    if first_frame:
+        before = hpage.evaluate("(el) => getComputedStyle(el).boxShadow", first_frame)
+        hpage.query_selector(".folder__link").hover()
         hpage.wait_for_timeout(300)
-        visible_sheets = hpage.eval_on_selector_all(
-            ".folder:first-child .folder__sheet",
-            "els => els.filter(e => parseFloat(getComputedStyle(e).opacity) > 0).length"
-        )
-        if visible_sheets < 3:
-            fail("T5", f"hover on first folder revealed {visible_sheets} sheets, want 3")
+        after = hpage.evaluate("(el) => getComputedStyle(el).boxShadow", first_frame)
+        if after == before:
+            fail("T5", f"hover did not change .folder__frame box-shadow ({before})")
         else:
-            ok("T5: hover still reveals three sheets per folder")
+            ok("T5: hover changes the frame stroke")
     else:
-        fail("T5", ".folder__link not found for hover check")
+        fail("T5", ".folder__frame not found for hover check")
     hover_context.close()
 
     errors.extend(herrors)

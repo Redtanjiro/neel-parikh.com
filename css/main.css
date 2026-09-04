@@ -69,6 +69,15 @@
      its track position rather than introducing a seventh accent. */
   --folder-teal: #74E8E8;
 
+  /* Figma's selection blue, and the only colour on this page not
+     sampled from the video. It is allowed in on the same grounds the
+     handwriting face was: it is a QUOTATION. The case studies are drawn
+     as selected artboards, and an artboard outlined in the site's own
+     teal is just a teal box — the reference only lands in this exact
+     blue, because this is the blue everyone who would get the joke sees
+     every day. Used for nothing else. */
+  --figma: #008FF0;
+
   /* Type scale */
   --type-hero:  clamp(2.75rem, 7.5vw, 8rem);
   --type-line:  clamp(1.25rem, 2.6vw, 2.5rem);
@@ -1376,123 +1385,150 @@ html.is-opening body {
   text-align: center;
 }
 
-.folder__icon {
+/* ---------- the frame ----------
+   The artboard, its label and its handles. Proportions taken from the
+   Figma export: a 289x204 frame, 2px stroke, 6px corner squares
+   straddling the corners, and the two radius dots inset from them.
+
+   .folder__art is the width both the label and the frame share, so the
+   label sits flush to the frame's left edge the way a frame name does,
+   rather than centred under an icon the way a filename does. */
+.folder__art {
+  display: block;
+  width: clamp(88px, 10.5vw, 168px);
+}
+
+/* Wider than the old square icon because the frame is landscape: at the
+   same width a 289:204 box is only 70% as tall, and six of them read as
+   a row of slots rather than a row of files. */
+
+/* ONE LINE, ALWAYS, AND TRUNCATED IF IT HAS TO BE.
+   The old .folder__name reserved two lines of height so that titles
+   which wrapped and titles which didn't still left the meta on a
+   straight baseline. A label above the frame can't do that — a second
+   line would push the frame down and break the row it is meant to
+   align. So it behaves the way a real frame name behaves: one line,
+   ellipsis when the cell is too narrow. */
+.folder__label {
+  display: block;
+  margin-bottom: .35em;
+  font-family: var(--font-display);
+  font-size: clamp(.6875rem, .95vw, .875rem);
+  font-weight: 500;
+  letter-spacing: -.005em;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--figma);
+  /* A TIGHTER, DARKER HALO THAN THE REST OF THE PAGE, and it is doing
+     real work rather than polish. #008FF0 has a relative luminance of
+     .259, which caps it at 6.2:1 even against pure black — so against
+     the halftone's bright cloud band (measured .571 behind the Futee
+     label) no blue passes 4.5:1 at all, and no lighter blue rescues it
+     either: brightening the type moves it toward the background it is
+     failing against. The plate would have to go nearly opaque black for
+     the hue to survive, which is not a trade worth making for four
+     labels.
+
+     What carries it is the shadow, the same way it carries the white
+     file names: a dark ring immediately around the glyphs is what the
+     eye actually reads the letterform against, not the plate two
+     hundred pixels away. So this is --halo plus a tight 1px core, which
+     is the difference between a blue that sits on the picture and a
+     blue that sits in front of it. */
+  text-shadow:
+    0 0 1px rgba(16, 19, 14, .95),
+    0 1px 2px rgba(16, 19, 14, .9),
+    0 1px 22px rgba(16, 19, 14, .75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 200ms var(--ease-ui);
+}
+
+/* box-shadow inset, not border. The handles below are positioned
+   against this element's own box, and a border would put the box's edge
+   2px inside the line they have to straddle. An inset shadow draws the
+   stroke without changing where the edges are. */
+.folder__frame {
   position: relative;
   display: block;
-  width: clamp(58px, 7vw, 116px);
-  aspect-ratio: 1;
+  width: 100%;
+  aspect-ratio: 289 / 204;
+  background: rgba(16, 19, 14, .45);
+  box-shadow: inset 0 0 0 2px var(--figma), 0 6px 18px rgba(16, 19, 14, .5);
+  transition: transform 200ms var(--ease-ui), box-shadow 200ms var(--ease-ui);
 }
-/* z-index 2: the sheets live behind this, so they read as coming out
-   from inside the folder rather than being stuck to the front of it.
-   No pixelated rendering — the source art is a dithered 512px bitmap
-   and nearest-neighbour downscaling to 100px destroys the pattern. */
-.folder__img {
-  position: relative;
+
+/* The work, cropped by its frame — which is what a frame does.
+   The four previews run from 420x236 to 420x551, so cover is doing real
+   work here. Biased above centre because the ones that are portrait are
+   screenshots of pages, and a page's meaning is at its top. */
+.folder__shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--shot-pos, 50% 20%);
+}
+
+/* THE HANDLES, AS BACKGROUND LAYERS RATHER THAN ELEMENTS.
+   Eight marks on each of four frames is thirty-two elements that carry
+   no meaning and no text. Four gradient layers on each of two
+   pseudo-elements draws the same thing, scales with the box, and costs
+   the DOM nothing.
+
+   ::before is inset -3px so the 6px squares land centred on the frame's
+   corners; ::after sits on the frame itself and places the radius dots
+   in from them. Both z-index 2, above the screenshot. */
+.folder__frame::before,
+.folder__frame::after {
+  content: '';
+  position: absolute;
   z-index: 2;
-  width: 100%; height: auto;
-  filter: drop-shadow(0 6px 14px rgba(16,19,14,.55));
-  transition: transform 200ms var(--ease-ui);
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+.folder__frame::before {
+  inset: -3px;
+  background-image:
+    linear-gradient(var(--figma), var(--figma)),
+    linear-gradient(var(--figma), var(--figma)),
+    linear-gradient(var(--figma), var(--figma)),
+    linear-gradient(var(--figma), var(--figma));
+  background-size: 6px 6px;
+  background-position: 0 0, 100% 0, 0 100%, 100% 100%;
+}
+.folder__frame::after {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
+    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
+    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
+    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px);
+  background-size: 7px 7px;
+  background-position: 8% 11%, 92% 11%, 8% 89%, 92% 89%;
 }
 
-/* ---------- the spill ----------
-   Three sheets, anchored at a point just inside the folder's mouth and
-   fanned upward. They start scaled down and fully behind the folder, so
-   the first frame of the hover has nothing sticking out.
-
-   PLACEHOLDER ART. Swap the three <img src> per folder for real case
-   study stills; the geometry is driven entirely by :nth-child below and
-   doesn't care what the image is. */
-.folder__spill {
-  position: absolute;
-  left: 50%;
-  bottom: 55%;
-  z-index: 1;
-  width: 0; height: 0;
-}
-.folder__sheet {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: clamp(74px, 8.5vw, 142px);
-  height: auto;
-  /* The reset's `img { max-width: 100% }` resolves against the
-     containing block — which is a zero-width anchor point — and
-     collapsed every sheet to nothing. The bug is invisible in devtools
-     until you notice the width, because opacity and rotation were both
-     applying correctly to an element with no area. */
-  max-width: none;
-  transform-origin: 50% 100%;
-  transform: translate(-50%, 8%) scale(.55);
-  opacity: 0;
-  box-shadow: 0 10px 26px rgba(16,19,14,.6);
-  transition:
-    transform 220ms var(--ease-ui),
-    opacity 160ms var(--ease-ui);
-}
-/* Fan geometry. Outer sheets travel less far and lean harder; the
-   middle one goes highest and stays near-upright, which is what stops
-   the spread reading as a symmetrical arc.
-
-   The travel is deliberately short. The first pass cleared the folder
-   entirely and the sheets floated above it with daylight in between —
-   which is three pictures near a folder, not three pictures coming out
-   of one. Their bottom edges have to stay tucked behind the folder's
-   top, and the folder's z-index does the rest. */
-.folder__sheet:nth-child(1) { --dx: -66%; --dy: -20%; --rot: -13deg; }
-.folder__sheet:nth-child(2) { --dx:   0%; --dy: -44%; --rot:  -1deg; }
-.folder__sheet:nth-child(3) { --dx:  64%; --dy: -16%; --rot:  12deg; }
-
-/* Hover gated — touch fires :hover on tap and leaves it stuck open.
-   :focus-within carries the same state for keyboard, so tabbing the row
-   shows the same thing a mouse does. */
+/* Hover gated — touch fires :hover on tap and leaves it stuck on.
+   :focus-visible carries the same state for the keyboard. */
 @media (hover: hover) and (pointer: fine) {
-  .folder__link:hover .folder__sheet,
-  .folder__link:focus-visible .folder__sheet {
-    transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot)) scale(1);
-    opacity: 1;
+  /* The frame lifts and its stroke thickens by a pixel, which is what
+     Figma does when you are about to grab something. That is the whole
+     hover state: the fan that used to be here was answering "is there
+     more inside", and a frame with the work in it has already answered.
+     Under the 300ms ceiling everything that isn't narrative motion
+     holds to. */
+  .folder__link:hover .folder__frame,
+  .folder__link:focus-visible .folder__frame {
+    transform: translateY(-3px);
+    box-shadow: inset 0 0 0 3px var(--figma), 0 12px 24px rgba(16, 19, 14, .6);
   }
-  /* 35ms apart, outermost first. The whole fan lands inside 290ms —
-     under the 300ms ceiling everything that isn't narrative motion
-     holds to. A hover that takes longer than that stops feeling like a
-     response and starts feeling like a scene. */
-  .folder__link:hover .folder__sheet:nth-child(1),
-  .folder__link:focus-visible .folder__sheet:nth-child(1) { transition-delay: 0ms; }
-  .folder__link:hover .folder__sheet:nth-child(3),
-  .folder__link:focus-visible .folder__sheet:nth-child(3) { transition-delay: 35ms; }
-  .folder__link:hover .folder__sheet:nth-child(2),
-  .folder__link:focus-visible .folder__sheet:nth-child(2) { transition-delay: 70ms; }
-
-  /* The folder lifts, and that's the whole hover state for the icon.
-     The name doesn't brighten — it's already at full --ink for contrast
-     reasons, and a colour change with nowhere to go is a transition
-     that does nothing. The fan is the feedback. */
-  .folder__link:hover .folder__img { transform: translateY(-3px) scale(1.04); }
 }
-/* Press gives. Scaling up-but-slightly-less than hover isn't feedback. */
-.folder__link:active .folder__img { transform: scale(.96); }
+/* Press gives. */
+.folder__link:active .folder__frame { transform: translateY(0) scale(.98); }
 
-/* Two lines of headroom whether the title needs them or not. Six cells
-   where some titles wrap and some don't left the meta line sitting at
-   six different heights — the row stopped reading as a row. Reserving
-   the space costs one line of air under the short titles and buys a
-   straight baseline across all of them. */
-.folder__name {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  min-height: 2.2em;
-  font-family: var(--font-work);
-  font-size: clamp(.85rem, 1.2vw, 1.2rem);
-  font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: -.005em;
-  /* Full --ink, not --ink-dim. Measured against glyph coverage rather
-     than the label's box, --ink-dim landed at 3.7:1 on the folder
-     sitting over the bright cloud on the right. It's also the right
-     hierarchy: the file name is the label, and the role/year under it
-     is the annotation. */
-  color: var(--ink);
-  text-shadow: var(--halo);
-}
+
 /* Panchang, not Sprat. Sprat is a high-contrast didone — beautiful at
    the name size above and gone entirely at 11px.
    Not --ink-faint: at .32 over the bright half of the halftone this
@@ -1500,6 +1536,10 @@ html.is-opening body {
    clears 4.5:1 against the worst pixel behind any of the six, at every
    breakpoint — measured against glyph coverage, not the label's box. */
 .folder__meta {
+  display: block;
+  width: clamp(88px, 10.5vw, 168px);
+  text-align: left;
+  margin-top: .5em;
   font-size: .6875rem;
   font-family: var(--font-display);
   font-weight: 400;
@@ -2127,22 +2167,17 @@ html.is-opening body {
   .about__sprite, .about__sprite.is-hop { animation: none; }
   .about__reopen { transform: none; transition: opacity 200ms linear; }
 
-  /* The fan is a large positional move by definition, so the travel
-     goes — but the sheets stay, because they're the actual content of
-     the hover and not decoration. They sit at their fanned positions
-     from the start and simply cross-fade in, so nothing ever moves. */
-  .folder__sheet {
-    transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot));
-    transition: opacity 160ms linear;
-  }
+  /* The frame's hover was a 3px lift and a pixel of stroke. The lift
+     goes; the stroke stays, because it is the part that carries the
+     information and it never moved anything. */
   @media (hover: hover) and (pointer: fine) {
-    .folder__link:hover .folder__sheet,
-    .folder__link:focus-visible .folder__sheet {
-      transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot));
-      transition-delay: 0ms;
+    .folder__link:hover .folder__frame,
+    .folder__link:focus-visible .folder__frame {
+      transform: none;
+      box-shadow: inset 0 0 0 3px var(--figma), 0 6px 18px rgba(16, 19, 14, .5);
     }
-    .folder__link:hover .folder__img { transform: none; }
   }
+  .folder__link:active .folder__frame { transform: none; }
 }
 
 /* =========================================================
@@ -2278,9 +2313,9 @@ html.is-opening body {
      clamp floor the moment the row count drops — six across at 1400px
      and three across at 820px both landed on a 58px icon, and at three
      across it looked like a bug. Re-floor per breakpoint. */
-  .folder__icon { width: clamp(76px, 11vw, 116px); }
-  .folder__name { font-size: clamp(.9rem, 1.9vw, 1.15rem); }
-  .folder__sheet { width: clamp(104px, 15vw, 160px); }
+  .folder__art,
+  .folder__meta { width: clamp(112px, 15vw, 168px); }
+  .folder__label { font-size: clamp(.75rem, 1.35vw, .9375rem); }
 }
 
 /* Two across, three rows. Three columns on a 390px screen gives each
@@ -2300,10 +2335,10 @@ html.is-opening body {
     gap: 1.1rem;
   }
   .work__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.1rem; }
-  .folder__icon { width: clamp(58px, 17vw, 84px); }
-  .folder__name { font-size: clamp(.85rem, 3.6vw, 1.05rem); min-height: 1.3em; }
+  .folder__art,
+  .folder__meta { width: clamp(96px, 26vw, 132px); }
+  .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
-  .folder__sheet { width: clamp(88px, 26vw, 130px); }
   .about { --about-sw: 96px; }
   .about__h { font-size: 1.05rem; }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
@@ -2318,7 +2353,8 @@ html.is-opening body {
    the internal scroll. */
 @media (max-width: 560px) and (max-height: 730px) {
   .about { --about-sw: 76px; }
-  .folder__icon { width: clamp(48px, 14vw, 68px); }
+  .folder__art,
+  .folder__meta { width: clamp(84px, 21vw, 108px); }
   .about__body { padding: 9px; }
   .work { gap: .75rem; }
 }
@@ -2339,4 +2375,4 @@ html.is-opening body {
 .no-js .chrome { opacity: 1; visibility: visible; }
 .no-js .chrome__mark, .no-js .chrome__rule, .no-js .chrome::before { opacity: 1; }
 .no-js .folder, .no-js .about { opacity: 1; transform: none; }
-.no-js .folder__name, .no-js .folder__meta { text-shadow: none; }
+.no-js .folder__label, .no-js .folder__meta { text-shadow: none; }

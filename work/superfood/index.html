@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superfood Adventure — Neel Parikh</title>
+<meta name="description" content="Superfood Adventure — a nutrition game for children 8–12, built first as a Unity RPG and then rebuilt as a printable board game. Bachelor thesis, 2023.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   CASE STUDY — MARK 5 SKELETON
+   Structure, motion and components are shared with Futee, EMF ACE,
+   CSEDS and Into Yesterday. Only the palette, the copy, the media and
+   the project-only block at the bottom change.
+
+     00  hero        full-bleed photograph, wordmark, meta row, tally
+     01  band        full-bleed graphic
+     02  run         DOSSIER PINNED LEFT   · content runs right
+     03  band
+     04  run.flip    DOSSIER PINNED RIGHT  · content runs left
+     05  band.tall + full
+     06  credits + next
+
+   SUPERFOOD'S PALETTE ARGUMENT
+   This game is an economy of good food points and bad food points.
+   So the page runs two accents rather than one: --good carries every
+   healthy quantity, --bad every unhealthy one, and --accent is the
+   good one. Nothing else about the skeleton differs.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── ground ── */
+  --void:#000000;            /* page — true black */
+  --deep:#080D18;            /* media wells keep the board's navy tint */
+
+  --ink:#FBF7F0;             /* never pure #FFF */
+  --ink-70:rgba(251,247,240,.74);
+  --ink-45:rgba(251,247,240,.46);
+  --rule:rgba(251,247,240,.20);
+
+  /* ── the project's own accents, taken off the printed board ── */
+  --good:#31A99E;            /* healthy time teal — vitamins, calcium, fibers */
+  --bad:#F2836B;             /* fast food coral — sugar, fat, carbohydrates */
+  --accent:var(--good);
+
+  /* ── motion ── */
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.23,1,.32,1);
+
+  /* ── rhythm ── */
+  --pad:clamp(20px,8.4vw,108px);
+  --gap:clamp(26px,4.4vw,72px);
+  --sec:clamp(80px,10vw,150px);
+  --beat:clamp(52px,6.4vw,96px);
+  --radius:0px;
+  --radius-pill:22px;
+
+  /* ── type ── */
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"DM Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  --ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.62;
+  letter-spacing:-.006em;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+::selection{background:var(--accent);color:#000000}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#000000;
+  padding:12px 18px;font-family:var(--ui);font-size:13px}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ══ shared type ═══════════════════════════════════════════════ */
+.h-beat{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.1vw,30px);
+  line-height:1.1;letter-spacing:-.018em;margin:0 0 clamp(18px,2vw,30px);
+  padding-top:clamp(14px,1.6vw,22px);border-top:1px solid var(--rule)}
+.eyebrow{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-45);margin:0 0 14px}
+.prose{margin:0;max-width:60ch;font-size:16.5px;line-height:1.66;color:var(--ink-70)}
+.prose + .prose{margin-top:1.05em}
+.prose strong{font-weight:500;color:var(--ink)}
+.prose em{font-style:normal;font-weight:500;color:var(--ink)}
+.prose.lead{font-size:clamp(18px,1.5vw,21px);line-height:1.5;color:var(--ink);max-width:46ch;
+  letter-spacing:-.012em}
+.cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-45);margin:11px 0 0}
+
+/* ══ reveals — transform / opacity only, once, fully opt-out ════ */
+.ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+.ln > i{display:block;font-style:inherit;transform:translate3d(0,105%,0);
+  transition:transform 900ms var(--ease-out);transition-delay:var(--d,0ms)}
+[data-reveal].is-in .ln > i{transform:translate3d(0,0,0)}
+
+[data-reveal]{--rd:0ms}
+[data-reveal] .rise{opacity:0;transform:translate3d(0,16px,0);
+  transition:opacity 720ms var(--ease-soft),transform 720ms var(--ease-soft);transition-delay:var(--rd)}
+[data-reveal].is-in .rise{opacity:1;transform:none}
+.d1{--rd:100ms}.d2{--rd:200ms}.d3{--rd:300ms}.d4{--rd:400ms}
+
+/* ══ shot ══════════════════════════════════════════════════════ */
+.shot{overflow:hidden;position:relative;background:var(--deep);border-radius:var(--radius)}
+.shot > img{width:100%;clip-path:inset(0 0 100% 0);transform:scale(1.05);
+  transition:clip-path 1050ms var(--ease-out),transform 1500ms var(--ease-out);
+  will-change:clip-path,transform}
+[data-reveal].is-in .shot > img,.shot[data-reveal].is-in > img{clip-path:inset(0 0 0 0);transform:scale(1)}
+/* a white document needs an edge or it bleeds into the black (CSEDS) */
+.shot.doc{border:1px solid var(--rule);background:#FFFFFF}
+/* pixel art must not be smoothed on the way up */
+.shot.pixel > img{image-rendering:pixelated}
+
+/* ══ progress + back ═══════════════════════════════════════════ */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:70;background:var(--accent);
+  transform:scaleX(0);transform-origin:0 50%}
+.back{position:fixed;z-index:60;top:16px;left:var(--pad);font-family:var(--ui);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink-45);
+  padding:8px 16px;border:1px solid var(--rule);border-radius:100px;
+  background:rgba(0,0,0,.92);backdrop-filter:saturate(160%) blur(12px);
+  -webkit-backdrop-filter:saturate(160%) blur(12px);
+  opacity:0;pointer-events:none;transform:translate3d(0,-8px,0);
+  transition:opacity 320ms ease,transform 320ms var(--ease-out),color 200ms ease,border-color 200ms ease}
+.back.is-live{opacity:1;pointer-events:auto;transform:none}
+@media (hover:hover) and (pointer:fine){ .back:hover{color:var(--ink);border-color:var(--ink)} }
+
+/* ══ 00 · HERO ═════════════════════════════════════════════════ */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:clamp(64px,10vw,120px) var(--pad) 0;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:112%;object-fit:cover;object-position:50% 44%;
+  transform:scale(1.08);transition:transform 2200ms var(--ease-out) 120ms;will-change:transform}
+.is-ready .hero-bg img{transform:scale(1)}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.20) 34%,rgba(0,0,0,.70) 80%,var(--void) 100%)}
+
+.hero-inner{position:relative;z-index:1;margin-top:auto;text-align:center}
+.hero-title{font-family:var(--display);font-weight:800;font-variation-settings:'opsz' 96;
+  font-size:clamp(38px,11.4vw,164px);line-height:.86;letter-spacing:-.045em;margin:0}
+.hero-tagline{font-size:clamp(19px,3.2vw,42px);line-height:1.12;letter-spacing:-.02em;
+  color:var(--ink);margin:clamp(14px,1.8vw,26px) auto 0;max-width:28ch;font-weight:400;
+  opacity:0;transform:translate3d(0,12px,0);
+  transition:opacity 760ms ease 520ms,transform 760ms var(--ease-soft) 520ms}
+.is-ready .hero-tagline{opacity:1;transform:none}
+.hero-tagline em{font-style:normal;color:var(--accent)}
+
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);
+  border-top:1px solid var(--ink);margin-top:clamp(22px,3vw,42px);
+  padding:clamp(16px,1.8vw,26px) 0 clamp(26px,3.4vw,48px);text-align:left;
+  opacity:0;transform:translate3d(0,12px,0);
+  transition:opacity 760ms ease 660ms,transform 760ms var(--ease-soft) 660ms}
+.is-ready .meta{opacity:1;transform:none}
+.meta dt{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-45);margin:0 0 8px}
+.meta dd{margin:0;font-family:var(--mono);font-size:13px;line-height:1.45;letter-spacing:-.01em}
+@media (max-width:760px){ .meta{grid-template-columns:1fr 1fr;row-gap:22px} }
+
+.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
+  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--ink-45)}
+.tally{position:relative;z-index:1;padding:clamp(30px,4vw,56px) 0 clamp(46px,6vw,86px);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);text-align:center}
+.tally .n{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,104px);
+  line-height:.86;letter-spacing:-.045em;margin:0}
+.tally .n .pre{font-size:.46em;font-weight:600;letter-spacing:-.02em;margin-right:.04em;
+  color:var(--ink-45)}
+.tally .lab{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-45);margin:14px 0 0}
+@media (max-width:760px){ .tally{grid-template-columns:1fr;gap:34px} }
+
+/* ══ 01 · BAND ═════════════════════════════════════════════════ */
+.band{position:relative;overflow:hidden;background:var(--deep);
+  margin:var(--sec) var(--pad) 0;aspect-ratio:16/6}
+.band.bleed{margin-inline:0}
+.band.tall{aspect-ratio:16/8}
+.band.short{aspect-ratio:16/4.6}
+.band img,.band video{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+  display:block;clip-path:inset(0 0 100% 0);transform:scale(1.05);
+  transition:clip-path 1100ms var(--ease-out),transform 1600ms var(--ease-out)}
+.band.pixel img{image-rendering:pixelated}
+.band.is-in img,.band.is-in video{clip-path:inset(0 0 0 0);transform:scale(1)}
+.band-note{font-family:var(--ui);font-size:13px;letter-spacing:-.005em;color:var(--ink);
+  text-align:right;margin:16px var(--pad) 0;font-weight:500}
+@media (max-width:700px){ .band,.band.tall,.band.short{aspect-ratio:4/3} }
+
+.full{margin:var(--sec) var(--pad) 0}
+
+/* ══ RUN — the sticky-dossier two-column engine ════════════════ */
+.run{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.28fr);
+  gap:var(--gap);padding:var(--sec) var(--pad) 0;align-items:start}
+.run .dossier{grid-column:1;position:sticky;top:clamp(60px,14vh,120px);align-self:start;height:max-content}
+.run .track{grid-column:2;min-width:0;display:grid;gap:var(--beat)}
+
+.run.flip{grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr)}
+.run.flip .dossier{grid-column:2}
+.run.flip .track{grid-column:1}
+
+@media (max-width:900px){
+  .run,.run.flip{grid-template-columns:1fr;gap:clamp(40px,7vw,64px)}
+  .run .dossier,.run.flip .dossier{position:static;grid-column:1;top:auto}
+  .run .track,.run.flip .track{grid-column:1;gap:clamp(46px,8vw,80px)}
+}
+
+.dossier-mark{font-family:var(--display);font-weight:700;font-size:clamp(19px,1.8vw,26px);
+  letter-spacing:-.02em;margin:0 0 clamp(26px,3vw,44px)}
+.dossier-mark span{color:var(--ink-45);font-weight:500}
+.dossier-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(16px,2vw,30px);align-items:start}
+.facts{margin:0;display:grid;gap:clamp(18px,2vw,30px);align-content:start}
+.facts dt{font-family:var(--ui);font-size:11.5px;letter-spacing:.06em;color:var(--ink-45);margin:0 0 3px}
+.facts dd{margin:0;font-size:16px;line-height:1.35;letter-spacing:-.01em}
+.impacts{display:grid;gap:clamp(16px,2vw,30px)}
+.impact{border:1px solid var(--ink);border-radius:var(--radius-pill);
+  min-height:clamp(96px,9vw,124px);padding:18px 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.impact b{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,34px);
+  line-height:1;letter-spacing:-.03em}
+.impact small{font-family:var(--ui);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-45);line-height:1.35}
+@media (max-width:520px){ .dossier-body{grid-template-columns:1fr} }
+
+.beat{min-width:0}
+.beat .stack{display:grid;gap:clamp(20px,2.6vw,38px)}
+.beat.indent{padding-left:clamp(0px,1.4vw,18px)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,40px)}
+@media (max-width:640px){ .pair{grid-template-columns:1fr} }
+
+/* ══ CREDITS + NEXT ════════════════════════════════════════════ */
+.credits{font-family:var(--ui);border-top:1px solid var(--rule);margin-top:var(--sec);
+  padding:clamp(36px,4.5vw,64px) var(--pad);display:grid;grid-template-columns:repeat(4,1fr);
+  gap:var(--gap);font-size:13.5px;color:var(--ink-70)}
+.credits h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-45);font-weight:500}
+@media (max-width:760px){ .credits{grid-template-columns:1fr 1fr;row-gap:26px} }
+
+.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
+  padding-bottom:2px;transition:border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
+
+.next{display:block;text-decoration:none;position:relative;overflow:hidden;
+  height:clamp(280px,40vw,520px);background:#000}
+.next img{width:100%;height:100%;object-fit:cover;opacity:.5;transform:scale(1.02);
+  transition:transform 800ms var(--ease-soft),opacity 800ms ease}
+@media (hover:hover) and (pointer:fine){ .next:hover img{transform:scale(1.06);opacity:.66} }
+.next .lbl{position:absolute;inset:auto 0 0 0;padding:var(--pad);color:var(--ink)}
+.next .lbl small{display:block;font-family:var(--ui);font-size:11.5px;letter-spacing:.15em;
+  text-transform:uppercase;opacity:.62;margin-bottom:10px}
+.next .lbl strong{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,74px);
+  letter-spacing:-.03em;line-height:1}
+
+/* ══ DIAGRAMS — shared. The rejected route is drawn and dimmed;
+   the chosen one carries the accent. Both are labelled with why. ══ */
+.diagram{margin:0}
+.diagram .board{position:relative;width:100%;background:var(--deep);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
+.diagram svg{width:100%;height:auto;display:block;overflow:visible}
+.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;fill:var(--ink-45)}
+.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
+.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
+.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
+.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
+.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
+.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:rgba(251,247,240,.38)}
+.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
+.dg-in .dg-step-lbl{fill:var(--ink)}
+.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
+.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;fill:var(--accent)}
+[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
+  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
+[data-reveal].is-in .dg-in{opacity:1;transform:none}
+
+/* ══ reduced motion ════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .ln > i{transform:none}
+  .hero-bg img,.hero-tagline,.meta{transform:none;opacity:1}
+  .band img,.band video,.shot > img{clip-path:none;transform:none}
+  .run .dossier{position:static}
+  [data-reveal] .dg-in{opacity:1;transform:none}
+  .sf-ledger tbody tr{opacity:1;transform:none}
+  .sf-crew figure{opacity:1;transform:none}
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PROJECT-ONLY — SUPERFOOD ADVENTURE
+   Nothing below this line belongs to the skeleton. Class names are
+   prefixed sf- so they cannot collide with a skeleton modifier the
+   way Into Yesterday's .flip once did.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── the ledger: the game's own economy, priced in nutrients ──
+   This is the argument of the case study rendered as the thing it
+   describes. Good quantities take --good, bad ones --bad. */
+.sf-ledger{width:100%;border-collapse:collapse;font-family:var(--ui);font-size:14px}
+.sf-ledger caption{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-45);text-align:left;padding:0 0 14px}
+.sf-ledger th{font-family:var(--ui);font-weight:500;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-45);text-align:left;padding:0 0 10px;
+  border-bottom:1px solid var(--rule)}
+.sf-ledger th:last-child{text-align:right}
+.sf-ledger td{padding:11px 0;border-bottom:1px solid rgba(251,247,240,.09);vertical-align:baseline}
+.sf-ledger td:last-child{text-align:right;font-family:var(--mono);font-size:12.5px;
+  letter-spacing:-.01em;white-space:nowrap}
+.sf-ledger tbody tr{opacity:0;transform:translate3d(0,10px,0);
+  transition:opacity 620ms var(--ease-soft),transform 620ms var(--ease-soft);
+  transition-delay:calc(var(--i,0) * 45ms)}
+[data-reveal].is-in .sf-ledger tbody tr{opacity:1;transform:none}
+.sf-good{color:var(--good)}
+.sf-bad{color:var(--bad)}
+.sf-ledger.is-bad th{border-bottom-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.sf-ledger.is-good th{border-bottom-color:color-mix(in srgb,var(--good) 40%,transparent)}
+/* below 640 the two columns stop fitting side by side and the values
+   were being clipped by body{overflow-x:hidden}. Stack the row instead. */
+@media (max-width:640px){
+  .sf-ledger thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .sf-ledger tbody tr{display:block;padding:11px 0;border-bottom:1px solid rgba(251,247,240,.09)}
+  .sf-ledger td{display:block;padding:0;border:0}
+  .sf-ledger td:last-child{text-align:left;white-space:normal;margin-top:4px;font-size:11.5px}
+  .sf-ledger .sf-sep{display:inline-block;width:.9em}
+}
+
+/* ── the rule that ends the game, stated as it is printed ── */
+.sf-rule{display:grid;gap:14px;margin:0;padding:clamp(20px,2.4vw,32px);
+  border:1px solid var(--rule);border-left:2px solid var(--bad);background:var(--deep)}
+.sf-rule p{margin:0;font-size:15.5px;line-height:1.55;color:var(--ink-70);max-width:56ch}
+.sf-rule p strong{color:var(--ink);font-weight:500}
+.sf-rule .sf-bad{font-weight:500}
+
+/* ── the crew: eight standees, drawn flat, sitting on nothing ── */
+.sf-crew{display:grid;grid-template-columns:repeat(8,1fr);gap:clamp(10px,1.6vw,26px);
+  align-items:end;margin:0}
+.sf-crew figure{margin:0;opacity:0;transform:translate3d(0,14px,0);
+  transition:opacity 640ms var(--ease-out),transform 760ms var(--ease-out);
+  transition-delay:calc(var(--i,0) * 70ms)}
+[data-reveal].is-in .sf-crew figure{opacity:1;transform:none}
+.sf-crew img{width:100%;height:auto}
+@media (max-width:760px){ .sf-crew{grid-template-columns:repeat(4,1fr);row-gap:24px} }
+
+/* ── the cost line: the whole game, priced ── */
+.sf-cost{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin:0;
+  padding:clamp(24px,3vw,40px) 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.sf-cost div{margin:0}
+.sf-cost dt{font-family:var(--ui);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-45);margin:0 0 10px}
+.sf-cost dd{margin:0;font-family:var(--display);font-weight:700;
+  font-size:clamp(22px,2.4vw,34px);line-height:1.05;letter-spacing:-.03em}
+@media (max-width:640px){ .sf-cost{grid-template-columns:1fr;gap:26px} }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" data-progress aria-hidden="true"></div>
+<a class="back" data-back href="/#work">← Work</a>
+
+<main id="main">
+
+<!-- ══ 00 · HERO ═══════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="img/cards-spread.png" alt="">
+  </div>
+
+  <div class="hero-inner">
+    <h1 class="hero-title">Superfood Adventure</h1>
+    <p class="hero-tagline">I built the video game first. The lesson kept stopping the play — so I rebuilt it as a board game where the nutrition <em>is</em> the play.</p>
+
+    <dl class="meta">
+      <div><dt>Role</dt><dd>Solo — game design, systems,<br>illustration, build</dd></div>
+      <div><dt>Year</dt><dd>2023</dd></div>
+      <div><dt>Scope</dt><dd>A Unity RPG, then a printable<br>six-player board game</dd></div>
+      <div><dt>Context</dt><dd>Bachelor thesis<br>Anant National University</dd></div>
+    </dl>
+  </div>
+
+  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
+  <div class="tally" data-reveal data-stagger>
+    <div><p class="n rise"><span data-count="16">0</span></p><p class="lab rise d1">Children interviewed, ages 8–12</p></div>
+    <div><p class="n rise d1"><span data-count="17">0</span></p><p class="lab rise d2">Foods, each priced in nutrients</p></div>
+    <div><p class="n rise d2"><span class="pre">₹</span><span data-count="20">0</span></p><p class="lab rise d3">To print the entire game</p></div>
+  </div>
+</header>
+
+<!-- ══ 01 · BAND ═══════════════════════════════════════════════ -->
+<div class="band" data-reveal>
+  <img src="img/board-flatlay.png" alt="The printed Superfood Adventure board laid out on a table with its card decks and standees.">
+</div>
+<p class="band-note">Printed at home, cut out, played.</p>
+
+<!-- ══ 02 · RUN — dossier pinned LEFT ══════════════════════════ -->
+<section class="run" id="context">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Superfood Adventure <span>; TLDR</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Role</dt><dd class="rise">Solo — design, systems,<br>illustration, build</dd></div>
+        <div><dt class="rise d1">Field</dt><dd class="rise d1">Nutrition education,<br>ages 8–12</dd></div>
+        <div><dt class="rise d2">Institution</dt><dd class="rise d2">Anant National University,<br>Ahmedabad</dd></div>
+        <div><dt class="rise d3">Built</dt><dd class="rise d3">Unity RPG,<br>then a printable board game</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>16</b><small>Children interviewed</small></div>
+        <div class="impact rise d2"><b>2</b><small>Games, one thesis</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Summary</h2>
+      <div class="rise d1">
+        <p class="prose lead">A game that teaches children what food does to them — built twice, because the first version taught by interrupting itself.</p>
+        <p class="prose"><strong>This was solo.</strong> The research, the systems, the rules, every illustration and both builds are mine. Version one is a top-down RPG in Unity where you hunt superfoods stolen by fast-food companies. Version two is a six-player board game you print at home.</p>
+        <p class="prose">The second one is the design work. The first one is why it exists.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The problem</h2>
+      <div class="rise d1">
+        <p class="prose lead">Nutrition education has <em>no grade attached to it</em>, so nobody in the room has a reason to care.</p>
+        <p class="prose">Not the student, who is measured on maths and science. Not the teacher, who is measured on the same. India's school system runs on marks, and a subject outside the mark scheme quietly becomes optional — while childhood obesity in urban India keeps climbing.</p>
+        <p class="prose">Grading nutrition is neither realistic nor a good idea. So the brief I set myself was to <strong>replace the missing incentive rather than argue for a new one</strong> — to make paying attention the way you win, not the price of being allowed to play.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What the children actually said</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Sixteen students aged 8–12, across Ahmedabad, Mumbai, Delhi and Surat. Three things came back from nearly all of them, and all three are about educational games specifically, not about food.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot doc"><img src="img/slide-survey.png" alt="Survey result: asked whether games could help them study, all but one of the sixteen students said yes."></div>
+            <figcaption class="cap">All but one said a game could help them study</figcaption>
+          </figure>
+          <div class="rise d3">
+            <p class="prose"><strong>They leave in five to ten minutes.</strong> An educational game holds them for one session, then gets played for the teacher rather than for itself.</p>
+            <p class="prose"><strong>The learning is a garnish.</strong> Their words for the genre amount to an okay game and a bad lesson — facts bolted onto play that would work identically without them.</p>
+            <p class="prose"><strong>The computers can't run them.</strong> Old school machines, long loads, and crashes that take the session's progress with them. This one turned out to matter more than the other two.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What it rests on</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Two pieces of theory did real work here. Thaler and Sunstein's <em>nudge</em> — changing the choice architecture without forbidding anything or changing the payoff — and Fogg's behaviour model, where a behaviour needs motivation, ability and a prompt at the same moment.</p>
+          <p class="prose">A game is unusually good at all three: it supplies the motivation, keeps the ability trivial, and prompts on every turn. <strong>That is the whole reason to teach this through a game rather than a poster.</strong></p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot doc"><img src="img/slide-nudge.png" alt="Thesis slide defining nudging, with a conceptual framework from a meta-analysis of healthy-eating nudges."></div>
+            <figcaption class="cap">Nudge — Thaler &amp; Sunstein, 2008</figcaption>
+          </figure>
+          <figure class="rise d3" style="margin:0">
+            <div class="shot doc"><img src="img/slide-fogg.png" alt="Thesis slide showing the Fogg Behaviour Model: behaviour equals motivation, ability and prompt."></div>
+            <figcaption class="cap">B = MAP — Fogg, 2009</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ 03 · BAND ═══════════════════════════════════════════════ -->
+<div class="band pixel" data-reveal>
+  <img src="img/level-desert.png" alt="The desert level of the Superfood Adventure RPG, drawn in pixel art.">
+</div>
+<p class="band-note">Version one: an RPG in Unity.</p>
+
+<!-- ══ 04 · RUN — dossier pinned RIGHT · THE DECISION ══════════ -->
+<section class="run flip" id="decision">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">The call</p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Question</dt><dd class="rise">How does a game teach<br>without stopping to teach?</dd></div>
+        <div><dt class="rise d1">Rejected</dt><dd class="rise d1">The NPC lesson —<br>collect, cutscene, resume</dd></div>
+        <div><dt class="rise d2">Taken</dt><dd class="rise d2">The food is the resource<br>you win or lose with</dd></div>
+        <div><dt class="rise d3">Cost</dt><dd class="rise d3">Abandoning a working<br>build to start again</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>17</b><small>Foods, priced in nutrients</small></div>
+        <div class="impact rise d2"><b>0</b><small>Facts you must read to continue</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What I built first</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose lead">A top-down RPG: forest, desert, ocean, a city, a laboratory. Superfoods stolen by fast-food companies, enemies in the way, and an NPC in every level who teaches you about the food you just found.</p>
+          <p class="prose">It ran. You could walk the levels, open chests, take damage and talk to Dr Rose. As a first thing ever coded it was the steepest part of the year, and I was proud of it.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot pixel"><img src="img/rpg-drrose-lab.png" alt="The laboratory level. Dr Rose's dialogue box covers the lower third of the screen while the player stands still."></div>
+            <figcaption class="cap">The laboratory — Dr Rose explains</figcaption>
+          </figure>
+          <figure class="rise d3" style="margin:0">
+            <div class="shot pixel"><img src="img/rpg-drrose-city.png" alt="The city level, with Dr Rose's line about finding and promoting these foods rendered over the street."></div>
+            <figcaption class="cap">The city — Dr Rose explains again</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Where it broke</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose lead">Everything the game teaches, it teaches by <em>stopping</em>.</p>
+          <p class="prose">Dr Rose is the lesson. She appears, she says the true and useful thing, and you press a key to make her go away — and the game you were actually playing carries on exactly as it would have if she had never spoken. That is the five-to-ten-minute problem the children described, reproduced by me, in my own build.</p>
+          <p class="prose">The chests made it plainer. <strong>You find a burger in a chest and nothing happens</strong> — it's loot, like everything else. The nutrition was a layer painted on top of the game rather than anything the game ran on.</p>
+          <p class="prose">And underneath that sat the constraint I could not design my way past: <strong>the schools this was for could not run it.</strong> A Unity build needs a machine, and the interviews had already told me those machines crash and lose the session.</p>
+        </div>
+        <figure class="rise d2" style="margin:0">
+          <div class="shot pixel"><img src="img/rpg-burger-chest.png" alt="A dialogue box in the RPG reading: You found Burger in chest."></div>
+          <figcaption class="cap">The junk food is loot — it costs the player nothing</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The decision, drawn</h2>
+      <div class="rise d1">
+        <p class="prose">Two ways for a game to carry a fact. The first is the one almost every educational game picks, and the one I had already built.</p>
+      </div>
+      <figure class="diagram rise d2" style="margin:0">
+        <div class="board">
+          <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Two ways to carry a nutrition fact in a game. The rejected route: find the food, stop the game, read the fact, resume unchanged. The route taken: the food's nutrients are the points you win and lose with, so the fact is the decision.">
+            <g class="dg-out">
+              <text class="dg-title" x="8" y="20">The fact as an interruption — what I built first</text>
+              <rect class="dg-step" x="8" y="34" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="121.2" y="67" text-anchor="middle">Find the food</text>
+              <path class="dg-arrow" d="M239.5 62H251.5m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="260.5" y="34" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="373.8" y="59" text-anchor="middle">Game stops,</text>
+              <text class="dg-step-lbl" x="373.8" y="76" text-anchor="middle">NPC speaks</text>
+              <path class="dg-arrow" d="M492 62H504m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="513" y="34" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="626.2" y="67" text-anchor="middle">Dismiss the box</text>
+              <path class="dg-arrow" d="M744.5 62H756.5m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="765.5" y="34" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="878.8" y="59" text-anchor="middle">Play resumes,</text>
+              <text class="dg-step-lbl" x="878.8" y="76" text-anchor="middle">unchanged</text>
+              <text class="dg-verdict-out" x="8" y="116">Rejected · the lesson can be skipped and the game does not notice</text>
+            </g>
+            <g class="dg-in">
+              <text class="dg-title" x="8" y="176">The fact as the currency — what the board game does</text>
+              <rect class="dg-step" x="8" y="190" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="121.2" y="223" text-anchor="middle">Land, draw three</text>
+              <path class="dg-arrow" d="M239.5 218H251.5m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="260.5" y="190" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="373.8" y="215" text-anchor="middle">Read what each</text>
+              <text class="dg-step-lbl" x="373.8" y="232" text-anchor="middle">one costs you</text>
+              <path class="dg-arrow" d="M492 218H504m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="513" y="190" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="626.2" y="223" text-anchor="middle">Choose one</text>
+              <path class="dg-arrow" d="M744.5 218H756.5m-5,-4 5,4-5,4"/>
+              <rect class="dg-step" x="765.5" y="190" width="226.5" height="56" rx="3"/>
+              <text class="dg-step-lbl" x="878.8" y="215" text-anchor="middle">The choice</text>
+              <text class="dg-step-lbl" x="878.8" y="232" text-anchor="middle">decides the game</text>
+              <text class="dg-verdict-in" x="8" y="272">Taken · there is no way to skip the nutrition, because the nutrition is the score</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="cap">Both routes teach the same nutrition. Only one of them can be ignored.</figcaption>
+      </figure>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The economy</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Every food in the game is priced in the nutrients it actually carries. Good points come in <span class="sf-good">vitamins, calcium and fibers</span>; bad points in <span class="sf-bad">sugar, fat and carbohydrates</span>. You collect them as physical tokens, so your diet sits on the table in front of you where everyone can see it.</p>
+        </div>
+        <div class="pair rise d2">
+          <table class="sf-ledger is-good">
+            <caption>Superfood cards</caption>
+            <thead><tr><th scope="col">Food</th><th scope="col">Yields</th></tr></thead>
+            <tbody>
+              <tr style="--i:0"><td>Dark green vegetables</td><td class="sf-good">+1 fiber <span class="sf-sep"> </span>+1 calcium</td></tr>
+              <tr style="--i:1"><td>Berries</td><td class="sf-good">+2 vitamins</td></tr>
+              <tr style="--i:2"><td>Green tea</td><td class="sf-good">+1 fiber <span class="sf-sep"> </span>+1 vitamin</td></tr>
+              <tr style="--i:3"><td>Eggs</td><td class="sf-good">+1 calcium <span class="sf-sep"> </span>+1 vitamin</td></tr>
+              <tr style="--i:4"><td>Legumes</td><td class="sf-good">+2 vitamins</td></tr>
+              <tr style="--i:5"><td>Nuts</td><td class="sf-good">+2 fibers</td></tr>
+              <tr style="--i:6"><td>Kefir</td><td class="sf-good">+2 calcium</td></tr>
+              <tr style="--i:7"><td>Garlic</td><td class="sf-good">+2 fibers</td></tr>
+              <tr style="--i:8"><td>Olive oil</td><td class="sf-good">+1 vitamin <span class="sf-sep"> </span>+1 fiber</td></tr>
+            </tbody>
+          </table>
+          <table class="sf-ledger is-bad">
+            <caption>Fast food cards</caption>
+            <thead><tr><th scope="col">Food</th><th scope="col">Costs</th></tr></thead>
+            <tbody>
+              <tr style="--i:0"><td>Burger</td><td class="sf-bad">+1 fat <span class="sf-sep"> </span>+1 carbohydrate</td></tr>
+              <tr style="--i:1"><td>Fries</td><td class="sf-bad">+2 fat</td></tr>
+              <tr style="--i:2"><td>Candy</td><td class="sf-bad">+2 sugar</td></tr>
+              <tr style="--i:3"><td>Hot dog</td><td class="sf-bad">+1 fat <span class="sf-sep"> </span>+1 carbohydrate</td></tr>
+              <tr style="--i:4"><td>Ice cream</td><td class="sf-bad">+2 sugar</td></tr>
+              <tr style="--i:5"><td>Soda</td><td class="sf-bad">+3 sugar</td></tr>
+              <tr style="--i:6"><td>Chocolate</td><td class="sf-bad">+1 fat <span class="sf-sep"> </span>+1 sugar</td></tr>
+              <tr style="--i:7"><td>Chips</td><td class="sf-bad">+2 fat</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rise d3">
+          <p class="prose">The fast-food square doesn't let you decline. You draw three and pick the least damaging one — which means the only way to play well is to know which of a burger, a soda and a bag of chips hurts you least, and why.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What losing looks like</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Bad points are not a penalty score. They accumulate into <em>habits</em>, and habits are what actually end you — which is the argument the whole thesis is making, expressed as a rule rather than a sentence.</p>
+        </div>
+        <div class="sf-rule rise d2">
+          <p>More than <span class="sf-bad">five bad points in one category</span> and you draw a bad habit card. You may then clear five of those points — the damage is done, and it has become something you carry.</p>
+          <p>A bad habit card makes the rest of your game worse: <strong>you move one square less than you roll</strong>, or <strong>every junk food card now costs you an extra fat</strong>, or your superfood yields one less calcium.</p>
+          <p>Hold <span class="sf-bad">three bad habit cards</span> and you are out. The last player standing wins.</p>
+        </div>
+        <div class="rise d3">
+          <p class="prose">Good points are the other half of it. You spend them at the sports school to buy superpowers — an extra square each turn, a bonus calcium on every superfood — so <strong>eating well is not virtue, it's capital</strong>. The children I interviewed had asked for exactly this: tokens you earn and spend on something you want.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The facts are still there</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">I didn't remove the teaching — I moved it. The nutritional detail still prints on the cards, but it now sits beside a number you are about to make a decision with, and the action cards are drawn as the <strong>back of a food package</strong>, so the layout a child reads in the game is the layout on the thing in their hand at a shop.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot"><img src="img/card-carbs.png" alt="A junk food card for carbohydrates, showing a flat-illustrated character and a plus-one unhealthy food point."></div>
+            <figcaption class="cap">Junk food card — the cost, stated on the front</figcaption>
+          </figure>
+          <figure class="rise d3" style="margin:0">
+            <div class="shot"><img src="img/card-fact-carbs.png" alt="A food fact card explaining that refined carbohydrates spike blood sugar and provide little nutritional value."></div>
+            <figcaption class="cap">Food fact card — the reason, on the back</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">The cast</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Every food is a character before it is a number. It starts on paper — faces, postures, a wizard and a knight that didn't survive — and lands as flat vector shapes with two eyes and one expression: cheap to print, readable at standee size, and drawn so a child can tell the ones that are on their side from the ones that aren't without reading a word.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot doc"><img src="img/sketch-faces.png" alt="A sheet of pencil sketches: six variations on a character's face and hair."></div>
+            <figcaption class="cap">Faces, first pass</figcaption>
+          </figure>
+          <figure class="rise d3" style="margin:0">
+            <div class="shot doc"><img src="img/sketch-characters.png" alt="Pencil sketches of two full characters — a robed figure with a staff and an armoured figure carrying a crate."></div>
+            <figcaption class="cap">Directions that didn't make it</figcaption>
+          </figure>
+        </div>
+        <div class="sf-crew rise d2">
+          <figure style="--i:0"><img src="img/char-01.png" alt="A superfood character standee."></figure>
+          <figure style="--i:1"><img src="img/char-02.png" alt="A junk food character standee."></figure>
+          <figure style="--i:2"><img src="img/char-03.png" alt="A junk food character standee."></figure>
+          <figure style="--i:3"><img src="img/char-04.png" alt="A superfood character standee."></figure>
+          <figure style="--i:4"><img src="img/char-05.png" alt="A superfood character standee."></figure>
+          <figure style="--i:5"><img src="img/char-06.png" alt="A junk food character standee."></figure>
+          <figure style="--i:6"><img src="img/char-07.png" alt="A chef character standee."></figure>
+          <figure style="--i:7"><img src="img/char-08.png" alt="A character standee holding a broom."></figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ 05 · BAND ═══════════════════════════════════════════════ -->
+<div class="band tall" data-reveal>
+  <img src="img/board-in-play.png" alt="The Superfood Adventure board mid-game, with card decks fanned out across it.">
+</div>
+
+<!-- ══ 05b · THE BOARD — read whole, so uncropped ══════════════ -->
+<figure class="full" data-reveal>
+  <div class="shot"><img src="img/board.png" alt="The complete Superfood Adventure board: a loop of fastfood, laboratory, healthy time and sports school squares around a central guide, with a time heal square before start."></div>
+  <figcaption class="cap">The board — five square types around one loop, with the rules printed in the middle so nobody has to hold them</figcaption>
+</figure>
+
+<figure class="full" data-reveal>
+  <div class="shot doc"><img src="img/rulebook-spread.png" alt="A spread from the printed rule book: objective, components, setup and the turn structure."></div>
+  <figcaption class="cap">The rule book — objective, components, setup, and every square's turn</figcaption>
+</figure>
+
+<!-- ══ 05c · RUN — the second constraint ═══════════════════════ -->
+<section class="run" id="reach">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Superfood Adventure <span>; reach</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Constraint</dt><dd class="rise">Must work in a school<br>with no working computer</dd></div>
+        <div><dt class="rise d1">Format</dt><dd class="rise d1">Printable — board, cards,<br>tokens, standees</dd></div>
+        <div><dt class="rise d2">Cost</dt><dd class="rise d2">≈ ₹1 per page,<br>10–20 pages</dd></div>
+        <div><dt class="rise d3">Tested</dt><dd class="rise d3">Multiple groups,<br>rules revised after</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>6</b><small>Players, one table</small></div>
+        <div class="impact rise d2"><b>3</b><small>Rules changed by playtesting</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Printable, on purpose</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose lead">A manufactured board game solves the wrong half of the problem.</p>
+          <p class="prose">Manufacture it and you inherit a supply chain — units, shipping, and the certainty that a game handed to nine-year-olds loses a token in week one and becomes unplayable while a replacement crosses the country. Meanwhile the schools that most need it are the ones a distribution run reaches last.</p>
+          <p class="prose">So the deliverable is a <strong>file, not a product</strong>. Anyone with a printer makes the whole game — board, decks, tokens, standees — for the price of the paper. A lost card is reprinted, not reordered. And a translation is an edit rather than a manufacturing run, which is the only way this ever reaches a classroom that doesn't work in English.</p>
+        </div>
+        <dl class="sf-cost rise d2">
+          <div><dt>To make one copy</dt><dd>≈ ₹10–20</dd></div>
+          <div><dt>To replace a lost card</dt><dd>One page</dd></div>
+          <div><dt>To add a language</dt><dd>Edit the file</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What the table changed</h2>
+      <div class="stack">
+        <div class="rise d1">
+          <p class="prose">Groups played it, and three rules changed because of what they did rather than what I intended.</p>
+          <p class="prose"><strong>Superpowers became recipes.</strong> Buying a power with points alone was flat, so powers now cost points <em>and</em> ingredient cards, collected from a new farm square. Cooking something is a better fiction for the reward than purchasing a stat.</p>
+          <p class="prose"><strong>Bad habits got physical.</strong> Every bad habit card now carries an exercise you perform when you take it. The penalty stops being an abstraction and becomes ten seconds of doing something, at the table, in front of everyone — which is also how the game gets children out of their chairs at all.</p>
+          <p class="prose"><strong>Hands got a limit.</strong> Players hoarded; over five cards in hand and the farm square now forces a discard.</p>
+        </div>
+        <div class="pair">
+          <figure class="rise d2" style="margin:0">
+            <div class="shot doc"><img src="img/slide-playtest.png" alt="Thesis slide listing the changes made to the rules after testing the board game with different groups of players."></div>
+            <figcaption class="cap">The revisions, as recorded in the thesis</figcaption>
+          </figure>
+          <figure class="rise d3" style="margin:0">
+            <div class="shot"><img src="img/board-detail.png" alt="Close view of the printed board with cut-out standees and card decks resting on it."></div>
+            <figcaption class="cap">Printed, cut and played — the format the rules were tested in</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ 05d · OUTCOME ═══════════════════════════════════════════ -->
+<section class="run flip" id="outcome">
+  <aside class="dossier" data-reveal>
+    <p class="dossier-mark rise">Superfood Adventure <span>; end</span></p>
+    <div class="dossier-body">
+      <dl class="facts">
+        <div><dt class="rise">Delivered</dt><dd class="rise">Printable board game,<br>rule book, full card set</dd></div>
+        <div><dt class="rise d1">Also built</dt><dd class="rise d1">A Unity RPG,<br>left at version one</dd></div>
+        <div><dt class="rise d2">Assessed</dt><dd class="rise d2">Bachelor thesis,<br>Anant National University</dd></div>
+        <div><dt class="rise d3">Year</dt><dd class="rise d3">2023</dd></div>
+      </dl>
+      <div class="impacts">
+        <div class="impact rise d1"><b>2</b><small>Formats, one argument</small></div>
+        <div class="impact rise d2"><b>0</b><small>Learning outcomes measured</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="track">
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">Where it ended</h2>
+      <div class="rise d1">
+        <p class="prose lead">The board game is finished, playable and has been played. The RPG is not, and I'd rather say that than dress version one as a companion piece.</p>
+        <p class="prose">What the year actually produced was a design argument I still hold: <strong>a lesson a player can dismiss is a lesson the game does not need</strong>. If the teaching can be removed and the game still works, it was decoration. Making the nutrition into the currency was the only move that made it structural.</p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What this case study doesn't have</h2>
+      <div class="rise d1">
+        <p class="prose">Worth saying plainly, because the whole premise is educational. <strong>Nothing here measures whether anyone learned anything.</strong> There was no knowledge check before and after a session, and no follow-up on what children ate afterwards. The evidence on this page runs research → decision → artefact, and stops there.</p>
+        <p class="prose">The sixteen interviews also have a bias I can name: they were students at urban private schools in four cities — close to the least likely group to need a game you print because the computers don't work. <strong>The format was designed for children I did not interview.</strong></p>
+      </div>
+    </section>
+
+    <section class="beat" data-reveal>
+      <h2 class="h-beat rise">What I'd change</h2>
+      <div class="rise d1">
+        <p class="prose">Two things, and they're the same thing twice. Put one printed copy in a classroom without working computers, which is the premise the format was built on and the one place it was never tested. And run a five-question check before the session and the same five after — not to prove it works, but because a game that claims to teach should be willing to find out that it doesn't.</p>
+        <p class="prose">I would also cut the RPG from the deliverable and keep it in the process. It earned its place as the reason for the pivot; it didn't earn its place as a second product.</p>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
+<section class="credits">
+  <div><h4>Role</h4>Solo — research, game design, systems, illustration, rules, build. Neel Parikh</div>
+  <div><h4>Context</h4>Bachelor thesis — Anant National University, Ahmedabad, 2023</div>
+  <div><h4>Methods</h4>Desk research, 16 student interviews (ages 8–12), an expert interview with a board-game designer, iterative playtesting</div>
+  <div><h4>Tools</h4>Unity, Figma, print production</div>
+</section>
+
+<section class="contact">
+  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
+  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+  <a href="/#work">See the rest of the work</a>
+</section>
+
+</main>
+
+<a class="next" href="/work/futee/" aria-label="Next project: Futee">
+  <img src="/work/futee/img/hero-floodlight.jpg" alt="">
+  <span class="lbl"><small>Next project</small><strong>Futee</strong></span>
+</a>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   Shared case-study behaviour.
+   transform/opacity only · custom easing · once-only reveals ·
+   no scroll hijacking · full prefers-reduced-motion opt-out.
+   ══════════════════════════════════════════════════════════════════ */
+const REDUCED = typeof window.matchMedia === 'function'
+  && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 1 — reveal on enter, once, never on scroll-up */
+(function reveals(){
+  const targets = document.querySelectorAll('[data-reveal]');
+  if (REDUCED) { targets.forEach(t => t.classList.add('is-in')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { rootMargin:'0px 0px -12% 0px', threshold:0.01 });
+  targets.forEach(t => io.observe(t));
+})();
+
+/* 2 — line-mask any [data-lines] headline */
+(function maskLines(){
+  document.querySelectorAll('[data-lines]').forEach(el => {
+    el.innerHTML = el.innerHTML.split('<br>').map(s => s.trim())
+      .map((l,i) => `<span class="ln"><i style="--d:${i*70}ms">${l}</i></span>`).join('');
+  });
+})();
+
+/* 3 — scroll progress */
+(function progress(){
+  const bar = document.querySelector('[data-progress]');
+  if (!bar) return;
+  const run = () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+  };
+  addEventListener('scroll', run, { passive:true });
+  addEventListener('resize', run);
+  run();
+})();
+
+/* 4 — back chip: past the hero, and only while reading upward */
+(function back(){
+  const el = document.querySelector('[data-back]');
+  if (!el) return;
+  let last = scrollY;
+  const run = () => {
+    const y = scrollY;
+    const past = y > innerHeight * 0.7;
+    if (y > last + 4) el.classList.remove('is-live');
+    else if (y < last - 4 && past) el.classList.add('is-live');
+    if (!past) el.classList.remove('is-live');
+    last = y;
+  };
+  addEventListener('scroll', run, { passive:true });
+  run();
+})();
+
+/* 5 — motion slots: play only while on screen, never under reduced motion */
+(function motion(){
+  const vids = document.querySelectorAll('video[data-motion]');
+  if (!vids.length) return;
+  if (REDUCED) { vids.forEach(v => { v.autoplay = false; v.pause(); }); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      const v = e.target;
+      if (e.isIntersecting) { const p = v.play(); if (p) p.catch(()=>{}); }
+      else v.pause();
+    });
+  }, { threshold:0.15 });
+  vids.forEach(v => io.observe(v));
+})();
+
+/* 6 — count-up for the outcome tally */
+(function countUp(){
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const end = parseFloat(el.dataset.count);
+    if (REDUCED) { el.textContent = end; return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now(), dur = 1200;
+      const tick = t => {
+        const p = Math.min((t - t0) / dur, 1);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold:0.6 });
+    io.observe(el);
+  });
+})();
+
+/* 7 — hero settles on load */
+requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+
+/* ── device frames: the page inside scrolls with the reader ──────── */
+(function deviceScroll(){
+  const frames = [...document.querySelectorAll('[data-scrollshot]')];
+  if (!frames.length || REDUCED) return;
+  let ticking = false;
+  const run = () => {
+    const vh = innerHeight;
+    frames.forEach(f => {
+      const r = f.getBoundingClientRect();
+      if (r.bottom < -160 || r.top > vh + 160) return;
+      const img = f.querySelector('img');
+      if (!img) return;
+      const travel = img.offsetHeight - f.clientHeight;
+      if (travel <= 4) return;
+      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
+      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
+    });
+    ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
+  addEventListener('resize', run);
+  run();
+})();
+
+</script>
+</body>
+</html>
