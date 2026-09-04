@@ -157,7 +157,7 @@ def check_t1(page, vw, vh):
     names = page.eval_on_selector_all(
         ".folder__label", "els => els.map(e => e.textContent.trim())"
     )
-    expected = ["Futee", "EMF ACE", "CSEDS", "Into Yesterday"]
+    expected = ["Futee", "EMF ACE", "CSEDS", "Into Yesterday", "Superfood Adventure"]
     for name in expected:
         if name not in names:
             fail(label, f"T1: folder label '{name}' missing (found {names})")
@@ -746,8 +746,8 @@ def run_no_js_pass(browser, base_url):
             ok("no-js: the site renders as a plain document with JS disabled")
 
     folders = page.query_selector_all(".folder")
-    if len(folders) != 4:
-        fail("no-js", f"expected 4 .folder without JS, found {len(folders)}")
+    if len(folders) != 5:
+        fail("no-js", f"expected 5 .folder without JS, found {len(folders)}")
 
     context.close()
     return errors

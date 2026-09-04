@@ -1407,10 +1407,14 @@ html.is-opening body {
    which wrapped and titles which didn't still left the meta on a
    straight baseline. A label above the frame can't do that — a second
    line would push the frame down and break the row it is meant to
-   align. So it behaves the way a real frame name behaves: one line,
-   ellipsis when the cell is too narrow. */
+   align. So it behaves the way a real frame name behaves: one line, as
+   wide as the name needs (a long one overhangs the frame's right edge
+   into the gutter the way a Figma layer name does), ellipsis only past
+   a hard cap. */
 .folder__label {
   display: block;
+  width: max-content;
+  max-width: 16rem;
   margin-bottom: .35em;
   font-family: var(--font-display);
   font-size: clamp(.6875rem, .95vw, .875rem);
