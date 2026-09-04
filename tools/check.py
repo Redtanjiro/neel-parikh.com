@@ -436,9 +436,9 @@ def run_t5_pass(browser, base_url):
 
     context.close()
 
-    # --- hover thickens the frame stroke, in a hover-capable context ---
-    # The folder cards are Figma artboards now, not a folder icon with a
-    # fan of sheets — hover is a lift plus a 2px->3px stroke, not a reveal.
+    # --- hover: the frame lifts and the fan of three sheets reveals ---
+    # The folder cards are Figma artboards; hover lifts the frame and
+    # fans three screenshot sheets out from behind it.
     hover_context = browser.new_context(viewport={"width": 1440, "height": 900})
     hpage = hover_context.new_page()
     herrors = []
@@ -446,14 +446,22 @@ def run_t5_pass(browser, base_url):
     goto_desk(hpage, base_url)
     first_frame = hpage.query_selector(".folder:first-child .folder__frame")
     if first_frame:
-        before = hpage.evaluate("(el) => getComputedStyle(el).boxShadow", first_frame)
+        before = hpage.evaluate("(el) => getComputedStyle(el).transform", first_frame)
         hpage.query_selector(".folder__link").hover()
-        hpage.wait_for_timeout(300)
-        after = hpage.evaluate("(el) => getComputedStyle(el).boxShadow", first_frame)
+        hpage.wait_for_timeout(400)
+        after = hpage.evaluate("(el) => getComputedStyle(el).transform", first_frame)
         if after == before:
-            fail("T5", f"hover did not change .folder__frame box-shadow ({before})")
+            fail("T5", f"hover did not move .folder__frame (transform {before})")
         else:
-            ok("T5: hover changes the frame stroke")
+            ok("T5: hover lifts the frame")
+        revealed = hpage.eval_on_selector_all(
+            ".folder:first-child .folder__sheet",
+            "els => els.filter(e => parseFloat(getComputedStyle(e).opacity) > 0.5).length"
+        )
+        if revealed < 3:
+            fail("T5", f"hover on first folder revealed {revealed} sheets, want 3")
+        else:
+            ok("T5: hover fans out three sheets")
     else:
         fail("T5", ".folder__frame not found for hover check")
     hover_context.close()

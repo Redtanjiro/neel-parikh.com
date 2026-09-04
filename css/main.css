@@ -1449,24 +1449,43 @@ html.is-opening body {
   transition: color 200ms var(--ease-ui);
 }
 
-/* box-shadow inset, not border. The handles below are positioned
-   against this element's own box, and a border would put the box's edge
-   2px inside the line they have to straddle. An inset shadow draws the
-   stroke without changing where the edges are. */
+/* THE STROKE IS AN OVERLAY, NOT THE BOX'S OWN.
+
+   It was `box-shadow: inset` on .folder__frame, and it was invisible.
+   An inset shadow paints above the element's background but BELOW its
+   children — and the child here is a screenshot with object-fit: cover,
+   so it covered the line on all four edges. The frames read as
+   screenshots with handles floating at their corners and no artboard
+   around them. Drawn on ::before instead, above the image. */
+.folder__stack {
+  position: relative;
+  display: block;
+}
+
 .folder__frame {
   position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   aspect-ratio: 289 / 204;
   background: rgba(16, 19, 14, .45);
-  box-shadow: inset 0 0 0 2px var(--figma), 0 6px 18px rgba(16, 19, 14, .5);
+  box-shadow: 0 6px 18px rgba(16, 19, 14, .5);
   transition: transform 200ms var(--ease-ui), box-shadow 200ms var(--ease-ui);
+}
+.folder__frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 2px var(--figma);
+  transition: box-shadow 200ms var(--ease-ui);
 }
 
 /* The work, cropped by its frame — which is what a frame does.
-   The four previews run from 420x236 to 420x551, so cover is doing real
-   work here. Biased above centre because the ones that are portrait are
-   screenshots of pages, and a page's meaning is at its top. */
+   The previews run from 420x236 to 420x560, so cover is doing real
+   work. Biased above centre because the portrait ones are screenshots
+   of pages, and a page's meaning is at its top. */
 .folder__shot {
   position: absolute;
   inset: 0;
@@ -1476,57 +1495,109 @@ html.is-opening body {
   object-position: var(--shot-pos, 50% 20%);
 }
 
-/* THE HANDLES, AS BACKGROUND LAYERS RATHER THAN ELEMENTS.
-   Eight marks on each of four frames is thirty-two elements that carry
-   no meaning and no text. Four gradient layers on each of two
-   pseudo-elements draws the same thing, scales with the box, and costs
-   the DOM nothing.
+/* THE HANDLES — WHITE FILL, BLUE STROKE, which is what Figma draws and
+   what the export in Macbook_icon.svg has (fill="white"
+   stroke="#008FF0"). They were solid blue, which read as dots rather
+   than as something you could grab.
 
-   ::before is inset -3px so the 6px squares land centred on the frame's
-   corners; ::after sits on the frame itself and places the radius dots
-   in from them. Both z-index 2, above the screenshot. */
-.folder__frame::before,
+   Two data-URI SVGs, each placed at four corners, rather than eight
+   elements per frame across five frames. The blue is hard-coded inside
+   the URIs because a data URI cannot see var(--figma) — if that token
+   ever changes, these two strings change with it.
+
+   inset -4px so an 8px square sits centred on the frame's corner; the
+   radius dots then come in from there, as they do in the export. */
 .folder__frame::after {
   content: '';
   position: absolute;
-  z-index: 2;
+  inset: -4px;
+  z-index: 4;
   pointer-events: none;
   background-repeat: no-repeat;
-}
-.folder__frame::before {
-  inset: -3px;
   background-image:
-    linear-gradient(var(--figma), var(--figma)),
-    linear-gradient(var(--figma), var(--figma)),
-    linear-gradient(var(--figma), var(--figma)),
-    linear-gradient(var(--figma), var(--figma));
-  background-size: 6px 6px;
-  background-position: 0 0, 100% 0, 0 100%, 100% 100%;
-}
-.folder__frame::after {
-  inset: 0;
-  background-image:
-    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
-    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
-    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px),
-    radial-gradient(circle, transparent 0 1.4px, var(--figma) 1.4px 2.4px, transparent 2.4px);
-  background-size: 7px 7px;
-  background-position: 8% 11%, 92% 11%, 8% 89%, 92% 89%;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect x='1' y='1' width='6' height='6' fill='%23ffffff' stroke='%23008FF0' stroke-width='1.2'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect x='1' y='1' width='6' height='6' fill='%23ffffff' stroke='%23008FF0' stroke-width='1.2'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect x='1' y='1' width='6' height='6' fill='%23ffffff' stroke='%23008FF0' stroke-width='1.2'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect x='1' y='1' width='6' height='6' fill='%23ffffff' stroke='%23008FF0' stroke-width='1.2'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9'%3E%3Ccircle cx='4.5' cy='4.5' r='2.9' fill='none' stroke='%23008FF0' stroke-width='1.1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9'%3E%3Ccircle cx='4.5' cy='4.5' r='2.9' fill='none' stroke='%23008FF0' stroke-width='1.1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9'%3E%3Ccircle cx='4.5' cy='4.5' r='2.9' fill='none' stroke='%23008FF0' stroke-width='1.1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9'%3E%3Ccircle cx='4.5' cy='4.5' r='2.9' fill='none' stroke='%23008FF0' stroke-width='1.1'/%3E%3C/svg%3E");
+  background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 9px 9px, 9px 9px, 9px 9px, 9px 9px;
+  background-position:
+    0 0, 100% 0, 0 100%, 100% 100%,
+    8% 11%, 92% 11%, 8% 89%, 92% 89%;
 }
 
-/* Hover gated — touch fires :hover on tap and leaves it stuck on.
+/* ---------- the fan ----------
+   THE THREE SHEETS ARE BACK, and behind the frame rather than behind a
+   folder. The frame says what the project looks like; the fan says
+   there is more than one screen of it. Anchored to a zero-size point
+   above the frame's centre so the three fan out from one origin.
+
+   z-index 0 against the frame's 1 — they come out from behind the
+   artboard, which is the only reading that makes sense once the
+   artboard has the work in it. */
+.folder__spill {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  z-index: 0;
+  width: 0;
+  height: 0;
+}
+.folder__sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* The reset's `img { max-width: 100% }` would resolve against a
+     zero-width parent and collapse these to nothing. */
+  max-width: none;
+  width: clamp(74px, 8.5vw, 142px);
+  height: auto;
+  transform: translate(-50%, 0) scale(.82);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  box-shadow: 0 8px 20px rgba(16, 19, 14, .55);
+  outline: 1px solid rgba(0, 143, 240, .55);
+  outline-offset: -1px;
+  transition:
+    transform 260ms var(--ease-pop),
+    opacity 200ms var(--ease-ui);
+}
+.folder__sheet:nth-child(1) { --dx: -66%; --dy: -20%; --rot: -13deg; }
+.folder__sheet:nth-child(2) { --dx:   0%; --dy: -44%; --rot:  -1deg; }
+.folder__sheet:nth-child(3) { --dx:  64%; --dy: -16%; --rot:  12deg; }
+
+/* Hover gated — touch fires :hover on tap and leaves it stuck open.
    :focus-visible carries the same state for the keyboard. */
 @media (hover: hover) and (pointer: fine) {
-  /* The frame lifts and its stroke thickens by a pixel, which is what
-     Figma does when you are about to grab something. That is the whole
-     hover state: the fan that used to be here was answering "is there
-     more inside", and a frame with the work in it has already answered.
-     Under the 300ms ceiling everything that isn't narrative motion
-     holds to. */
+  .folder__link:hover .folder__sheet,
+  .folder__link:focus-visible .folder__sheet {
+    transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot)) scale(1);
+    opacity: 1;
+  }
+  /* 35ms apart, outermost first — the whole fan lands inside 290ms,
+     under the 300ms ceiling everything that isn't narrative motion
+     holds to. A hover slower than that stops being a response and
+     starts being a scene. */
+  .folder__link:hover .folder__sheet:nth-child(1),
+  .folder__link:focus-visible .folder__sheet:nth-child(1) { transition-delay: 0ms; }
+  .folder__link:hover .folder__sheet:nth-child(3),
+  .folder__link:focus-visible .folder__sheet:nth-child(3) { transition-delay: 35ms; }
+  .folder__link:hover .folder__sheet:nth-child(2),
+  .folder__link:focus-visible .folder__sheet:nth-child(2) { transition-delay: 70ms; }
+
+  /* The frame lifts and its stroke thickens by a pixel — what Figma
+     does when you are about to grab something. */
   .folder__link:hover .folder__frame,
   .folder__link:focus-visible .folder__frame {
     transform: translateY(-3px);
-    box-shadow: inset 0 0 0 3px var(--figma), 0 12px 24px rgba(16, 19, 14, .6);
+    box-shadow: 0 12px 24px rgba(16, 19, 14, .6);
+  }
+  .folder__link:hover .folder__frame::before,
+  .folder__link:focus-visible .folder__frame::before {
+    box-shadow: inset 0 0 0 3px var(--figma);
   }
 }
 /* Press gives. */
@@ -2171,15 +2242,24 @@ html.is-opening body {
   .about__sprite, .about__sprite.is-hop { animation: none; }
   .about__reopen { transform: none; transition: opacity 200ms linear; }
 
-  /* The frame's hover was a 3px lift and a pixel of stroke. The lift
-     goes; the stroke stays, because it is the part that carries the
-     information and it never moved anything. */
+  /* The fan is a large positional move by definition, so the travel
+     goes — but the sheets stay, because they are the content of the
+     hover and not decoration. They sit at their fanned positions from
+     the start and cross-fade in, so nothing ever moves. */
+  .folder__sheet {
+    transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot));
+    transition: opacity 160ms linear;
+  }
   @media (hover: hover) and (pointer: fine) {
-    .folder__link:hover .folder__frame,
-    .folder__link:focus-visible .folder__frame {
-      transform: none;
-      box-shadow: inset 0 0 0 3px var(--figma), 0 6px 18px rgba(16, 19, 14, .5);
+    .folder__link:hover .folder__sheet,
+    .folder__link:focus-visible .folder__sheet {
+      transform: translate(calc(-50% + var(--dx)), var(--dy)) rotate(var(--rot));
+      transition-delay: 0ms;
     }
+    /* The lift goes; the stroke stays, because it carries the
+       information and it never moved anything. */
+    .folder__link:hover .folder__frame,
+    .folder__link:focus-visible .folder__frame { transform: none; }
   }
   .folder__link:active .folder__frame { transform: none; }
 }
@@ -2319,6 +2399,7 @@ html.is-opening body {
      across it looked like a bug. Re-floor per breakpoint. */
   .folder__art,
   .folder__meta { width: clamp(112px, 15vw, 168px); }
+  .folder__sheet { width: clamp(104px, 15vw, 160px); }
   .folder__label { font-size: clamp(.75rem, 1.35vw, .9375rem); }
 }
 
@@ -2341,6 +2422,7 @@ html.is-opening body {
   .work__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.1rem; }
   .folder__art,
   .folder__meta { width: clamp(96px, 26vw, 132px); }
+  .folder__sheet { width: clamp(88px, 26vw, 130px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
   .about { --about-sw: 96px; }
