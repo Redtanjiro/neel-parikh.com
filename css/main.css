@@ -1422,27 +1422,18 @@ html.is-opening body {
   letter-spacing: -.005em;
   line-height: 1.2;
   text-align: left;
-  color: var(--figma);
-  /* A TIGHTER, DARKER HALO THAN THE REST OF THE PAGE, and it is doing
-     real work rather than polish. #008FF0 has a relative luminance of
-     .259, which caps it at 6.2:1 even against pure black — so against
+  /* Full --ink, not --figma. The blue read as a Figma quotation but it
+     is a losing contrast fight: #008FF0 has a relative luminance of
+     .259, which caps it at 6.2:1 even against pure black, so against
      the halftone's bright cloud band (measured .571 behind the Futee
-     label) no blue passes 4.5:1 at all, and no lighter blue rescues it
-     either: brightening the type moves it toward the background it is
-     failing against. The plate would have to go nearly opaque black for
-     the hue to survive, which is not a trade worth making for four
-     labels.
-
-     What carries it is the shadow, the same way it carries the white
-     file names: a dark ring immediately around the glyphs is what the
-     eye actually reads the letterform against, not the plate two
-     hundred pixels away. So this is --halo plus a tight 1px core, which
-     is the difference between a blue that sits on the picture and a
-     blue that sits in front of it. */
-  text-shadow:
-    0 0 1px rgba(16, 19, 14, .95),
-    0 1px 2px rgba(16, 19, 14, .9),
-    0 1px 22px rgba(16, 19, 14, .75);
+     label) no blue clears 4.5:1 — the tight 1px shadow core this rule
+     used to carry was patching over that, not solving it. White has no
+     such ceiling and matches the file names everywhere else on the
+     desk: the standard --halo is enough on its own. --figma stays on
+     the frame's stroke and handles, where it has a hard edge to sit on
+     rather than a bare glyph over open sky. */
+  color: var(--ink);
+  text-shadow: var(--halo);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
