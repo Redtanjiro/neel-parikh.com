@@ -1321,8 +1321,10 @@ html.is-opening body {
   display: grid;
   /* The second track is sized, not auto. `auto` let the about column be
      whatever its widest child wanted, which with a fixed-height panel
-     under a fluid card meant the two disagreed about the column. */
-  grid-template-columns: minmax(0, 1fr) clamp(19rem, 30vw, 26rem);
+     under a fluid card meant the two disagreed about the column.
+     34vw is measured off Neel's sketch: the panel there is 34.4% of the
+     frame. */
+  grid-template-columns: minmax(0, 1fr) clamp(20rem, 34vw, 31rem);
   /* start, not end. The files used to rest on the plate's bottom edge;
      they open high on it now, under the chrome. */
   align-items: start;
@@ -1332,7 +1334,7 @@ html.is-opening body {
      a short laptop the window's top edge travels up with the frame
      height, and without room reserved above it lands behind "WORK
      CONTACT" instead of under it. */
-  padding: clamp(88px, 14svh, 156px) 6vw clamp(3rem, 8svh, 5rem);
+  padding: clamp(80px, 16svh, 172px) 6vw clamp(2rem, 5svh, 4rem);
   /* Nothing here is clickable until it's visible. Without this the
      folders are an invisible hit area over the whole lower half of the
      hero for the entire story. */
@@ -1340,20 +1342,21 @@ html.is-opening body {
 }
 .site[data-desk] .work { pointer-events: auto; }
 
-/* Three across, two rows. Six in a single row spanned the full plate,
-   which was fine when nothing shared it; against the window it left the
-   icons thin and the labels wrapping. */
+/* TWO across, three rows — measured off Neel's sketch, where the frames
+   are 17.8% of the frame's width and the two of them fill barely a third
+   of it. Three across cannot reach that size and share the plate with a
+   34% panel; the arithmetic simply doesn't close. Two can, and two is
+   what the sketch draws at every width.
+
+   The cap is what sets the frame size: the cells divide it, and the
+   frame fills its cell. The leftover between the second column and the
+   cards is empty desk, which is what a desktop mostly is. */
 .work__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(1rem, 2.5vh, 2.25rem) clamp(.6rem, 1.6vw, 2rem);
   width: 100%;
-  /* Capped, not fluid. Left to fill a 1440px column the three cells came
-     out 380px wide with a 100px icon adrift in each — icons on a desktop
-     sit near each other, they don't get distributed across the furniture.
-     The leftover between the last column and the window is empty desk,
-     which is what a desktop mostly is. */
-  max-width: 48rem;
+  max-width: min(34rem, 37vw);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1406,7 +1409,10 @@ html.is-opening body {
    rather than centred under an icon the way a filename does. */
 .folder__art {
   display: block;
-  width: clamp(88px, 10.5vw, 168px);
+  /* The cell, not a clamp. A ceiling here is how the frames ended up at
+     168px inside 250px cells — a file adrift in half again its own
+     width. .work__grid's max-width is the only size control now. */
+  width: 100%;
 }
 
 /* Wider than the old square icon because the frame is landscape: at the
@@ -1555,11 +1561,19 @@ html.is-opening body {
   /* The reset's `img { max-width: 100% }` would resolve against a
      zero-width parent and collapse these to nothing. */
   max-width: none;
-  width: clamp(74px, 8.5vw, 142px);
+  /* Percentages are out — .folder__spill is a 0x0 positioning anchor, so
+     they would resolve against nothing. Tracks .folder__art's cell by
+     hand instead, at roughly 90% of it. */
+  width: clamp(90px, 16vw, 240px);
   height: auto;
   transform: translate(-50%, 0) scale(.82);
   transform-origin: 50% 100%;
   opacity: 0;
+  /* Decorative reveal only — never a click target. opacity: 0 does not
+     stop hit-testing, and at two-across the widened sheets of one card
+     overlap the link of the card above it: without this, invisible dead
+     zones sit over the folder links. */
+  pointer-events: none;
   box-shadow: 0 8px 20px rgba(16, 19, 14, .55);
   outline: 1px solid rgba(0, 143, 240, .55);
   outline-offset: -1px;
@@ -1614,7 +1628,7 @@ html.is-opening body {
    breakpoint — measured against glyph coverage, not the label's box. */
 .folder__meta {
   display: block;
-  width: clamp(88px, 10.5vw, 168px);
+  width: 100%;
   text-align: left;
   margin-top: .5em;
   font-size: .6875rem;
@@ -1652,6 +1666,9 @@ html.is-opening body {
   flex-direction: column;
   align-items: center;
   gap: clamp(.7rem, 1.6svh, 1.1rem);
+  /* The sketch drops the cards ~4.5% of the frame below the first row of
+     files, rather than starting both on the same line. */
+  padding-top: clamp(0px, 4.5svh, 46px);
   --card-r: 7.84% / 5.73%;
 
   /* Same reveal as the window it replaces, and for the same reason:
@@ -1672,7 +1689,7 @@ html.is-opening body {
    laptop, and a card sized on vw alone blows that budget at 800px tall. */
 .cards {
   position: relative;
-  width: min(16rem, 26vw, 33svh);
+  width: min(12.5rem, 14vw, 28svh);
   aspect-ratio: 306 / 419;
   flex: none;
   margin-bottom: clamp(.2rem, 2svh, 1.4rem);
@@ -1746,7 +1763,7 @@ html.is-opening body {
   font-weight: 600;
   letter-spacing: var(--track-hero);
   line-height: .9;
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-size: clamp(2.75rem, 5.6vw, 5.2rem);
   color: var(--ink);
   text-shadow: var(--halo);
   margin: 0;
@@ -2320,16 +2337,10 @@ html.is-opening body {
       calc(72px + env(safe-area-inset-top, 0px)) 6vw
       calc(6svh + env(safe-area-inset-bottom, 0px));
   }
-  /* Two across, not three. Stacked, the grid has the full column and no
-     longer has to share it with a window, so three narrow cells becomes
-     two wide ones — which is what the tablet sketch shows and what the
-     labels want anyway. Same 38rem cap on both so the files and the
-     cards line up as one block. */
-  .work__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: clamp(1.25rem, 3svh, 2.25rem);
-    max-width: 38rem;
-  }
+  /* Two across is the base now; stacked, the grid has the whole column
+     rather than sharing it, so the cap opens up. Same 38rem on the cards
+     below so the files and the About block read as one column. */
+  .work__grid { row-gap: clamp(1.25rem, 3svh, 2.25rem); max-width: 38rem; }
   .about { width: 100%; max-width: 38rem; }
   /* .76 was set to hold an opaque window off a bright halftone. The
      panel carries its own scrim now and every label carries --halo, so
@@ -2344,13 +2355,8 @@ html.is-opening body {
   .cards { width: min(13rem, 34vw, 26svh); margin-top: clamp(1.5rem, 5svh, 3rem); }
   .about__mark { font-size: clamp(3rem, 8vw, 4.25rem); }
 
-  /* The desktop icon sizes are driven by vw, which collapses to the
-     clamp floor the moment the row count drops. Re-floor per breakpoint
-     — and at two across the cells are half a 38rem column, so a 168px
-     ceiling left each frame adrift in twice its own width. */
-  .folder__art,
-  .folder__meta { width: clamp(150px, 26vw, 250px); }
-  .folder__sheet { width: clamp(140px, 25vw, 240px); }
+  /* Still the cell. Only the fan needs a hand-set width down here. */
+  .folder__sheet { width: clamp(140px, 27vw, 250px); }
   .folder__label { font-size: clamp(.75rem, 1.35vw, .9375rem); }
 }
 
@@ -2371,9 +2377,7 @@ html.is-opening body {
     gap: 1.1rem;
   }
   .work__grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; max-width: 22rem; }
-  .folder__art,
-  .folder__meta { width: clamp(170px, 56vw, 260px); }
-  .folder__sheet { width: clamp(160px, 54vw, 250px); }
+  .folder__sheet { width: clamp(160px, 50vw, 250px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
   .about { max-width: 22rem; }
@@ -2393,8 +2397,6 @@ html.is-opening body {
    the internal scroll. */
 @media (max-width: 560px) and (max-height: 730px) {
   .cards { width: min(10.5rem, 42vw); }
-  .folder__art,
-  .folder__meta { width: clamp(150px, 48vw, 210px); }
   .work { gap: .75rem; }
 }
 

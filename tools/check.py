@@ -170,11 +170,10 @@ def check_t1(page, vw, vh):
 
     if vw == 1440 and vh == 900:
         tops = sorted(set(round(f.bounding_box()["y"]) for f in folders if f.bounding_box()))
-        # baseline: row1 top=126, row2 top=305 (allow a couple px of
-        # AA/measurement slack). Shifted from 475/654 when .work went
-        # align-items:end -> start: the files used to rest on the plate's
-        # bottom edge, they open high on it under the chrome now.
-        expected_rows = [126, 305]
+        # baseline: three row tops now (126/305 -> 144/396/648) — the
+        # folder grid went three-across to two, so five cards are 2+2+1
+        # rather than 3+2. Allow a couple px of AA/measurement slack.
+        expected_rows = [144, 396, 648]
         for exp in expected_rows:
             if not any(abs(t - exp) <= 3 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
@@ -592,26 +591,32 @@ def check_t9(page):
     else:
         ok("T9: canonical link present")
 
-    if not icon:
-        fail("T9", "link[rel=icon] missing")
+    if not icon or not icon.endswith("media/favicon.png"):
+        fail("T9", f"link[rel=icon] missing or not media/favicon.png: {icon!r}")
     else:
         ok("T9: favicon link present")
 
-    favicon_path = REPO_ROOT / "media" / "favicon.svg"
-    if not favicon_path.is_file():
-        fail("T9", "media/favicon.svg does not exist")
+    apple = page.evaluate("document.querySelector('link[rel=\"apple-touch-icon\"]')?.href")
+    if not apple or not apple.endswith("media/apple-touch-icon.png"):
+        fail("T9", f"apple-touch-icon missing or wrong: {apple!r}")
     else:
-        size = favicon_path.stat().st_size
-        if size >= 2048:
-            fail("T9", f"media/favicon.svg is {size} bytes, >= 2 KB")
+        ok("T9: apple-touch-icon present")
+
+    for rel, name, cap in [
+        ("icon", "favicon.png", 8 * 1024),
+        ("apple-touch-icon", "apple-touch-icon.png", 24 * 1024),
+    ]:
+        p = REPO_ROOT / "media" / name
+        if not p.is_file():
+            fail("T9", f"media/{name} does not exist")
+            continue
+        if not p.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"):
+            fail("T9", f"media/{name} is not a PNG")
+        size = p.stat().st_size
+        if size >= cap:
+            fail("T9", f"media/{name} is {size} bytes, >= {cap // 1024} KB")
         else:
-            ok(f"T9: media/favicon.svg is {size} bytes")
-        try:
-            import xml.etree.ElementTree as ET
-            ET.parse(str(favicon_path))
-            ok("T9: media/favicon.svg parses as SVG/XML")
-        except Exception as e:
-            fail("T9", f"media/favicon.svg does not parse as XML: {e}")
+            ok(f"T9: media/{name} is {size} bytes")
 
 
 # ---------------------------------------------------------------------------
