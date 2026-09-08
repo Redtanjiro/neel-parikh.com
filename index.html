@@ -483,137 +483,76 @@
 
       </ul>
 
-      <!-- ============ THE ABOUT WINDOW ============
+      <!-- ============ THE ABOUT CARDS ============
            The other half of the desktop. Files on the left, the person who
-           made them on the right — which is the argument the whole page is
-           making, so it should be visible in one frame rather than two.
+           made them on the right — the argument the whole page is making,
+           landed in one frame rather than two.
 
-           Four tabs — about me, experience, studies, contact — a real
-           ARIA tablist (arrow keys, Home/End, roving tabindex) rather than a
-           two-button transport, because there was more true to say than a
-           caption could carry. Each tab still pairs with a pose, and drifts
-           to a second one after a few seconds, so the window keeps a little
-           life without that life ever being the answer to the question the
-           tab is asking.
+           Two hand-drawn cards, not a window. Both are glass: the flat
+           lavender plate is keyed out of each export, so the card's header
+           band and its footer strip are the pane itself and the pixel
+           panel is the one opaque thing sitting on it. The slab under the
+           art (.card__glass) is what does the blurring; the art is only
+           what is printed on it.
 
-           Bitmap treatment, site palette. Hard 2px borders, no radii, one
-           solid unblurred drop shadow, monospace chrome. NOT a pixel
-           webfont — that would be a fourth face and another download on a
-           page already carrying two videos. Monospace is what a terminal
-           actually uses and the scroll cue's digit grid is already set in
-           it, so the register was on the page before this window was.
-
-           Close hides the window and hands off to a small reopen chip in
-           the same desktop cell — close/reopen, not close/gone, matching
-           every other control on this page. -->
-      <aside class="about" id="about" aria-label="About Neel">
-        <div class="about__bar">
-          <span class="about__title">about.exe</span>
-          <span class="about__controls">
-            <button type="button" class="about__ctrl" aria-hidden="true" tabindex="-1"><i aria-hidden="true"></i></button>
-            <button type="button" class="about__ctrl about__ctrl--min" aria-label="Minimise" data-about-close><i aria-hidden="true"></i></button>
-            <button type="button" class="about__ctrl about__ctrl--close" aria-label="Close" data-about-close><i aria-hidden="true"></i></button>
-          </span>
-        </div>
-
-        <div class="about__tabs" role="tablist" aria-label="About sections">
-          <button class="about__tab" role="tab" id="about-t0" aria-controls="about-p0" aria-selected="true">About</button>
-          <button class="about__tab" role="tab" id="about-t1" aria-controls="about-p1" aria-selected="false" tabindex="-1">Experience</button>
-          <button class="about__tab" role="tab" id="about-t2" aria-controls="about-p2" aria-selected="false" tabindex="-1">Studies</button>
-          <button class="about__tab" role="tab" id="about-t3" aria-controls="about-p3" aria-selected="false" tabindex="-1">Contact</button>
-        </div>
-
-        <div class="about__body">
-          <!-- The sprite is decorative: the caption below carries every bit
-               of meaning it has, and describing eighteen near-identical
-               poses to a screen reader is noise. -->
-          <div class="about__stage">
-            <div class="about__screen">
-              <div class="about__sprite" id="about-sprite" role="img" aria-hidden="true"></div>
-            </div>
-            <p class="about__cap" id="about-caption" aria-live="polite">idle</p>
+           Three links, not four tabs. The window's four sections carried a
+           timeline each and the panel grew and shrank as you moved between
+           them; these three carry a line and three rows each, and the box
+           they sit in is a fixed height with all three stacked in the same
+           grid cell — so switching swaps opacity and NOTHING below it
+           moves. Contact folded into "just me" and into the footer. -->
+      <section class="about" id="about" aria-labelledby="about-mark">
+        <div class="cards" aria-hidden="false">
+          <div class="card card--back" aria-hidden="true">
+            <span class="card__glass"></span>
+            <img class="card__art" src="media/card-back.png" alt=""
+                 width="299" height="413" loading="lazy" decoding="async">
           </div>
-
-          <div class="about__panes">
-            <div class="about__panel" role="tabpanel" id="about-p0" aria-labelledby="about-t0">
-              <h3 class="about__h">Neel Parikh</h3>
-              <p class="about__lede">Designer. I make things that explain themselves — mostly interfaces, occasionally a maze. This site is hand-written: no framework, no template underneath.</p>
-              <ul class="about__rows">
-                <li><b>Based</b><span>Sydney, NSW</span></li>
-                <li><b>Works in</b><span>Product and brand design, motion, and the front-end that carries them</span></li>
-                <li><b>Right now</b><span>Five case studies live in here — Futee, EMF ACE, CSEDS, Into Yesterday, Superfood Adventure</span></li>
-              </ul>
-            </div>
-
-            <div class="about__panel" role="tabpanel" id="about-p1" aria-labelledby="about-t1" hidden>
-              <h3 class="about__h">Experience</h3>
-              <ol class="about__tl">
-                <li>
-                  <span class="about__when">Mar 2026 — now</span>
-                  <div>
-                    <p class="about__role-t">Marketing &amp; Engagement Ambassador</p>
-                    <p class="about__where">UNSW Founders · Sydney</p>
-                    <p class="about__desc">Content and community across the UNSW Founders brand, feeding student insight back into campaigns.</p>
-                  </div>
-                </li>
-                <li>
-                  <span class="about__when">2023 — 25</span>
-                  <div>
-                    <p class="about__role-t">Design Lead</p>
-                    <p class="about__where">Media Mushroom · India</p>
-                    <p class="about__desc">Directed brand and the EMF ACE event site — led a 5-person team across 50+ vendors and 10–15 concurrent campaigns.</p>
-                  </div>
-                </li>
-                <li>
-                  <span class="about__when">2020 — 22</span>
-                  <div>
-                    <p class="about__role-t">Visual &amp; UX Designer</p>
-                    <p class="about__where">Idealoft Studio · India</p>
-                    <p class="about__desc">Wireframes through interactive prototypes for B2B and banking clients, including ICICI Bank and Yes Bank.</p>
-                  </div>
-                </li>
-              </ol>
-            </div>
-
-            <div class="about__panel" role="tabpanel" id="about-p2" aria-labelledby="about-t2" hidden>
-              <h3 class="about__h">Studies</h3>
-              <ol class="about__tl">
-                <li>
-                  <span class="about__when">2025 — now</span>
-                  <div>
-                    <p class="about__role-t">Master of Design, Interaction &amp; Immersive</p>
-                    <p class="about__where">UNSW · Sydney</p>
-                    <p class="about__desc">Human-centred UX methods, interaction and immersive design. Dean's List award recipient.</p>
-                  </div>
-                </li>
-                <li>
-                  <span class="about__when">2019 — 23</span>
-                  <div>
-                    <p class="about__role-t">Bachelor of Design</p>
-                    <p class="about__where">Anant National University · India</p>
-                    <p class="about__desc">Major in Interaction Design, minor in Graphic Design.</p>
-                  </div>
-                </li>
-              </ol>
-            </div>
-
-            <div class="about__panel" role="tabpanel" id="about-p3" aria-labelledby="about-t3" hidden>
-              <h3 class="about__h">Contact</h3>
-              <ul class="about__rows">
-                <li><b>Email</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
-                <li><b>Elsewhere</b><span><a href="https://www.linkedin.com/in/neel-parikh-413b16169/" target="_blank" rel="noopener">LinkedIn</a></span></li>
-                <li><b>Open to</b><span>Product and brand work, and case studies that need a story</span></li>
-                <li><b>Reply</b><span>Usually within a day</span></li>
-              </ul>
-            </div>
+          <div class="card card--front">
+            <span class="card__glass" aria-hidden="true"></span>
+            <img class="card__art" src="media/card-front.png"
+                 alt="A hand-drawn pixel card: Neel at a desk. It reads Designer, Worker Bee, lvl. max?"
+                 width="306" height="419" loading="lazy" decoding="async">
           </div>
         </div>
-      </aside>
 
-      <!-- Stands in for the window in the same corner while it's closed —
-           see .about__reopen in main.css and the close/reopen wiring in
-           hero.js. -->
-      <button type="button" class="about__reopen" id="about-reopen" hidden>Reopen — about.exe</button>
+        <h2 class="about__mark" id="about-mark">About</h2>
+
+        <div class="about__nav" role="tablist" aria-label="About sections">
+          <button class="about__tab" type="button" role="tab" id="about-t0"
+                  aria-controls="about-p0" aria-selected="false" tabindex="-1">education</button>
+          <button class="about__tab" type="button" role="tab" id="about-t1"
+                  aria-controls="about-p1" aria-selected="false" tabindex="-1">resume</button>
+          <button class="about__tab" type="button" role="tab" id="about-t2"
+                  aria-controls="about-p2" aria-selected="true">just me</button>
+        </div>
+
+        <div class="about__panel">
+          <div class="about__pane" role="tabpanel" id="about-p0" aria-labelledby="about-t0" tabindex="0">
+            <p class="about__lede">Two degrees, both in design, both spent building the thing rather than writing about it.</p>
+            <ul class="about__rows">
+              <li><b>2025&ndash;27</b><span>M.Des Interaction &amp; Immersive, UNSW Sydney &middot; Dean&rsquo;s List</span></li>
+              <li><b>2019&ndash;23</b><span>B.Des, Anant National University &middot; founded three student bodies</span></li>
+            </ul>
+          </div>
+          <div class="about__pane" role="tabpanel" id="about-p1" aria-labelledby="about-t1" tabindex="0">
+            <p class="about__lede">Four years of it, mostly as the person who both decided the thing and built it.</p>
+            <ul class="about__rows">
+              <li><b>Now</b><span>Marketing &amp; Engagement Ambassador, UNSW Founders</span></li>
+              <li><b>2023&ndash;25</b><span>Design Lead, Media Mushroom &middot; 5 designers, 50+ vendors</span></li>
+              <li><b>2020&ndash;22</b><span>Visual &amp; UX Designer, Idealoft &middot; ICICI, Yes Bank</span></li>
+            </ul>
+          </div>
+          <div class="about__pane" role="tabpanel" id="about-p2" aria-labelledby="about-t2" tabindex="0" data-on>
+            <p class="about__lede">Designer. I make things that explain themselves &mdash; mostly interfaces, occasionally a maze.</p>
+            <ul class="about__rows">
+              <li><b>Based</b><span>Sydney, NSW &middot; UTC+10</span></li>
+              <li><b>Draws</b><span>Every sprite on this page, by hand, one pixel at a time</span></li>
+              <li><b>Reach me</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </main>
 
   </section>

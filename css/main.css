@@ -1303,25 +1303,36 @@ html.is-opening body {
    above. This box just gives .work somewhere to be. */
 .desk {
   position: relative;
-  height: 100svh;
+  /* min-height, not height, and no overflow:hidden. A fixed-height
+     clipping box can only say "this fits" or "this is cropped" — never
+     "this is taller than the screen". The about column is now cards +
+     name + links + panel stacked, which on a short laptop is taller
+     than 100svh, and cropping it centred cut it at BOTH ends. The
+     section grows instead; the min-height still holds a full screen on
+     everything that fits. This is what the 1000px step used to have to
+     undo by hand. */
+  min-height: 100svh;
   width: 100%;
-  overflow: hidden;
 }
 
 .work {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 3;                 /* above the media stack and the phrases */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
+  /* The second track is sized, not auto. `auto` let the about column be
+     whatever its widest child wanted, which with a fixed-height panel
+     under a fluid card meant the two disagreed about the column. */
+  grid-template-columns: minmax(0, 1fr) clamp(19rem, 30vw, 26rem);
+  /* start, not end. The files used to rest on the plate's bottom edge;
+     they open high on it now, under the chrome. */
+  align-items: start;
   gap: clamp(1.5rem, 4vw, 4.5rem);
   /* Top padding clears the fixed chrome. .work is bottom-aligned
      (align-items: end), so on a tall frame this costs nothing — but on
      a short laptop the window's top edge travels up with the frame
      height, and without room reserved above it lands behind "WORK
      CONTACT" instead of under it. */
-  padding: clamp(72px, 11svh, 108px) 6vw 10svh;
+  padding: clamp(88px, 14svh, 156px) 6vw clamp(3rem, 8svh, 5rem);
   /* Nothing here is clickable until it's visible. Without this the
      folders are an invisible hit area over the whole lower half of the
      hero for the entire story. */
@@ -1617,299 +1628,263 @@ html.is-opening body {
 }
 
 /* =========================================================
-   THE ABOUT WINDOW
+   THE ABOUT CARDS
    =========================================================
-   The other half of the desktop. Files on the left, the person who made
-   them on the right — which is the argument the whole page has been
-   making, so it should land in one frame rather than two.
+   The window is gone. In its place, the two cards drawn for it — one
+   front, one back — fanned on the plate with the section's name and its
+   three links under them.
 
-   Bitmap rules, held consistently or not at all: 2px borders, zero
-   radius, one solid unblurred drop shadow, monospace chrome, integer
-   pixel values instead of the fluid clamps used everywhere else. Every
-   softness elsewhere on this page is doing a job; here softness is the
-   thing being argued against, so it all goes.
+   The glass is real, not painted. Each export had a flat lavender plate
+   behind its art; that plate is keyed out of the PNG (media/card-*.png),
+   so the header band and the footer strip are HOLES and the pixel panel
+   is the only opaque thing on the card. .card__glass is the pane those
+   holes look through — one backdrop-filter, a diagonal body gradient
+   and a rim — and the art is simply what is printed on it. Painting a
+   translucent rectangle on top of the export would have given the same
+   colour and none of the refraction, which is the whole point.
 
-   Colours are the same tokens as the rest of the site. The window reads
-   as retro because of its EDGES, not because it brought its own palette
-   — a black-and-electric-blue dialog would have been a second colour
-   scheme on a page whose every value was sampled from one photograph. */
+   The one number that has to agree with the artwork is the corner:
+   24px on a 306px-wide export. Expressed as an elliptical percentage
+   pair (7.84% of width / 5.73% of height) so it stays circular on a
+   card that is taller than it is wide, at every size the clamp gives. */
 .about {
-  --bd: 2px;
-  --about-sw: 116px;                  /* sprite width; height and the sheet math derive from it */
-  width: clamp(268px, 27vw, 380px);
-  border: var(--bd) solid var(--ink);
-  /* Solid, unblurred, offset. A blurred shadow is a lighting model and
-     these machines didn't have one — they had a second rectangle. */
-  box-shadow: 5px 5px 0 rgba(16, 19, 14, .55);
-  background: var(--deep);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(.7rem, 1.6svh, 1.1rem);
+  --card-r: 7.84% / 5.73%;
 
-  /* Hidden until the desktop exists, exactly like the folders.
-     Without this it is an opaque window sitting on the black opening
-     frame for the whole story — `.work` is absolutely positioned over
-     the hero from the first paint, and `pointer-events: none` stops it
-     being clickable but does nothing about it being VISIBLE. The
-     folders had their own reveal and the window didn't; it read as a
-     leak, because it was one.
-
-     It arrives 300ms behind them: six icons at 55ms apart finish at
-     ~330ms, and a window landing in the middle of that would be a
-     seventh object in the same stagger rather than the thing the files
-     turn out to be sitting next to. */
+  /* Same reveal as the window it replaces, and for the same reason:
+     .work is painted over the hero from the first frame, so without
+     this the cards sit on the black opening for the whole story.
+     300ms behind the folders — see .folder. */
   opacity: 0;
   transform: translateY(12px);
   transition:
     opacity 240ms var(--ease-ui) 300ms,
     transform 380ms var(--ease-pop) 300ms;
-
-  /* The window is bottom-aligned in its cell (.work's align-items:end),
-     so a short frame doesn't push its bottom edge down — it pushes its
-     TOP edge up, into the chrome. Rather than let the window grow past
-     the space it's given, it's bounded by it (max-height: 100%) and
-     becomes a column flex box, so the one part of it with room to lose
-     — the tab content — is the part that yields. */
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
-  min-height: 0;
 }
 .site[data-desk] .about { opacity: 1; transform: none; }
-.about[hidden] { display: none; }
 
-/* Inverted title bar, the way every one of these looked. */
-.about__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .75rem;
-  padding: 5px 7px;
-  background: var(--ink);
-  color: var(--void);
-  border-bottom: var(--bd) solid var(--ink);
-}
-.about__title {
-  font-size: .6875rem;
-  letter-spacing: .04em;
-}
-/* Two of the three squares work now — a direct response to the window
-   being closeable and reopenable. The middle one still doesn't: there
-   is nothing here for a maximise to do, and furniture that responds to
-   the mouse but does nothing is worse than furniture that doesn't. */
-/* 32px, not the original 4px. Each control's own hit area (below) is
-   44px, centred on a 13px square — the gap has to put their CENTRES at
-   least 44px apart or two "different" controls answer the same tap.
-   13px square + 31px gap = 44px centre-to-centre is the minimum; 32px
-   is that plus a hair of margin, kept as a gap increase rather than
-   shrinking the areas themselves. */
-.about__controls { display: flex; gap: 32px; }
-.about__ctrl {
+/* ---------- the pair ----------
+   Sized off the SHORTER of width and height: the column has to hold the
+   cards, the name, the links and the panel inside one screen on a
+   laptop, and a card sized on vw alone blows that budget at 800px tall. */
+.cards {
   position: relative;
-  width: 13px; height: 13px;
-  padding: 0;
-  border: 2px solid var(--void);
-  background: none;
-  cursor: default;
+  width: min(16rem, 26vw, 33svh);
+  aspect-ratio: 306 / 419;
+  flex: none;
+  margin-bottom: clamp(.2rem, 2svh, 1.4rem);
 }
-/* The square stays 13px — the window's proportions need it small — so
-   the hit area is a separate, invisible 44px square centred on it via
-   a pseudo-element instead of growing the control itself. */
-.about__ctrl::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 44px; height: 44px;
-  transform: translate(-50%, -50%);
-}
-.about__ctrl i { display: block; width: 100%; height: 100%; }
-.about__ctrl--min, .about__ctrl--close { cursor: pointer; }
-.about__ctrl--close i { background: var(--void); }
-@media (hover: hover) and (pointer: fine) {
-  .about__ctrl--min:hover, .about__ctrl--close:hover { background: rgba(251, 247, 240, .28); }
-}
-.about__ctrl:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
+.card { position: absolute; inset: 0; transform-origin: 52% 88%; }
 
-/* ---------- tabs ----------
-   A real tablist: arrow keys, Home/End, roving tabindex (see hero.js).
-   One line each, always — a hard <br> in "Experi-/ence" read as a
-   rendering bug rather than a layout choice (and made that one tab two
-   lines while its neighbours stayed one). white-space: nowrap holds the
-   line; if "Experience" ever overflows its cell at the narrowest width
-   the window gets, the letter-spacing and size are the levers, at that
-   breakpoint only — not a break. */
-.about__tabs {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-bottom: var(--bd) dashed rgba(251, 247, 240, .3);
+/* Drift. Two loops at different periods, so the pair never quite repeats
+   its own pose — ambient, with nothing to trigger and nothing to chase.
+   Long and shallow on purpose: this sits beside the reading column, and
+   motion next to text has to stay under the threshold where it competes
+   with it. */
+.card--back  { z-index: 1; animation: card-drift-back  13s ease-in-out infinite; }
+.card--front { z-index: 2; animation: card-drift-front 9.5s ease-in-out infinite; }
+@keyframes card-drift-back {
+  0%, 100% { transform: translate(9%, -7%)   rotate(9deg)    scale(.97); }
+  50%      { transform: translate(11%, -4.5%) rotate(11.5deg) scale(.97); }
+}
+@keyframes card-drift-front {
+  0%, 100% { transform: translate(-3%, 0)    rotate(-2.5deg); }
+  50%      { transform: translate(-3.4%, -2.2%) rotate(-4deg); }
+}
+
+/* Two gradients, not one: a broad diagonal body and a tighter sheen
+   along the top-left edge. One gradient reads as a tinted rectangle;
+   the second one is what makes it read as a pane. */
+.card__glass {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-r);
+  background: linear-gradient(147deg,
+    rgba(251, 247, 240, .26)   0%,
+    rgba(251, 247, 240, .09)  38%,
+    rgba(251, 247, 240, .05)  62%,
+    rgba(251, 247, 240, .14) 100%);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5) brightness(1.04);
+          backdrop-filter: blur(14px) saturate(1.5) brightness(1.04);
+  border: 1px solid rgba(251, 247, 240, .30);
+  /* NOT filter: drop-shadow on the card — that creates a containing
+     block and kills the backdrop-filter underneath it. The shadow lives
+     on the slab, as a box-shadow, where it costs nothing. */
+  box-shadow:
+    inset 0  1px 0 rgba(251, 247, 240, .48),
+    inset 0 -1px 0 rgba(251, 247, 240, .12),
+    0 24px 46px rgba(16, 19, 14, .55);
+}
+/* The specular streak — faint enough to read as light on glass rather
+   than as a highlight someone drew on. */
+.card__glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(112deg,
+    rgba(251, 247, 240, 0)   30%,
+    rgba(251, 247, 240, .16) 44%,
+    rgba(251, 247, 240, 0)   56%);
+  pointer-events: none;
+}
+.card__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* ---------- the name ---------- */
+.about__mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: var(--track-hero);
+  line-height: .9;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  color: var(--ink);
+  text-shadow: var(--halo);
+  margin: 0;
+}
+
+/* ---------- the three links ---------- */
+.about__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: clamp(.9rem, 2.4vw, 2.1rem);
 }
 .about__tab {
-  border: 0;
-  border-right: 1px solid rgba(251, 247, 240, .18);
-  background: none;
-  padding: 8px 3px 7px;
-  cursor: pointer;
-  color: rgba(251, 247, 240, .4);
-  font: inherit;
-  font-size: .5625rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  line-height: 1.3;
-  white-space: nowrap;
-  hyphens: none;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  transition: color 150ms linear;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(.9375rem, 1.4vw, 1.0625rem);
+  color: rgba(251, 247, 240, .5);
+  text-shadow: var(--halo);
+  background: none;
+  border: 0;
+  padding: 0 0 .2rem;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  transition: color 200ms var(--ease-ui), border-color 200ms var(--ease-ui);
 }
-.about__tab:last-child { border-right: 0; }
-.about__tab[aria-selected="true"] { color: var(--ink); }
-.about__tab[aria-selected="true"]::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
-  background: var(--folder-teal, #74E8E8);
+/* The link is set small on purpose; the tap area is not. A 44px band
+   centred on the text, full width of the label, so a finger has
+   something to land on without the type having to be chunky to give it
+   one. Same trick the window's title-bar controls used. */
+.about__tab::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  min-height: 44px;
 }
 @media (hover: hover) and (pointer: fine) {
-  .about__tab:hover { color: var(--ink); }
+  .about__tab:hover { color: var(--ink-dim); }
 }
-.about__tab:focus-visible { outline: none; color: var(--ink); box-shadow: inset 0 0 0 2px var(--folder-teal, #74E8E8); }
-
-.about__body { padding: 12px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-
-.about__stage { display: flex; flex-direction: column; align-items: center; }
-
-/* The sprite panel. Sunken by inverting the border weight — light on
-   two sides, dark on two — which is the entire visual vocabulary those
-   interfaces had for depth. No explicit width: the global `border-box`
-   reset means a fixed width here would count its own padding against
-   the sprite inside it, shrinking the sprite by exactly that padding —
-   and then the background-position math, which assumes the sprite's
-   rendered box IS --about-sw, would be reading off a misaligned frame.
-   Sizing to content instead means the screen is always exactly the
-   sprite's size plus its own frame, never fighting it. */
-.about__screen {
-  border: var(--bd) solid var(--ink);
-  background: var(--void);
-  padding: 8px 6px 0;
-  display: flex;
-  justify-content: center;
-}
-
-/* 6x3 grid, 256x320 cells, stepped by background-position from JS;
-   --about-col / --about-row are the frame's place in it. Every pose is
-   bottom-aligned in its cell, so switching poses never shifts his feet.
-
-   image-rendering: pixelated is the whole point — the sheet is authored
-   larger than it's shown here, so the browser has to be told to keep
-   the pixels square instead of smoothing them into a blur. */
-.about__sprite {
-  width: var(--about-sw);
-  height: calc(var(--about-sw) * 1.25);
-  background-image: url('../media/neel-sprites.webp');
-  background-repeat: no-repeat;
-  background-size: calc(var(--about-sw) * 6) calc(var(--about-sw) * 3.75);
-  background-position:
-    calc(var(--about-col, 0) * var(--about-sw) * -1)
-    calc(var(--about-row, 0) * var(--about-sw) * -1.25);
-  image-rendering: pixelated;
-  animation: about-bob 2.6s var(--ease-ui) infinite;
-}
-/* A quick settle on top of the idle bob, fired by JS on every pose
-   change — the frame swap alone read as a slide-show; this is what
-   makes it read as him moving. */
-.about__sprite.is-hop { animation: about-bob 2.6s var(--ease-ui) infinite, about-hop 340ms var(--ease-pop); }
-@keyframes about-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes about-hop { 0% { transform: translateY(0); } 38% { transform: translateY(-9px); } 100% { transform: translateY(0); } }
-
-.about__cap {
-  margin-top: 6px;
-  font-size: .5625rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: rgba(251, 247, 240, .4);
-}
-
-/* ---------- the panes ---------- */
-/* flex: 1 + overflow-y: auto is the yield T2 needs: on a short laptop
-   the window is bounded by .about's own max-height (its parent cell,
-   ultimately the chrome-cleared padding above), and this is the one
-   part of the window with text long enough to need more room than
-   that sometimes allows. A short internal scroll here is correct; a
-   sentence cut off at the frame's edge is not. */
-.about__panes { margin-top: 14px; min-width: 0; flex: 1; min-height: 4rem; overflow-y: auto; overscroll-behavior: contain; }
-.about__panel[hidden] { display: none; }
-.about__h {
-  font-family: var(--font-work);
-  font-size: 1.2rem;
-  font-weight: 300;
-  line-height: 1.1;
-  margin: 0 0 6px;
+.about__tab[aria-selected="true"] {
   color: var(--ink);
+  border-bottom-color: var(--folder-teal, #74E8E8);
+}
+.about__tab:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 3px; }
+
+/* ---------- the panel that never changes size ----------
+   All three panes in the SAME grid cell rather than swapped in and out
+   of flow, so the grid row is the height of the tallest pane and
+   switching links is an opacity swap — nothing below it moves, which is
+   the whole reason the window's timelines were cut down to three rows.
+
+   min-height, not height: the panes are all the same height at a given
+   width, so letting the box grow to fit them still reflows nothing on a
+   switch — and it means a pane that wraps to one more line on a narrow
+   column is held, not clipped out the bottom of the frame. The
+   min-height keeps it reading as a panel on the short viewports where
+   the content happens to fit. */
+.about__panel {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: clamp(9rem, 20svh, 12.5rem);
+  padding: clamp(.9rem, 1.8svh, 1.2rem) clamp(1rem, 1.6vw, 1.4rem);
+  background: rgba(16, 19, 14, .42);
+  border: 1px solid rgba(251, 247, 240, .16);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+}
+.about__pane {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(5px);
+  transition:
+    opacity 240ms var(--ease-ui),
+    transform 300ms var(--ease-out),
+    visibility 0s 260ms;
+}
+.about__pane[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s, 0s, 0s;
 }
 .about__lede {
-  margin: 0 0 12px;
-  font-family: var(--font-display);
-  font-size: .75rem;
+  font-family: var(--font-work);
   font-weight: 300;
-  line-height: 1.5;
-  color: rgba(251, 247, 240, .8);
+  font-size: clamp(.9375rem, 1.25vw, 1.0625rem);
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0;
 }
-
-/* labelled rows — about me, contact */
 .about__rows {
-  list-style: none; margin: 0; padding: 10px 0 0;
-  border-top: var(--bd) dashed rgba(251, 247, 240, .3);
-  display: grid; gap: 8px;
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
 }
 .about__rows li {
-  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: baseline;
-  font-family: var(--font-display); font-size: .75rem; line-height: 1.45; color: rgba(251, 247, 240, .8);
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: .6rem;
+  align-items: baseline;
 }
 .about__rows b {
-  font-size: .5625rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 500;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 400;
+  font-size: .5625rem;
+  letter-spacing: .11em;
+  text-transform: uppercase;
   color: var(--folder-teal, #74E8E8);
 }
-.about__rows a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(251, 247, 240, .3); }
-.about__rows a:hover { color: var(--folder-teal, #74E8E8); border-bottom-color: var(--folder-teal, #74E8E8); }
+.about__rows span { font-size: .8125rem; line-height: 1.35; color: var(--ink-dim); }
+.about__rows a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(251, 247, 240, .3);
+}
+@media (hover: hover) and (pointer: fine) {
+  .about__rows a:hover { color: var(--folder-teal, #74E8E8); border-bottom-color: var(--folder-teal, #74E8E8); }
+}
 .about__rows a:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
 
-/* timeline — experience, studies */
-.about__tl { list-style: none; margin: 0; padding: 10px 0 0; border-top: var(--bd) dashed rgba(251, 247, 240, .3); }
-.about__tl li { padding: 9px 0; }
-.about__tl li + li { border-top: 1px dashed rgba(251, 247, 240, .18); }
-.about__when { display: block; font-size: .5625rem; letter-spacing: .08em; color: var(--folder-teal, #74E8E8); }
-.about__role-t { font-family: var(--font-work); font-weight: 300; font-size: .9375rem; line-height: 1.2; margin: 3px 0 0; color: var(--ink); }
-.about__where { font-size: .5625rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(251, 247, 240, .4); margin: 3px 0 4px; }
-.about__desc { font-family: var(--font-display); font-size: .6875rem; font-weight: 300; line-height: 1.5; color: rgba(251, 247, 240, .75); margin: 0; }
-
-/* Stands in for the window in the same corner while it's closed. A
-   grid item in `.work`'s own cell rather than an absolutely positioned
-   overlay — `.work` is a two-column grid and this is the simplest way
-   to land in the second column without a new positioning context. Its
-   own reveal — arrives after the window has finished closing, not with
-   the folders. */
-.about__reopen {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
-  align-self: end;
-  border: var(--bd) solid var(--ink);
-  background: var(--deep);
-  color: var(--ink);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: .6875rem;
-  letter-spacing: .04em;
-  padding: 8px 12px;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 220ms var(--ease-ui), transform 220ms var(--ease-ui);
+@media (prefers-reduced-motion: reduce) {
+  .card { animation: none; }
+  .card--back  { transform: translate(9%, -6%) rotate(9deg) scale(.97); }
+  .card--front { transform: translate(-3%, 0)  rotate(-3deg); }
+  .about__pane { transition: opacity 1ms; }
 }
-.about__reopen[hidden] { display: none; }
-.about__reopen.is-in { opacity: 1; transform: none; }
-@media (hover: hover) and (pointer: fine) {
-  .about__reopen:hover { background: var(--ink); color: var(--void); }
-}
-.about__reopen:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 2px; }
 
 /* The gutter lives here now. It used to come from `.work { padding: … 6vw }`,
    which went when the plate took over the section — leaving the footer
@@ -2226,12 +2201,11 @@ html.is-opening body {
     transition: opacity 250ms linear calc(var(--i) * 40ms);
   }
   .about { transform: none; transition: opacity 250ms linear 260ms; }
-  /* The idle bob and the hop both go — a sprite that never stops moving
-     between poses is the ambient motion this page has refused
-     everywhere else. It still changes pose on tab change, it just holds
-     each one still rather than breathing. */
-  .about__sprite, .about__sprite.is-hop { animation: none; }
-  .about__reopen { transform: none; transition: opacity 200ms linear; }
+  /* The card drift goes — an ambient loop is exactly the motion this
+     page has refused everywhere else, and it is the one thing here that
+     runs without being asked. The pair holds its fanned pose instead;
+     the composition survives, the movement doesn't. (The cards' own
+     stand-down lives beside them, next to .card--front.) */
 
   /* The fan is a large positional move by definition, so the travel
      goes — but the sheets stay, because they are the content of the
@@ -2331,21 +2305,10 @@ html.is-opening body {
 /* Below 1000px the two columns become two rows: files first, then the
    person. Work before bio at every width — the order is the argument. */
 @media (max-width: 1000px) {
-  /* .desk is a fixed-height, overflow:hidden box — a shape that can only
-     express "this content fits" or "this content is cropped", never
-     "this content is taller than the screen". Below 1000px .work is one
-     centred column instead of two side by side, and on a short or narrow
-     phone its stacked content is routinely taller than 100svh. Centred
-     inside a box that clips, the overflow is cut at BOTH ends — which is
-     why row one went negative at the top while the about window ran off
-     the bottom. So down here .work leaves `position: absolute` (which
-     had made it exactly as tall as .desk, no taller) and becomes a normal
-     flow element again: .desk grows to fit it, and it is `.desk`'s own
-     min-height, not a hard cap, that keeps most viewports resolving in
-     one screen without a scroll. */
-  .desk { height: auto; min-height: 100svh; overflow: visible; }
+  /* One column: files on top, the cards and the About panel under them.
+     .desk grows to fit — it is min-height everywhere now, not a
+     clipping box this step has to undo. */
   .work {
-    position: relative; inset: auto;
     grid-template-columns: minmax(0, 1fr);
     /* start, not center — centring a box taller than its container is
        what turns overflow into clipping at both ends instead of one. */
@@ -2357,40 +2320,37 @@ html.is-opening body {
       calc(72px + env(safe-area-inset-top, 0px)) 6vw
       calc(6svh + env(safe-area-inset-bottom, 0px));
   }
-  /* Same cap on both so the files and the window line up as one block.
-     38rem, not 34: Sprat Extended is a wide face and "Project Three"
-     wrapped at 34rem, which put every second label on two lines and the
-     meta rows at different heights again. */
-  .work__grid { row-gap: clamp(1.25rem, 3svh, 2.25rem); max-width: 38rem; }
-  .about { width: 100%; max-width: 38rem; }
-  .backdrop__wash { background: rgba(16,19,14,.76); }
-
-  /* Stacked, the window has width to spare and no height to spare — so
-     it turns on its side: sprite beside the text instead of above it.
-     Same window, laid out the way the space is shaped. */
-  /* Stacked, the window has width to spare and no height to spare — so
-     it turns on its side: sprite beside the tab content instead of
-     above it. Same window, laid out the way the space is shaped. The
-     wider frame earns a bigger sprite — --about-sw is the only value
-     that needs to change; the sheet math derives from it. */
-  .about { --about-sw: 140px; }
-  .about__body {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 16px;
-    align-items: start;
+  /* Two across, not three. Stacked, the grid has the full column and no
+     longer has to share it with a window, so three narrow cells becomes
+     two wide ones — which is what the tablet sketch shows and what the
+     labels want anyway. Same 38rem cap on both so the files and the
+     cards line up as one block. */
+  .work__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: clamp(1.25rem, 3svh, 2.25rem);
+    max-width: 38rem;
   }
-  .about__stage { grid-row: 1 / -1; }
-  .about__panes { grid-column: 2; margin-top: 0; }
-  .about__reopen { grid-column: 1; justify-self: center; }
+  .about { width: 100%; max-width: 38rem; }
+  /* .76 was set to hold an opaque window off a bright halftone. The
+     panel carries its own scrim now and every label carries --halo, so
+     the plate can be a picture again rather than a grey. */
+  .backdrop__wash { background: rgba(16,19,14,.62); }
+
+  /* Stacked, the column is wide and short, so the cards give height
+     back to the panel under them. */
+  /* Stacked, the cards sit directly under the last file's meta line —
+     and the back card's drift lifts it ~7% of its own height ABOVE the
+     box it is laid out in. The margin is that overshoot plus air. */
+  .cards { width: min(13rem, 34vw, 26svh); margin-top: clamp(1.5rem, 5svh, 3rem); }
+  .about__mark { font-size: clamp(3rem, 8vw, 4.25rem); }
 
   /* The desktop icon sizes are driven by vw, which collapses to the
-     clamp floor the moment the row count drops — six across at 1400px
-     and three across at 820px both landed on a 58px icon, and at three
-     across it looked like a bug. Re-floor per breakpoint. */
+     clamp floor the moment the row count drops. Re-floor per breakpoint
+     — and at two across the cells are half a 38rem column, so a 168px
+     ceiling left each frame adrift in twice its own width. */
   .folder__art,
-  .folder__meta { width: clamp(112px, 15vw, 168px); }
-  .folder__sheet { width: clamp(104px, 15vw, 160px); }
+  .folder__meta { width: clamp(150px, 26vw, 250px); }
+  .folder__sheet { width: clamp(140px, 25vw, 240px); }
   .folder__label { font-size: clamp(.75rem, 1.35vw, .9375rem); }
 }
 
@@ -2410,14 +2370,17 @@ html.is-opening body {
       calc(6svh + env(safe-area-inset-bottom, 0px));
     gap: 1.1rem;
   }
-  .work__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.1rem; }
+  .work__grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; max-width: 22rem; }
   .folder__art,
-  .folder__meta { width: clamp(96px, 26vw, 132px); }
-  .folder__sheet { width: clamp(88px, 26vw, 130px); }
+  .folder__meta { width: clamp(170px, 56vw, 260px); }
+  .folder__sheet { width: clamp(160px, 54vw, 250px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
-  .about { --about-sw: 96px; }
-  .about__h { font-size: 1.05rem; }
+  .about { max-width: 22rem; }
+  .cards { width: min(13rem, 52vw); margin-top: clamp(1.75rem, 5svh, 2.75rem); }
+  .about__mark { font-size: clamp(2.75rem, 13vw, 3.5rem); }
+  .about__panel { min-height: 12.5rem; }
+  .about__rows li { grid-template-columns: 4.5rem minmax(0, 1fr); }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which
      is the only thing in the shot with a silhouette. Bias down. */
   .backdrop__dither { object-position: 50% 58%; }
@@ -2429,10 +2392,9 @@ html.is-opening body {
    window's own padding to buy back what it can before falling back to
    the internal scroll. */
 @media (max-width: 560px) and (max-height: 730px) {
-  .about { --about-sw: 76px; }
+  .cards { width: min(10.5rem, 42vw); }
   .folder__art,
-  .folder__meta { width: clamp(84px, 21vw, 108px); }
-  .about__body { padding: 9px; }
+  .folder__meta { width: clamp(150px, 48vw, 210px); }
   .work { gap: .75rem; }
 }
 

@@ -170,17 +170,18 @@ def check_t1(page, vw, vh):
 
     if vw == 1440 and vh == 900:
         tops = sorted(set(round(f.bounding_box()["y"]) for f in folders if f.bounding_box()))
-        # baseline: row1 top=475, row2 top=654 (allow a couple px of AA/measurement
-        # slack). Shifted from 448/640 when the folder icons became Figma
-        # artboards — landscape frame, label above it instead of below.
-        expected_rows = [475, 654]
+        # baseline: row1 top=126, row2 top=305 (allow a couple px of
+        # AA/measurement slack). Shifted from 475/654 when .work went
+        # align-items:end -> start: the files used to rest on the plate's
+        # bottom edge, they open high on it under the chrome now.
+        expected_rows = [126, 305]
         for exp in expected_rows:
             if not any(abs(t - exp) <= 3 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
 
 
 # ---------------------------------------------------------------------------
-# T2 — the about window sits under the nav on short laptops
+# T2 — the About cards: clear the nav, the panel doesn't clip, links switch
 # ---------------------------------------------------------------------------
 
 def rects_intersect(a, b):
@@ -197,45 +198,51 @@ def check_t2(page, vw, vh):
         return
     abox = about.bounding_box()
 
+    # The About column is cards + name + links + panel now; it is allowed
+    # to run taller than the viewport (the desk grows, the page scrolls).
+    # What still has to hold: its top clears the fixed chrome.
     if (vw, vh) in [(1024, 700), (1280, 800)]:
         if abox["y"] < 56:
-            fail(label, f"T2: .about top={abox['y']:.1f} < 56")
-        if abox["y"] + abox["height"] > vh + 1:
-            fail(label, f"T2: .about bottom={abox['y']+abox['height']:.1f} > innerHeight={vh}")
+            fail(label, f"T2: .about top={abox['y']:.1f} < 56 (under the chrome)")
         else:
-            ok(f"T2 {vw}x{vh}: .about fits within the viewport, clears the chrome")
+            ok(f"T2 {vw}x{vh}: .about clears the chrome")
 
-    bar = page.query_selector(".about__bar")
     nav = page.query_selector(".chrome__nav")
-    if bar and nav:
-        bbox_ = bar.bounding_box()
+    mark = page.query_selector(".about__mark")
+    if mark and nav:
+        mbox = mark.bounding_box()
         nbox = nav.bounding_box()
-        if bbox_ and nbox and rects_intersect(bbox_, nbox):
-            fail(label, "T2: .about__bar intersects .chrome__nav")
+        if mbox and nbox and rects_intersect(mbox, nbox):
+            fail(label, "T2: .about__mark intersects .chrome__nav")
 
-    visible_panel = page.query_selector(".about__panel:not([hidden])")
-    if visible_panel:
-        sh, ch, ov = page.evaluate(
-            "(el) => [el.scrollHeight, el.clientHeight, getComputedStyle(el.closest('.about__panes')).overflowY]",
-            visible_panel,
-        )
-        if sh > ch and ov not in ("auto", "scroll"):
-            fail(label, f"T2: visible .about__panel truncated (scrollHeight={sh} > clientHeight={ch}) and panes overflow-y={ov}")
+    # The fixed-height panel must not clip its active pane (the whole
+    # point of stacking the panes was that nothing reflows AND nothing
+    # gets cut). Below 560px it is height:auto, so only check above that.
+    if vw > 560:
+        active = page.query_selector(".about__pane[data-on]")
+        if active:
+            sh, ch = page.evaluate(
+                "(el) => [el.scrollHeight, el.parentElement.clientHeight]", active
+            )
+            if sh > ch + 1:
+                fail(label, f"T2: active .about__pane clipped (scrollHeight={sh} > panel clientHeight={ch})")
 
-    # tab switching
+    # link switching — three now, roving tabindex, data-on moves with aria-selected
     tabs = page.query_selector_all(".about__tab")
-    if len(tabs) != 4:
-        fail(label, f"T2: expected 4 .about__tab, found {len(tabs)}")
+    if len(tabs) != 3:
+        fail(label, f"T2: expected 3 .about__tab, found {len(tabs)}")
     else:
         for i, t in enumerate(tabs):
             t.click()
+            page.wait_for_timeout(50)
             selected = page.query_selector_all('.about__tab[aria-selected="true"]')
             if len(selected) != 1:
-                fail(label, f"T2: after clicking tab {i}, {len(selected)} tabs have aria-selected=true (want 1)")
-            panel_id = t.get_attribute("aria-controls")
-            panel = page.query_selector(f"#{panel_id}")
-            if panel is None or panel.is_hidden():
-                fail(label, f"T2: clicking tab {i} did not reveal panel #{panel_id}")
+                fail(label, f"T2: after clicking link {i}, {len(selected)} have aria-selected=true (want 1)")
+            pane_id = t.get_attribute("aria-controls")
+            on = page.query_selector_all(".about__pane[data-on]")
+            if len(on) != 1 or on[0].get_attribute("id") != pane_id:
+                got = [p.get_attribute("id") for p in on]
+                fail(label, f"T2: clicking link {i} did not move data-on to #{pane_id} (on: {got})")
 
 
 # ---------------------------------------------------------------------------
@@ -487,7 +494,7 @@ def check_t6(page):
 
 
 # ---------------------------------------------------------------------------
-# T7 — "EXPERI-/ENCE"
+# T7 — the About links: one line each, no hyphen, a real 44px tap band
 # ---------------------------------------------------------------------------
 
 def check_t7(page, vw, vh):
@@ -502,9 +509,15 @@ def check_t7(page, vw, vh):
             fail(label, f"T7: tab[{i}] innerText contains a newline: {text!r}")
         if "-" in text:
             fail(label, f"T7: tab[{i}] innerText contains a hyphen: {text!r}")
-        box = t.bounding_box()
-        if box and box["height"] < 44:
-            fail(label, f"T7: tab[{i}] height={box['height']:.1f} < 44")
+        # The link is set small on purpose; its ::before is the tap band.
+        hit_h = page.evaluate(
+            "(e) => { var b = e.getBoundingClientRect(); "
+            "var p = getComputedStyle(e, '::before'); "
+            "return Math.max(b.height, parseFloat(p.minHeight) || 0, parseFloat(p.height) || 0); }",
+            t,
+        )
+        if hit_h < 44:
+            fail(label, f"T7: tab[{i}] tap band height={hit_h:.1f} < 44")
 
     scroll_width = page.evaluate("document.documentElement.scrollWidth")
     if vw == 360 and scroll_width > vw + 1:
@@ -521,11 +534,15 @@ def check_t8(page, vw, vh):
     for i, el in enumerate(elements):
         cls = page.evaluate("(e) => e.className", el) or ""
         classes = str(cls).split()
-        if "skip" in classes or "footer__mail" in classes or "about__ctrl" in classes:
+        if "skip" in classes or "footer__mail" in classes:
+            continue
+        # The About links are set small on purpose and carry a 44px
+        # ::before tap band — measured below, not here.
+        if "about__tab" in classes:
             continue
         # Inline text links in running copy, same category as the
         # footer mail link the spec exempts by name — contact details
-        # in the about window's Contact panel, not a navigation exit.
+        # in the About panel's rows, not a navigation exit.
         in_about_rows = page.evaluate("(e) => !!e.closest('.about__rows')", el)
         if in_about_rows:
             continue
@@ -536,30 +553,18 @@ def check_t8(page, vw, vh):
             tag = page.evaluate("(e) => e.tagName + (e.id ? '#' + e.id : '') + (e.className ? '.' + String(e.className).replace(/ /g,'.') : '')", el)
             fail(label, f"T8: {tag} is {box['width']:.0f}x{box['height']:.0f} (< 44px on an axis)")
 
-    # .about__ctrl's real hit area is the ::after pseudo-element, not the
-    # 13px visible square — measure that instead.
-    ctrls = page.query_selector_all(".about__ctrl")
-    for i, c in enumerate(ctrls):
-        w, h = page.evaluate(
-            "(e) => { var s = getComputedStyle(e, '::after'); return [parseFloat(s.width), parseFloat(s.height)]; }",
-            c,
+    # .about__tab is set small on purpose; its ::before is a 44px band
+    # centred on the text. Measure the band, and its width from the link.
+    tabs = page.query_selector_all(".about__tab")
+    for i, t in enumerate(tabs):
+        w = t.bounding_box()["width"] if t.bounding_box() else 0
+        h = page.evaluate(
+            "(e) => { var b = e.getBoundingClientRect(); var p = getComputedStyle(e, '::before'); "
+            "return Math.max(b.height, parseFloat(p.minHeight) || 0, parseFloat(p.height) || 0); }",
+            t,
         )
         if w < 44 or h < 44:
-            fail(label, f"T8: .about__ctrl[{i}]::after hit area is {w:.0f}x{h:.0f} (< 44px)")
-
-    # centres of the (visible) controls still have to be >=44px apart,
-    # or two of the 44px hit areas overlap each other.
-    boxes = [c.bounding_box() for c in ctrls]
-    boxes = [b for b in boxes if b]
-    for i in range(len(boxes)):
-        for j in range(i + 1, len(boxes)):
-            a, b = boxes[i], boxes[j]
-            ac = (a["x"] + a["width"] / 2, a["y"] + a["height"] / 2)
-            bc = (b["x"] + b["width"] / 2, b["y"] + b["height"] / 2)
-            dx = abs(ac[0] - bc[0])
-            dy = abs(ac[1] - bc[1])
-            if dx < 44 and dy < 44:
-                fail(label, f"T8: .about__ctrl hit areas {i} and {j} overlap (centre distance {dx:.1f}x{dy:.1f})")
+            fail(label, f"T8: .about__tab[{i}] tap band is {w:.0f}x{h:.0f} (< 44px on an axis)")
 
 
 # ---------------------------------------------------------------------------

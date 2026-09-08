@@ -1053,75 +1053,35 @@
   }
 
   /* ---------------------------------------------------------
-     The About window's tabs
+     The About links
 
-     Eighteen poses in one 6x3, 256x320-cell sheet (media/sprites/README.md
-     has the frame table). Four tabs, each pinned to a resting pose it
-     snaps to on selection and a second pose it drifts to after a few
-     seconds — enough life to say the window is alive without that life
-     ever being the answer to the question the tab is asking.
+     Three links, one panel. The panes are stacked in a single grid cell
+     (see .about__panel in main.css), so selecting one is an opacity swap
+     and the box never changes height — which is why this is a dozen
+     lines where the window's four-tab version was sixty. No sprite, no
+     pose table, no close/reopen: the cards carry that job now, and they
+     carry it in CSS.
 
-     A real ARIA tablist: arrow keys, Home/End, roving tabindex, one
-     panel visible at a time — see the markup in index.html. Close hides
-     the window and shows a reopen chip in its place (`.about__reopen`);
-     reopen restores whichever tab was open, not tab zero, because
-     reopening isn't restarting.
+     Still a real ARIA tablist — arrow keys, Home/End, roving tabindex.
+     `hidden` is deliberately NOT used on the panes: hiding them would
+     take them out of flow and the panel would collapse to the height of
+     whichever one was showing, which is the exact thing this replaces.
      --------------------------------------------------------- */
-  var FRAMES = [
-    'idle', 'walk-1', 'back', 'walk-2', 'walk-3', 'desk',
-    'mug', 'think', 'laptop-floor', 'walk-phone', 'backpack', 'headphones',
-    'clipboard', 'cheer', 'sit-ground', 'crouch', 'stance', 'cast'
-  ];
-  /* One pose per tab that shows what the panel is about, then a slower
-     second pose. */
-  var ABOUT_TABS = [
-    { poses: ['idle', 'headphones'] },        /* about me   */
-    { poses: ['desk', 'mug'] },               /* experience */
-    { poses: ['clipboard', 'laptop-floor'] }, /* studies    */
-    { poses: ['cheer', 'walk-phone'] }        /* contact    */
-  ];
-  var DRIFT_MS = 5200;
+  var about     = document.getElementById('about');
+  var aboutTabs = about ? Array.prototype.slice.call(about.querySelectorAll('.about__tab')) : [];
+  var aboutPanes = aboutTabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
 
-  var about       = document.getElementById('about');
-  var aboutSprite = document.getElementById('about-sprite');
-  var aboutCap    = document.getElementById('about-caption');
-  var aboutReopen = document.getElementById('about-reopen');
-  var aboutTabs   = about ? Array.prototype.slice.call(about.querySelectorAll('.about__tab')) : [];
-  var aboutPanels = aboutTabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
-  var aboutActive = 0, aboutSub = 0, aboutDrift = null, aboutLastTab = 0;
-
-  function aboutPose(pose, hop) {
-    var i = FRAMES.indexOf(pose); if (i < 0) i = 0;
-    if (aboutSprite) {
-      aboutSprite.style.setProperty('--about-col', i % 6);
-      aboutSprite.style.setProperty('--about-row', Math.floor(i / 6));
-      if (hop && !reduced) {
-        aboutSprite.classList.remove('is-hop');
-        void aboutSprite.offsetWidth;
-        aboutSprite.classList.add('is-hop');
-      }
-    }
-    if (aboutCap) aboutCap.textContent = pose.replace(/-/g, ' ');
-  }
-  function aboutDriftStart() {
-    clearInterval(aboutDrift);
-    if (reduced) return;   /* the drift is ambient motion; reduced motion holds the resting pose */
-    aboutDrift = setInterval(function () {
-      aboutSub = (aboutSub + 1) % ABOUT_TABS[aboutActive].poses.length;
-      aboutPose(ABOUT_TABS[aboutActive].poses[aboutSub], false);
-    }, DRIFT_MS);
-  }
   function aboutSelect(n, focus) {
-    aboutActive = n; aboutSub = 0; aboutLastTab = n;
     aboutTabs.forEach(function (t, i) {
-      t.setAttribute('aria-selected', i === n ? 'true' : 'false');
+      t.setAttribute('aria-selected', String(i === n));
       t.tabIndex = i === n ? 0 : -1;
+      if (!aboutPanes[i]) return;
+      if (i === n) aboutPanes[i].setAttribute('data-on', '');
+      else         aboutPanes[i].removeAttribute('data-on');
     });
-    aboutPanels.forEach(function (p, i) { if (p) p.hidden = i !== n; });
-    aboutPose(ABOUT_TABS[n].poses[0], true);
-    aboutDriftStart();
-    if (focus) aboutTabs[n].focus();
+    if (focus && aboutTabs[n]) aboutTabs[n].focus();
   }
+
   aboutTabs.forEach(function (t, i) {
     t.addEventListener('click', function () { aboutSelect(i); });
     t.addEventListener('keydown', function (e) {
@@ -1133,31 +1093,14 @@
       if (n !== null) { e.preventDefault(); aboutSelect(n, true); }
     });
   });
-  if (about && aboutTabs.length) aboutSelect(0);
 
-  /* Close/reopen, not close/gone — matching every other control on this
-     page. Close stops the drift, hides the window and brings in a small
-     reopen chip in the same desktop cell; reopen restores the tab that
-     was open when it closed. */
-  if (about) {
-    Array.prototype.slice.call(about.querySelectorAll('[data-about-close]')).forEach(function (b) {
-      b.addEventListener('click', function () {
-        clearInterval(aboutDrift);
-        about.hidden = true;
-        if (aboutReopen) {
-          aboutReopen.hidden = false;
-          requestAnimationFrame(function () { aboutReopen.classList.add('is-in'); });
-        }
-      });
-    });
-  }
-  if (aboutReopen) {
-    aboutReopen.addEventListener('click', function () {
-      aboutReopen.classList.remove('is-in');
-      setTimeout(function () { aboutReopen.hidden = true; }, 220);
-      about.hidden = false;
-      aboutSelect(aboutLastTab, true);
-    });
+  /* Whichever one the markup ships selected — "just me", not link zero.
+     The page's first frame should be the person, not their transcript. */
+  if (aboutTabs.length) {
+    var start = aboutTabs.findIndex
+      ? aboutTabs.findIndex(function (t) { return t.getAttribute('aria-selected') === 'true'; })
+      : 0;
+    aboutSelect(start < 0 ? 0 : start);
   }
 
   /* Fonts settle after layout. Nothing about the opening depends on
