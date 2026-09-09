@@ -146,13 +146,17 @@ def check_t1(page, vw, vh):
         if top < 56:
             fail(label, f"T1: .folder[{i}] top={top:.1f} < 56 (under the chrome)")
 
+    # .about is its own full-height section below .desk now, not a column
+    # inside it — so it is expected to run past the desk. Just confirm it
+    # exists and sits below the files rather than overlapping them.
     about = page.query_selector(".about")
-    if about:
-        abox = about.bounding_box()
-        if abox and abox["y"] + abox["height"] > max_bottom + 1:
-            fail(label, f"T1: .about bottom={abox['y']+abox['height']:.1f} exceeds desk section bottom={max_bottom:.1f}")
-    else:
+    if not about:
         fail(label, "T1: .about not found")
+    else:
+        abox = about.bounding_box()
+        if abox and abox["y"] < max(f.bounding_box()["y"] + f.bounding_box()["height"]
+                                     for f in folders if f.bounding_box()) - 1:
+            fail(label, f"T1: .about top={abox['y']:.1f} starts above the last folder's bottom")
 
     names = page.eval_on_selector_all(
         ".folder__label", "els => els.map(e => e.textContent.trim())"
@@ -170,10 +174,10 @@ def check_t1(page, vw, vh):
 
     if vw == 1440 and vh == 900:
         tops = sorted(set(round(f.bounding_box()["y"]) for f in folders if f.bounding_box()))
-        # baseline: three row tops now (126/305 -> 144/396/648) — the
-        # folder grid went three-across to two, so five cards are 2+2+1
-        # rather than 3+2. Allow a couple px of AA/measurement slack.
-        expected_rows = [144, 396, 648]
+        # baseline: back to two row tops (144/396/648 -> 144/395) — with
+        # About on its own screen the folder grid is three-across again,
+        # so five cards are 3+2. Allow a couple px of AA slack.
+        expected_rows = [144, 395]
         for exp in expected_rows:
             if not any(abs(t - exp) <= 3 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
@@ -195,17 +199,17 @@ def check_t2(page, vw, vh):
     if not about:
         fail(label, "T2: .about not found")
         return
-    abox = about.bounding_box()
 
-    # The About column is cards + name + links + panel now; it is allowed
-    # to run taller than the viewport (the desk grows, the page scrolls).
-    # What still has to hold: its top clears the fixed chrome.
-    if (vw, vh) in [(1024, 700), (1280, 800)]:
-        if abox["y"] < 56:
-            fail(label, f"T2: .about top={abox['y']:.1f} < 56 (under the chrome)")
-        else:
-            ok(f"T2 {vw}x{vh}: .about clears the chrome")
+    # About is its own section below the desk now — scroll it into view so
+    # its [data-about] reveal fires and everything below is measurable.
+    page.evaluate("document.getElementById('about').scrollIntoView({block: 'start'})")
+    page.wait_for_timeout(500)
+    if not page.evaluate("document.querySelector('.site').hasAttribute('data-about')"):
+        fail(label, "T2: [data-about] not set after scrolling #about into view")
 
+    # The section's own content has to clear the fixed chrome — check the
+    # thing that would collide, the name, not the section box (which sits
+    # at scroll-top by design and has its padding do the clearing).
     nav = page.query_selector(".chrome__nav")
     mark = page.query_selector(".about__mark")
     if mark and nav:
@@ -213,6 +217,8 @@ def check_t2(page, vw, vh):
         nbox = nav.bounding_box()
         if mbox and nbox and rects_intersect(mbox, nbox):
             fail(label, "T2: .about__mark intersects .chrome__nav")
+        elif (vw, vh) in [(1024, 700), (1280, 800)]:
+            ok(f"T2 {vw}x{vh}: About name clears the chrome")
 
     # The fixed-height panel must not clip its active pane (the whole
     # point of stacking the panes was that nothing reflows AND nothing
@@ -535,9 +541,9 @@ def check_t8(page, vw, vh):
         classes = str(cls).split()
         if "skip" in classes or "footer__mail" in classes:
             continue
-        # The About links are set small on purpose and carry a 44px
-        # ::before tap band — measured below, not here.
-        if "about__tab" in classes:
+        # Set small on purpose, each carries a 44px ::before tap band —
+        # measured below, not here.
+        if "about__tab" in classes or "footer__replay" in classes:
             continue
         # Inline text links in running copy, same category as the
         # footer mail link the spec exempts by name — contact details
@@ -564,6 +570,17 @@ def check_t8(page, vw, vh):
         )
         if w < 44 or h < 44:
             fail(label, f"T8: .about__tab[{i}] tap band is {w:.0f}x{h:.0f} (< 44px on an axis)")
+
+    replay = page.query_selector(".footer__replay")
+    if replay:
+        w = replay.bounding_box()["width"] if replay.bounding_box() else 0
+        h = page.evaluate(
+            "(e) => { var b = e.getBoundingClientRect(); var p = getComputedStyle(e, '::before'); "
+            "return Math.max(b.height, parseFloat(p.minHeight) || 0, parseFloat(p.height) || 0); }",
+            replay,
+        )
+        if w < 44 or h < 44:
+            fail(label, f"T8: .footer__replay tap band is {w:.0f}x{h:.0f} (< 44px on an axis)")
 
 
 # ---------------------------------------------------------------------------

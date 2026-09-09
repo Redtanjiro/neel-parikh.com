@@ -1319,16 +1319,13 @@ html.is-opening body {
   position: relative;
   z-index: 3;                 /* above the media stack and the phrases */
   display: grid;
-  /* The second track is sized, not auto. `auto` let the about column be
-     whatever its widest child wanted, which with a fixed-height panel
-     under a fluid card meant the two disagreed about the column.
-     34vw is measured off Neel's sketch: the panel there is 34.4% of the
-     frame. */
-  grid-template-columns: minmax(0, 1fr) clamp(20rem, 34vw, 31rem);
+  /* One column. The About cards were the second track; they are their
+     own section below this one now, so the files have the whole plate
+     and this is a container rather than a layout. */
+  grid-template-columns: minmax(0, 1fr);
   /* start, not end. The files used to rest on the plate's bottom edge;
      they open high on it now, under the chrome. */
   align-items: start;
-  gap: clamp(1.5rem, 4vw, 4.5rem);
   /* Top padding clears the fixed chrome. .work is bottom-aligned
      (align-items: end), so on a tall frame this costs nothing — but on
      a short laptop the window's top edge travels up with the frame
@@ -1342,21 +1339,23 @@ html.is-opening body {
 }
 .site[data-desk] .work { pointer-events: auto; }
 
-/* TWO across, three rows — measured off Neel's sketch, where the frames
-   are 17.8% of the frame's width and the two of them fill barely a third
-   of it. Three across cannot reach that size and share the plate with a
-   34% panel; the arithmetic simply doesn't close. Two can, and two is
-   what the sketch draws at every width.
+/* THREE across, two rows. Two was forced while the files shared the
+   plate with a 34% panel — three at the sketch's frame size and a panel
+   beside them simply doesn't close. With About on its own screen the
+   arithmetic opens up, so the row count goes back to three and the
+   FRAME SIZE stays exactly where the sketch put it: 17.8% of the
+   viewport, held by a vw-based cap rather than a rem one so it survives
+   the jump from a 1280 laptop to a 1440 desktop.
 
-   The cap is what sets the frame size: the cells divide it, and the
-   frame fills its cell. The leftover between the second column and the
-   cards is empty desk, which is what a desktop mostly is. */
+   The cap is what sets the frame size: the cells divide it, the frame
+   fills its cell, and the leftover on the right is empty desk — which
+   is what a desktop mostly is. */
 .work__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1rem, 2.5vh, 2.25rem) clamp(.6rem, 1.6vw, 2rem);
   width: 100%;
-  max-width: min(34rem, 37vw);
+  max-width: min(52rem, 57vw);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1662,26 +1661,49 @@ html.is-opening body {
    pair (7.84% of width / 5.73% of height) so it stays circular on a
    card that is taller than it is wide, at every size the clamp gives. */
 .about {
-  display: flex;
-  flex-direction: column;
+  /* Its own screen now, below the files rather than beside them — the
+     files are the argument and this is the person who made it, and Neel
+     wanted the two read one after the other rather than at once.
+
+     A spread, not a stack: cards on the left, the name and its three
+     links and the panel on the right. `auto` for the first track so the
+     cards keep the width their own clamp gives them and the text takes
+     what is left. */
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: clamp(.7rem, 1.6svh, 1.1rem);
-  /* The sketch drops the cards ~4.5% of the frame below the first row of
-     files, rather than starting both on the same line. */
-  padding-top: clamp(0px, 4.5svh, 46px);
+  gap: clamp(1.75rem, 5vw, 4.5rem);
+  min-height: 100svh;
+  padding: clamp(4rem, 10svh, 8rem) 6vw clamp(4rem, 10svh, 8rem);
   --card-r: 7.84% / 5.73%;
 
-  /* Same reveal as the window it replaces, and for the same reason:
-     .work is painted over the hero from the first frame, so without
-     this the cards sit on the black opening for the whole story.
-     300ms behind the folders — see .folder. */
+  /* Arrives on its own switch, [data-about], not the desk's. It used to
+     be a column inside .work and inherited the folders' cue along with
+     their 300ms offset; it is a section of its own now, reached by
+     scrolling, and a delay measured against a stagger happening a
+     screen above is just lag. So the offset goes and the section
+     simply arrives when it is looked at. */
   opacity: 0;
   transform: translateY(12px);
   transition:
-    opacity 240ms var(--ease-ui) 300ms,
-    transform 380ms var(--ease-pop) 300ms;
+    opacity 240ms var(--ease-ui),
+    transform 420ms var(--ease-pop);
 }
-.site[data-desk] .about { opacity: 1; transform: none; }
+.site[data-about] .about { opacity: 1; transform: none; }
+
+/* The right half. Left-aligned, because it now has a left edge to align
+   to — the cards — where the stacked version was centred on nothing. */
+.about__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(.7rem, 1.6svh, 1.1rem);
+  /* Capped at the sketch's panel width. Left to fill a 1440px track the
+     three rows would run to 700px and the lede would stop being a lede. */
+  max-width: 34rem;
+}
 
 /* ---------- the pair ----------
    Sized off the SHORTER of width and height: the column has to hold the
@@ -1689,7 +1711,7 @@ html.is-opening body {
    laptop, and a card sized on vw alone blows that budget at 800px tall. */
 .cards {
   position: relative;
-  width: min(12.5rem, 14vw, 28svh);
+  width: min(15rem, 17vw, 34svh);
   aspect-ratio: 306 / 419;
   flex: none;
   margin-bottom: clamp(.2rem, 2svh, 1.4rem);
@@ -1773,7 +1795,6 @@ html.is-opening body {
 .about__nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: baseline;
   gap: clamp(.9rem, 2.4vw, 2.1rem);
 }
@@ -1930,6 +1951,15 @@ html.is-opening body {
   line-height: 1.1;
   max-width: 16ch;
 }
+/* The address and the replay stacked as one right-hand block, so the
+   footer stays the two-part composition it was rather than becoming a
+   three-way space-between with the email adrift in the middle. */
+.footer__ends {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .55rem;
+}
 .footer__mail {
   font-family: var(--font-display);
   font-size: var(--type-label);
@@ -1942,6 +1972,43 @@ html.is-opening body {
 @media (hover: hover) and (pointer: fine) {
   .footer__mail:hover { border-color: var(--ink); }
 }
+
+/* Deliberately the quietest thing on the page. Nobody arrives wanting
+   to watch an intro twice; this is for the one reader who did, and for
+   showing the thing to someone across a table. Monospace and no
+   underline so it reads as a control rather than a second address. */
+.footer__replay {
+  position: relative;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .6875rem;
+  letter-spacing: .08em;
+  /* NOT --ink-faint. At .32 over --deep this composites to ~#676760 and
+     lands on 2.8:1 — fine for the decorative labels that token was made
+     for, not fine for a control. .52 is the floor that clears 4.5:1 on
+     this ground, measured rather than eyeballed. Quiet is the intent;
+     unreadable is not. */
+  color: rgba(251, 247, 240, .52);
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  cursor: pointer;
+  transition: color 180ms var(--ease-ui);
+}
+/* Quiet to look at, still a real tap target: a 44px band under the
+   text, biased downward into the footer's own padding so it does not
+   reach up into the email address above it. Same device as .about__tab. */
+.footer__replay::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: -6px;
+  min-height: 44px;
+  height: calc(100% + 12px);
+}
+@media (hover: hover) and (pointer: fine) {
+  .footer__replay:hover { color: var(--ink-dim); }
+}
+.footer__replay:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 3px; }
 
 /* =========================================================
    THE TITLE CARD — the top of the site, read in two lines on scroll
@@ -2322,11 +2389,7 @@ html.is-opening body {
 /* Below 1000px the two columns become two rows: files first, then the
    person. Work before bio at every width — the order is the argument. */
 @media (max-width: 1000px) {
-  /* One column: files on top, the cards and the About panel under them.
-     .desk grows to fit — it is min-height everywhere now, not a
-     clipping box this step has to undo. */
   .work {
-    grid-template-columns: minmax(0, 1fr);
     /* start, not center — centring a box taller than its container is
        what turns overflow into clipping at both ends instead of one. */
     align-content: start;
@@ -2337,11 +2400,29 @@ html.is-opening body {
       calc(72px + env(safe-area-inset-top, 0px)) 6vw
       calc(6svh + env(safe-area-inset-bottom, 0px));
   }
-  /* Two across is the base now; stacked, the grid has the whole column
-     rather than sharing it, so the cap opens up. Same 38rem on the cards
-     below so the files and the About block read as one column. */
-  .work__grid { row-gap: clamp(1.25rem, 3svh, 2.25rem); max-width: 38rem; }
-  .about { width: 100%; max-width: 38rem; }
+  /* Two across. Three cells on a tablet gives each frame under 200px and
+     the labels start wrapping; two is what the tablet sketch draws. */
+  .work__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: clamp(1.25rem, 3svh, 2.25rem);
+    /* vw, not rem. 38rem alone let each of two cells run to 36% of an
+       834px screen; the tablet sketch draws them at 27%, which is two
+       cells and a gap inside 55.6vw. */
+    max-width: min(38rem, 55.6vw);
+  }
+  /* The spread folds. There is no width to put the text beside the cards
+     at this size, so it goes back under them and both centre — which is
+     the arrangement the tablet sketch shows. */
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-content: center;
+    gap: clamp(1.25rem, 3svh, 2rem);
+    min-height: 0;
+    padding-top: clamp(2rem, 6svh, 4rem);
+  }
+  .about__side { align-items: center; width: 100%; max-width: 38rem; }
+  .about__nav { justify-content: center; }
   /* .76 was set to hold an opaque window off a bright halftone. The
      panel carries its own scrim now and every label carries --halo, so
      the plate can be a picture again rather than a grey. */
@@ -2349,10 +2430,7 @@ html.is-opening body {
 
   /* Stacked, the column is wide and short, so the cards give height
      back to the panel under them. */
-  /* Stacked, the cards sit directly under the last file's meta line —
-     and the back card's drift lifts it ~7% of its own height ABOVE the
-     box it is laid out in. The margin is that overshoot plus air. */
-  .cards { width: min(13rem, 34vw, 26svh); margin-top: clamp(1.5rem, 5svh, 3rem); }
+  .cards { width: min(13rem, 34vw, 26svh); }
   .about__mark { font-size: clamp(3rem, 8vw, 4.25rem); }
 
   /* Still the cell. Only the fan needs a hand-set width down here. */
@@ -2376,12 +2454,15 @@ html.is-opening body {
       calc(6svh + env(safe-area-inset-bottom, 0px));
     gap: 1.1rem;
   }
-  .work__grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; max-width: 22rem; }
+  /* One across, and the frame is 66% of the screen rather than 90% —
+     the phone sketch leaves real margin either side of it. */
+  .work__grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; max-width: min(22rem, 66vw); }
+  .about { padding-left: 8vw; padding-right: 8vw; }
   .folder__sheet { width: clamp(160px, 50vw, 250px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
-  .about { max-width: 22rem; }
-  .cards { width: min(13rem, 52vw); margin-top: clamp(1.75rem, 5svh, 2.75rem); }
+  .about__side { max-width: 22rem; }
+  .cards { width: min(13rem, 52vw); }
   .about__mark { font-size: clamp(2.75rem, 13vw, 3.5rem); }
   .about__panel { min-height: 12.5rem; }
   .about__rows li { grid-template-columns: 4.5rem minmax(0, 1fr); }

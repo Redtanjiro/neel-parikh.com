@@ -89,6 +89,7 @@
   <span class="chrome__mark" id="chrome-mark">Neel Parikh</span>
   <nav class="chrome__nav">
     <a href="#work">Work</a>
+    <a href="#about">About</a>
     <a href="mailto:neelparikh7@gmail.com">Contact</a>
   </nav>
 </header>
@@ -484,84 +485,94 @@
 
       </ul>
 
-      <!-- ============ THE ABOUT CARDS ============
-           The other half of the desktop. Files on the left, the person who
-           made them on the right — the argument the whole page is making,
-           landed in one frame rather than two.
-
-           Two hand-drawn cards, not a window. Both are glass: the flat
-           lavender plate is keyed out of each export, so the card's header
-           band and its footer strip are the pane itself and the pixel
-           panel is the one opaque thing sitting on it. The slab under the
-           art (.card__glass) is what does the blurring; the art is only
-           what is printed on it.
-
-           Three links, not four tabs. The window's four sections carried a
-           timeline each and the panel grew and shrank as you moved between
-           them; these three carry a line and three rows each, and the box
-           they sit in is a fixed height with all three stacked in the same
-           grid cell — so switching swaps opacity and NOTHING below it
-           moves. Contact folded into "just me" and into the footer. -->
-      <section class="about" id="about" aria-labelledby="about-mark">
-        <div class="cards" aria-hidden="false">
-          <div class="card card--back" aria-hidden="true">
-            <span class="card__glass"></span>
-            <img class="card__art" src="media/card-back.png" alt=""
-                 width="299" height="413" loading="lazy" decoding="async">
-          </div>
-          <div class="card card--front">
-            <span class="card__glass" aria-hidden="true"></span>
-            <img class="card__art" src="media/card-front.png"
-                 alt="A hand-drawn pixel card: Neel at a desk. It reads Designer, Worker Bee, lvl. max?"
-                 width="306" height="419" loading="lazy" decoding="async">
-          </div>
-        </div>
-
-        <h2 class="about__mark" id="about-mark">About</h2>
-
-        <div class="about__nav" role="tablist" aria-label="About sections">
-          <button class="about__tab" type="button" role="tab" id="about-t0"
-                  aria-controls="about-p0" aria-selected="false" tabindex="-1">education</button>
-          <button class="about__tab" type="button" role="tab" id="about-t1"
-                  aria-controls="about-p1" aria-selected="false" tabindex="-1">resume</button>
-          <button class="about__tab" type="button" role="tab" id="about-t2"
-                  aria-controls="about-p2" aria-selected="true">just me</button>
-        </div>
-
-        <div class="about__panel">
-          <div class="about__pane" role="tabpanel" id="about-p0" aria-labelledby="about-t0" tabindex="0">
-            <p class="about__lede">Two degrees, both in design, both spent building the thing rather than writing about it.</p>
-            <ul class="about__rows">
-              <li><b>2025&ndash;27</b><span>M.Des Interaction &amp; Immersive, UNSW Sydney &middot; Dean&rsquo;s List</span></li>
-              <li><b>2019&ndash;23</b><span>B.Des, Anant National University &middot; founded three student bodies</span></li>
-            </ul>
-          </div>
-          <div class="about__pane" role="tabpanel" id="about-p1" aria-labelledby="about-t1" tabindex="0">
-            <p class="about__lede">Four years of it, mostly as the person who both decided the thing and built it.</p>
-            <ul class="about__rows">
-              <li><b>Now</b><span>Marketing &amp; Engagement Ambassador, UNSW Founders</span></li>
-              <li><b>2023&ndash;25</b><span>Design Lead, Media Mushroom &middot; 5 designers, 50+ vendors</span></li>
-              <li><b>2020&ndash;22</b><span>Visual &amp; UX Designer, Idealoft &middot; ICICI, Yes Bank</span></li>
-            </ul>
-          </div>
-          <div class="about__pane" role="tabpanel" id="about-p2" aria-labelledby="about-t2" tabindex="0" data-on>
-            <p class="about__lede">Designer. I make things that explain themselves &mdash; mostly interfaces, occasionally a maze.</p>
-            <ul class="about__rows">
-              <li><b>Based</b><span>Sydney, NSW &middot; UTC+10</span></li>
-              <li><b>Draws</b><span>Every sprite on this page, by hand, one pixel at a time</span></li>
-              <li><b>Reach me</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
-            </ul>
-          </div>
-        </div>
-      </section>
     </main>
 
   </section>
-  <!-- Below the plate. The files live on the plate above, so there is
-       no third screen to build. -->
+
+  <!-- ============ THE ABOUT CARDS ============
+       The other half of the desktop. Files on the left, the person who
+       made them on the right — the argument the whole page is making,
+       landed in one frame rather than two.
+
+       Two hand-drawn cards, not a window. Both are glass: the flat
+       lavender plate is keyed out of each export, so the card's header
+       band and its footer strip are the pane itself and the pixel
+       panel is the one opaque thing sitting on it. The slab under the
+       art (.card__glass) is what does the blurring; the art is only
+       what is printed on it.
+
+       Three links, not four tabs. The window's four sections carried a
+       timeline each and the panel grew and shrank as you moved between
+       them; these three carry a line and three rows each, and the box
+       they sit in is a fixed height with all three stacked in the same
+       grid cell — so switching swaps opacity and NOTHING below it
+       moves. Contact folded into "just me" and into the footer. -->
+  <section class="about" id="about" aria-labelledby="about-mark">
+    <div class="cards" aria-hidden="false">
+      <div class="card card--back" aria-hidden="true">
+        <span class="card__glass"></span>
+        <img class="card__art" src="media/card-back.png" alt=""
+             width="299" height="413" loading="lazy" decoding="async">
+      </div>
+      <div class="card card--front">
+        <span class="card__glass" aria-hidden="true"></span>
+        <img class="card__art" src="media/card-front.png"
+             alt="A hand-drawn pixel card: Neel at a desk. It reads Designer, Worker Bee, lvl. max?"
+             width="306" height="419" loading="lazy" decoding="async">
+      </div>
+    </div>
+
+    <div class="about__side">
+      <h2 class="about__mark" id="about-mark">About</h2>
+
+      <div class="about__nav" role="tablist" aria-label="About sections">
+        <button class="about__tab" type="button" role="tab" id="about-t0"
+                aria-controls="about-p0" aria-selected="false" tabindex="-1">education</button>
+        <button class="about__tab" type="button" role="tab" id="about-t1"
+                aria-controls="about-p1" aria-selected="false" tabindex="-1">resume</button>
+        <button class="about__tab" type="button" role="tab" id="about-t2"
+                aria-controls="about-p2" aria-selected="true">just me</button>
+      </div>
+
+      <div class="about__panel">
+        <div class="about__pane" role="tabpanel" id="about-p0" aria-labelledby="about-t0" tabindex="0">
+          <p class="about__lede">Two degrees, both in design, both spent building the thing rather than writing about it.</p>
+          <ul class="about__rows">
+            <li><b>2025&ndash;27</b><span>M.Des Interaction &amp; Immersive, UNSW Sydney &middot; Dean&rsquo;s List</span></li>
+            <li><b>2019&ndash;23</b><span>B.Des, Anant National University &middot; founded three student bodies</span></li>
+          </ul>
+        </div>
+        <div class="about__pane" role="tabpanel" id="about-p1" aria-labelledby="about-t1" tabindex="0">
+          <p class="about__lede">Four years of it, mostly as the person who both decided the thing and built it.</p>
+          <ul class="about__rows">
+            <li><b>Now</b><span>Marketing &amp; Engagement Ambassador, UNSW Founders</span></li>
+            <li><b>2023&ndash;25</b><span>Design Lead, Media Mushroom &middot; 5 designers, 50+ vendors</span></li>
+            <li><b>2020&ndash;22</b><span>Visual &amp; UX Designer, Idealoft &middot; ICICI, Yes Bank</span></li>
+          </ul>
+        </div>
+        <div class="about__pane" role="tabpanel" id="about-p2" aria-labelledby="about-t2" tabindex="0" data-on>
+          <p class="about__lede">Designer. I make things that explain themselves &mdash; mostly interfaces, occasionally a maze.</p>
+          <ul class="about__rows">
+            <li><b>Based</b><span>Sydney, NSW &middot; UTC+10</span></li>
+            <li><b>Draws</b><span>Every sprite on this page, by hand, one pixel at a time</span></li>
+            <li><b>Reach me</b><span><a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Below the plate. -->
   <footer class="footer">
     <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
-    <a class="footer__mail" href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+    <!-- The opening plays once per visit (sessionStorage — see hero.js).
+         This is the way back into it, and the only reason it is a button
+         rather than a link: there is no other page to go to, only this
+         one without the flag. -->
+    <div class="footer__ends">
+      <a class="footer__mail" href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
+      <button type="button" class="footer__replay" id="replay-opening">Replay the opening</button>
+    </div>
   </footer>
 </div><!-- /.site -->
 

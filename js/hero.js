@@ -117,15 +117,47 @@
     EASE_OUT = 'npOut';
   }
 
+  /* ---------------------------------------------------------
+     SEEN ALREADY — the opening plays once per visit
+
+     Coming home from a case study is a RETURN, not an arrival, and a
+     fourteen-second story told to someone who watched it four minutes
+     ago is a toll rather than a welcome. Worse, the door is a question:
+     even the skip button has to be found and pressed, every time.
+
+     sessionStorage, so the memory lasts exactly as long as the tab
+     does. Every bounce between the work and the desk skips the door;
+     a cold link tomorrow, or a stranger opening it for the first time,
+     still gets the whole thing. The story stays the front door and
+     stops being a turnstile. The footer's replay link is the way back
+     in on purpose.
+
+     Wrapped, because sessionStorage THROWS in a few contexts (site data
+     blocked, some embeds) rather than returning null. A storage that
+     throws reads as "not seen" and the story plays — the safe failure,
+     since the cost is a story shown twice rather than never. */
+  var SEEN_KEY = 'np:opening-seen';
+  function seenGet() {
+    try { return sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) { return false; }
+  }
+  function seenSet() {
+    try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+  }
+  var skipOpening = seenGet();
+
   /* The site is behind the lid and must not be reachable through it —
      not by Tab, not by a screen reader's virtual cursor, not by a
      scroll. Set here rather than in the markup so that a browser
-     without JS never sees it and gets the whole page. */
-  if (site) {
+     without JS never sees it and gets the whole page.
+
+     Both of these are the LID's doing, so both are skipped when there
+     is no lid: locking a page nobody is being shown a story on is how
+     you ship a site that cannot be scrolled. */
+  if (site && !skipOpening) {
     site.setAttribute('aria-hidden', 'true');
     site.setAttribute('inert', '');
   }
-  root.classList.add('is-opening');
+  if (!skipOpening) root.classList.add('is-opening');
 
   /* A reload must start at the door, not wherever the reader left the
      page. Without this the browser restores the old scroll position,
@@ -702,6 +734,7 @@
   function handoff() {
     if (handedOff) return;
     handedOff = true;
+    seenSet();
     stopClock();
 
     railShow(false);
@@ -752,7 +785,7 @@
        Instant, and after the unlock so the layout is the unlocked one.
        A smooth scroll would animate the reader away from the frame they
        were just delivered to. */
-    window.scrollTo(0, 0);
+    landing();
 
     showChrome();
     watchTitle();
@@ -804,15 +837,30 @@
      the instant a single pixel of the section crosses the fold, which
      is a good half second before there is anything to look at. */
   function watchDesk() {
-    var deskEl = document.getElementById('desk');
-    if (!site || !deskEl) return;
-    if (!('IntersectionObserver' in window)) { site.setAttribute('data-desk', ''); return; }
+    reveal(document.getElementById('desk'), 'data-desk');
+    reveal(document.getElementById('about'), 'data-about');
+  }
+
+  /* One-shot: set the attribute the first time the section is a quarter
+     on screen, then stop watching.
+
+     About needs its OWN watcher rather than riding on the desk's. It
+     used to be a column inside .work, so `[data-desk]` was the only
+     switch either of them needed; it is a section below the desk now,
+     and a reader who lands straight on #about — from the nav, or from a
+     /#about link on a return visit — leaves the desk entirely off
+     screen above them. The desk's observer would never fire and the
+     cards would sit at opacity 0 on a screen the reader is looking
+     directly at. */
+  function reveal(el, attr) {
+    if (!site || !el) return;
+    if (!('IntersectionObserver' in window)) { site.setAttribute(attr, ''); return; }
     var io = new IntersectionObserver(function (entries) {
       if (!entries[0].isIntersecting) return;
-      site.setAttribute('data-desk', '');
+      site.setAttribute(attr, '');
       io.disconnect();
     }, { threshold: 0.25 });
-    io.observe(deskEl);
+    io.observe(el);
   }
 
   /* ---------------------------------------------------------
@@ -869,6 +917,28 @@
     tl.to(stage,   { opacity: 0,               duration: 0.28 }, '<');
 
     ScrollTrigger.refresh();
+  }
+
+  /* Where the reader is put down.
+
+     After the story: the top, always — the intro is the path and the
+     reasoning is in handoff().
+
+     On a SKIP: whatever the URL asked for. `/#work` is what a case
+     study's "See the rest of the work" sends, and scrollRestoration is
+     manual, so if this doesn't honour the fragment nothing does — the
+     link has been quietly landing people at the top of the page for as
+     long as the handoff has been resetting the scroll. Only on the skip
+     path, because during the story the fragment is a destination the
+     reader hasn't been given yet. */
+  function landing() {
+    var target = null;
+    var hash = window.location.hash;
+    if (skipOpening && hash && hash.length > 1) {
+      try { target = document.querySelector(hash); } catch (e) { target = null; }
+    }
+    if (target) target.scrollIntoView();
+    else window.scrollTo(0, 0);
   }
 
   /* ---------------------------------------------------------
@@ -952,16 +1022,29 @@
     bail();
   });
 
-  /* Every link that points at the work is an exit while the lid is
-     down, and an ordinary anchor once it is up. Nobody is walked
-     through the story on their way out of it. */
-  Array.prototype.slice.call(document.querySelectorAll('a[href="#work"]')).forEach(function (a) {
+  /* Every link that points INTO the page is an exit while the lid is
+     down, and an ordinary anchor once it is up. Nobody is walked through
+     the story on their way out of it. Was #work only; About is a nav
+     item now and wants the same treatment. */
+  Array.prototype.slice.call(document.querySelectorAll('a[href="#work"], a[href="#about"]')).forEach(function (a) {
     a.addEventListener('click', function (e) {
       if (handedOff) return;              /* let the browser do its job */
       e.preventDefault();
       bail();
     });
   });
+
+  /* The way back in. Clearing the flag alone would do nothing until the
+     next navigation, so this reloads — via replace() rather than
+     reload(), which drops any #work fragment on the way and lands the
+     reader at the door instead of three screens past it. */
+  var replayBtn = document.getElementById('replay-opening');
+  if (replayBtn) {
+    replayBtn.addEventListener('click', function () {
+      try { sessionStorage.removeItem(SEEN_KEY); } catch (e) {}
+      window.location.replace(window.location.pathname + window.location.search);
+    });
+  }
 
   var doorOn = false;
   function doorShow(on) {
@@ -1112,4 +1195,25 @@
 
   render(0);
   setRail(0);
+
+  /* A return, not an arrival.
+
+     handoff() is the single place the lid ever comes off, so a skip
+     runs exactly the teardown the story's last frame runs — same
+     chrome, same title-scroll wiring, same desk watcher — rather than a
+     second, parallel way of ending that drifts out of step with the
+     first. Synchronous, so the door's 600ms timer finds handedOff true
+     and never comes up.
+
+     The halftone has to be asked for by hand here: pumpMedia only
+     reaches for it near the end of the story (preload="none", 1.5 MB),
+     and on a skip the story never runs, so without this the plate the
+     whole site sits on would be an empty buffer. */
+  if (skipOpening) {
+    if (!reduced && dither && dither.preload === 'none') {
+      dither.preload = 'auto';
+      dither.load();
+    }
+    handoff();
+  }
 })();
