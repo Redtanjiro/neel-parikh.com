@@ -1301,6 +1301,15 @@ html.is-opening body {
 /* One screen for the files. Transparent — the plate they sit on is
    .backdrop, fixed behind the whole site, shared with the title card
    above. This box just gives .work somewhere to be. */
+/* The chrome is fixed, so anything an anchor scrolls to lands underneath
+   it. Both nav targets reserve its height — without this "About" puts the
+   cards behind the nav on any frame short enough that the section isn't
+   centring itself out of the way. */
+.desk,
+.about {
+  scroll-margin-top: clamp(64px, 9svh, 104px);
+}
+
 .desk {
   position: relative;
   /* min-height, not height, and no overflow:hidden. A fixed-height
@@ -1331,7 +1340,9 @@ html.is-opening body {
      a short laptop the window's top edge travels up with the frame
      height, and without room reserved above it lands behind "WORK
      CONTACT" instead of under it. */
-  padding: clamp(80px, 16svh, 172px) 6vw clamp(2rem, 5svh, 4rem);
+  /* Trimmed from 16svh: the thumbnails are half again the size they
+     were, so the two rows want the height back. */
+  padding: clamp(76px, 13svh, 144px) 6vw clamp(2rem, 5svh, 4rem);
   /* Nothing here is clickable until it's visible. Without this the
      folders are an invisible hit area over the whole lower half of the
      hero for the entire story. */
@@ -1339,23 +1350,20 @@ html.is-opening body {
 }
 .site[data-desk] .work { pointer-events: auto; }
 
-/* THREE across, two rows. Two was forced while the files shared the
-   plate with a 34% panel — three at the sketch's frame size and a panel
-   beside them simply doesn't close. With About on its own screen the
-   arithmetic opens up, so the row count goes back to three and the
-   FRAME SIZE stays exactly where the sketch put it: 17.8% of the
-   viewport, held by a vw-based cap rather than a rem one so it survives
-   the jump from a 1280 laptop to a 1440 desktop.
+/* THREE across, two rows, and NO CAP. The cap was inherited from the
+   layout where the files shared the plate with the About column and had
+   to leave room for it; on their own it just bunched three cells into
+   the left 57% and left a third of the screen empty beside them.
 
-   The cap is what sets the frame size: the cells divide it, the frame
-   fills its cell, and the leftover on the right is empty desk — which
-   is what a desktop mostly is. */
+   The grid is the content box now, so the three columns divide the full
+   width evenly and the frame — which is its cell — grows with it. The
+   thumbnails roughly halve in count and gain about 60% in size, which
+   is the trade Neel asked for: fewer, bigger, evenly spread. */
 .work__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vh, 2.25rem) clamp(.6rem, 1.6vw, 2rem);
+  gap: clamp(1.25rem, 3vh, 2.5rem) clamp(1rem, 2.4vw, 2.5rem);
   width: 100%;
-  max-width: min(52rem, 57vw);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1563,7 +1571,7 @@ html.is-opening body {
   /* Percentages are out — .folder__spill is a 0x0 positioning anchor, so
      they would resolve against nothing. Tracks .folder__art's cell by
      hand instead, at roughly 90% of it. */
-  width: clamp(90px, 16vw, 240px);
+  width: clamp(90px, 25vw, 370px);
   height: auto;
   transform: translate(-50%, 0) scale(.82);
   transform-origin: 50% 100%;
@@ -1672,9 +1680,16 @@ html.is-opening body {
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto auto;
+  /* Centred as a pair rather than pinned left. The files above are a
+     field and fill their plate; this is one object and is composed like
+     one, which is also what stops it hugging the left edge with a third
+     of the screen empty beside it. */
+  justify-content: center;
   align-items: center;
-  gap: clamp(1.75rem, 5vw, 4.5rem);
+  /* Wide. At 5vw the cards were almost touching the A of "About" — the
+     two halves have to read as two halves, and that is a gap's job. */
+  gap: clamp(2rem, 9vw, 9rem);
   min-height: 100svh;
   padding: clamp(4rem, 10svh, 8rem) 6vw clamp(4rem, 10svh, 8rem);
   --card-r: 7.84% / 5.73%;
@@ -1699,7 +1714,7 @@ html.is-opening body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(.7rem, 1.6svh, 1.1rem);
+  gap: clamp(.9rem, 2.2svh, 1.6rem);
   /* Capped at the sketch's panel width. Left to fill a 1440px track the
      three rows would run to 700px and the lede would stop being a lede. */
   max-width: 34rem;
@@ -1850,6 +1865,9 @@ html.is-opening body {
   position: relative;
   display: grid;
   width: 100%;
+  /* The links belong to the name above them, not to the panel below —
+     a little extra here is what makes that grouping read. */
+  margin-top: clamp(.25rem, 1.2svh, .9rem);
   min-height: clamp(9rem, 20svh, 12.5rem);
   padding: clamp(.9rem, 1.8svh, 1.2rem) clamp(1rem, 1.6vw, 1.4rem);
   background: rgba(16, 19, 14, .42);

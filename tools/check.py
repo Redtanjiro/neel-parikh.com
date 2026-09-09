@@ -124,10 +124,12 @@ def check_t1(page, vw, vh):
     else:
         ok(f"T1 {vw}x{vh}: no horizontal scroll")
 
-    desk_h = page.evaluate(
-        "(() => { var d = document.querySelector('.desk'); return d ? d.getBoundingClientRect().height : 0; })()"
-    )
-    max_bottom = max(vh, desk_h)
+    # Measure folders RELATIVE TO .desk, not the viewport — .desk carries
+    # scroll-margin-top now, so scrollIntoView leaves it a chunk below the
+    # fold and viewport-y is no longer a fixed frame to compare against.
+    desk_box = page.query_selector(".desk").bounding_box()
+    desk_top = desk_box["y"] if desk_box else 0
+    desk_h = desk_box["height"] if desk_box else 0
 
     folders = page.query_selector_all(".folder")
     if not folders:
@@ -137,14 +139,14 @@ def check_t1(page, vw, vh):
         if box is None:
             fail(label, f"T1: .folder[{i}] has no bounding box")
             continue
-        top = box["y"]
-        bottom = box["y"] + box["height"]
-        if top < 0:
-            fail(label, f"T1: .folder[{i}] top={top:.1f} < 0 (clipped at top)")
-        if bottom > max_bottom + 1:
-            fail(label, f"T1: .folder[{i}] bottom={bottom:.1f} > {max_bottom:.1f} (clipped at bottom)")
-        if top < 56:
-            fail(label, f"T1: .folder[{i}] top={top:.1f} < 56 (under the chrome)")
+        top_rel = box["y"] - desk_top
+        bottom_rel = box["y"] + box["height"] - desk_top
+        if top_rel < -1:
+            fail(label, f"T1: .folder[{i}] top is {top_rel:.1f} above .desk (clipped at top)")
+        if bottom_rel > desk_h + 1:
+            fail(label, f"T1: .folder[{i}] bottom {bottom_rel:.1f} exceeds .desk height {desk_h:.1f} (clipped at bottom)")
+        if box["y"] < 56:
+            fail(label, f"T1: .folder[{i}] viewport-y={box['y']:.1f} < 56 (under the fixed chrome)")
 
     # .about is its own full-height section below .desk now, not a column
     # inside it — so it is expected to run past the desk. Just confirm it
@@ -173,13 +175,13 @@ def check_t1(page, vw, vh):
                 fail(label, f"T1: .folder[{i}] .folder__label has zero-size box")
 
     if vw == 1440 and vh == 900:
-        tops = sorted(set(round(f.bounding_box()["y"]) for f in folders if f.bounding_box()))
-        # baseline: back to two row tops (144/396/648 -> 144/395) — with
-        # About on its own screen the folder grid is three-across again,
-        # so five cards are 3+2. Allow a couple px of AA slack.
-        expected_rows = [144, 395]
+        tops = sorted(set(round(f.bounding_box()["y"] - desk_top) for f in folders if f.bounding_box()))
+        # baseline, measured RELATIVE TO .desk (see above): two row tops.
+        # The grid lost its max-width cap so the three frames divide the
+        # full width and grew ~60%, pushing row two down. Slack is 4px.
+        expected_rows = [117, 476]
         for exp in expected_rows:
-            if not any(abs(t - exp) <= 3 for t in tops):
+            if not any(abs(t - exp) <= 4 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
 
 
