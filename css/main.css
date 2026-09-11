@@ -1335,14 +1335,17 @@ html.is-opening body {
   /* start, not end. The files used to rest on the plate's bottom edge;
      they open high on it now, under the chrome. */
   align-items: start;
+  align-content: start;
+  row-gap: clamp(1rem, 3svh, 2.25rem);
   /* Top padding clears the fixed chrome. .work is bottom-aligned
      (align-items: end), so on a tall frame this costs nothing — but on
      a short laptop the window's top edge travels up with the frame
      height, and without room reserved above it lands behind "WORK
      CONTACT" instead of under it. */
-  /* Trimmed from 16svh: the thumbnails are half again the size they
-     were, so the two rows want the height back. */
-  padding: clamp(76px, 13svh, 144px) 6vw clamp(2rem, 5svh, 4rem);
+  /* Trimmed twice: once for the bigger thumbnails, once for the heading
+     that now sits above them. The desk is meant to resolve in one screen
+     and this is the only slack left in it. */
+  padding: clamp(64px, 9svh, 108px) 6vw clamp(1.5rem, 4svh, 3rem);
   /* Nothing here is clickable until it's visible. Without this the
      folders are an invisible hit area over the whole lower half of the
      hero for the entire story. */
@@ -1437,6 +1440,10 @@ html.is-opening body {
    a hard cap. */
 .folder__label {
   display: block;
+  /* Above the spill. The sheets fan up past the artboard and out over
+     the label, which paints later and so won for free. */
+  position: relative;
+  z-index: 6;
   width: max-content;
   max-width: 16rem;
   margin-bottom: .35em;
@@ -1569,9 +1576,16 @@ html.is-opening body {
      zero-width parent and collapse these to nothing. */
   max-width: none;
   /* Percentages are out — .folder__spill is a 0x0 positioning anchor, so
-     they would resolve against nothing. Tracks .folder__art's cell by
-     hand instead, at roughly 90% of it. */
-  width: clamp(90px, 25vw, 370px);
+     they would resolve against nothing, so this is set by hand.
+
+     NOT a fraction of the frame. The fan's reach is a percentage of the
+     SHEET (--dy lifts the middle one 44% of its own height, on top of
+     its full height above the anchor), so sizing the sheet off a frame
+     that nearly doubled sent the fan ~430px above the artboard and clean
+     off the top of the screen. It is a peek at what is inside, not a
+     second poster: capped near where it was when the frames were small,
+     and it now reaches about a third of the way up the viewport. */
+  width: clamp(84px, 9vw, 140px);
   height: auto;
   transform: translate(-50%, 0) scale(.82);
   transform-origin: 50% 100%;
@@ -1681,15 +1695,20 @@ html.is-opening body {
   z-index: 3;
   display: grid;
   grid-template-columns: auto auto;
-  /* Centred as a pair rather than pinned left. The files above are a
-     field and fill their plate; this is one object and is composed like
-     one, which is also what stops it hugging the left edge with a third
-     of the screen empty beside it. */
-  justify-content: center;
+  grid-template-areas:
+    "head head"
+    "cards side";
+  /* Left, not centred. The heading has to start on the same 6vw line as
+     Work's or the two screens stop rhyming, and a heading hard against
+     the left edge above a centred block reads as a mistake. So the block
+     comes back to the left and the heading anchors the weight there. */
+  justify-content: start;
   align-items: center;
+  align-content: center;
   /* Wide. At 5vw the cards were almost touching the A of "About" — the
      two halves have to read as two halves, and that is a gap's job. */
-  gap: clamp(2rem, 9vw, 9rem);
+  column-gap: clamp(2rem, 9vw, 9rem);
+  row-gap: clamp(1rem, 3svh, 2.25rem);
   min-height: 100svh;
   padding: clamp(4rem, 10svh, 8rem) 6vw clamp(4rem, 10svh, 8rem);
   --card-r: 7.84% / 5.73%;
@@ -1710,7 +1729,10 @@ html.is-opening body {
 
 /* The right half. Left-aligned, because it now has a left edge to align
    to — the cards — where the stacked version was centred on nothing. */
+.about > .sect__h { grid-area: head; }
+
 .about__side {
+  grid-area: side;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1725,6 +1747,7 @@ html.is-opening body {
    cards, the name, the links and the panel inside one screen on a
    laptop, and a card sized on vw alone blows that budget at 800px tall. */
 .cards {
+  grid-area: cards;
   position: relative;
   width: min(15rem, 17vw, 34svh);
   aspect-ratio: 306 / 419;
@@ -1794,13 +1817,19 @@ html.is-opening body {
   image-rendering: pixelated;
 }
 
-/* ---------- the name ---------- */
-.about__mark {
+/* ---------- the section headings ----------
+   One rule for both screens. Work had a visually-hidden h2 and About had
+   a wordmark nested inside its right-hand column, which meant the two
+   sections opened in two different ways — the page had no consistent way
+   of saying "here is the next thing". Now each section opens with its
+   name at its own top-left, in the same face at the same size, and the
+   rhyme is what makes them read as siblings. */
+.sect__h {
   font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: var(--track-hero);
   line-height: .9;
-  font-size: clamp(2.75rem, 5.6vw, 5.2rem);
+  font-size: clamp(2.5rem, 5.2vw, 4.75rem);
   color: var(--ink);
   text-shadow: var(--halo);
   margin: 0;
@@ -2420,6 +2449,7 @@ html.is-opening body {
   }
   /* Two across. Three cells on a tablet gives each frame under 200px and
      the labels start wrapping; two is what the tablet sketch draws. */
+  .work .sect__h { width: min(38rem, 55.6vw); }
   .work__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: clamp(1.25rem, 3svh, 2.25rem);
@@ -2433,6 +2463,7 @@ html.is-opening body {
      the arrangement the tablet sketch shows. */
   .about {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "cards" "side";
     justify-items: center;
     align-content: center;
     gap: clamp(1.25rem, 3svh, 2rem);
@@ -2449,10 +2480,10 @@ html.is-opening body {
   /* Stacked, the column is wide and short, so the cards give height
      back to the panel under them. */
   .cards { width: min(13rem, 34vw, 26svh); }
-  .about__mark { font-size: clamp(3rem, 8vw, 4.25rem); }
+  .sect__h { font-size: clamp(2.75rem, 7vw, 4rem); }
 
   /* Still the cell. Only the fan needs a hand-set width down here. */
-  .folder__sheet { width: clamp(140px, 27vw, 250px); }
+  .folder__sheet { width: clamp(84px, 12vw, 140px); }
   .folder__label { font-size: clamp(.75rem, 1.35vw, .9375rem); }
 }
 
@@ -2474,14 +2505,15 @@ html.is-opening body {
   }
   /* One across, and the frame is 66% of the screen rather than 90% —
      the phone sketch leaves real margin either side of it. */
+  .work .sect__h { width: min(22rem, 66vw); }
   .work__grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; max-width: min(22rem, 66vw); }
   .about { padding-left: 8vw; padding-right: 8vw; }
-  .folder__sheet { width: clamp(160px, 50vw, 250px); }
+  .folder__sheet { width: clamp(84px, 28vw, 140px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
   .folder__meta { font-size: .5625rem; }
   .about__side { max-width: 22rem; }
   .cards { width: min(13rem, 52vw); }
-  .about__mark { font-size: clamp(2.75rem, 13vw, 3.5rem); }
+  .sect__h { font-size: clamp(2.5rem, 11vw, 3.25rem); }
   .about__panel { min-height: 12.5rem; }
   .about__rows li { grid-template-columns: 4.5rem minmax(0, 1fr); }
   /* A 16:9 frame cropped into a portrait viewport loses the cliff, which

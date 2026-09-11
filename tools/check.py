@@ -176,10 +176,11 @@ def check_t1(page, vw, vh):
 
     if vw == 1440 and vh == 900:
         tops = sorted(set(round(f.bounding_box()["y"] - desk_top) for f in folders if f.bounding_box()))
-        # baseline, measured RELATIVE TO .desk (see above): two row tops.
-        # The grid lost its max-width cap so the three frames divide the
-        # full width and grew ~60%, pushing row two down. Slack is 4px.
-        expected_rows = [117, 476]
+        # baseline, measured RELATIVE TO .desk (see above): two row tops,
+        # 117/476 -> 175/534 once "Work" became a visible heading above
+        # the grid (was visually-hidden) and .work gained a row-gap.
+        # Slack is 4px.
+        expected_rows = [175, 534]
         for exp in expected_rows:
             if not any(abs(t - exp) <= 4 for t in tops):
                 fail(label, f"T1: 1440x900 baseline row top {exp} not found in observed tops {tops}")
@@ -212,13 +213,15 @@ def check_t2(page, vw, vh):
     # The section's own content has to clear the fixed chrome — check the
     # thing that would collide, the name, not the section box (which sits
     # at scroll-top by design and has its padding do the clearing).
+    # .about__mark was folded into .sect__h (shared with Work's heading);
+    # #about-mark is the id that survived the rename.
     nav = page.query_selector(".chrome__nav")
-    mark = page.query_selector(".about__mark")
+    mark = page.query_selector("#about-mark")
     if mark and nav:
         mbox = mark.bounding_box()
         nbox = nav.bounding_box()
         if mbox and nbox and rects_intersect(mbox, nbox):
-            fail(label, "T2: .about__mark intersects .chrome__nav")
+            fail(label, "T2: About heading intersects .chrome__nav")
         elif (vw, vh) in [(1024, 700), (1280, 800)]:
             ok(f"T2 {vw}x{vh}: About name clears the chrome")
 
