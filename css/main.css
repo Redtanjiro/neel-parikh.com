@@ -1517,6 +1517,7 @@ html.is-opening body {
   object-position: var(--shot-pos, 50% 20%);
 }
 
+
 /* THE HANDLES — WHITE FILL, BLUE STROKE, which is what Figma draws and
    what the export in Macbook_icon.svg has (fill="white"
    stroke="#008FF0"). They were solid blue, which read as dots rather
@@ -1586,7 +1587,31 @@ html.is-opening body {
      second poster: capped near where it was when the frames were small,
      and it now reaches about a third of the way up the viewport. */
   width: clamp(84px, 9vw, 140px);
+
+  /* THE SHEET IS A SHAPE, NOT AN IMAGE.
+
+     This was the bug on Futee, Into Yesterday and Superfood. Every sheet
+     was `height: auto`, so its height came from whatever its source
+     happened to be — and --dy is a percentage of that height. Where a
+     card's three sources share a ratio the fan came out even by luck
+     (EMF ACE is three squares, CSEDS three portraits). Where they don't,
+     it fell apart: Futee is 1.32 / 1.79 / 1.91, Into Yesterday 1.78 /
+     1.33 / 2.04. Three different heights, each lifted by a different
+     percentage OF that different height, all anchored to one point —
+     so the tops never lined up and the wide ones read as bars rather
+     than as sheets.
+
+     Fixing it by hand per card would leave five fans with five shapes.
+     The rule instead: a sheet is the artboard's own 289:204, cropped to
+     fill. Now every sheet on the page is the same object, the offsets
+     mean the same thing everywhere, and the fan reads as what it is —
+     more artboards stacked behind this one. */
+  aspect-ratio: 289 / 204;
   height: auto;
+  object-fit: cover;
+  /* Top-biased: most of these are website screenshots, where the part
+     worth recognising is the header, not the middle of the page. */
+  object-position: 50% 22%;
   transform: translate(-50%, 0) scale(.82);
   transform-origin: 50% 100%;
   opacity: 0;
