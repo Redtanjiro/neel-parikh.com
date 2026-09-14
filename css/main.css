@@ -1439,13 +1439,21 @@ html.is-opening body {
    into the gutter the way a Figma layer name does), ellipsis only past
    a hard cap. */
 .folder__label {
-  display: block;
+  /* A row, not a block: the name and — on hover — the discipline that
+     used to sit under the frame. Baseline-aligned so the two sit on one
+     line however far apart their sizes are. */
+  display: flex;
+  align-items: baseline;
+  gap: .5em;
   /* Above the spill. The sheets fan up past the artboard and out over
      the label, which paints later and so won for free. */
   position: relative;
   z-index: 6;
   width: max-content;
-  max-width: 16rem;
+  /* The cap is the pair's now. The name keeps its own 16rem below, so a
+     long title still ellipses at the same width it always did and the
+     discipline is never what gets cut. */
+  max-width: 22rem;
   margin-bottom: .35em;
   font-family: var(--font-display);
   font-size: clamp(.6875rem, .95vw, .875rem);
@@ -1465,10 +1473,18 @@ html.is-opening body {
      rather than a bare glyph over open sky. */
   color: var(--ink);
   text-shadow: var(--halo);
+  transition: color 200ms var(--ease-ui);
+}
+
+/* Truncation belongs to the name alone — on the flex container it would
+   measure the discipline too and start eating the title to make room
+   for a label that isn't even on screen yet. */
+.folder__name {
+  min-width: 0;
+  max-width: 16rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 200ms var(--ease-ui);
 }
 
 /* THE STROKE IS AN OVERLAY, NOT THE BOX'S OWN.
@@ -1671,6 +1687,20 @@ html.is-opening body {
   .folder__link:focus-visible .folder__frame::before {
     box-shadow: inset 0 0 0 3px var(--figma);
   }
+
+  /* 200ms in, 240ms out: the label lands before the bottom line has
+     finished clearing, so the discipline reads as having arrived rather
+     than as two separate events. Both sit under the fan's 290ms. */
+  .folder__link:hover .folder__disc,
+  .folder__link:focus-visible .folder__disc {
+    opacity: 1;
+    transform: none;
+  }
+  .folder__link:hover .folder__cat,
+  .folder__link:focus-visible .folder__cat {
+    max-width: 0;
+    opacity: 0;
+  }
 }
 /* Press gives. */
 .folder__link:active .folder__frame { transform: translateY(0) scale(.98); }
@@ -1682,19 +1712,69 @@ html.is-opening body {
    was legible in theory and invisible in practice. .75 is the floor that
    clears 4.5:1 against the worst pixel behind any of the six, at every
    breakpoint — measured against glyph coverage, not the label's box. */
-.folder__meta {
-  display: block;
-  width: 100%;
-  text-align: left;
-  margin-top: .5em;
-  font-size: .6875rem;
+/* ONE TYPE SPEC, TWO POSITIONS.
+   The discipline beside the name and the meta under the frame are the
+   same line of text in two places, so they are set by one rule and can
+   never drift: same face, same size, same weight, same tracking, same
+   case, same colour, at every breakpoint. Anything that changes the
+   meta's size has to be written here, for both. */
+.folder__meta,
+.folder__disc {
   font-family: var(--font-display);
+  font-size: .6875rem;
   font-weight: 400;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: rgba(251, 247, 240, .75);
   text-shadow: var(--halo);
   white-space: nowrap;
+}
+.folder__meta {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: .5em;
+}
+
+/* THE DISCIPLINE GOES UP, THE YEAR STAYS DOWN.
+   Not a second copy of the meta — the half that moves is the half the
+   bottom line gives up, so the card never says "Product" twice. The
+   collapse is a max-width because the span has no fixed width to
+   animate. 10em is measured, not guessed: the widest of the five is
+   "PRODUCT · ", which in Panchang at 400 with --track-label comes to
+   9.30em of advance, so 10em clears it at rest and leaves only 7% of
+   dead travel before the width starts actually moving. Redraw the face
+   or change the tracking and this number has to be re-measured — too
+   small and the bottom line is clipped permanently. */
+.folder__disc {
+  opacity: 0;
+  transform: translateX(-.35em);
+  /* --halo alone isn't enough here. It was tuned for the meta's other
+     position, under the frame, against the dark halftone plate — a
+     soft diffuse glow. .folder__disc only ever shows on hover, which is
+     exactly when the fan sheets are behind it, and those are often
+     light document scans (Futee, CSEDS, Into Yesterday all go
+     near-invisible under the plain halo). A tight 1px outline in four
+     directions, stacked under the glow, holds contrast against any
+     sheet regardless of its own color. */
+  text-shadow:
+    -1px -1px 0 rgba(16, 19, 14, .85),
+     1px -1px 0 rgba(16, 19, 14, .85),
+    -1px  1px 0 rgba(16, 19, 14, .85),
+     1px  1px 0 rgba(16, 19, 14, .85),
+    var(--halo);
+  transition:
+    opacity 200ms var(--ease-ui),
+    transform 200ms var(--ease-ui);
+}
+.folder__cat {
+  display: inline-block;
+  max-width: 10em;
+  overflow: hidden;
+  vertical-align: bottom;
+  transition:
+    max-width 240ms var(--ease-ui),
+    opacity 140ms var(--ease-ui);
 }
 
 /* =========================================================
@@ -2391,7 +2471,18 @@ html.is-opening body {
        information and it never moved anything. */
     .folder__link:hover .folder__frame,
     .folder__link:focus-visible .folder__frame { transform: none; }
+
+    /* The discipline still arrives — it is content, and content is never
+       what reduced motion takes away. It just fades in where it stands
+       instead of sliding. The bottom line stops collapsing, because a
+       width animation is travel and an instant one would jump the year
+       sideways: for this reader the meta simply stays whole and the card
+       carries the word twice for as long as the cursor is on it. */
+    .folder__link:hover .folder__cat,
+    .folder__link:focus-visible .folder__cat { max-width: 10em; opacity: 1; }
   }
+  .folder__disc { transform: none; transition: opacity 160ms linear; }
+  .folder__cat { transition: none; }
   .folder__link:active .folder__frame { transform: none; }
 }
 
@@ -2545,7 +2636,8 @@ html.is-opening body {
   .about { padding-left: 8vw; padding-right: 8vw; }
   .folder__sheet { width: clamp(120px, 46vw, 210px); }
   .folder__label { font-size: clamp(.75rem, 3.1vw, .9375rem); }
-  .folder__meta { font-size: .5625rem; }
+  /* Both halves, always together — see the shared rule above. */
+  .folder__meta, .folder__disc { font-size: .5625rem; }
   .about__side { max-width: 22rem; }
   .cards { width: min(13rem, 52vw); }
   .sect__h { font-size: clamp(2.5rem, 11vw, 3.25rem); }
@@ -2582,4 +2674,4 @@ html.is-opening body {
 .no-js .chrome { opacity: 1; visibility: visible; }
 .no-js .chrome__mark, .no-js .chrome__rule, .no-js .chrome::before { opacity: 1; }
 .no-js .folder, .no-js .about { opacity: 1; transform: none; }
-.no-js .folder__label, .no-js .folder__meta { text-shadow: none; }
+.no-js .folder__label, .no-js .folder__meta, .no-js .folder__disc { text-shadow: none; }

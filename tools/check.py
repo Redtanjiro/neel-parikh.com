@@ -160,8 +160,12 @@ def check_t1(page, vw, vh):
                                      for f in folders if f.bounding_box()) - 1:
             fail(label, f"T1: .about top={abox['y']:.1f} starts above the last folder's bottom")
 
+    # .folder__label now wraps .folder__name (the title) and .folder__disc
+    # (the discipline, revealed on hover) as two spans — its own
+    # textContent runs them together ("FuteeProduct"). The name lives in
+    # .folder__name alone.
     names = page.eval_on_selector_all(
-        ".folder__label", "els => els.map(e => e.textContent.trim())"
+        ".folder__name", "els => els.map(e => e.textContent.trim())"
     )
     expected = ["Futee", "EMF ACE", "CSEDS", "Into Yesterday", "Superfood Adventure"]
     for name in expected:
