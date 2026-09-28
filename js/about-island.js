@@ -683,7 +683,14 @@ function timeline(){
   var want = worksOut>0.0005;
   if(want!==scrubbing){ scrubbing=want; work.classList.toggle('is-scrubbing',want); }
   deskEl.style.opacity=(1-worksOut).toFixed(3);
-  deskEl.style.pointerEvents=worksOut>0.5?'none':'';
+  /* main.css sets .site[data-desk] .work to pointer-events:auto, which
+     beats the value inherited from the desk — so the faded folders kept
+     catching clicks over the About pane. Turn .work off itself, and hide
+     the desk once it is gone so its folders also leave the tab order. */
+  var deskGone=worksOut>0.5;
+  deskEl.style.pointerEvents=deskGone?'none':'';
+  work.style.pointerEvents=deskGone?'none':'';
+  deskEl.style.visibility=worksOut>0.995?'hidden':'';
   for(var i=0;i<folders.length;i++){
     var v=fvec[i], k=worksOut, f=folders[i];
     /* translate/rotate/scale, not transform: .folder's entrance owns the
