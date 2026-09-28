@@ -100,6 +100,10 @@ html.atoll-on .about {
    here so there is no flash of the copy before the first frame lands. */
 html.atoll-on .about > .sect__h { grid-area: head; align-self: end;   opacity: 0; }
 html.atoll-on .about__side      { grid-area: side; align-self: start; opacity: 0; }
+/* The canvas slot is positioned (z-index 1); unpositioned copy would paint
+   underneath it and its masked edge would read as a gradient over the text. */
+html.atoll-on .about > .sect__h,
+html.atoll-on .about__side      { position: relative; z-index: 2; }
 
 html.atoll-on .atoll__fit {
   display: block;
