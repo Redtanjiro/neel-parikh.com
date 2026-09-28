@@ -1,7 +1,7 @@
 /* ============================================================
    THE ISLAND — the About section's particle scene
    ------------------------------------------------------------
-   One house, three palms, a figure, a sea and some weather, drawn as a
+   One house, three palms, a sea and some weather, drawn as a
    point cloud by a software rasteriser. No WebGL and no three.js: the
    whole thing is a z-buffered triangle mesh sampled into points and
    accumulated additively into one ImageData, which is both small enough
@@ -168,19 +168,6 @@ CUR_ELEM=E_PALM;
 palm(1.62,-0.42,1.85,0.26,0.3);
 palm(-1.42,0.86,1.55,-0.22,1.7);
 palm(0.72,1.58,1.35,0.10,2.9);
-
-/* ---- figure ---- */
-CUR_ELEM=E_FIG;
-(function figure(){
-  var fx=-0.82, fz=0.72, y0=ih(Math.hypot(fx,fz));
-  box(fx-0.045,y0,fz,0.052,0.17,0.055,SHIRT);
-  box(fx+0.045,y0,fz,0.052,0.17,0.055,SHIRT);
-  box(fx,y0+0.17,fz,0.155,0.19,0.095,SHIRT);
-  box(fx-0.10,y0+0.19,fz,0.045,0.16,0.05,SKIN);
-  box(fx+0.10,y0+0.19,fz,0.045,0.16,0.05,SKIN);
-  box(fx,y0+0.352,fz,0.048,0.036,0.048,SKIN);        // neck
-  sphere(fx,y0+0.456,fz,0.072,SKIN,10,6,1.06);       // head
-})();
 
 /* ---- clouds: soft blobs ringing the island high up, so there is sky
        behind the silhouette from every orbit angle ---- */
