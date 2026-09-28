@@ -292,13 +292,18 @@ function buildWater(N){
   W_FM=new Float32Array(N); W_FD=new Float32Array(N); W_SC=new Float32Array(N*3);
   W_MT=new Uint8Array(N);
   for(var i=0;i<N;i++){
-    var r = (i%2===0) ? SHORE+(Math.random()-0.42)*1.6
-                      : WIN+(WOUT-WIN)*Math.pow(Math.random(),1.7);
+    /* a third of the sea is open water, spread evenly across the middle
+       distance: that is what fills the bottom of the frame behind the
+       footer, at whatever angle the island has turned to */
+    var r = (i%3===0) ? SHORE+(Math.random()-0.42)*1.6
+          : (i%3===1) ? WIN+(WOUT-WIN)*Math.pow(Math.random(),1.7)
+                      : 3.4+5.6*Math.pow(Math.random(),1.25);
     var th=Math.random()*6.28318;
     W_X[i]=r*Math.cos(th); W_Z[i]=r*Math.sin(th); W_PH[i]=Math.random();
     var fd=1-Math.min(1,Math.max(0,(r-SHORE)/(WOUT-SHORE)));
     W_FD[i]=(0.06+0.94*fd*fd*fd)*1.05;
     W_FM[i]=Math.exp(-Math.pow((r-SHORE)/0.42,2))*1.5;
+    if(i%3===2) W_FD[i]=2.1-0.9*((r-3.4)/5.6);
     /* three bands of blue, fixed at build time: pale surf on the shore line,
        shallow teal over the shelf, deep blue out to the horizon */
     W_MT[i] = W_FM[i]>0.55 ? FOAM : (W_FD[i]>0.55 ? SHALLOW : WATER);
@@ -616,10 +621,10 @@ var CW_PX=0, CH_PX=0, nPoints=0;
    can halve it once more if the frame rate doesn't hold. */
 function budget(){
   var w=innerWidth;
-  return w<=560 ? 34000 : w<=980 ? 58000 : 100000;
+  return w<=560 ? 34000 : w<=980 ? 58000 : 115000;
 }
 function makeCloud(){
-  var wOn=(water&&shape===0), wshare=wOn?0.28:0;
+  var wOn=(water&&shape===0), wshare=wOn?0.42:0;
   var sOn=(smoke&&shape===0), sshare=sOn?0.026:0;
   var nw=Math.round(nPoints*wshare), nsm=Math.round(nPoints*sshare);
   buildSurf(nPoints-nw-nsm); buildWater(Math.max(1,nw)); buildSmoke(Math.max(1,nsm));
@@ -708,6 +713,9 @@ function timeline(){
     var edge = narrow ? (T+H)/CH_PX : (L+W)/CW_PX;
     cvs.style.setProperty('--m1', (100-(100-edge*100+2)*aboutIn).toFixed(1)+'%');
     cvs.style.setProperty('--m2', Math.min(100,100-(100-edge*100-14)*aboutIn).toFixed(1)+'%');
+    /* the sea's full-width lower band, for the footer to sit in */
+    cvs.style.setProperty('--b1', (100-40*aboutIn).toFixed(1)+'%');
+    cvs.style.setProperty('--b2', (100-22*aboutIn).toFixed(1)+'%');
     var sc=Math.min(W/CW_PX, H/CH_PX);
     if(sc>0.02){
       xShift=((L+W/2)/CW_PX-0.5)*aboutIn;
