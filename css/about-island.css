@@ -1,0 +1,155 @@
+/* ============================================================
+   THE ISLAND — layout for the About scene and the track it rides
+   ------------------------------------------------------------
+   NOTHING IN HERE APPLIES UNTIL THE SCRIPT SAYS SO. Every rule that
+   changes the page is scoped under html.atoll-on (full motion) or
+   html.atoll-still (reduced motion), both of which js/about-island.js
+   sets only once the scene is standing up. Without JS, with JS that
+   fails, or with this file removed, .desk and .about are the ordinary
+   stacked sections they were — the wrapper is an inert div.
+
+   Two boxes do the work and neither is ever seen:
+     .atoll__slot  holds the canvas and decides where the canvas lives
+     .atoll__fit   is the measurement the camera fits the island into
+   The island is fitted to .atoll__fit's real rect every frame rather
+   than to a hardcoded fraction, so the stacked layout and the spread
+   one need no separate numbers.
+   ============================================================ */
+
+/* ---------- the track ----------
+   420svh of scroll for a 100svh pane. The extra 320 is the sequence:
+   the grid flying apart, the plate going, the gather, the settle. */
+.atoll { position: relative; }
+
+html.atoll-on .atoll        { height: 420svh; }
+html.atoll-on .atoll__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+
+/* Both screens become layers of the one pane. They keep their own
+   padding, their own grid and their own min-height — inset:0 on a
+   100svh stage is the same box min-height:100svh was giving them. */
+html.atoll-on .desk,
+html.atoll-on .about { position: absolute; inset: 0; }
+html.atoll-on .desk  { z-index: 3; }
+html.atoll-on .about { z-index: 2; min-height: 0; }
+
+/* The anchor #about used to be the section itself. Inside a sticky pane
+   the section reports the pane's position, so every nav click would land
+   at the top of the track — on the work, not the about. This is a real
+   1px element at the point in the track where the island has settled,
+   and it carries the chrome offset the section used to. */
+.atoll__cue {
+  display: block; width: 1px; height: 1px;
+  pointer-events: none; visibility: hidden;
+}
+html.atoll-on .atoll__cue {
+  position: absolute; left: 0; top: 74%;
+  scroll-margin-top: clamp(64px, 9svh, 104px);
+}
+
+/* ---------- the canvas ---------- */
+.atoll__slot { display: none; position: relative; }
+.atoll__canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  /* The reader has to be able to scroll the page while the island fills
+     the screen, so vertical panning stays with the browser. Orbit is a
+     mouse drag; pinch is the only touch gesture taken. */
+  touch-action: pan-y;
+}
+
+html.atoll-on .atoll__slot {
+  display: block;
+  position: absolute; inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+html.atoll-on .atoll__canvas { pointer-events: auto; cursor: grab; }
+html.atoll-on .atoll__canvas:active { cursor: grabbing; }
+
+/* The cloud dissolves before it reaches the copy. A mask, not a clip:
+   a clip ends at a line and the line reads as a crop. --m1/--m2 are
+   written per frame off the measured slot. */
+html.atoll-on .atoll__canvas.mx {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 var(--m1, 100%), transparent var(--m2, 100%));
+          mask-image: linear-gradient(90deg, #000 0%, #000 var(--m1, 100%), transparent var(--m2, 100%));
+}
+html.atoll-on .atoll__canvas.my {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 var(--m1, 100%), transparent var(--m2, 100%));
+          mask-image: linear-gradient(180deg, #000 0%, #000 var(--m1, 100%), transparent var(--m2, 100%));
+}
+
+/* ---------- the about spread ----------
+   Island left, copy right — the arrangement off Neel's frame. The left
+   track is the measurement box; the island is painted over the whole
+   pane and masked back to it, so the two need not agree in pixels. */
+html.atoll-on .about {
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  grid-template-areas:
+    "atoll head"
+    "atoll side";
+  justify-content: stretch;
+  align-content: center;
+  column-gap: clamp(1.25rem, 4.5vw, 4.5rem);
+  row-gap: clamp(.6rem, 2svh, 1.4rem);
+  /* the section is a layer of the pane now, not a screen to be read
+     through — only the copy takes the pointer */
+  pointer-events: none;
+}
+/* Both start hidden and are written per frame by the timeline. Declared
+   here so there is no flash of the copy before the first frame lands. */
+html.atoll-on .about > .sect__h { grid-area: head; align-self: end;   opacity: 0; }
+html.atoll-on .about__side      { grid-area: side; align-self: start; opacity: 0; }
+
+html.atoll-on .atoll__fit {
+  display: block;
+  grid-area: atoll;
+  width: 100%;
+  height: min(62svh, 44rem);
+  pointer-events: none;
+}
+
+/* ---------- the work grid, dispersing ----------
+   .folder's entrance owns `transform` and gives it a 420ms overshoot.
+   The scrub writes translate / rotate / scale — the individual
+   properties — which compose with it and carry no transition of their
+   own, so the grid answers the scrollbar frame for frame while the
+   arrival keeps its pop. Only opacity has to be un-eased by hand. */
+.work.is-scrubbing .folder { transition: none; }
+
+/* ---------- reduced motion ----------
+   Content kept, travel dropped: one still frame of the island in the
+   column the cards used to hold, and the page stays a plain stack. No
+   track, no disperse, no orbit, no drift. */
+html.atoll-still .atoll__slot {
+  display: block;
+  grid-area: cards;
+  width: min(20rem, 26vw, 42svh);
+  aspect-ratio: 4 / 3;
+}
+html.atoll-still .atoll__fit,
+html.atoll-still .atoll__cue { display: none; }
+
+/* ---------- stacked ----------
+   Below the spread's breakpoint the island sits above the copy and the
+   mask turns vertical (the script swaps .mx for .my at the same width). */
+@media (max-width: 820px) {
+  html.atoll-on .about {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "atoll"
+      "head"
+      "side";
+    align-content: start;
+    padding-top: clamp(64px, 11svh, 108px);
+    row-gap: clamp(.4rem, 1.4svh, 1rem);
+  }
+  html.atoll-on .atoll__fit { height: min(46svh, 26rem); }
+  html.atoll-on .about__side { max-width: none; }
+}
+
+/* A short laptop in landscape has no room for a 62svh island above a
+   three-row panel; give the island less and let the copy keep its size. */
+@media (min-width: 821px) and (max-height: 720px) {
+  html.atoll-on .atoll__fit { height: min(70svh, 30rem); }
+}

@@ -838,7 +838,7 @@
      is a good half second before there is anything to look at. */
   function watchDesk() {
     reveal(document.getElementById('desk'), 'data-desk');
-    reveal(document.getElementById('about'), 'data-about');
+    reveal(document.getElementById('about-sec'), 'data-about');
   }
 
   /* One-shot: set the attribute the first time the section is a quarter

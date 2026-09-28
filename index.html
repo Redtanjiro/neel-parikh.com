@@ -28,6 +28,9 @@
      reduced-motion, where it replaces the video entirely. -->
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/main.css">
+<!-- The About island. Inert until js/about-island.js puts .atoll-on (or
+     .atoll-still) on <html>; see the head of that file. -->
+<link rel="stylesheet" href="css/about-island.css">
 </head>
 <body>
 
@@ -378,6 +381,25 @@
     </div>
   </section>
 
+  <!-- ============ THE ISLAND TRACK ============
+       The work and the about are one pane now, not two screens. 420svh
+       of scroll for a 100svh sticky stage: the folders fly apart, the
+       halftone plate goes to void, an island gathers out of the dust
+       and settles to the left while About arrives beside it.
+
+       IT IS A PLAIN DIV UNTIL THE SCRIPT SAYS OTHERWISE. Every rule
+       that makes this a track is scoped under html.atoll-on, which
+       js/about-island.js adds only once the scene is up — so no-JS, a
+       failed load, or a deleted stylesheet all leave the two sections
+       stacked exactly as they were.
+
+       #about is the 1px cue below, not the section: inside a sticky
+       pane the section reports the pane's position, so the nav would
+       land every About click on the work. -->
+  <div class="atoll" id="atoll">
+  <span class="atoll__cue" id="about" aria-hidden="true"></span>
+  <div class="atoll__stage">
+
   <section class="desk" id="desk">
     <!-- The plate the files sit on is .backdrop, a body-level element —
          not a layer of this section any more. It is one plate shared
@@ -517,22 +539,16 @@
        they sit in is a fixed height with all three stacked in the same
        grid cell — so switching swaps opacity and NOTHING below it
        moves. Contact folded into "just me" and into the footer. -->
-  <section class="about" id="about" aria-labelledby="about-mark">
+  <section class="about" id="about-sec" aria-labelledby="about-mark">
     <h2 class="sect__h" id="about-mark">About</h2>
 
-    <div class="cards" aria-hidden="false">
-      <div class="card card--back" aria-hidden="true">
-        <span class="card__glass"></span>
-        <img class="card__art" src="media/card-back.png" alt=""
-             width="299" height="413" loading="lazy" decoding="async">
-      </div>
-      <div class="card card--front">
-        <span class="card__glass" aria-hidden="true"></span>
-        <img class="card__art" src="media/card-front.png"
-             alt="A hand-drawn pixel card: Neel at a desk. It reads Designer, Worker Bee, lvl. max?"
-             width="306" height="419" loading="lazy" decoding="async">
-      </div>
-    </div>
+    <!-- .atoll__slot holds the canvas; .atoll__fit is the invisible box the
+         camera fits the island into. Neither is ever seen. Under full
+         motion the slot covers the whole pane and the island is masked
+         back to the fit; under reduced motion the slot IS the fit, a
+         still frame in the column the cards used to hold. -->
+    <div class="atoll__slot" aria-hidden="true"><canvas class="atoll__canvas" id="atoll-canvas"></canvas></div>
+    <div class="atoll__fit" aria-hidden="true"></div>
 
     <div class="about__side">
 
@@ -573,6 +589,9 @@
     </div>
   </section>
 
+  </div><!-- /.atoll__stage -->
+  </div><!-- /.atoll -->
+
   <!-- Below the plate. -->
   <footer class="footer">
     <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
@@ -591,5 +610,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
 <script src="js/hero.js"></script>
+<script src="js/about-island.js"></script>
 </body>
 </html>
