@@ -7,10 +7,14 @@
    accumulated additively into one ImageData, which is both small enough
    to ship uncompiled and cheap enough to run beside the rest of the page.
 
-   IT IS ALSO THE TRANSITION. The work grid disperses, the halftone plate
-   fades to void, the island gathers out of the dust and settles to the
-   left while About arrives beside it — one sticky track, every beat a
-   pure function of scroll position, so it unplays exactly in reverse.
+   IT IS ALSO THE TRANSITION. The work grid disperses, the island gathers
+   out of the dust and settles to the left while About arrives beside it
+   — one sticky track, every beat a pure function of scroll position, so
+   it unplays exactly in reverse.
+
+   AND IT IS THE OPENING. js/opening.js borrows this same engine for the
+   lid (see THE OPENING'S ADDITIONS and window.NPIsland at the bottom):
+   the two scenes never run at once, so there is one engine, not two.
 
    Nothing here runs unless the track is on screen and the tab is
    visible, and none of the layout engages until this file says so: the
@@ -33,7 +37,6 @@
   var fit    = document.querySelector('.atoll__fit');
   var aHead  = aboutEl.querySelector('.sect__h');
   var aSide  = aboutEl.querySelector('.about__side');
-  var bdrop  = document.querySelector('.backdrop');
   var site   = document.getElementById('site');
   if (!host || !stage || !cvs || !deskEl || !aboutEl || !work) return;
 
@@ -44,7 +47,7 @@
   var folders = [].slice.call(work.querySelectorAll('.folder'));
   var reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* The About section is revealed by hero.js's observer in the ordinary
+  /* The About section is revealed by site.js's observer in the ordinary
      page; inside the sticky track the timeline owns its opacity, so set
      the switch now and let the inline style do the work. */
   if (site) site.setAttribute('data-about', '');
@@ -267,8 +270,11 @@ function buildSurf(N){
     for(;i<N;i++){ S_E[i]=0; spawnSurf(i,0); S_PH[i]=Math.random(); S_RT[i]=0.34+Math.random()*0.62; }
   } else {
     var SH=[SHARE[0],SHARE[1],SHARE[2],SHARE[3],cloudsOn?SHARE[4]:0];
+    /* An element with no triangles (E_FIG, since the figure went) would
+       pick from an empty pool and put its whole share on pixel 0,0. */
+    for(var _z=0;_z<5;_z++) if(EAREA[_z]<=0) SH[_z]=0;
     var tot=SH[0]+SH[1]+SH[2]+SH[3]+SH[4];
-    var last=cloudsOn?4:3;
+    var last=4; while(last>0&&SH[last]<=0) last--;
     for(var e=0;e<NE;e++){
       if(SH[e]<=0) continue;
       var cnt = e===last ? N-i : Math.round(N*SH[e]/tot);
@@ -345,7 +351,12 @@ var MCOL=[[0,0,0],
  [80,124,196],[255,226,150],[164,158,148],
  [118,198,242],   /* 14 FOAM   — surf reads pale blue, not cream */
  [214,210,200],   /* 15 VAPOR  — cloud + chimney smoke */
- [26,134,208]];   /* 16 SHALLOW— water over the shelf */
+ [26,134,208],    /* 16 SHALLOW— water over the shelf */
+ /* 17-19 are the opening's boat. Duller than they look on paper: a few
+    thousand points on one small object saturate an additive buffer. */
+ [156,104,64],    /* 17 HULL */
+ [206,194,172],   /* 18 DECK */
+ [150,206,240]];  /* 19 WAKE */
 var SITECOL=[[251,247,240],[235,220,191],[215,199,171],[199,175,142],[159,152,135],[112,107,88]];
 var PLUT=new Float32Array(20*3), palMode=0;
 function buildLUT(){
@@ -368,7 +379,7 @@ var bl2=document.createElement('canvas'), b2x=bl2.getContext('2d',{alpha:false})
 var img=null,u8=null,u32=null,BW=0,BH=0;
 function allocBuf(){
   var w=cvs.width,h=cvs.height;
-  var cap=1000000, sc=Math.min(1,Math.sqrt(cap/(w*h)));
+  var cap=CAP, sc=Math.min(1,Math.sqrt(cap/(w*h)));
   BW=Math.max(2,Math.round(w*sc)); BH=Math.max(2,Math.round(h*sc));
   pcv.width=BW; pcv.height=BH;
   bl1.width=Math.max(2,BW>>2); bl1.height=Math.max(2,BH>>2);
@@ -391,6 +402,29 @@ function allocDepth(){
   DW=Math.max(2,BW>>DSHIFT); DH=Math.max(2,BH>>DSHIFT);
   dbuf=new Float32Array(DW*DH);
 }
+
+/* ============ THE OPENING'S ADDITIONS ============
+   js/opening.js borrows this renderer; everything in this block is
+   inert (diss 0, boat off) whenever About has it.
+
+   THE EROSION is a per-point cull, not a fade: each point carries a fixed
+   threshold from a 4096 table and is gone once the dissolve, weighted by
+   where it lands on screen, passes it. Fastest in the middle, slowest on
+   the silhouette, and never a visible group leaving at once. */
+var diss=0, D_AR=1.35, D_CY=0.50, D_R=0.62;
+var THR=new Float32Array(4096);
+for(var _q=0;_q<4096;_q++) THR[_q]=Math.random();
+function radAt(X,Y){
+  var m=BW<BH?BW:BH;
+  var dx=(X-BW*0.5)/D_AR, dy=(Y-BH*D_CY);
+  var d=Math.sqrt(dx*dx+dy*dy)/(m*D_R);
+  if(d>=1) return 0;
+  var u=1-d; return u*u;
+}
+/* The boat and its wake: the opening builds the arrays, this only draws
+   them. Materials 17+ are how they escape the erosion. */
+var B_P=null,B_N=null,B_M=null,BN=0, boatOn=0,boatX=0,boatY=0,boatZ=0,boatC=1,boatS=0;
+var WK_P=null,WK_A=null,WKN=0, wakeOn=0;
 
 /* ============ RENDER ============ */
 var liveCount=0;
@@ -449,13 +483,16 @@ function renderParticles(t,dt){
 
   var wOn=(water && shape===0);
   var smOn=(smoke && shape===0);
-  var N=SN+(wOn?WN:0)+(smOn?SMN:0);
+  var N=SN+(wOn?WN:0)+(smOn?SMN:0)+(boatOn>0?BN:0)+(wakeOn>0?WKN:0);
   allocScratch(N);
   var SCA=scatter*6.4;
 
-  /* ---- 1. advance every particle and bank its world position ---- */
-  var n=0;
-  for(var i=0;i<SN;i++){
+  /* ---- 1. advance every particle and bank its world position ----
+         Nothing of the island is drawn at fadeIn 0 (the opening's crossing),
+         so none of it is walked either. */
+  var n=0, isle=fadeIn>0.0005;
+  if(!isle){ wOn=false; smOn=false; }
+  for(var i=0;isle&&i<SN;i++){
     var o=i*3, el=S_E[i], ch=ECH[el];
     var env=1, lift=0, dfx=0, dfy=0, dfz=0;
     if(ch>0){
@@ -515,6 +552,26 @@ function renderParticles(t,dt){
     }
   }
 
+  /* ---- 1b. the opening's boat, turned to face its travel, and the wake
+         it has laid down in world space ---- */
+  if(boatOn>0){
+    for(var b1=0;b1<BN;b1++){
+      var ob=b1*3, qb=n*3, bx=B_P[ob], bz=B_P[ob+2], bnx=B_N[ob], bnz=B_N[ob+2];
+      WPOS[qb]=bx*boatC-bz*boatS+boatX; WPOS[qb+1]=B_P[ob+1]+boatY; WPOS[qb+2]=bx*boatS+bz*boatC+boatZ;
+      WNRM[qb]=bnx*boatC-bnz*boatS; WNRM[qb+1]=B_N[ob+1]; WNRM[qb+2]=bnx*boatS+bnz*boatC;
+      WMAT[n]=B_M[b1]; WB[n]=boatOn*0.42; n++;
+    }
+  }
+  if(wakeOn>0){
+    for(var w1=0;w1<WKN;w1++){
+      var aw=WK_A[w1]; if(aw<=0.004) continue;
+      var qw=n*3, ow=w1*3;
+      WPOS[qw]=WK_P[ow]; WPOS[qw+1]=WK_P[ow+1]; WPOS[qw+2]=WK_P[ow+2];
+      WNRM[qw]=0; WNRM[qw+1]=1; WNRM[qw+2]=0;
+      WMAT[n]=19; WB[n]=aw*wakeOn*0.95; n++;
+    }
+  }
+
   /* ---- 2. depth pre-pass at quarter scale.
          At one point per pixel a full-res depth test never catches anything,
          so the buffer is coarse and every cell collects several points. ---- */
@@ -542,6 +599,8 @@ function renderParticles(t,dt){
     if(vz2<0) continue;
     var X2=SXi[k2], Y2=SYi[k2];
     if(useZ && vz2>dbuf[(Y2>>DSHIFT)*DW+(X2>>DSHIFT)]+occl) continue;
+    /* the opening's erosion — before the lighting, so a culled point costs nothing */
+    if(diss>0 && WMAT[k2]<17 && diss*(0.42+1.25*radAt(X2,Y2))>THR[k2&4095]) continue;
     var q4=k2*3;
     var nx=WNRM[q4], ny=WNRM[q4+1], nz=WNRM[q4+2];
     var dx2=WPOS[q4]-ex, dy2=WPOS[q4+1]-ey, dz2=WPOS[q4+2]-ez;
@@ -615,6 +674,9 @@ var scatter=0, fadeIn=0, occl=0.12, backLit=0.55;
 var yaw=-0.62, pitch=0.24, dist=5.6, tYaw=yaw, tPitch=pitch, tDist=dist;
 var panX=0,panY=0,tPanX=0,tPanY=0, xShift=0, yShift=0, distBias=0;
 var CW_PX=0, CH_PX=0, nPoints=0;
+/* Framebuffer cap. Solidity is points per buffer pixel, so this and the
+   point count move together; the opening runs its own. */
+var CAP=1000000;
 
 /* Point count is the perf lever, not resolution — measured, not guessed.
    Phones get a third of the desktop budget and the adaptive step below
@@ -630,6 +692,8 @@ function makeCloud(){
   buildSurf(nPoints-nw-nsm); buildWater(Math.max(1,nw)); buildSmoke(Math.max(1,nsm));
 }
 function layout(){
+  if(lent) return;
+  needLayout=false;
   var w=stage.clientWidth||900, h=stage.clientHeight||620;
   cvs.classList.toggle('mx', innerWidth>820);
   cvs.classList.toggle('my', innerWidth<=820);
@@ -659,15 +723,9 @@ function timeline(){
   P = travel<=0 ? 0 : Math.max(0,Math.min(1,-r.top/travel));
 
   var worksOut=ease(seg(P,0.06,0.32));
-  var plateOut=seg(P,0.10,0.38);
   scatter = 1-ease(seg(P,0.22,0.70));
   fadeIn  = seg(P,0.20,0.52);
   var aboutIn=ease(seg(P,0.58,0.78));
-
-  /* The plate is the site's own fixed backdrop. Fading the element lands
-     on body's --void, which is the same near-black — so the page goes
-     dark without a second black layer stacked over it. */
-  if(bdrop) bdrop.style.opacity=(1-plateOut).toFixed(3);
 
   /* The folders keep their entrance pop; the scrub can't afford its
      240ms transition, so the transition is cut the first time we move
@@ -732,9 +790,11 @@ function timeline(){
    the island costs nothing. */
 var running=false, lastT=0, fAcc=0, fN=0, slowFor=0, trimmed=false;
 var dragging=false,panning=false,lastX=0,lastY=0,pinchD=0;
+var lent=false, onScreen=false, needLayout=false, stillMode=false;
 function frame(now){
   if(!running) return;
   var t=now/1000, dt=Math.min(0.05,(now-lastT)/1000); lastT=now;
+  if(needLayout) layout();
   timeline();
   if(spin && !dragging) tYaw+=dt*0.10;
   yaw+=(tYaw-yaw)*0.12; pitch+=(tPitch-pitch)*0.12; dist+=(tDist-dist)*0.12;
@@ -752,7 +812,7 @@ function frame(now){
   }
   requestAnimationFrame(frame);
 }
-function start(){ if(running) return; running=true; lastT=performance.now(); requestAnimationFrame(frame); }
+function start(){ if(running||lent||stillMode) return; running=true; lastT=performance.now(); requestAnimationFrame(frame); }
 function stop(){ running=false; }
 
 function boot(){
@@ -799,32 +859,106 @@ layout();
 addEventListener('resize',layout);
 
 if('IntersectionObserver' in window){
-  new IntersectionObserver(function(en){ if(en[0].isIntersecting) start(); else stop(); },
+  new IntersectionObserver(function(en){ onScreen=en[0].isIntersecting; if(onScreen) start(); else stop(); },
     {rootMargin:'20% 0px'}).observe(track);
-} else start();
-document.addEventListener('visibilitychange',function(){ document.hidden?stop():start(); });
-if(window.ScrollTrigger && ScrollTrigger.refresh) ScrollTrigger.refresh();
+} else { onScreen=true; start(); }
+/* Only back on if the track is actually in view — coming back to the tab
+   used to restart the loop wherever the reader was on the page. */
+document.addEventListener('visibilitychange',function(){ if(document.hidden) stop(); else if(onScreen) start(); });
 }
 
   /* ---------- reduced motion ----------
      Content kept, travel dropped. The island is rendered once into the
      column the cards used to hold; the page stays a plain stack. */
+  var stillN=0;
+  function stillFrame(){
+    if(lent) return;
+    if(nPoints!==stillN){ nPoints=stillN; makeCloud(); }
+    var w=cvs.clientWidth||320, h=cvs.clientHeight||240;
+    cvs.width=Math.round(w*DPR); cvs.height=Math.round(h*DPR);
+    CW_PX=w; CH_PX=h; allocBuf();
+    renderParticles(2.0, 0);
+  }
   function still(){
+    stillMode=true;
     document.documentElement.classList.add('atoll-still');
     palette='island'; psize=1; bloom=0.55; gain=1.8; occl=0.12; backLit=0.55;
     spin=0; scatter=0; fadeIn=1; ECH=[0,0,0,0,0,0]; smoke=1; cloudsOn=1;
     yaw=-0.62; pitch=0.24; dist=6.4; distBias=0; xShift=0; yShift=0;
-    prepTris(); nPoints=Math.min(70000,budget()); makeCloud();
-    function once(){
-      var w=cvs.clientWidth||320, h=cvs.clientHeight||240;
-      cvs.width=Math.round(w*DPR); cvs.height=Math.round(h*DPR);
-      CW_PX=w; CH_PX=h; allocBuf();
-      renderParticles(2.0, 0);
-    }
-    once();
-    var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(once,180); });
+    prepTris(); stillN=Math.min(70000,budget()); stillFrame();
+    var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(stillFrame,180); });
   }
 
   if (reduceMo) still();
   else { document.documentElement.classList.add('atoll-on'); boot(); }
+
+  /* ---------- lent to the opening ----------
+     js/opening.js holds this engine for the length of the lid. take()
+     parks the About loop and points the renderer at the opening's canvas
+     with the opening's look; give() puts every one of those back, and
+     About rebuilds at its own budget before it next draws. */
+  var kept=null, U=[0,0,0];
+  window.NPIsland = {
+    take: function(canvas, o){
+      if(lent) return false;
+      stop(); lent=true;
+      kept={cvs:cvs,ctx:ctx,gain:gain,bloom:bloom,spin:spin,occl:occl,ECH:ECH,
+            yaw:yaw,tYaw:tYaw,pitch:pitch,tPitch:tPitch,dist:dist,tDist:tDist,
+            panX:panX,panY:panY,tPanX:tPanX,tPanY:tPanY,xShift:xShift,yShift:yShift,
+            distBias:distBias,scatter:scatter,fadeIn:fadeIn,CAP:CAP};
+      cvs=canvas; ctx=canvas.getContext('2d',{alpha:false});
+      gain=o.gain; bloom=o.bloom; occl=o.occl; spin=0; if(o.ECH) ECH=o.ECH;
+      yaw=tYaw=o.yaw; pitch=tPitch=o.pitch; dist=tDist=o.dist;
+      panX=panY=tPanX=tPanY=0; xShift=yShift=distBias=0; scatter=0; fadeIn=1; CAP=o.cap;
+      this.size(o.points);
+      return true;
+    },
+    size: function(points, d){
+      if(!lent) return;
+      if(d) dist=tDist=d;
+      var w=cvs.clientWidth||innerWidth, h=cvs.clientHeight||innerHeight;
+      cvs.width=Math.round(w*DPR); cvs.height=Math.round(h*DPR);
+      CW_PX=w; CH_PX=h; allocBuf();
+      if(points && points!==nPoints){ nPoints=points; makeCloud(); }
+    },
+    points: function(){ return nPoints; },
+    set: function(fade, erode, wake){ fadeIn=fade; diss=erode; wakeOn=wake; },
+    carry: function(bp,bn,bm,bnum, wp,wa,wnum){ B_P=bp; B_N=bn; B_M=bm; BN=bnum; WK_P=wp; WK_A=wa; WKN=wnum; },
+    boat: function(on,x,y,z,c,s){ boatOn=on; boatX=x; boatY=y; boatZ=z; boatC=c; boatS=s; },
+    yaw: function(){ return yaw; },
+    /* The inverse of renderParticles' camera, for placing the boat by where
+       it should be on screen. Same construction line for line — if that
+       camera changes, this changes with it. No bob: spin is 0 while lent. */
+    unproject: function(sx, sy, vz){
+      var cp=Math.cos(pitch), sp=Math.sin(pitch), cy=Math.cos(yaw), sy2=Math.sin(yaw);
+      var tgx=panX, tgy=0.28+panY, D=dist+distBias;
+      var ex=tgx+D*cp*sy2, ey=tgy+D*sp, ez=D*cp*cy;
+      var fx=tgx-ex, fy=tgy-ey, fz=-ez, fl=Math.sqrt(fx*fx+fy*fy+fz*fz)||1; fx/=fl; fy/=fl; fz/=fl;
+      var rx=-fz, rz=fx, rl=Math.sqrt(rx*rx+rz*rz)||1; rx/=rl; rz/=rl;
+      var ux=-rz*fy, uy=rz*fx-rx*fz, uz=rx*fy;
+      var F=1/Math.tan(0.46), asp=BW/BH;
+      var a=(sx-0.5-xShift)*2*asp/F*vz, b=(0.5-sy-yShift)*2/F*vz;
+      U[0]=ex+fx*vz+rx*a+ux*b; U[1]=ey+fy*vz+uy*b; U[2]=ez+fz*vz+rz*a+uz*b;
+      return U;
+    },
+    render: function(t, dt){ if(lent) renderParticles(t, dt); },
+    blank: function(){ if(!lent) return; ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height); },
+    give: function(){
+      if(!lent) return;
+      diss=0; boatOn=0; wakeOn=0;
+      var k=kept; kept=null;
+      cvs=k.cvs; ctx=k.ctx; gain=k.gain; bloom=k.bloom; spin=k.spin; occl=k.occl; ECH=k.ECH;
+      yaw=k.yaw; tYaw=k.tYaw; pitch=k.pitch; tPitch=k.tPitch; dist=k.dist; tDist=k.tDist;
+      panX=k.panX; panY=k.panY; tPanX=k.tPanX; tPanY=k.tPanY; xShift=k.xShift; yShift=k.yShift;
+      distBias=k.distBias; scatter=k.scatter; fadeIn=k.fadeIn; CAP=k.CAP;
+      lent=false;
+      if(stillMode){ stillFrame(); return; }
+      /* Rebuilding at About's budget is the one expensive step in the
+         handback, so it waits for idle; frame() does it first if About
+         is scrolled to before then. */
+      needLayout=true;
+      (window.requestIdleCallback||function(f){ return setTimeout(f,200); })(function(){ if(needLayout) layout(); });
+      if(onScreen && !document.hidden) start();
+    }
+  };
 })();

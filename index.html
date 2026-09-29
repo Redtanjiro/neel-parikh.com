@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Before first paint: a return in the same tab never sees the lid, not
+     even for a frame. js/opening.js reads the same flag. -->
+<script>try{if(sessionStorage.getItem('np:opening-seen')==='1')document.documentElement.classList.add('op-seen')}catch(e){}</script>
 <title>Neel Parikh — Designer</title>
 <!-- "A designer without a team is, well, marooned" was the joke the old
      hero concept was built around; that hero is gone, and a joke with
@@ -20,14 +23,10 @@
 <link rel="apple-touch-icon" href="media/apple-touch-icon.png">
 
 <link rel="preload" href="fonts/Panchang-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/Allison.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Sprat-ExtendedLight.woff2" as="font" type="font/woff2" crossorigin>
-<!-- No poster preload. The frame is black until step 5, by which point
-     the video is playing — preloading the still would have been 125KB
-     spent on something almost nobody sees. It stays in the markup for
-     reduced-motion, where it replaces the video entirely. -->
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/opening.css">
 <!-- The About island. Inert until js/about-island.js puts .atoll-on (or
      .atoll-still) on <html>; see the head of that file. -->
 <link rel="stylesheet" href="css/about-island.css">
@@ -35,42 +34,6 @@
 <body>
 
 <a class="skip" href="#work">Skip to work</a>
-
-<!-- ============ THE BACKDROP ============
-     One halftone plate behind the whole site. The name and the desktop
-     sit on THIS — the machine's read of the island — and the opening's
-     clean footage dissolves into it.
-
-     It used to be two things: a clean-footage title card stacked above a
-     red-halftone desk section, butt-joined, so scrolling between them
-     cut hard from one grade and framing to another. Rejoined now, the
-     way it was before the title card was split out (see 3bb9a38).
-
-     A sibling of .hero and .site, never a child. .site takes a
-     translateY for the length of the opening (siteOffset in hero.js);
-     a transformed ancestor becomes the containing block for a fixed
-     child and drags it off the viewport. At body level this stays
-     locked to the frame — which is also exactly what the reveal needs,
-     since the lid dissolves onto it.
-
-     h264 only, no webm alternate: a <video> with several <source>s
-     downloads the first it can play rather than negotiating, and every
-     browser this audience uses plays h264 — the webm was ~1.5 MB of
-     duplicate fetch for nothing. preload="none"; hero.js asks for it a
-     couple of seconds before the dissolve. The poster is load-bearing:
-     it is what the layer shows before the buffer is ready, and under
-     reduced motion it is the plate — the clip never plays. -->
-<div class="backdrop" aria-hidden="true">
-  <video class="backdrop__dither" id="backdrop-dither"
-         poster="media/dither-poster.jpg"
-         muted loop playsinline preload="none"
-         aria-hidden="true" tabindex="-1">
-    <source src="media/dither.mp4" type="video/mp4">
-  </video>
-  <div class="backdrop__wash"></div>
-  <div class="backdrop__scrim"></div>
-  <div class="backdrop__grain"></div>
-</div>
 
 <!-- Site chrome. Fixed, and a sibling of .hero rather than a child, so
      it does not scroll away with the pin.
@@ -81,15 +44,17 @@
      asked a first-time reader to take the entire site on trust. The
      mark and the reading rule still wait for the picture — those are
      furniture. The nav is an exit, and an exit nobody can see is not
-     one. See data-full in hero.js. -->
+     one. See showChrome in js/opening.js. -->
 <header class="chrome" id="chrome">
   <div class="chrome__rule"><span class="chrome__rule-fill" id="progress-fill"></span></div>
   <!-- The persistent mark is the NAME now, not the joke. "Marooned." was
        doing a wordmark's job on a page that had no other one; the tail
        gives the name a full-bleed moment, and the header is what carries
-       it for the rest of the visit. Two sizes of one thing, which is
-       what a mark is for. -->
-  <span class="chrome__mark" id="chrome-mark">Neel Parikh</span>
+       it for the rest of the visit.
+
+       It is the page's h1. It was the title card's, and the title card
+       went with the old opening; a portfolio's title is the person. -->
+  <h1 class="chrome__mark" id="chrome-mark">Neel Parikh</h1>
   <nav class="chrome__nav">
     <a href="#work">Work</a>
     <a href="#about">About</a>
@@ -97,156 +62,22 @@
   </nav>
 </header>
 
-<!-- ============ HERO ============ -->
-<section class="hero" id="hero">
+<!-- ============ THE OPENING ============
+     A lid over the page, run once per visit by js/opening.js. The island
+     is the About section's own particle scene (js/about-island.js),
+     borrowed for the length of the lid; the three lines arrive in the
+     space it gives up, and a boat crosses and leaves the site behind it.
 
-  <div class="hero__media">
-    <video class="hero__video" id="hero-video"
-           poster="media/hero-poster.jpg"
-           autoplay muted loop playsinline preload="auto"
-           aria-hidden="true" tabindex="-1">
-      <source src="media/hero.webm" type="video/webm">
-      <source src="media/hero.mp4" type="video/mp4">
-    </video>
+     The lines are real text, all three present from the first frame so
+     that none of them moves when the next one arrives. -->
+<section class="hero" id="hero" aria-label="Opening">
 
+  <canvas class="hero__isle" id="hero-isle" aria-hidden="true"></canvas>
 
-    <div class="hero__scrim"></div>
-    <div class="hero__vignette"></div>
-    <div class="hero__blackout" id="blackout"></div>
-
-    <!-- The island, as the machine renders it. ASCII pass off the same
-         footage that plays underneath, cropped to the one island and
-         sat ON TOP of the blackout — so screen one is a black frame
-         with a picture on it rather than a photograph being dimmed.
-         The real place is still down there, and it arrives when the
-         blackout lifts in the tail. Idea first, then the thing.
-
-         h264 ONLY — no webm alternate. There used to be one, "for
-         builds without proprietary codecs"; the real effect was
-         Chromium fetching both encodes, since a <video> with several
-         <source>s downloads the first one it can play rather than
-         negotiating, and every browser this audience uses can play
-         h264. That was ~2.5 MB of duplicate download across this
-         element and the dither layer below, nobody watching a frame of
-         it. Putting the alternate back means finding the source
-         re-selection problem first, not just re-adding the tag.
-
-         preload="auto", unusually for a second video on the page: it is
-         the first picture on the site and it is due one gesture in, so
-         there is no lead time to buy later. It plays only on screen one
-         — hero.js starts and stops it with the step — and under reduced
-         motion it never plays at all and the poster is the plate. -->
-    <div class="hero__isle" id="isle" aria-hidden="true">
-      <video class="hero__isle-clip" id="isle-clip"
-             poster="media/isle-poster.jpg"
-             muted loop playsinline preload="auto"
-             width="1000" height="690"
-             aria-hidden="true" tabindex="-1">
-        <source src="media/isle.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <!-- ============ THE LIGHTS ============
-         Screen two's whole set piece. Three lamps, screen-blended, so
-         where they overlap they ADD rather than stack — which is the
-         argument the frame is making and the reason these cannot be
-         three flat circles with the blend faked into the fill. Screen
-         over #000 is the identity, so the frame stays black everywhere
-         they aren't and the blackout underneath still does its job.
-
-         Decorative, every one of them: the sentence they light is real
-         text a few elements down. -->
-    <div class="hero__lamps" aria-hidden="true">
-      <i class="hero__lamp hero__lamp--y" id="lamp-y"></i>
-      <i class="hero__lamp hero__lamp--a" id="lamp-a"></i>
-      <i class="hero__lamp hero__lamp--r" id="lamp-r"></i>
-    </div>
-
-    <div class="hero__grain"></div>
-  </div>
-
-  <!-- (chrome lives outside .hero — see css) -->
-  <!-- The script. Every line is real text in the DOM.
-
-       data-at  = screens of scroll, from the top of the story, at which
-                  this phrase arrives
-       data-off = screens at which it leaves again (omit to stay)
-
-       SCREENS, NOT SECONDS. These were seconds when the story ran on a
-       clock. It runs on the scroll position now, so the numbers changed
-       meaning: one screen is one viewport of scrolling, and a value
-       reads directly as "how far down". Retiming the piece is editing
-       these — nothing in hero.js needs to know.
-
-       The whole story, in screens from the top of the pin:
-
-         0.20  No man is an island…
-         0.45  the two strokes, then Designer under them
-         0.85  the island and the line leave
-         1.00  a beam comes on and starts searching
-         1.75  it settles — found
-         1.90  all by their Self,
-         2.35  two more lights, from the left and the right
-         2.60  all by their Self, leaves
-         2.85  let’s work together.
-         3.35  the story ends and the reveal begins
-
-       No lock and no skip: crossing a number forward plays its beat,
-       crossing it backward unplays it, and scrolling fast is what
-       skipping looks like. -->
-  <div class="hero__stage">
-
-    <!-- ============ THE CLAIM ============
-         The island, the claim, and the correction. "man" is struck
-         through and "Designer" written under it in Allison, which is
-         the whole joke of the site made in one gesture: the quote is
-         about people, and this is about the one doing the work.
-
-         del/ins rather than a decorative span — a strike-and-replace
-         is exactly the pair of elements HTML already has for it, and a
-         screen reader gets "No man Designer is an island", which is
-         what the frame says. The strike is drawn rather than
-         text-decoration so it can be animated; see .cut in main.css.
-
-         The island plate rides this phrase's two numbers, so there is
-         one place to retime the opening rather than two. -->
-    <div class="phrase pos--isle" data-at="0.20" data-off="0.85" data-cut>
-      <span class="line line--body">No <span class="cut"><del>man</del><ins class="hand">Designer</ins></span> is an island&#8230;</span>
-    </div>
-
-    <!-- ============ THE LIGHTS ============
-         The frame empties, a beam comes on and hunts for something,
-         finds the sentence, and then two more lights arrive and the
-         three of them overlap into the answer.
-
-         The beam's PATH is the one thing on the page still running on
-         its own clock, and deliberately: darts and holds only read as
-         searching when they are timed. Scrubbed, every hold becomes a
-         stretch of scrolling where nothing happens. So the scroll
-         controls how long you watch it, not where it points.
-
-         The lamp cues live in hero.js (BEAM_ON / BEAM_HOLD /
-         LIGHTS_AT) because they are staging, not sentences. -->
-    <div class="phrase pos--lit" data-at="1.90" data-off="2.60">
-      <span class="line line--body line--lit">all by their <em>Self</em>,</span>
-    </div>
-
-    <div class="phrase pos--lit" data-at="2.85">
-      <span class="line line--body line--lit line--tog">let&#8217;s work <b>together</b>.</span>
-    </div>
-
-  </div><!-- /.hero__stage -->
-
-  <!-- ============ THE NAME ============
-       NOT A PHRASE, and not a step. It lives in the pinned tail, where
-       the blackout comes off and the real footage arrives, and it is
-       scrubbed by the scroll rather than fired by a gesture — see
-       NAME_IN / NAME_OUT in hero.js. Making it a `.phrase` would have
-       given it a data-in, which is what LAST is derived from, which
-       would have added a third dot to a two-dot ledger and a third
-       gated scroll to a page whose whole point is that it has two. -->
-  <div class="hero__name" id="hero-name">
-    <span class="hero__name-line">Neel Parikh</span>
+  <div class="hero__lines">
+    <p class="hero__ln">no designer is an island</p>
+    <p class="hero__ln">all by themself,</p>
+    <p class="hero__ln">let&#8217;s work together.</p>
   </div>
 
 
@@ -317,75 +148,16 @@
 
 
 <!-- ============ THE SITE ============
-     Everything that is not the opening, and a separate document from it.
-
-     THIS USED TO LIVE INSIDE THE HERO. The desktop was a layer of the
-     pinned sequence, which meant the animation was welded to the page:
-     the story owned seven thousand pixels of scroll, the work sat on top
-     of it, and scrolling up from the files un-played the story frame by
-     frame. Two different things sharing one scrollbar.
-
-     They are two things now. The hero is a fixed overlay that runs once
-     and unmounts; this is an ordinary page underneath it, with an
-     ordinary scrollbar, which the reader reaches at the top and cannot
-     leave backwards into an animation that is over.
-
-     The halftone plate is NOT in here and not in the hero either — it is
-     .backdrop, a body-level element behind both, so the hero fades out
-     onto it and the name and the desktop then share it with no seam
-     between them. -->
+     Everything that is not the opening. An ordinary page under the lid,
+     with an ordinary scrollbar, which starts at its own top: the desk.
+     The boat uncovers it in place, so the reader lands on the frame the
+     opening ended on. -->
 <div class="site" id="site">
-  <!-- ============ THE TITLE CARD ============
-       The top of the site, and the reason there is somewhere to scroll
-       back TO. The opening dissolves past this into the desktop and the
-       reader lands on the files; this sits above them and scrolling up
-       reaches it.
-
-       IT READS IN TWO LINES, ON SCROLL. .title is 300svh of scroll
-       budget; .title__stage is a 100svh sticky pane inside it. A
-       ScrollTrigger scrub (setupTitleScroll in hero.js) holds line one,
-       swaps it for line two, then lifts and fades the whole pane as the
-       desk scrolls up under it — the title dissolving into the work
-       rather than ending at a hard edge. Both lines are real text in
-       source order, so a screen reader (and no-JS, and reduced motion)
-       gets them stacked and static; the scrub is enhancement.
-
-       THE h1 IS STILL "Neel Parikh" — the small standing mark at the
-       top of the pane, not the tagline. A portfolio's title is the
-       person; the tagline is a <p>.
-
-       NO LAYERS OF ITS OWN. Transparent — .backdrop shows through, the
-       same continuous plate the desktop sits on. -->
-  <section class="title" id="title">
-    <div class="title__stage">
-      <div class="title__inner">
-        <h1 class="title__eyebrow">Neel Parikh</h1>
-        <div class="title__lines">
-          <p class="title__line title__line--1">Interaction &amp; Product <span class="title__keep">Designer, <i class="title__script">Sydney.</i></span></p>
-          <p class="title__line title__line--2">I make things that <span class="title__keep">explain <i class="title__script">themselves.</i></span></p>
-        </div>
-      </div>
-
-      <!-- The reader arrives here off a sequence that held the scroll for
-           fourteen seconds, onto a sticky pane whose first line is held
-           still for the first quarter of its travel. For that beat the
-           frame is motionless and the only thing that says the page is
-           theirs again is a scrollbar. So: one arrow, gone the moment
-           the first line starts to move, which is the moment it has
-           stopped being needed. -->
-      <div class="title__cue" id="title-cue" aria-hidden="true">
-        <svg width="10" height="26" viewBox="0 0 10 26" fill="none">
-          <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
-        </svg>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ THE ISLAND TRACK ============
        The work and the about are one pane now, not two screens. 420svh
-       of scroll for a 100svh sticky stage: the folders fly apart, the
-       halftone plate goes to void, an island gathers out of the dust
-       and settles to the left while About arrives beside it.
+       of scroll for a 100svh sticky stage: the folders fly apart, an
+       island gathers out of the dust and settles to the left while
+       About arrives beside it.
 
        IT IS A PLAIN DIV UNTIL THE SCRIPT SAYS OTHERWISE. Every rule
        that makes this a track is scoped under html.atoll-on, which
@@ -401,11 +173,6 @@
   <div class="atoll__stage">
 
   <section class="desk" id="desk">
-    <!-- The plate the files sit on is .backdrop, a body-level element —
-         not a layer of this section any more. It is one plate shared
-         with the title card above, which is what the dissolve resolves
-         into: the halftone ceasing to be a picture of the island and
-         becoming the thing the island's laptop is showing. -->
     <main class="work" id="work" tabindex="-1">
       <h2 class="sect__h">Work</h2>
       <ul class="work__grid" id="work-grid" aria-label="Selected work">
@@ -595,7 +362,7 @@
   <!-- Below the plate. -->
   <footer class="footer">
     <p class="footer__line">The island has good wifi. Send a boat anyway.</p>
-    <!-- The opening plays once per visit (sessionStorage — see hero.js).
+    <!-- The opening plays once per visit (sessionStorage — see js/opening.js).
          This is the way back into it, and the only reason it is a button
          rather than a link: there is no other page to go to, only this
          one without the flag. -->
@@ -606,10 +373,9 @@
   </footer>
 </div><!-- /.site -->
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
-<script src="js/hero.js"></script>
+<!-- Order matters: the opening borrows the island's engine. -->
 <script src="js/about-island.js"></script>
+<script src="js/opening.js"></script>
+<script src="js/site.js"></script>
 </body>
 </html>
