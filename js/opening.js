@@ -10,13 +10,13 @@
    same time, so there is no second copy of either. This file owns the
    playhead, the score, the boat and its wake, and the reveal.
 
-   What makes a timed sequence defensible is not that it is short. It is
-   that the reader chose it, can see how long it is, and can leave:
+   It plays on its own, once per visit. What keeps a timed sequence
+   nobody asked for from being an ambush is that the reader can see how
+   long it is and can leave at any point:
 
-     - THE DOOR. Nobody is shown this without asking.
-     - THE RAIL. The reader is owed the clock they agreed to.
-     - THE EXIT, STANDING. Esc, and a tap target beside the rail, for the
-       whole run and not only at the door.
+     - THE RAIL. A bar filling for the length of the run.
+     - THE EXIT, STANDING. Esc, a tap target beside the rail, and every
+       nav link, for the whole run.
 
    THE SHAPE, in seconds of playhead:
 
@@ -27,7 +27,7 @@
       5.15  the remnant of the island starts to go
       6.25  the boat enters from the right
      ~9.2   the hull is off the left edge; the wake is still clearing
-     10.8   the site is standing, and the lid comes off
+     10.8   the title card is standing, and the lid comes off
 
    Every beat except the wake is a pure function of the playhead.
 
@@ -46,7 +46,6 @@
   var hero     = document.getElementById('hero');
   var cvs      = document.getElementById('hero-isle');
   var site     = document.getElementById('site');
-  var door     = document.getElementById('door');
   var rail     = document.getElementById('rail');
   var railBar  = document.getElementById('rail-bar');
   var railFill = document.getElementById('rail-fill');
@@ -54,6 +53,7 @@
   var chrome   = document.getElementById('chrome');
   var mark     = document.getElementById('chrome-mark');
   var lines    = [].slice.call(document.querySelectorAll('.hero__ln'));
+  var linesEl  = document.querySelector('.hero__lines');
   var E        = window.NPIsland;
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -266,13 +266,19 @@
      ONE POSITION OF THE PLAYHEAD
      ========================================================= */
   var boatOn = 0, wakeOn = 0, fadeIn = 1, bx = 0, by = 0, bz = 0, sx = 0, sz = 0;
-  var lastMask = '', chromeAt = 0;
+  var lastMask = '', lastLinesMask = '';
 
   function setMask(v) {
     if (v === lastMask) return;
     lastMask = v;
     hero.style.webkitMaskImage = v;
     hero.style.maskImage = v;
+  }
+  function setLinesMask(v) {
+    if (!linesEl || v === lastLinesMask) return;
+    lastLinesMask = v;
+    linesEl.style.webkitMaskImage = v;
+    linesEl.style.maskImage = v;
   }
 
   function apply(t) {
@@ -318,12 +324,17 @@
        only once the particles have spread and gone the page itself. The
        page cannot arrive before the wake has cleared, or it is a wipe
        with particles on it. Unclamped, so it clears the left edge. */
-    if (t < BOAT_IN) setMask('');
+    if (t < BOAT_IN) { setMask(''); setLinesMask(''); }
     else {
       var rev = bsx * 100;
       setMask('linear-gradient(to right, #000 ' + (rev - 3).toFixed(1) + '%, rgba(0,0,0,.82) ' +
         (rev + 13).toFixed(1) + '%, rgba(0,0,0,.38) ' + (rev + 32).toFixed(1) + '%, transparent ' +
         (rev + 52).toFixed(1) + '%)');
+      /* The lines go at the hull, on a tighter edge than the page arrives
+         on: the title card's own lines sit in the same band of the frame,
+         and two sentences crossing in the curtain read as neither. */
+      setLinesMask('linear-gradient(to right, #000 ' + (rev - 2).toFixed(1) + '%, transparent ' +
+        (rev + 12).toFixed(1) + '%)');
     }
 
     /* The mark arrives as the band clears the top-left, where it sits. */
@@ -332,9 +343,9 @@
 
   /* =========================================================
      THE PLAYHEAD
-     The loop runs from the first frame, not from play: behind the door
-     the island is standing and alive — water, smoke, weather — and the
-     playhead simply sits at zero until the reader asks for the rest.
+     The loop runs from the first frame; the playhead starts once the
+     island has faded in, so it is seen standing — water, smoke, weather —
+     before anything happens to it.
      ========================================================= */
   var clock = 0, running = false, leaving = false, handedOff = false;
   var raf = 0, last = 0;
@@ -422,11 +433,11 @@
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
 
     railShow(false);
-    doorShow(false);
     if (hero) {
       hero.hidden = true;
       hero.style.opacity = '';
       setMask('');
+      setLinesMask('');
     }
 
     root.classList.remove('is-opening');
@@ -443,8 +454,8 @@
     showChrome();
   }
 
-  /* Where the reader is put down. The top of the page is the desk now —
-     the files are what the boat uncovered — so that is the default. A
+  /* Where the reader is put down. The top of the page is the title card —
+     what the boat uncovered — so that is the default. A
      fragment wins on a return visit (/#work from a case study), and so
      does a nav link pressed during the lid: that reader asked to go
      somewhere, and skipping them to the top would ignore it. */
@@ -459,12 +470,8 @@
     else window.scrollTo(0, 0);
   }
 
-  /* ---------------------------------------------------------
-     THE TWO ANSWERS
-     --------------------------------------------------------- */
   function play() {
     if (handedOff || running || leaving) return;
-    doorShow(false);
     railShow(true);
     if (reduced) cvs.style.transition = 'none';
     running = true;
@@ -476,26 +483,12 @@
      cut, and no stop on a title card that no longer exists. */
   function bail() {
     if (handedOff || leaving) return;
-    doorShow(false);
     if (running && !reduced && clock >= BOAT_IN + BOAT_SPAN * 0.5) return;
     leaving = true;
     showChrome();
     hero.classList.add('is-leaving');
     hero.style.opacity = '0';
     setTimeout(handoff, 500);
-  }
-
-  var doorOn = false;
-  function doorShow(on) {
-    if (!door || on === doorOn) return;
-    doorOn = on;
-    if (on) {
-      door.hidden = false;
-      requestAnimationFrame(function () { door.setAttribute('data-show', ''); });
-    } else {
-      door.removeAttribute('data-show');
-      setTimeout(function () { if (!doorOn) door.hidden = true; }, 460);
-    }
   }
 
   var railOn = false;
@@ -520,7 +513,9 @@
     if (chromeShown || !chrome) return;
     chromeShown = true;
     chrome.setAttribute('data-full', '');
-    if (reduced || !mark || !mark.animate) return;
+    /* Over the title card the mark stands down (its eyebrow is the mark
+       there), so an entrance would only play to leave again. */
+    if (reduced || !mark || !mark.animate || chrome.hasAttribute('data-top')) return;
     var entrance = mark.animate([
       { opacity: 0, transform: 'translate(2vw, 6vh) scale(1.6)', filter: 'blur(2px)' },
       { opacity: 1, transform: 'none', filter: 'blur(0px)' }
@@ -533,33 +528,11 @@
   /* ---------------------------------------------------------
      Wiring
      --------------------------------------------------------- */
-  var storyBtn = document.getElementById('door-story');
-  var skipBtn  = document.getElementById('door-skip');
-  if (storyBtn) storyBtn.addEventListener('click', play);
-  if (skipBtn)  skipBtn.addEventListener('click', bail);
-  if (bailBtn)  bailBtn.addEventListener('click', bail);
-
-  /* The story option says "scroll down", and the page is locked — so a
-     reader who does exactly that has to get the story. */
-  var wheelAcc = 0, touchY = null;
-  window.addEventListener('wheel', function (e) {
-    if (!doorOn || e.deltaY <= 0) return;
-    wheelAcc += e.deltaY;
-    if (wheelAcc > 24) play();
-  }, { passive: true });
-  window.addEventListener('touchstart', function (e) {
-    touchY = (e.touches && e.touches[0]) ? e.touches[0].clientY : null;
-  }, { passive: true });
-  window.addEventListener('touchmove', function (e) {
-    if (!doorOn || touchY === null) return;
-    var y = (e.touches && e.touches[0]) ? e.touches[0].clientY : null;
-    if (y !== null && touchY - y > 24) play();
-  }, { passive: true });
+  if (bailBtn) bailBtn.addEventListener('click', bail);
 
   window.addEventListener('keydown', function (e) {
     if (handedOff) return;
-    if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); bail(); return; }
-    if (doorOn && (e.key === 'ArrowDown' || e.key === 'PageDown')) { e.preventDefault(); play(); }
+    if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); bail(); }
   });
 
   /* Every link into the page is an exit while the lid is down — and it
@@ -575,7 +548,7 @@
   });
 
   /* The way back in. replace(), not reload(), so a #work fragment is
-     dropped and the reader lands at the door. */
+     dropped and the reader lands at the start of the opening. */
   var replayBtn = document.getElementById('replay-opening');
   if (replayBtn) {
     replayBtn.addEventListener('click', function () {
@@ -617,10 +590,10 @@
   setRail(0);
   raf = requestAnimationFrame(function () {
     if (!reduced) calibrate();
-    /* The island arrives rather than having always been there; the door
-       follows it in. */
+    /* The island arrives rather than having always been there, and the
+       story starts as it finishes arriving. */
     cvs.setAttribute('data-live', '');
     raf = requestAnimationFrame(frame);
+    setTimeout(play, 900);
   });
-  setTimeout(function () { if (!handedOff && !running && !leaving) doorShow(true); }, 600);
 })();

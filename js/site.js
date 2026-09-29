@@ -1,8 +1,8 @@
 /* =========================================================
    neel-parikh.com — the page under the opening
-   The reading rule, the files arriving, and the About links. Nothing
-   here knows the opening exists: the lid is js/opening.js, the island
-   is js/about-island.js.
+   The reading rule, the title card, the files arriving, and the About
+   links. Nothing here knows the opening exists: the lid is
+   js/opening.js, the island is js/about-island.js.
    ========================================================= */
 (function () {
   'use strict';
@@ -15,26 +15,84 @@
      frame at most, whatever the scroll event rate.
      --------------------------------------------------------- */
   var fill = document.getElementById('progress-fill');
-  if (fill) {
-    var ticking = false;
-    var measure = function () {
-      ticking = false;
-      var max = document.documentElement.scrollHeight - window.innerHeight;
-      var f = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      fill.style.transform = 'scaleX(' + f.toFixed(4) + ')';
-    };
-    var queue = function () { if (!ticking) { ticking = true; requestAnimationFrame(measure); } };
-    window.addEventListener('scroll', queue, { passive: true });
-    window.addEventListener('resize', queue);
-    measure();
+  function rule() {
+    if (!fill) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var f = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    fill.style.transform = 'scaleX(' + f.toFixed(4) + ')';
+  }
+
+  /* ---------------------------------------------------------
+     THE TITLE CARD, READ IN TWO LINES
+
+     .title is 300svh of scroll; .title__stage is the 100svh sticky pane
+     inside it. Progress runs from the card's top at the top of the
+     window to its bottom there, and every beat is a pure function of it,
+     so scrolling back up unplays it exactly:
+
+       0.00-0.06  the cue goes — it exists to say "this moves"
+       0.00-0.24  line one, held
+       0.24-0.40  line one lifts out, line two takes its place
+       0.40-0.72  line two, held
+       0.72-1.00  line two, the eyebrow and the pane fade while the pane
+                  unpins and the desk comes up under it — the title
+                  dissolving into the work rather than ending at an edge
+
+     Reduced motion and no-JS never get here: CSS stacks both lines,
+     static, and leaves the cue in place.
+     --------------------------------------------------------- */
+  var title   = document.getElementById('title');
+  var tStage  = title && title.querySelector('.title__stage');
+  var tLine1  = title && title.querySelector('.title__line--1');
+  var tLine2  = title && title.querySelector('.title__line--2');
+  var tBrow   = title && title.querySelector('.title__eyebrow');
+  var tCue    = document.getElementById('title-cue');
+  var scrubTitle = !!(tStage && tLine1 && tLine2) &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var lastP = -1;
+
+  function seg(p, a, b) { var v = (p - a) / (b - a); return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function titleScrub() {
+    var r = title.getBoundingClientRect();
+    var p = r.height > 0 ? Math.min(1, Math.max(0, -r.top / r.height)) : 0;
+    if (p === lastP) return;
+    lastP = p;
+    var swap = seg(p, 0.24, 0.40), out = seg(p, 0.72, 1);
+    tLine1.style.opacity = (1 - swap).toFixed(3);
+    tLine1.style.transform = 'translateY(' + (-16 * swap).toFixed(2) + '%)';
+    tLine2.style.opacity = (swap * (1 - out)).toFixed(3);
+    tLine2.style.transform = 'translateY(' + (16 * (1 - swap) - 16 * out).toFixed(2) + '%)';
+    if (tBrow) tBrow.style.opacity = (1 - out).toFixed(3);
+    tStage.style.opacity = (1 - out).toFixed(3);
+    if (tCue) tCue.style.opacity = (0.5 * (1 - seg(p, 0, 0.06))).toFixed(3);
+  }
+
+  var ticking = false;
+  function onScroll() {
+    ticking = false;
+    rule();
+    if (scrubTitle) titleScrub();
+  }
+  function queue() { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
+  onScroll();
+
+  /* The mark stands down while the card is on screen: its eyebrow IS
+     the mark there, and two of one mark in a frame is a repetition. */
+  var chrome = document.getElementById('chrome');
+  if (tStage && chrome && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) chrome.setAttribute('data-top', '');
+      else chrome.removeAttribute('data-top');
+    }, { threshold: 0 }).observe(tStage);
   }
 
   /* ---------------------------------------------------------
      THE FILES ARRIVING — one-shot, the first time a section is a
      quarter on screen. Not toggled: an entrance that replays every time
-     you scroll past is a tic. The desk is at the top of the page, so
-     under the opening this fires at load and the files are standing by
-     the time the boat uncovers them.
+     you scroll past is a tic. The desk sits under the title card, so
+     the files arrive as the reader scrolls down to them.
      --------------------------------------------------------- */
   function reveal(el, attr) {
     if (!site || !el) return;

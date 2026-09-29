@@ -1,6 +1,6 @@
 /* =========================================================
    neel-parikh.com — Mark 4
-   Tokens → reset → chrome → work → about → a11y (the opening: opening.css)
+   Tokens → reset → chrome → work → about → title → a11y (the opening: opening.css)
    ========================================================= */
 
 :root {
@@ -57,6 +57,9 @@
   /* Two voices, one boundary. Panchang is the person shouting into the
      cloud; Sprat is the work itself. They never share a block. */
   --font-display: 'Panchang', ui-sans-serif, system-ui, sans-serif;
+  /* The third voice: a handwriting face for the two script words on the
+     title card. Allison, subset to the characters they need. */
+  --font-hand: 'Allison', 'Snell Roundhand', 'Segoe Script', cursive;
   --font-work: 'Sprat', Georgia, 'Times New Roman', serif;
   --font-ui: ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -1066,6 +1069,170 @@ img, video { display: block; max-width: 100%; }
   .footer__replay:hover { color: var(--ink-dim); }
 }
 .footer__replay:focus-visible { outline: 2px solid var(--folder-teal, #74E8E8); outline-offset: 3px; }
+
+/* =========================================================
+   THE TITLE CARD — the top of the site, read in two lines on scroll
+   ========================================================= */
+/* The scroll budget. Not what the reader sees — that is .title__stage,
+   one viewport of it, sticky inside this. The extra height is the
+   distance the line swap and the hand-off into the desk are scrubbed
+   across (THE TITLE CARD in js/site.js). NO overflow:hidden — it would
+   kill the sticky child; body already uses overflow-x: clip for the
+   same reason. */
+.title {
+  position: relative;
+  width: 100%;
+  height: 300svh;
+}
+.title__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center start;
+  padding: 0 6vw;
+  z-index: 2;
+}
+/* Left-aligned block, ragged right — the tagline is speech, not a
+   headline centred on the frame. */
+/* 70rem, not 52.
+
+   The design draws these as two lines — "Interaction & Product" /
+   "Designer, Sydney." — and 52rem could not hold the first one, so it
+   came apart into three with "Product" stranded in the middle.
+   Measured: at the clamped type size (70px from 1440 up) that phrase
+   wants 1095px, and 52rem is 832.
+
+   It was never the 22ch measure on .title__line doing this. Panchang's
+   zero is wide enough that 22ch computes to ~1848px — the ch cap has
+   not once been the binding constraint on this element at any
+   viewport. Worth knowing before anyone tunes it expecting an effect.
+
+   70rem = 1120px, which clears 1095 wherever the type is at full size
+   and collapses to 100% below that. */
+.title__inner {
+  position: relative;
+  width: min(100%, 70rem);
+  text-shadow: var(--halo);
+}
+/* The standing mark. Small, above the tagline, the same "Neel Parikh"
+   the header carries — while the pane is in view this is it and the
+   header copy stands down (see below). */
+.title__eyebrow {
+  margin: 0 0 clamp(.9rem, 2.6vh, 1.8rem);
+  font-family: var(--font-display);
+  font-size: var(--type-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* The two lines share one grid cell so line two replaces line one in
+   place rather than the block reflowing. */
+.title__lines { display: grid; }
+.title__line {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5.1vw, 4.4rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: var(--track-line);
+  color: var(--ink);
+}
+/* JS sets the real starting state and scrubs from there; this is the
+   no-JS / pre-JS floor so line two is not stacked opaque over line one
+   before setupTitleScroll runs. */
+.title__line--2 { opacity: 0; }
+/* Allison has a small x-height, so the script runs larger than the
+   roman beside it to carry the same weight; line-height: 0 keeps the
+   tall glyph from opening the line box. Same treatment as the intro's
+   "let's work together." */
+/* THE SCRIPT WORD BREAKS WITH THE WORD BEFORE IT, NEVER ALONE.
+
+   Allison runs at 1.5em against the roman, so it is the widest thing on
+   the line and the first thing the browser pushes to a new line. That
+   left "Sydney." sitting on its own at the left margin under "Product
+   Designer," — which reads as a third line of the sentence rather than
+   as the accent the layout is built around, and is not the two-line
+   arrangement the design draws.
+
+   The measure is the wrong lever for this: the width that keeps it
+   inline at 1280 pushes it down at 1440 and back up at 1600. Binding it
+   to its neighbour fixes it at every width instead, and says the true
+   thing — "Designer, Sydney." is one phrase and the break belongs in
+   front of it. */
+.title__keep { white-space: nowrap; }
+
+.title__script {
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-size: 1.5em;
+  line-height: 0;
+  position: relative;
+  top: .08em;
+  white-space: nowrap;
+}
+
+/* No JS and reduced motion: no scrub. Collapse the scroll budget and
+   let both lines sit in normal flow, stacked and static — less
+   movement, not less content. */
+.no-js .title { height: auto; min-height: 100svh; }
+.no-js .title__stage { position: static; height: auto; min-height: 100svh; }
+.no-js .title__lines { display: block; }
+.no-js .title__line { max-width: 20ch; }
+.no-js .title__line + .title__line { margin-top: clamp(1.4rem, 4vh, 2.6rem); }
+.no-js .title__line--2 { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .title { height: auto; min-height: 100svh; }
+  .title__stage { position: static; height: auto; min-height: 100svh; }
+  .title__lines { display: block; }
+  .title__line { max-width: 20ch; }
+  .title__line + .title__line { margin-top: clamp(1.4rem, 4vh, 2.6rem); }
+  .title__line--2 { opacity: 1; }
+}
+
+/* TWO SIZES OF ONE THING, which is what a mark is for — so they are
+   never both on screen at once. While the title pane is in view the
+   eyebrow is the name and the header's copy stands down; scroll to the
+   desktop and the header picks it up. js/site.js sets data-top from an
+   IntersectionObserver on .title__stage. */
+.chrome[data-full][data-top] .chrome__mark { opacity: 0; }
+
+/* The landing cue. One arrow, bottom-centre of the sticky pane, gone as
+   soon as the pane answers a scroll — see THE TITLE CARD in js/site.js,
+   which scrubs its opacity rather than switching it, so scrolling back
+   up brings it honestly back.
+
+   No word beside it. "Scroll" on a page that is plainly a page is an
+   instruction nobody needed; the arrow is doing the only job here,
+   which is to say the frame is not stuck. */
+.title__cue {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5svh;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: var(--ink-dim);
+  opacity: .5;
+  pointer-events: none;
+}
+.title__cue svg { animation: title-cue-bob 1.9s var(--ease-move) infinite; }
+
+@keyframes title-cue-bob {
+  0%, 100% { transform: translateY(0);   opacity: .55; }
+  50%      { transform: translateY(5px); opacity: 1;   }
+}
+
+/* Reduced motion keeps the arrow and drops the bob — it is information,
+   and the setting asks for less travel, not less meaning. It also never
+   gets scrubbed away there (the scrubbed timeline doesn't run under
+   reduced motion), which is correct: the pane is static, so the one
+   thing saying "there is more below" has to stay. */
+@media (prefers-reduced-motion: reduce) {
+  .title__cue svg { animation: none; }
+}
 
 /* =========================================================
    ACCESSIBILITY

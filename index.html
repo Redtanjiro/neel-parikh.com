@@ -23,6 +23,7 @@
 <link rel="apple-touch-icon" href="media/apple-touch-icon.png">
 
 <link rel="preload" href="fonts/Panchang-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Allison.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/Sprat-ExtendedLight.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/main.css">
@@ -50,11 +51,9 @@
   <!-- The persistent mark is the NAME now, not the joke. "Marooned." was
        doing a wordmark's job on a page that had no other one; the tail
        gives the name a full-bleed moment, and the header is what carries
-       it for the rest of the visit.
-
-       It is the page's h1. It was the title card's, and the title card
-       went with the old opening; a portfolio's title is the person. -->
-  <h1 class="chrome__mark" id="chrome-mark">Neel Parikh</h1>
+       it for the rest of the visit. Two sizes of one thing, which is
+       what a mark is for. -->
+  <span class="chrome__mark" id="chrome-mark">Neel Parikh</span>
   <nav class="chrome__nav">
     <a href="#work">Work</a>
     <a href="#about">About</a>
@@ -81,46 +80,6 @@
   </div>
 
 
-  <!-- ============ THE DOOR ============
-       The opening frame asks one question and offers two answers. It is
-       the only place on the site where the reader is asked to choose
-       anything, and it exists because the story is a held sequence: a
-       held sequence that nobody opted into is an ambush, and one they
-       did opt into is a piece of work. The choice is what makes the
-       holding legitimate.
-
-       BOTH ARE BUTTONS, and that is the point of the second one. "esc"
-       is an instruction to a keyboard, and half the people who open
-       this will not have one — so the key is drawn as a key, the whole
-       line is a target you can tap, and the copy swaps to say so on a
-       touch pointer. An escape hatch that only opens with a keystroke
-       is not an escape hatch on a phone.
-
-       They animate differently on purpose. The story option BOBS —
-       downward, in the direction of the gesture it is asking for. The
-       skip option PULSES — no direction, because it is not asking you
-       to travel, it is asking you to leave. Two motions that mean two
-       different things, rather than one motion applied twice.
-
-       THE COPY CHANGED WITH THE MECHANISM. It said "scroll to view the
-       story" when the scroll was the clock. The clock is a clock now, so
-       it says "play" — the one verb that is honest about what the button
-       does, and the one the reader already knows costs them a fixed
-       amount of time rather than an unknown number of gestures. -->
-  <div class="hero__door" id="door" hidden>
-    <button class="door__opt door__opt--skip" type="button" id="door-skip">
-      <span class="door__line door__line--desk">click <kbd class="door__kbd">esc</kbd> to view work</span>
-      <span class="door__line door__line--touch">tap here to view work</span>
-    </button>
-
-    <button class="door__opt door__opt--story" type="button" id="door-story">
-      <span class="door__line">scroll down to view animation</span>
-      <svg class="door__arrow" width="10" height="26" viewBox="0 0 10 26" fill="none" aria-hidden="true">
-        <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
-      </svg>
-    </button>
-  </div>
-
 
   <!-- ============ THE RAIL ============
        The story runs on a clock now, so the reader is owed the clock.
@@ -130,10 +89,10 @@
        wants to know is "how much of this is left", which a bar answers
        at a glance and a number makes you do arithmetic for.
 
-       Next to it, an exit that stays out for the whole run. The old
-       version's one defensible claim was that there was always a
-       visible way out; a timed sequence needs that more than a scrubbed
-       one did, not less. -->
+       Next to it, an exit that stays out for the whole run. The opening
+       plays without asking, so this and Esc are the reader's say in it —
+       a sequence nobody opted into needs a visible way out more than one
+       they chose, not less. -->
   <div class="hero__rail" id="rail" hidden>
     <div class="hero__rail-track" role="progressbar" aria-label="Opening sequence" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="rail-bar">
       <span class="hero__rail-fill" id="rail-fill"></span>
@@ -149,10 +108,47 @@
 
 <!-- ============ THE SITE ============
      Everything that is not the opening. An ordinary page under the lid,
-     with an ordinary scrollbar, which starts at its own top: the desk.
-     The boat uncovers it in place, so the reader lands on the frame the
-     opening ended on. -->
+     with an ordinary scrollbar, which starts at its own top: the title
+     card. The boat uncovers it in place, so the reader lands on the frame
+     the opening ended on. -->
 <div class="site" id="site">
+  <!-- ============ THE TITLE CARD ============
+       The top of the site, and the frame the opening's boat uncovers.
+
+       IT READS IN TWO LINES, ON SCROLL. .title is 300svh of scroll
+       budget; .title__stage is a 100svh sticky pane inside it. A scroll
+       scrub (THE TITLE CARD in js/site.js) holds line one, swaps it for
+       line two, then fades the whole pane as the desk scrolls up under it.
+       Both lines are real text in source order, so a screen reader (and
+       no-JS, and reduced motion) gets them stacked and static.
+
+       THE h1 IS "Neel Parikh" — the small standing mark at the top of the
+       pane, not the tagline. A portfolio's title is the person. -->
+  <section class="title" id="title">
+    <div class="title__stage">
+      <div class="title__inner">
+        <h1 class="title__eyebrow">Neel Parikh</h1>
+        <div class="title__lines">
+          <p class="title__line title__line--1">Interaction &amp; Product <span class="title__keep">Designer, <i class="title__script">Sydney.</i></span></p>
+          <p class="title__line title__line--2">I make things that <span class="title__keep">explain <i class="title__script">themselves.</i></span></p>
+        </div>
+      </div>
+
+      <!-- The reader arrives here off a sequence that held the scroll for
+           fourteen seconds, onto a sticky pane whose first line is held
+           still for the first quarter of its travel. For that beat the
+           frame is motionless and the only thing that says the page is
+           theirs again is a scrollbar. So: one arrow, gone the moment
+           the first line starts to move, which is the moment it has
+           stopped being needed. -->
+      <div class="title__cue" id="title-cue" aria-hidden="true">
+        <svg width="10" height="26" viewBox="0 0 10 26" fill="none">
+          <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ THE ISLAND TRACK ============
        The work and the about are one pane now, not two screens. 420svh
        of scroll for a 100svh sticky stage: the folders fly apart, an

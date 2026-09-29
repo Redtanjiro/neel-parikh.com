@@ -82,107 +82,8 @@ html.is-opening body {
   opacity: 0;
 }
 
-/* =========================================================
-   THE DOOR
-   =========================================================
-   Two answers to one question, centred on the opening frame.
-
-   Centred rather than tucked at the bottom because it is not a hint,
-   it is a fork: the reader is choosing between two versions of the
-   site and the choice deserves the middle of the screen. The bottom
-   of the frame stays empty until the story starts, at which point the
-   rail takes it over and the door is gone. One instrument at a time.
-
-   The two options are deliberately NOT symmetrical in weight. The
-   story is the default and reads brighter; the skip is quieter. It
-   sits ABOVE the story option now, not because it's the one most
-   readers should take — it isn't — but so the exit is the first thing
-   read on the frame rather than a second thought below the button
-   most people are about to press. */
-.hero__door {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* Room between the two, so the story option's arrow reads as
-     belonging to the story option rather than pointing at the skip. */
-  gap: 3.2rem;
-  opacity: 0;
-  transition: opacity 420ms var(--ease-out);
-  /* The frame behind is still scrollable — the door offers the scroll,
-     it does not intercept it. Only the two buttons take pointer. */
-  pointer-events: none;
-}
-.hero__door[hidden] { display: none; }
-.hero__door[data-show] { opacity: 1; }
-
-.door__opt {
-  pointer-events: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: .7rem;
-  margin: 0;
-  padding: .5rem 1.2rem;
-  border: 0;
-  background: none;
-  color: var(--ink-dim);
-  /* `inherit` on a button inherits from the page, not the design —
-     and the page's UI face is not the face this site speaks in. The
-     door is the first type anybody reads here; it has to be Panchang
-     like every other sentence in the sequence. */
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(1.35rem, 3.2vw, 2.5rem);
-  line-height: 1.25;
-  letter-spacing: var(--track-line);
-  text-align: center;
-  text-shadow: var(--halo);
-  cursor: pointer;
-  transition: color 260ms var(--ease-ui), opacity 260ms var(--ease-ui);
-}
-
-/* BOB for the story — downward, in the direction of the gesture it is
-   asking for. The arrow carries it; the words stay put, because type
-   that moves is type you re-read rather than read. */
-.door__opt--story { color: var(--ink); }
-.door__arrow { animation: door-bob 1.8s var(--ease-move) infinite; }
-
-@keyframes door-bob {
-  0%, 100% { transform: translateY(0);   opacity: .55; }
-  50%      { transform: translateY(5px); opacity: 1;   }
-}
-
-/* PULSE for the skip — no direction, because it is not asking you to
-   travel. Slower than the bob and out of phase with it, so the two
-   never beat together and read as one blinking object.
-
-   OPACITY ONLY, NEVER SCALE. It is a tap target, and a tap target that
-   is still breathing when the finger arrives has moved out from under
-   it. A button may change how it looks; it may not change where it is.
-   (This also stopped the automated click test dead — Playwright will
-   not click an element that never comes to rest, which is a fair proxy
-   for a thumb.) */
-.door__opt--skip { animation: door-pulse 2.6s var(--ease-move) infinite; font-size: clamp(1.1rem, 2.4vw, 1.8rem); }
-
-@keyframes door-pulse {
-  0%, 100% { opacity: .42; }
-  50%      { opacity: .82; }
-}
-
-/* Hover and focus stop the animation dead and go to full strength.
-   A thing that keeps pulsing while you are pointing at it has not
-   noticed you. */
-.door__opt:hover,
-.door__opt:focus-visible { color: var(--ink); opacity: 1; animation-play-state: paused; }
-.door__opt:hover .door__arrow,
-.door__opt:focus-visible .door__arrow { animation-play-state: paused; opacity: 1; }
-.door__opt:focus-visible { outline: 1px solid var(--ink-dim); outline-offset: .5rem; }
-
-/* The key, drawn as a key. */
+/* The key, drawn as a key, and copy that tells the truth about the
+   pointer it is under — used by the rail's skip. */
 .door__kbd {
   display: inline-block;
   padding: .06em .5em .12em;
@@ -203,21 +104,12 @@ html.is-opening body {
   vertical-align: .16em;
 }
 
-/* Copy that tells the truth about the pointer it is under. "click esc"
-   is nonsense on a phone. */
 .door__line--touch { display: none; }
 @media (hover: none) and (pointer: coarse) {
   .door__line--desk  { display: none; }
   .door__line--touch { display: inline; }
 }
 
-@media (max-width: 640px) {
-  .hero__door { gap: 1.1rem; padding: 0 8vw; }
-  .door__opt  { font-size: clamp(1.25rem, 6.4vw, 1.9rem); }
-  .door__opt--skip { font-size: clamp(1rem, 4.6vw, 1.4rem); }
-  /* A tap target, not a line of text. */
-  .door__opt { min-height: 48px; padding: .8rem 1.2rem; }
-}
 
 /* =========================================================
    THE RAIL — the clock, made visible
@@ -273,10 +165,8 @@ html.is-opening body {
   transform: scaleX(0);
 }
 
-/* Quiet, and quieter than the door was — the reader has already made
-   the choice this contradicts, so it should be findable rather than
-   competing. No pulse: a thing that blinks for fifteen seconds beside
-   a story is asking you to leave it. */
+/* Quiet: findable rather than competing. No pulse — a thing that blinks
+   for ten seconds beside a story is asking you to leave it. */
 .hero__bail {
   pointer-events: auto;
   flex: none;
@@ -310,11 +200,3 @@ html.is-opening body {
   .hero__bail { min-height: 44px; padding: .8rem .4rem; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* The door stops moving but keeps its hierarchy — the difference
-     between the two options was never carried by the motion. The rail
-     stays: it is information, and a reader who asked for less motion
-     has more reason to want to know how long this runs, not less. */
-  .door__arrow, .door__opt--skip { animation: none; transform: none; }
-  .door__opt--skip { opacity: .6; }
-}
