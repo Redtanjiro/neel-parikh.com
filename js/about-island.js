@@ -718,9 +718,11 @@ var fvec=folders.map(function(_,i){
 var scrubbing=false, P=0;
 
 function timeline(){
-  var r=track.getBoundingClientRect();
-  var travel=r.height-stage.offsetHeight;
-  P = travel<=0 ? 0 : Math.max(0,Math.min(1,-r.top/travel));
+  /* The first stage-height of the track is a hold — the Work grid sits
+     still for a full screen of scrolling before any of this starts. */
+  var r=track.getBoundingClientRect(), hold=stage.offsetHeight;
+  var travel=r.height-stage.offsetHeight-hold;
+  P = travel<=0 ? 0 : Math.max(0,Math.min(1,(-r.top-hold)/travel));
 
   var worksOut=ease(seg(P,0.06,0.32));
   scatter = 1-ease(seg(P,0.22,0.70));
