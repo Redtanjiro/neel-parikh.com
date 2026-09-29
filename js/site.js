@@ -78,6 +78,73 @@
   window.addEventListener('resize', queue);
   onScroll();
 
+  /* ---------------------------------------------------------
+     ABOUT, BY CLICK, PLAYS THE SAME WAY IT DOES BY SCROLL
+
+     The island track is driven by scroll position, so an anchor jump
+     lands on the settled frame and skips the whole disperse. Instead the
+     link carries the page there: from above the track it cuts to the
+     Work grid at rest — the frame the sequence starts from — then runs
+     the scroll down to the settle, so the grid flies apart and the island
+     gathers on the way. Scrolling by hand is untouched.
+
+     Any wheel, touch or key during the run hands the page straight back.
+     Reduced motion, and no track (no JS for it, or the still island),
+     keep the plain jump. While the opening's lid is down, js/opening.js
+     owns the link. */
+  var atoll = document.getElementById('atoll');
+  var cue   = document.getElementById('about');
+  var carrying = 0;
+
+  function stopCarry() {
+    if (!carrying) return;
+    cancelAnimationFrame(carrying);
+    carrying = 0;
+    ['wheel', 'touchstart', 'keydown'].forEach(function (t) { window.removeEventListener(t, stopCarry); });
+  }
+
+  function carryToAbout() {
+    var r = atoll.getBoundingClientRect();
+    var trackTop = r.top + window.scrollY;
+    var hold = parseFloat(getComputedStyle(atoll).getPropertyValue('--hold')) || window.innerHeight;
+    var margin = parseFloat(getComputedStyle(cue).scrollMarginTop) || 0;
+    var target = cue.getBoundingClientRect().top + window.scrollY - margin;
+    var from = window.scrollY;
+    if (from < trackTop + hold && target > trackTop + hold) {
+      from = trackTop + hold;
+      window.scrollTo(0, from);
+    }
+    var dist = target - from;
+    if (Math.abs(dist) < 2) return;
+    var screens = Math.abs(dist) / window.innerHeight;
+    var dur = Math.max(700, Math.min(2400, 600 + 450 * screens));
+    var t0 = 0;
+    function step(now) {
+      if (!t0) t0 = now;
+      var k = Math.min(1, (now - t0) / dur);
+      var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      window.scrollTo(0, from + dist * e);
+      if (k < 1) carrying = requestAnimationFrame(step);
+      else stopCarry();
+    }
+    ['wheel', 'touchstart', 'keydown'].forEach(function (t) { window.addEventListener(t, stopCarry, { passive: true }); });
+    carrying = requestAnimationFrame(step);
+  }
+
+  if (atoll && cue) {
+    [].slice.call(document.querySelectorAll('a[href="#about"]')).forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var root = document.documentElement;
+        if (root.classList.contains('is-opening') || !root.classList.contains('atoll-on')) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        e.preventDefault();
+        stopCarry();
+        if (window.location.hash !== '#about' && history.pushState) history.pushState(null, '', '#about');
+        carryToAbout();
+      });
+    });
+  }
+
   /* The mark stands down while the card is on screen: its eyebrow IS
      the mark there, and two of one mark in a frame is a repetition. */
   var chrome = document.getElementById('chrome');
