@@ -30,7 +30,6 @@
      window to its bottom there, and every beat is a pure function of it,
      so scrolling back up unplays it exactly:
 
-       0.00-0.06  the cue goes — it exists to say "this moves"
        0.00-0.24  line one, held
        0.24-0.40  line one lifts out, line two takes its place
        0.40-0.72  line two, held
@@ -39,14 +38,13 @@
                   dissolving into the work rather than ending at an edge
 
      Reduced motion and no-JS never get here: CSS stacks both lines,
-     static, and leaves the cue in place.
+     static.
      --------------------------------------------------------- */
   var title   = document.getElementById('title');
   var tStage  = title && title.querySelector('.title__stage');
   var tLine1  = title && title.querySelector('.title__line--1');
   var tLine2  = title && title.querySelector('.title__line--2');
   var tBrow   = title && title.querySelector('.title__eyebrow');
-  var tCue    = document.getElementById('title-cue');
   var scrubTitle = !!(tStage && tLine1 && tLine2) &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var lastP = -1;
@@ -64,7 +62,6 @@
     tLine2.style.transform = 'translateY(' + (16 * (1 - swap) - 16 * out).toFixed(2) + '%)';
     if (tBrow) tBrow.style.opacity = (1 - out).toFixed(3);
     tStage.style.opacity = (1 - out).toFixed(3);
-    if (tCue) tCue.style.opacity = (0.5 * (1 - seg(p, 0, 0.06))).toFixed(3);
   }
 
   var ticking = false;
@@ -143,6 +140,45 @@
         carryToAbout();
       });
     });
+  }
+
+  /* ---------------------------------------------------------
+     THE SCROLL CUE — on and off, all the way down
+
+     Hidden while the reader is scrolling (they have plainly found the
+     scroll), back after a pause of REST, and gone for good while the
+     footer is in view: there is nothing further down to point at. It
+     first arrives once the opening's lid has lifted — watched for on
+     html's class, since the lid is js/opening.js's business.
+     --------------------------------------------------------- */
+  var cue = document.getElementById('scroll-cue');
+  var footer = document.querySelector('.footer');
+  if (cue) {
+    var REST = 1400, restT = 0, atEnd = false, root = document.documentElement;
+    var cueShow = function () {
+      if (atEnd || root.classList.contains('is-opening')) return;
+      cue.setAttribute('data-on', '');
+    };
+    var cueRest = function (ms) { clearTimeout(restT); restT = setTimeout(cueShow, ms); };
+    window.addEventListener('scroll', function () {
+      cue.removeAttribute('data-on');
+      cueRest(REST);
+    }, { passive: true });
+    if (footer && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        atEnd = entries[0].isIntersecting;
+        if (atEnd) { clearTimeout(restT); cue.removeAttribute('data-on'); }
+        else cueRest(REST);
+      }).observe(footer);
+    }
+    if (root.classList.contains('is-opening') && 'MutationObserver' in window) {
+      var lid = new MutationObserver(function () {
+        if (root.classList.contains('is-opening')) return;
+        lid.disconnect();
+        cueRest(700);
+      });
+      lid.observe(root, { attributes: true, attributeFilter: ['class'] });
+    } else cueRest(700);
   }
 
   /* The mark stands down while the card is on screen: its eyebrow IS

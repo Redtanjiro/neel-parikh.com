@@ -134,20 +134,19 @@
         </div>
       </div>
 
-      <!-- The reader arrives here off a sequence that held the scroll for
-           fourteen seconds, onto a sticky pane whose first line is held
-           still for the first quarter of its travel. For that beat the
-           frame is motionless and the only thing that says the page is
-           theirs again is a scrollbar. So: one arrow, gone the moment
-           the first line starts to move, which is the moment it has
-           stopped being needed. -->
-      <div class="title__cue" id="title-cue" aria-hidden="true">
-        <svg width="10" height="26" viewBox="0 0 10 26" fill="none">
-          <path d="M5 0v24M1 20l4 4 4-4" stroke="currentColor" stroke-width="1.25"/>
-        </svg>
-      </div>
     </div>
   </section>
+
+  <!-- ============ THE SCROLL CUE ============
+       One arrow for the whole page, bottom-centre and fixed. It comes and
+       goes: gone while the reader is scrolling, back once they pause, and
+       gone for good at the footer, where there is nothing further down.
+       It first arrives once the opening has lifted. See js/site.js. -->
+  <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
+    <svg width="12" height="32" viewBox="0 0 12 32" fill="none">
+      <path d="M6 0v30M1.5 25.5L6 30l4.5-4.5" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+  </div>
 
   <!-- ============ THE ISLAND TRACK ============
        The work and the about are one pane now, not two screens. A hold

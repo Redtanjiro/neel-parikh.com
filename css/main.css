@@ -1200,38 +1200,31 @@ img, video { display: block; max-width: 100%; }
    IntersectionObserver on .title__stage. */
 .chrome[data-full][data-top] .chrome__mark { opacity: 0; }
 
-/* The landing cue. One arrow, bottom-centre of the sticky pane, gone as
-   soon as the pane answers a scroll — see THE TITLE CARD in js/site.js,
-   which scrubs its opacity rather than switching it, so scrolling back
-   up brings it honestly back.
-
-   No word beside it. "Scroll" on a page that is plainly a page is an
-   instruction nobody needed; the arrow is doing the only job here,
-   which is to say the frame is not stuck. */
-.title__cue {
-  position: absolute;
+/* The scroll cue — one arrow for the whole page (js/site.js decides
+   when it shows). Fixed bottom-centre, under the opening's lid and the
+   chrome. A drop shadow rather than --halo, since it is a stroke, not
+   type, and it crosses photographs on the Work page. */
+.scroll-cue {
+  position: fixed;
   left: 50%;
   bottom: 4.5svh;
+  z-index: 30;
   transform: translateX(-50%);
-  z-index: 2;
   color: var(--ink-dim);
-  opacity: .5;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+  filter: drop-shadow(0 1px 6px rgba(0,0,0,.7));
 }
-.title__cue svg { animation: title-cue-bob 1.9s var(--ease-move) infinite; }
-
-@keyframes title-cue-bob {
-  0%, 100% { transform: translateY(0);   opacity: .55; }
-  50%      { transform: translateY(5px); opacity: 1;   }
+.scroll-cue[data-on] { opacity: 1; }
+.scroll-cue svg { display: block; animation: scroll-cue-bob 1.9s var(--ease-move) infinite; }
+@keyframes scroll-cue-bob {
+  0%, 100% { transform: translateY(0);   opacity: .6; }
+  50%      { transform: translateY(6px); opacity: 1;  }
 }
-
-/* Reduced motion keeps the arrow and drops the bob — it is information,
-   and the setting asks for less travel, not less meaning. It also never
-   gets scrubbed away there (the scrubbed timeline doesn't run under
-   reduced motion), which is correct: the pane is static, so the one
-   thing saying "there is more below" has to stay. */
+/* It still comes and goes — that is information — but it does not bob. */
 @media (prefers-reduced-motion: reduce) {
-  .title__cue svg { animation: none; }
+  .scroll-cue svg { animation: none; }
 }
 
 /* =========================================================
