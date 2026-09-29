@@ -717,12 +717,29 @@ var fvec=folders.map(function(_,i){
 });
 var scrubbing=false, P=0;
 
+/* ---- the hold ----
+   How far the grid has to scroll inside the pinned pane to show its last
+   row, and how long the whole hold is: that, plus a rest on the bottom
+   row, and never less than one screen. Written to the track as --hold;
+   rewritten only when it changes, since it moves the page below it. */
+var holdPx=0, gridOver=0;
+function measureHold(){
+  if(stillMode) return;
+  var sh=stage.offsetHeight||innerHeight;
+  gridOver=Math.max(0, Math.ceil(work.offsetTop+work.offsetHeight-sh));
+  var h=Math.round(Math.max(sh, gridOver+sh*0.6));
+  if(Math.abs(h-holdPx)>1){ holdPx=h; host.style.setProperty('--hold', h+'px'); }
+}
+
 function timeline(){
-  /* The first stage-height of the track is a hold — the Work grid sits
-     still for a full screen of scrolling before any of this starts. */
-  var r=track.getBoundingClientRect(), hold=stage.offsetHeight;
+  /* The hold first: the grid scrolls up inside the pinned pane until its
+     last row is in view, rests, and only then does any of this start. */
+  measureHold();
+  var r=track.getBoundingClientRect(), hold=holdPx||stage.offsetHeight;
   var travel=r.height-stage.offsetHeight-hold;
   P = travel<=0 ? 0 : Math.max(0,Math.min(1,(-r.top-hold)/travel));
+  var lift=Math.max(0,Math.min(gridOver,-r.top));
+  deskEl.style.transform=lift>0?'translateY('+(-lift)+'px)':'';
 
   var worksOut=ease(seg(P,0.06,0.32));
   scatter = 1-ease(seg(P,0.22,0.70));
@@ -858,7 +875,12 @@ prepTris();
 nPoints=budget();
 makeCloud();
 layout();
-addEventListener('resize',layout);
+measureHold();
+addEventListener('resize',function(){ layout(); measureHold(); });
+/* The grid's height settles as fonts and thumbnails land; the track has
+   to be right before anyone reaches it, or #about lands off the settle. */
+addEventListener('load',measureHold);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measureHold);
 
 if('IntersectionObserver' in window){
   new IntersectionObserver(function(en){ onScreen=en[0].isIntersecting; if(onScreen) start(); else stop(); },

@@ -17,14 +17,18 @@
    ============================================================ */
 
 /* ---------- the track ----------
-   520svh of scroll for a 100svh pane. The first extra 100 is a HOLD: the
-   Work grid is a page to be looked at, and it used to start flying apart
-   a fifth of a screen after it arrived. The other 320 is the sequence —
-   the grid flying apart, the gather, the settle. The hold is one stage
-   height; see timeline() in js/about-island.js. */
+   A HOLD, then 320svh of sequence (the grid flying apart, the gather,
+   the settle) on a 100svh pane.
+
+   The hold is the Work page being a page. The grid is usually taller
+   than the pinned pane, so for the length of the hold it scrolls up
+   inside the pane like ordinary content until its last row is in view,
+   rests there, and only then starts to go. --hold is that distance in
+   px, measured from the grid by js/about-island.js (measureHold); 100svh
+   is only the floor before the script has measured. */
 .atoll { position: relative; }
 
-html.atoll-on .atoll        { height: 520svh; }
+html.atoll-on .atoll        { height: calc(420svh + var(--hold, 100svh)); }
 html.atoll-on .atoll__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 
 /* Both screens become layers of the one pane. They keep their own
