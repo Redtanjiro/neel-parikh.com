@@ -1210,10 +1210,10 @@ img, video { display: block; max-width: 100%; }
   bottom: 4.5svh;
   z-index: 30;
   transform: translateX(-50%);
-  color: var(--ink-dim);
+  color: var(--ink);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 500ms var(--ease-out);
+  transition: opacity 300ms var(--ease-out);
   filter: drop-shadow(0 1px 6px rgba(0,0,0,.7));
 }
 .scroll-cue[data-on] { opacity: 1; }

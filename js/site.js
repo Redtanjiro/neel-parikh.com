@@ -145,16 +145,17 @@
   /* ---------------------------------------------------------
      THE SCROLL CUE — on and off, all the way down
 
-     Hidden while the reader is scrolling (they have plainly found the
-     scroll), back after a pause of REST, and gone for good while the
-     footer is in view: there is nothing further down to point at. It
+     Hidden while the reader is scrolling, back the moment they stop
+     (REST is just long enough to see a scroll has ended, momentum
+     included), and gone for good while the footer is in view: there is
+     nothing further down to point at. It
      first arrives once the opening's lid has lifted — watched for on
      html's class, since the lid is js/opening.js's business.
      --------------------------------------------------------- */
   var cue = document.getElementById('scroll-cue');
   var footer = document.querySelector('.footer');
   if (cue) {
-    var REST = 1400, restT = 0, atEnd = false, root = document.documentElement;
+    var REST = 220, restT = 0, atEnd = false, root = document.documentElement;
     var cueShow = function () {
       if (atEnd || root.classList.contains('is-opening')) return;
       cue.setAttribute('data-on', '');
