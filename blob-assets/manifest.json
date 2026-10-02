@@ -1,0 +1,19 @@
+{
+  "name": "blob-field",
+  "grid": 340,
+  "anchor": { "x": 170, "y": 318, "norm": 300 },
+  "note": "Every sprite is drawn on the same 340x340 grid at one shared scale, with the blob's bottom-centre on the anchor. Add a pose by matching that and appending it to poses.",
+  "poses": [
+    { "id": "happy",    "label": "Happy",          "file": "sprites/happy.webp" },
+    { "id": "sad",      "label": "Sad",            "file": "sprites/sad.webp" },
+    { "id": "angry",    "label": "Angry",          "file": "sprites/angry.webp" },
+    { "id": "thinking", "label": "Thinking",       "file": "sprites/thinking.webp" },
+    { "id": "confused", "label": "Confused",       "file": "sprites/confused.webp" },
+    { "id": "tired",    "label": "Tired",          "file": "sprites/tired.webp" },
+    { "id": "resting",  "label": "Resting",        "file": "sprites/resting.webp" },
+    { "id": "working",  "label": "Working",        "file": "sprites/working.webp" },
+    { "id": "stressed", "label": "Stressed",       "file": "sprites/stressed.webp" },
+    { "id": "laptop",   "label": "On the laptop",  "file": "sprites/laptop.webp" },
+    { "id": "phone",    "label": "On the phone",   "file": "sprites/phone.webp" }
+  ]
+}

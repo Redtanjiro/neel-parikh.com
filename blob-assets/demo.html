@@ -1,0 +1,62 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>blob-field — demo</title>
+<link rel="stylesheet" href="blob-field.css">
+<style>
+  body{margin:0;background:#000;color:#FBF7F0;
+       font:14px/1.6 "Space Grotesk","Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:54rem;margin:0 auto;padding-inline:20px;padding-block:28px 40px}
+  h1{font-size:22px;font-weight:500;margin:0 0 4px}
+  p.sub{margin:0 0 18px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+        color:rgba(251,247,240,.45)}
+  .blobstage{aspect-ratio:16/11;border:1px solid rgba(251,247,240,.14)}
+  @media (max-width:620px){.blobstage{aspect-ratio:1/1}}
+  .rail{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  button{font:inherit;font-size:13px;color:rgba(251,247,240,.7);background:none;
+         border:1px solid rgba(251,247,240,.14);padding:7px 13px;border-radius:999px;
+         cursor:pointer;min-height:34px}
+  button[aria-pressed="true"]{color:#000;background:#4FA8FF;border-color:#4FA8FF}
+  button:focus-visible{outline:2px solid #4FA8FF;outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <h1>blob-field</h1>
+  <p class="sub">Serve this folder — don't open the file directly</p>
+
+  <div class="blobstage" id="stage">
+    <canvas class="blobstage__canvas" id="c"></canvas>
+    <p class="blobstage__cap" id="cap"></p>
+  </div>
+
+  <div class="rail" id="rail"></div>
+</div>
+
+<script src="blob-field.js"></script>
+<script>
+  var cap = document.getElementById('cap'), rail = document.getElementById('rail');
+
+  var field = BlobField.create({
+    canvas: document.getElementById('c'),
+    base: '',                 // this file sits beside manifest.json
+    points: innerWidth < 640 ? 8000 : 14000,
+    pose: 'happy',
+    onReady: function (f) {
+      f.poses.forEach(function (id) {
+        var b = document.createElement('button');
+        b.textContent = f.labels[id];
+        b.setAttribute('aria-pressed', String(id === f.pose));
+        b.onclick = function () { f.setPose(id, { burst: true }); paint(f); };
+        rail.appendChild(b);
+      });
+      paint(f);
+    }
+  });
+
+  function paint(f) {
+    cap.textContent = f.labels[f.pose];
+    [].forEach.call(rail.children, function (b, i) {
+      b.setAttribute('aria-pressed', String(f.poses[i] === f.pose));
+    });
+  }
+</script>

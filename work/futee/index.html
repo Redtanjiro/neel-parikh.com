@@ -4,841 +4,1153 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Futee — Neel Parikh</title>
-<meta name="description" content="Futee — an all-in-one football matchmaking platform for Bangkok. UX research, UI design and visual identity, 2021—22.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Futee — a matchmaking platform for people who play football in Bangkok. UX research, information architecture, UI system and identity, 2021–22.">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CASE STUDY TEMPLATE  ·  built screen by screen from Figma
+
+       01  .statement   full-bleed photograph, wordmark, centred claim
+       03  .dossier     the problem          04–05 .row  solution, role
+       06  .thesis      the big question     07  .trace  walkthrough
+       08–11 .step      one user question each, hung off a wire
+       12  .turn        the other person in every screen
+       13–14 .close     what went over, credits, next project
+
+     Content is Futee. Swap the images, the copy and --accent and
+     the template carries over.
+     ══════════════════════════════════════════════════════════════ -->
 
 <style>
-/* ══════════════════════════════════════════════════════════════════
-   CASE STUDY — MARK 5 SKELETON
-   The structure every case study on the site now uses:
-
-     00  hero        full-bleed photograph, wordmark, meta row,
-                     outcome numbers
-     01  band        full-bleed motion graphic
-     02  run         DOSSIER PINNED LEFT   · content runs right
-     03  band        full-bleed motion graphic
-     04  run.flip    DOSSIER PINNED RIGHT  · content runs left
-     05  band        full-bleed motion graphic
-     06  credits + next
-
-   Only the palette, the copy and the media change between projects.
-   Everything below this line is shared.
-   ══════════════════════════════════════════════════════════════════ */
+@font-face{
+  font-family:'DM Sans';
+  src:url('../../fonts/DMSans-Variable.woff2') format('woff2');
+  font-weight:100 1000;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'DM Sans';
+  src:url('../../fonts/DMSans-Italic-Variable.woff2') format('woff2');
+  font-weight:100 1000;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Panchang';
+  src:url('../../fonts/Panchang-Variable.woff2') format('woff2');
+  font-weight:200 800;font-style:normal;font-display:block;
+}
 
 :root{
-  /* ── ground ── */
-  --void:#000000;            /* page — true black */
-  --deep:#0F120C;             /* media wells keep the project tint */
-
-  --ink:#FBF7F0;              /* never pure #FFF */
+  --void:#000;
+  --ink:#FBF7F0;
   --ink-70:rgba(251,247,240,.74);
-  --ink-45:rgba(251,247,240,.46);
-  --rule:rgba(251,247,240,.20);
+  --ink-mute:rgba(251,247,240,.52);   /* labels, captions — 5.4:1 on black, AA */
+  --rule:rgba(251,247,240,.26);
 
-  /* ── the project's own accent. Swap per case study. ── */
-  --floodlight:#F2E338;
-  --accent:var(--floodlight);
+  /* ── the two faces, and nothing else ──────────────────────────
+     Panchang   headings, wordmarks, plate labels. Never body copy.
+     DM Sans    everything that is read as a sentence, plus labels,
+                answers and captions. Italic carries the voice — the
+                questions, the quote, the asides.
+     ─────────────────────────────────────────────────────────── */
+  --display:'Panchang',ui-sans-serif,system-ui,sans-serif;
+  --body:'DM Sans',ui-sans-serif,system-ui,-apple-system,sans-serif;
 
-  /* ── motion ── */
+  /* ── type scale ───────────────────────────────────────────────
+     Sizes are the Figma's, measured at a 1280 frame, expressed so
+     that 1280 lands exactly on them. FACE · WEIGHT · SIZE@1280.
+     ─────────────────────────────────────────────────────────── */
+  --t-mark:      clamp(17px,1.64vw,23px);  /* Panchang 500 · 21 — wordmarks        */
+  --t-nav:       clamp(14px,1.33vw,18px);  /* Panchang 400 · 17 — nav links        */
+  --t-disc:      clamp(16px,1.48vw,20px);  /* Panchang 400 · 19 — discipline       */
+  --t-head:      clamp(23px,2.42vw,34px);  /* Panchang 700 · 31 — section heads    */
+  --t-thesis:    clamp(33px,4.22vw,60px);  /* Panchang 700 · 54 — the big question */
+  --t-plate:     clamp(18px,2.19vw,30px);  /* Panchang 700 · 28 — plate label      */
+
+  --t-quote:     clamp(21px,2.19vw,31px);  /* DM Sans it. 400 · 28 — pull quote    */
+  --t-lede:      clamp(20px,2.03vw,29px);  /* DM Sans it. 400 · 26 — lead question */
+  --t-sub:       clamp(18px,1.88vw,26px);  /* DM Sans it. 400 · 24 — sub-questions */
+  --t-body:      clamp(15px,1.48vw,20px);  /* DM Sans 400 · 19 — right-column copy */
+  --t-small:     clamp(13.5px,1.33vw,18px);
+  --t-label:     clamp(11px,.94vw,13px);   /* DM Sans 500 caps · 12 — keys, credits *//* DM Sans 400 · 17 — answers, captions */
+
   --ease-out:cubic-bezier(.16,1,.3,1);
-  --ease-soft:cubic-bezier(.23,1,.32,1);
 
-  /* ── rhythm ── */
-  --pad:clamp(20px,8.4vw,108px);
-  --gap:clamp(26px,4.4vw,72px);
-  --sec:clamp(80px,10vw,150px);    /* between major sections */
-  --beat:clamp(52px,6.4vw,96px);   /* between beats inside a track */
-  --radius:0px;
-  --radius-pill:22px;
+  --pad-g:clamp(18px,2.97vw,44px);   /* the one gutter, 38px @1280  */
+  --sec:clamp(90px,13vw,190px);
+  --col-1:28.7%;                     /* 367 of 1280 — the head column */
+  --bar:clamp(44px,4.22vw,60px);
 
-  /* ── type ── */
-  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
-  --body:"DM Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
-  --ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* The one colour the page spends — Futee's floodlight yellow. It
+     marks what the reader is being asked to notice, as yellow marks
+     what the user is asked to decide inside the product. */
+  --accent:#F2E338;
 }
-
-/* To run the site's own Panchang instead of Bricolage, uncomment this
-   and change --display to 'Panchang'. Path is Futee/ → ../Mark4/fonts/.
-@font-face{font-family:'Panchang';src:url('../Mark4/fonts/Panchang-Variable.woff2') format('woff2');
-  font-weight:200 800;font-style:normal;font-display:swap}
-*/
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%;background:var(--void)}  /* no white on overscroll */
 body{
   margin:0;background:var(--void);color:var(--ink);
-  font-family:var(--body);font-size:17px;line-height:1.62;
-  letter-spacing:-.006em;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-family:var(--body);font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
-img{display:block;max-width:100%;height:auto}
-a{color:inherit}
-::selection{background:var(--accent);color:#000000}
-.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#000000;
-  padding:12px 18px;font-family:var(--ui);font-size:13px}
-.skip:focus{left:8px;top:8px}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+img{display:block;max-width:100%}
 
-/* ══ shared type ═══════════════════════════════════════════════ */
-/* a hairline holds the section, now that there is no box to do it */
-.h-beat{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.1vw,30px);
-  line-height:1.1;letter-spacing:-.018em;margin:0 0 clamp(18px,2vw,30px);
-  padding-top:clamp(14px,1.6vw,22px);border-top:1px solid var(--rule)}
-.eyebrow{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--ink-45);margin:0 0 14px}
-.prose{margin:0;max-width:60ch;font-size:16.5px;line-height:1.66;color:var(--ink-70)}
-.prose + .prose{margin-top:1.05em}
-.prose strong{font-weight:500;color:var(--ink)}
-.prose em{font-style:normal;font-weight:500;color:var(--ink)}
-.prose.lead{font-size:clamp(18px,1.5vw,21px);line-height:1.5;color:var(--ink);max-width:46ch;
-  letter-spacing:-.012em}
-.cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-45);margin:11px 0 0}
-
-/* ══ reveals — transform / opacity only, once, fully opt-out ════ */
+/* line-rise reveal, the site's shared idiom */
 .ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
-.ln > i{display:block;font-style:inherit;transform:translate3d(0,105%,0);
-  transition:transform 900ms var(--ease-out);transition-delay:var(--d,0ms)}
-[data-reveal].is-in .ln > i{transform:translate3d(0,0,0)}
+.ln > i{display:block;font-style:inherit;text-wrap:balance;transform:translate3d(0,108%,0);
+  transition:transform 1040ms var(--ease-out);transition-delay:var(--d,0ms)}
+.is-in .ln > i{transform:none}
 
-[data-reveal]{--rd:0ms}
-[data-reveal] .rise{opacity:0;transform:translate3d(0,16px,0);
-  transition:opacity 720ms var(--ease-soft),transform 720ms var(--ease-soft);transition-delay:var(--rd)}
-[data-reveal].is-in .rise{opacity:1;transform:none}
-.d1{--rd:100ms}.d2{--rd:200ms}.d3{--rd:300ms}.d4{--rd:400ms}
-
-/* ══ shot — a piece of media. No ground, no frame: the artwork is the
-   block. Wipes up on entry. ══════════════════════════════════════ */
-.shot{overflow:hidden;position:relative;background:var(--deep);border-radius:var(--radius)}
-.shot > img{width:100%;clip-path:inset(0 0 100% 0);transform:scale(1.05);
-  transition:clip-path 1050ms var(--ease-out),transform 1500ms var(--ease-out);
-  will-change:clip-path,transform}
-[data-reveal].is-in .shot > img,.shot[data-reveal].is-in > img{clip-path:inset(0 0 0 0);transform:scale(1)}
-
-/* ══ progress + back ═══════════════════════════════════════════ */
-.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:70;background:var(--accent);
-  transform:scaleX(0);transform-origin:0 50%}
-/* chip, not bare text — it crosses the sticky dossier on both sides */
-.back{position:fixed;z-index:60;top:16px;left:var(--pad);font-family:var(--ui);font-size:11px;
-  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink-45);
-  padding:8px 16px;border:1px solid var(--rule);border-radius:100px;
-  background:rgba(0,0,0,.92);backdrop-filter:saturate(160%) blur(12px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
-  opacity:0;pointer-events:none;transform:translate3d(0,-8px,0);
-  transition:opacity 320ms ease,transform 320ms var(--ease-out),color 200ms ease,border-color 200ms ease}
-.back.is-live{opacity:1;pointer-events:auto;transform:none}
-@media (hover:hover) and (pointer:fine){ .back:hover{color:var(--ink);border-color:var(--ink)} }
-
-/* ══ 00 · HERO ═════════════════════════════════════════════════ */
-.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;
-  justify-content:flex-end;padding:clamp(64px,10vw,120px) var(--pad) 0;overflow:hidden}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:112%;object-fit:cover;object-position:50% 42%;
-  transform:scale(1.08);transition:transform 2200ms var(--ease-out) 120ms;will-change:transform}
-.is-ready .hero-bg img{transform:scale(1)}
-.hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.12) 34%,rgba(0,0,0,.62) 82%,var(--void) 100%)}
-
-.hero-inner{position:relative;z-index:1;margin-top:auto;text-align:center}
-.hero-title{font-family:var(--display);font-weight:800;font-variation-settings:'opsz' 96;
-  font-size:clamp(40px,13.5vw,190px);line-height:.86;letter-spacing:-.045em;margin:0}
-.hero-tagline{font-size:clamp(19px,3.2vw,42px);line-height:1.12;letter-spacing:-.02em;
-  color:var(--ink);margin:clamp(14px,1.8vw,26px) auto 0;max-width:26ch;font-weight:400;
-  opacity:0;transform:translate3d(0,12px,0);
-  transition:opacity 760ms ease 520ms,transform 760ms var(--ease-soft) 520ms}
-.is-ready .hero-tagline{opacity:1;transform:none}
-.hero-tagline em{font-style:normal;color:var(--accent)}
-
-.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);
-  border-top:1px solid var(--ink);margin-top:clamp(22px,3vw,42px);
-  padding:clamp(16px,1.8vw,26px) 0 clamp(26px,3.4vw,48px);text-align:left;
-  opacity:0;transform:translate3d(0,12px,0);
-  transition:opacity 760ms ease 660ms,transform 760ms var(--ease-soft) 660ms}
-.is-ready .meta{opacity:1;transform:none}
-.meta dt{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-45);margin:0 0 8px}
-.meta dd{margin:0;font-family:var(--mono);font-size:13px;line-height:1.45;letter-spacing:-.01em}
-@media (max-width:760px){ .meta{grid-template-columns:1fr 1fr;row-gap:22px} }
-
-/* the outcome numbers, sitting on the photograph itself */
-.tally{position:relative;z-index:1;padding:clamp(30px,4vw,56px) 0 clamp(46px,6vw,86px);
-  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);text-align:center}
-.tally .n{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,104px);
-  line-height:.86;letter-spacing:-.045em;margin:0}
-.tally .n sup{font-size:.34em;font-weight:600;vertical-align:super;letter-spacing:0;margin-left:.1em}
-.tally .lab{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-45);margin:14px 0 0}
-@media (max-width:760px){ .tally{grid-template-columns:1fr;gap:34px} }
-
-/* ══ 01 · BAND — full-bleed motion graphic ═════════════════════
-   Bands are a fixed wide crop by design: they are a beat, not a
-   document. Anything that must be read whole goes in a .shot. */
-.band{position:relative;overflow:hidden;background:var(--deep);
-  margin:var(--sec) var(--pad) 0;aspect-ratio:16/6}
-.band.bleed{margin-inline:0}
-.band.tall{aspect-ratio:16/8}
-.band.short{aspect-ratio:16/4.6}
-.band img,.band video{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
-  display:block;clip-path:inset(0 0 100% 0);transform:scale(1.05);
-  transition:clip-path 1100ms var(--ease-out),transform 1600ms var(--ease-out)}
-.band.is-in img,.band.is-in video{clip-path:inset(0 0 0 0);transform:scale(1)}
-.band-note{font-family:var(--ui);font-size:13px;letter-spacing:-.005em;color:var(--ink);
-  text-align:right;margin:16px var(--pad) 0;font-weight:500}
-@media (max-width:700px){ .band,.band.tall,.band.short{aspect-ratio:4/3} }
-
-/* full-width media — for artefacts that must be read whole, uncropped */
-.full{margin:var(--sec) var(--pad) 0}
-
-/* ══ RUN — the sticky-dossier two-column engine ════════════════ */
-.run{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.28fr);
-  gap:var(--gap);padding:var(--sec) var(--pad) 0;align-items:start}
-.run .dossier{grid-column:1;position:sticky;top:clamp(60px,14vh,120px);align-self:start;height:max-content}
-.run .track{grid-column:2;min-width:0;display:grid;gap:var(--beat)}
-
-/* the swap: dossier pins right, content runs left */
-.run.flip{grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr)}
-.run.flip .dossier{grid-column:2}
-.run.flip .track{grid-column:1}
-
-@media (max-width:900px){
-  .run,.run.flip{grid-template-columns:1fr;gap:clamp(40px,7vw,64px)}
-  .run .dossier,.run.flip .dossier{position:static;grid-column:1;top:auto}
-  .run .track,.run.flip .track{grid-column:1;gap:clamp(46px,8vw,80px)}
+/* ══ 01 · statement ═══════════════════════════════════════════ */
+.statement{
+  position:relative;isolation:isolate;overflow:clip;
+  min-height:clamp(540px,74vh,880px);
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(80px,9vw,130px) var(--pad-g);
 }
+.statement__bg{
+  position:absolute;inset:-6% 0;width:100%;height:112%;
+  object-fit:cover;z-index:-2;
+  will-change:transform;
+}
+/* the photograph is already dark — this only holds the type off the
+   floodlight bloom, it is not a scrim over the picture */
+.statement::after{
+  content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 62% at 50% 34%,rgba(0,0,0,.42),transparent 68%);
+}
+.statement__body{width:min(90%,980px);text-align:center}
+.statement h1 .ln{padding-block:.12em;margin-block:-.12em}
+.statement h1{
+  font-family:var(--display);
+  margin:0 0 .34em;font-weight:700;
+  font-size:clamp(28px,4.15vw,60px);line-height:1.02;letter-spacing:-.03em;
+}
+.statement p{
+  font-family:var(--body);font-weight:400;color:var(--ink);
+  font-size:clamp(16px,1.64vw,22px);line-height:1.5;letter-spacing:0;
+  max-width:40ch;margin:clamp(14px,1.6vw,22px) auto 0;text-wrap:balance;
+}
+/* "Futee" twirls in after its line rises — each letter turns a full
+   revolution about its own axis, one after another, and settles with
+   a little overshoot. Hovering the word plays it again. */
+.twirl{display:inline-block;perspective:1600px}
+.twirl .t{display:inline-block;transform-origin:50% 62%}
+.statement.is-in .twirl .t{animation:twirl 1150ms var(--ease-out) both;
+  animation-delay:calc(900ms + var(--i)*75ms)}
+.statement.is-in .twirl.again .t{animation:twirl-again 900ms var(--ease-out) both;
+  animation-delay:calc(var(--i)*60ms)}
+@keyframes twirl{
+  0%{transform:rotateY(-360deg);opacity:.4}
+  62%{transform:rotateY(14deg);opacity:1}
+  100%{transform:none;opacity:1}}
+@keyframes twirl-again{
+  0%{transform:rotateY(-360deg)}
+  62%{transform:rotateY(14deg)}
+  100%{transform:none}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
-/* ── the dossier card itself ── */
-.dossier-mark{font-family:var(--display);font-weight:700;font-size:clamp(19px,1.8vw,26px);
-  letter-spacing:-.02em;margin:0 0 clamp(26px,3vw,44px)}
-.dossier-mark span{color:var(--ink-45);font-weight:500}
-.dossier-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:clamp(16px,2vw,30px);align-items:start}
-.facts{margin:0;display:grid;gap:clamp(18px,2vw,30px);align-content:start}
-.facts dt{font-family:var(--ui);font-size:11.5px;letter-spacing:.06em;color:var(--ink-45);margin:0 0 3px}
-.facts dd{margin:0;font-size:16px;line-height:1.35;letter-spacing:-.01em}
-.impacts{display:grid;gap:clamp(16px,2vw,30px)}
-.impact{border:1px solid var(--ink);border-radius:var(--radius-pill);
-  min-height:clamp(96px,9vw,124px);padding:18px 20px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-.impact b{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,34px);
+/* ══ access ═══════════════════════════════════════════════════ */
+.skip{position:absolute;left:var(--pad-g);top:-100px;z-index:90;
+  background:var(--accent);color:#0A0A0A;font-family:var(--body);font-weight:500;
+  font-size:var(--t-small);padding:12px 18px;text-decoration:none;
+  transition:top 200ms var(--ease-out)}
+.skip:focus{top:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
+:focus:not(:focus-visible){outline:none}
+main:focus,main:focus-visible{outline:none}   /* the skip link's landing, not a control */
+
+/* ══ chrome ═══════════════════════════════════════════════════ */
+.chrome{border-bottom:1px solid var(--rule)}
+.bar{
+  display:flex;align-items:center;gap:clamp(12px,2vw,28px);
+  height:var(--bar);padding:0 var(--pad-g);
+}
+.bar__mark{display:inline-flex;align-items:center;min-height:44px;
+  font-family:var(--display);font-weight:500;
+  font-size:var(--t-mark);letter-spacing:-.015em;margin-right:auto;
+  color:var(--ink);text-decoration:none;white-space:nowrap}
+.bar__nav{display:flex;gap:clamp(14px,1.9vw,26px)}
+.bar__nav a{display:inline-flex;align-items:center;min-height:44px;
+  font-family:var(--display);font-size:var(--t-nav);
+  color:var(--ink-mute);text-decoration:none;transition:color 220ms ease}
+@media (hover:hover){ .bar__nav a:hover{color:var(--ink)} }
+
+/* the project bar stays with you — it is the only thing naming the
+   project once the opening photograph has gone by */
+.projbar{
+  position:sticky;top:0;z-index:40;
+  border-bottom:1px solid var(--rule);background:var(--void);
+}
+.projbar .bar{position:relative}
+.projbar__disc{font-family:var(--display);font-size:var(--t-disc)}
+/* the football runs behind the labels, never over them */
+.pitch{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.projbar .bar__mark,.projbar__disc{position:relative;z-index:1}
+
+/* ══ 03 · the dossier grid ════════════════════════════════════ */
+.dossier{display:grid;grid-template-columns:var(--col-1) 1fr;
+  border-bottom:1px solid var(--rule)}
+.dossier__head{border-right:1px solid var(--rule);
+  padding:clamp(28px,3.1vw,44px) var(--pad-g) clamp(40px,6vw,90px)}
+.h-sec{font-family:var(--display);font-weight:700;
+  font-size:var(--t-head);line-height:1.28;letter-spacing:-.02em;
+  margin:0;max-width:12ch;text-wrap:balance}
+
+.drow{padding:clamp(34px,4.6vw,66px) var(--pad-g) clamp(48px,8.4vw,120px)
+  clamp(24px,3.9vw,56px)}
+.drow + .drow{border-top:1px solid var(--rule)}
+.q-lede{font-family:var(--body);font-style:italic;font-size:var(--t-lede);
+  line-height:1.24;margin:0 0 .5em;max-width:26ch}
+.a{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-70);margin:0;max-width:34ch}
+
+/* question left, answer at 58% of the column — the Figma's split */
+.qa{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(16px,3vw,44px);align-items:start}
+.qa + .qa{margin-top:clamp(38px,5.4vw,78px)}
+.qa .q{font-family:var(--body);font-style:italic;font-size:var(--t-sub);
+  line-height:1.24;margin:0}
+.quote{font-family:var(--body);font-style:italic;font-size:var(--t-quote);
+  line-height:1.32;margin:0;max-width:38ch;text-wrap:balance}
+.quote__by{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(14px,1.6vw,22px) 0 0}
+
+/* ══ 04–05 · plain two-column rows ════════════════════════════ */
+.row{display:grid;grid-template-columns:var(--col-1) 1fr;
+  border-bottom:1px solid var(--rule);
+  padding:clamp(48px,7.5vw,108px) var(--pad-g) clamp(48px,7.5vw,108px)}
+.row__body{padding-left:clamp(24px,3.9vw,56px)}
+.em{font-family:var(--body);font-style:italic;font-size:var(--t-body);
+  line-height:1.4;margin:0 0 1.5em;max-width:40ch}
+.say{font-family:var(--body);font-size:var(--t-body);
+  line-height:1.5;margin:0;max-width:46ch;color:var(--ink-70)}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(14px,1.9vw,26px);margin-top:clamp(28px,4vw,56px)}
+.cols3 .box{border-top:1px solid var(--rule);padding-top:clamp(12px,1.2vw,16px)}
+.cols3 .box span{font-family:var(--body);font-size:var(--t-small);
+  line-height:1.5;color:var(--ink-70)}
+.cols3 .box b{display:block;color:var(--ink);font-weight:500;margin-bottom:.45em}
+
+/* ══ 06–07 · the trace ════════════════════════════════════════ */
+/* One wiring diagram runs from the big question down into the
+   walkthrough. Every segment draws itself once, in order, as you
+   reach it, and each one ends in a node. */
+.thesis{position:relative}
+.trace__box{position:relative;padding-top:var(--h)}
+.trace__box > *{position:absolute}
+.walk__head{width:min(40%,26ch)}
+.thesis__frame{
+  position:relative;width:79.6%;
+  padding:clamp(56px,8.2vw,118px) 0 clamp(60px,9vw,128px) clamp(40px,7vw,100px);
+}
+.thesis h2{font-family:var(--display);font-weight:700;
+  font-size:var(--t-thesis);line-height:1.13;letter-spacing:-.03em;
+  margin:0;max-width:15ch;text-wrap:balance}
+
+.wire{position:absolute;background:var(--rule);transform-origin:0 0;
+  transition:transform 900ms var(--ease-out);transition-delay:var(--wd,0ms)}
+.wire--h{height:1px;transform:scaleX(0)}
+.wire--v{width:1px;transform:scaleY(0)}
+.is-in .wire--h,.is-in .wire--v{transform:none}
+.wire[data-from="end"]{transform-origin:100% 0}
+.node{position:absolute;width:9px;height:9px;border-radius:50%;
+  background:#D4D4D4;transform:translate(-50%,-50%) scale(.4);opacity:0;
+  transition:transform 420ms var(--ease-out),opacity 240ms ease-out;
+  transition-delay:var(--wd,0ms)}
+.is-in .node{transform:translate(-50%,-50%) scale(1);opacity:1}
+
+.trace{position:relative}
+.trace__aside{font-family:var(--body);font-style:italic;
+  font-size:var(--t-small);line-height:1.36;margin:0;width:22ch}
+.trace__say{font-family:var(--body);font-size:var(--t-body);
+  line-height:1.45;margin:0;color:var(--ink-70);width:min(38%,34ch)}
+.plates{padding:0 var(--pad-g)}
+
+.walk__head h3{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.28;letter-spacing:-.02em;margin:0;max-width:12ch;text-wrap:balance}
+.explainers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(10px,1.4vw,20px);margin:clamp(30px,4.4vw,64px) 0 clamp(14px,1.6vw,22px);
+  padding-left:clamp(40px,7.2vw,100px)}
+.explainers span{font-family:var(--body);font-size:var(--t-small);color:var(--ink-70)}
+
+/* A plate is a placeholder until an <img> is put inside it; then the
+   grey ground never shows. Both states are the same element. */
+.plate{position:relative;margin:0;width:100%;aspect-ratio:var(--ar,2.6)/1;
+  background:#D9D9D9;overflow:hidden;display:grid;place-items:center}
+.plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.plate__note{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(10px,1.2vw,16px) 0 0}
+.plate figcaption{font-family:var(--display);font-weight:700;
+  font-size:var(--t-plate);color:#0A0A0A;letter-spacing:-.02em}
+.plate:has(img) figcaption{display:none}
+
+/* the explainers under a question: a label and one line each */
+.explainers div{min-width:0}
+.explainers b{display:block;font-family:var(--body);font-weight:500;
+  font-size:var(--t-small);color:var(--ink);margin-bottom:.3em}
+
+/* ══ the blob ══════════════════════════════════════════════════
+   Neel's particle creature (blob-assets/, engine extended for this
+   page). One canvas per appearance, each a single pose chosen for
+   what its section is saying. It gathers out of a scatter as it
+   scrolls in and blows apart as it scrolls out; once gone its loop
+   sleeps, so only the blobs on screen cost anything.
+
+   Each .blobfig IS the area the blob fills — sized and placed to
+   Neel's marked-up boxes (1 Oct), measured off a 1027px-wide page and
+   so written in vw. The canvas overhangs the box by 30% on every side
+   and the engine is told so (inset), so the blob fills the box while
+   the scatter flies out past it. Decorative throughout. */
+.blobfig{position:absolute;margin:0;pointer-events:none;z-index:0}
+.blobfig canvas{position:absolute;left:-30%;top:-30%;width:160%;height:160%;display:block}
+main{overflow-x:clip}   /* the overhang must never widen the page */
+
+/* 03 · beside the lede, top-aligned with the question */
+.drow{position:relative}
+.drow > *:not(.blobfig){position:relative;z-index:1}
+.blobfig--lede{right:4vw;top:5.4vw;width:24.3vw;height:22.7vw}
+/* 03 · beside the quote, centred on its row */
+.blobfig--quote{right:2.6vw;top:2.2vw;width:24.3vw;height:13.2vw}
+/* 05 · under "What I did", in its own column */
+.row{position:relative}
+.row:has(> .blobfig--head) > .row__body{grid-row:1 / span 2}
+.blobfig--head{position:relative;grid-column:1;grid-row:2;
+  width:22.4vw;height:10.7vw;margin-top:2.6vw;left:calc(2.4vw - var(--pad-g))}
+/* 06 · on the bracket's bottom-right corner */
+.blobfig--corner{left:60.9vw;bottom:-9.9vw;width:32.9vw;height:22.9vw;z-index:2}
+/* 09 · 11 · in the margin beside the question */
+.step > .blobfig--step{left:1.6vw;top:calc(var(--wl) + clamp(26px,3.2vw,46px));width:14vw;height:11vw}
+/* 10 · under "When's my next game?", out into the margin */
+.step > .blobfig--under{left:5.4vw;top:calc(var(--wl) + clamp(26px,3.2vw,46px) + 8vw);width:22.2vw;height:9.3vw}
+/* 12 · the turn's empty left column, below the rule */
+.turn{position:relative}
+.turn > *:not(.blobfig){position:relative;z-index:1}
+.blobfig--turn{left:3.1vw;top:calc(clamp(100px,13vw,190px) + 6vw);width:27.9vw;height:27.8vw}
+/* 12 · left of the two flows, the full height of the argument */
+.flows{position:relative}
+.blobfig--flows{left:-30.6vw;top:6vw;width:25.6vw;height:30.5vw}
+/* 13 · bottom right of "What went over", across the row's line */
+.blobfig--over{right:1.8vw;bottom:-3.3vw;width:18.9vw;height:14.8vw;z-index:2}
+
+/* ══ 08–11 · the walkthrough, continued ══════════════════════
+   Each question hangs from a wire that comes down out of the last
+   plate — the same line the Figma draws between screens — so the
+   page reads as one path through the product. The question sits at
+   17.7% and the answer at 49.4%, the two x-positions the Figma uses
+   for "Now how do I find a place to play?". */
+.step{position:relative;--wl:clamp(90px,11vw,160px);
+  padding-top:calc(var(--wl) + clamp(26px,3.2vw,46px))}
+.step > .wire--v{left:23.7%;top:0;height:var(--wl)}
+.step > .node{left:23.7%;top:var(--wl)}
+.step__grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);
+  column-gap:clamp(24px,4vw,60px);row-gap:clamp(26px,3.4vw,48px);
+  margin-left:17.7%;padding-right:var(--pad-g)}
+.step__q{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.28;letter-spacing:-.02em;margin:0;max-width:13ch;text-wrap:balance}
+.step__say p{font-family:var(--body);font-size:var(--t-body);line-height:1.5;
+  margin:0;color:var(--ink-70);max-width:40ch}
+.step__say p + p{margin-top:.9em}
+.step__say strong{color:var(--ink);font-weight:500}
+.step .plates{margin-top:clamp(40px,5.6vw,80px)}
+
+/* one player card, read field by field */
+.legend{list-style:none;margin:clamp(26px,3.2vw,44px) 0 0;padding:0;
+  display:grid;gap:clamp(10px,1vw,14px)}
+.legend li{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr);gap:14px;
+  align-items:baseline;font-family:var(--body);font-size:var(--t-small);color:var(--ink)}
+.legend li span{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute)}
+.legend__src{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(12px,1.2vw,18px) 0 0}
+
+/* a row of named parts — fields, stages, states */
+.fields{grid-column:1/-1;display:grid;
+  grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:clamp(16px,2.2vw,32px)}
+.fields > div{border-top:1px solid var(--rule);padding-top:clamp(12px,1.2vw,16px);min-width:0}
+.fields h4{font-family:var(--body);font-weight:500;font-size:var(--t-small);
+  color:var(--ink);margin:0 0 .4em}
+.fields p{font-family:var(--body);font-size:var(--t-small);line-height:1.45;
+  color:var(--ink-70);margin:0}
+/* yellow is the only colour the page spends: where the mood dips */
+.fields .dip{border-top-color:var(--accent)}
+.fields .dip h4::after{content:'';display:inline-block;width:7px;height:7px;
+  border-radius:50%;background:var(--accent);margin-left:.55em;vertical-align:.12em}
+.fields__key{grid-column:1/-1;font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:0}
+.fields__key i{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);margin-right:.6em;vertical-align:.1em}
+
+/* ══ 12 · the turn — the other person in every screen ═══════ */
+.turn{display:grid;grid-template-columns:36% minmax(0,1fr);
+  padding:clamp(100px,13vw,190px) var(--pad-g) 0 0}
+.turn__rule{height:1px;background:var(--rule);margin:calc(var(--t-head)*.68) 28px 0 0;
+  transform:scaleX(0);transform-origin:0 0;transition:transform 1100ms var(--ease-out)}
+.is-in .turn__rule{transform:none}
+.turn__big{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.3;letter-spacing:-.02em;margin:0;max-width:26ch;text-wrap:balance}
+.turn__big + .turn__big{margin-top:1.1em}
+.turn__say{font-family:var(--body);font-size:var(--t-body);line-height:1.5;
+  color:var(--ink-70);margin:clamp(26px,3vw,40px) 0 0;max-width:46ch}
+
+/* a plate with its caption beside it rather than under it */
+.pair{display:grid;grid-template-columns:minmax(0,57fr) minmax(0,25fr);column-gap:5%;
+  align-items:end;margin:clamp(56px,7vw,100px) 0 0 12.8%;padding-right:var(--pad-g)}
+.pair .plate{--ar:1.9}
+.pair h3{font-family:var(--body);font-weight:500;font-size:var(--t-small);
+  color:var(--ink);margin:0 0 .45em}
+.pair p{font-family:var(--body);font-size:var(--t-small);line-height:1.5;
+  color:var(--ink-70);margin:0}
+.pair p + p{margin-top:.7em}
+
+/* the argument with the brief, drawn as two paths */
+.flows{margin:clamp(56px,7vw,100px) var(--pad-g) 0 36%;display:grid;
+  gap:clamp(40px,4.8vw,68px)}
+.flow__label{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 clamp(16px,1.8vw,24px)}
+.flow ol{list-style:none;margin:0;padding:0;position:relative;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr))}
+.flow ol::before{content:'';position:absolute;left:4px;right:12%;top:4px;height:1px;
+  background:var(--rule)}
+.flow li{position:relative;padding:22px 12px 0 0;font-family:var(--body);
+  font-size:var(--t-small);line-height:1.35;color:var(--ink)}
+.flow li::before{content:'';position:absolute;left:0;top:0;width:9px;height:9px;
+  border-radius:50%;background:#D4D4D4}
+/* "game exists" is the whole argument — where it falls in each path */
+.flow li.exists::before{background:var(--accent)}
+.flow--lost li{color:var(--ink-mute)}
+.flow--lost li::before{background:var(--void);border:1px solid var(--ink-mute);
+  box-sizing:border-box}
+.flow--lost li.exists::before{border-color:var(--accent);background:var(--void)}
+.flow__verdict{font-family:var(--body);font-style:italic;font-size:var(--t-small);
+  line-height:1.45;color:var(--ink-70);margin:clamp(14px,1.6vw,20px) 0 0;max-width:46ch}
+.flow__verdict b{font-style:normal;font-weight:500;color:var(--ink)}
+
+/* ══ 13–14 · the close ═══════════════════════════════════════ */
+.close{margin-top:clamp(100px,13vw,190px);border-top:1px solid var(--rule)}
+.close .row:last-child{border-bottom:0}
+footer{border-top:1px solid var(--rule)}
+.credits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(16px,2.2vw,32px);margin:0;padding:clamp(40px,5vw,72px) var(--pad-g)}
+.credits dt{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 .6em}
+.credits dd{font-family:var(--body);font-size:var(--t-small);line-height:1.45;
+  color:var(--ink);margin:0}
+.next{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  border-top:1px solid var(--rule);padding:clamp(48px,6vw,90px) var(--pad-g);
+  text-decoration:none;color:var(--ink)}
+.next span{display:block;font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:clamp(12px,1.4vw,20px)}
+.next strong{font-family:var(--display);font-weight:700;font-size:var(--t-thesis);
   line-height:1;letter-spacing:-.03em}
-.impact small{font-family:var(--ui);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink-45);line-height:1.35}
-@media (max-width:520px){ .dossier-body{grid-template-columns:1fr} }
+.next em{font-style:normal;font-family:var(--display);font-size:var(--t-thesis);
+  line-height:1;transition:transform 240ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){ .next:hover em{transform:translateX(10px)} }
+.next:active em{transform:translateX(4px)}
 
-/* ── beats inside a track ── */
-.beat{min-width:0}
-.beat .stack{display:grid;gap:clamp(20px,2.6vw,38px)}
-.beat.indent{padding-left:clamp(0px,1.4vw,18px)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,40px)}
-@media (max-width:640px){ .pair{grid-template-columns:1fr} }
-
-/* ══ CREDITS + NEXT ════════════════════════════════════════════ */
-.credits{font-family:var(--ui);border-top:1px solid var(--rule);margin-top:var(--sec);
-  padding:clamp(36px,4.5vw,64px) var(--pad);display:grid;grid-template-columns:repeat(4,1fr);
-  gap:var(--gap);font-size:13.5px;color:var(--ink-70)}
-.credits h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink-45);font-weight:500}
-@media (max-width:760px){ .credits{grid-template-columns:1fr 1fr;row-gap:26px} }
-
-.next{display:block;text-decoration:none;position:relative;overflow:hidden;
-  height:clamp(280px,40vw,520px);background:#000}
-.next img{width:100%;height:100%;object-fit:cover;opacity:.5;transform:scale(1.02);
-  transition:transform 800ms var(--ease-soft),opacity 800ms ease}
-@media (hover:hover) and (pointer:fine){ .next:hover img{transform:scale(1.06);opacity:.66} }
-.next .lbl{position:absolute;inset:auto 0 0 0;padding:var(--pad);color:var(--ink)}
-.next .lbl small{display:block;font-family:var(--ui);font-size:11.5px;letter-spacing:.15em;
-  text-transform:uppercase;opacity:.62;margin-bottom:10px}
-.next .lbl strong{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,74px);
-  letter-spacing:-.03em;line-height:1}
-
-/* ══ reduced motion ════════════════════════════════════════════ */
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .ln > i{transform:none}
-  .hero-bg img,.hero-tagline,.meta{transform:none;opacity:1}
-  .band img,.band video,.shot > img{clip-path:none;transform:none}
-  .run .dossier{position:static}
+@media (max-width:440px){
+  .bar{gap:8px}
+  .bar__nav{gap:10px}
+  .bar__nav a{font-size:12.5px}
+  .chrome .bar__mark{font-size:15px}
+}
+@media (max-width:900px){
+  .dossier,.row{grid-template-columns:1fr}
+  .dossier__head{border-right:0;border-bottom:1px solid var(--rule);
+    padding-bottom:clamp(24px,5vw,40px)}
+  .drow,.row__body{padding-left:var(--pad-g)}
+  .row{padding-left:0;padding-right:0}
+  .row > .h-sec{padding:0 var(--pad-g);margin-bottom:clamp(20px,4vw,32px)}
+  .qa{grid-template-columns:1fr;gap:8px}
+  .cols3{grid-template-columns:1fr}
+  .explainers{grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:clamp(12px,3vw,20px);padding-left:0}
+  .thesis{padding:0 var(--pad-g)}
+  .thesis__frame{width:100%;padding-left:0}
+  .wire,.node{display:none}                 /* the wiring is a desktop read */
+  .blobfig,.blobfig--lede,.blobfig--quote,.blobfig--head,.blobfig--corner,
+  .step > .blobfig--step,.step > .blobfig--under,.blobfig--turn,.blobfig--flows,.blobfig--over{
+    position:relative;left:auto;right:auto;top:auto;bottom:auto;
+    width:min(62vw,240px);height:min(48vw,190px);margin:24px 0 8px auto;display:block}
+  .row:has(> .blobfig--head) > .row__body{grid-row:auto}
+  .blobfig--head{grid-row:auto;margin:16px var(--pad-g) 0 auto}
+  .step > .blobfig--step,.step > .blobfig--under{margin-right:var(--pad-g)}
+  .blobfig--corner{margin-right:var(--pad-g)}
+  .trace__box{padding-top:0 !important;padding:clamp(40px,8vw,64px) var(--pad-g) 0;
+    display:flex;flex-direction:column;gap:clamp(14px,3vw,22px)}
+  .trace__box > *{position:static}
+  .trace__aside,.trace__say,.walk__head{width:auto;max-width:36ch}
+  .step{padding-top:clamp(56px,12vw,80px)}
+  .step__grid{grid-template-columns:1fr;margin-left:0;padding:0 var(--pad-g)}
+  .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .turn{grid-template-columns:1fr;padding:clamp(80px,16vw,120px) var(--pad-g) 0}
+  .turn__rule{display:none}
+  .pair{grid-template-columns:1fr;row-gap:14px;margin-left:0;padding:0 var(--pad-g)}
+  .flows{margin-left:var(--pad-g)}
+  .credits{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .next strong,.next em{font-size:clamp(30px,9vw,44px)}
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   DEVICE FRAMES
-   A screenshot is a document; a device frame makes it a screen. The
-   page inside scrolls, driven by the reader's own scroll position —
-   no autoplay, no loop, nothing to wait for, and it reverses when
-   they scroll back up. Frames are drawn, not photographed, so they
-   inherit the palette and cost nothing to load.
-   ══════════════════════════════════════════════════════════════════ */
-
-.device{position:relative}
-.device .screen{position:relative;overflow:hidden;background:var(--deep)}
-.device .screen > img{width:100%;min-height:100%;object-fit:cover;object-position:50% 0;
-  display:block;will-change:transform}
-
-/* the page keeps moving past the frame edge — a hairline says so */
-.device .screen::after{content:"";position:absolute;inset:auto 0 0 0;height:38px;
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.28));pointer-events:none}
-
-/* ── browser ── */
-.device.browser{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:#131313}
-.device.browser .bar{display:flex;align-items:center;gap:7px;padding:10px 13px;
-  background:#191919;border-bottom:1px solid var(--rule)}
-.device.browser .dot{width:9px;height:9px;border-radius:50%;background:rgba(251,247,240,.20);flex:none}
-.device.browser .url{margin-left:9px;flex:1;min-width:0;height:19px;border-radius:100px;
-  background:rgba(251,247,240,.07);display:flex;align-items:center;padding:0 11px;
-  font-family:var(--mono);font-size:9.5px;color:var(--ink-45);
-  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.device.browser .screen{aspect-ratio:16/10}
-
-/* ── phone ── */
-.device.phone{width:min(290px,100%);margin-inline:auto;border:1px solid var(--rule);
-  border-radius:36px;padding:10px;background:#0D0D0D}
-.device.phone .screen{aspect-ratio:9/19;border-radius:27px}
-.device.phone .screen::after{border-radius:0 0 27px 27px}
-.device.phone .notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);
-  width:62px;height:5px;border-radius:100px;background:rgba(251,247,240,.16);z-index:2}
-
-/* ── laptop ── */
-.device.laptop .lid{border:1px solid var(--rule);border-radius:11px 11px 3px 3px;
-  padding:11px 11px 13px;background:#131313}
-.device.laptop .screen{aspect-ratio:16/10;border-radius:3px}
-.device.laptop .base{height:11px;margin:0 -5%;border-radius:0 0 13px 13px;
-  background:linear-gradient(180deg,#242424,#111);border:1px solid var(--rule);border-top:none}
-.device.laptop .base::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
-  margin-top:1px;width:15%;height:3px;border-radius:0 0 6px 6px;background:rgba(251,247,240,.10)}
-
-/* a pair of phones sits tighter than a pair of anything else */
-.pair.phones{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,30px)}
-@media (max-width:560px){ .pair.phones{grid-template-columns:1fr} }
-
 @media (prefers-reduced-motion:reduce){
-  .device .screen > img{transform:none!important}
-}
-
-
-/* the tally is a facts row, not a results row — say so */
-.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
-  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
-  color:var(--ink-45)}
-
-/* a reader who is convinced needs somewhere to go */
-.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
-  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
-  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
-.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
-  padding-bottom:2px;transition:border-color 200ms ease}
-@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
-
-/* ══════════════════════════════════════════════════════════════════
-   DIAGRAMS
-   Where the page has been describing a decision in prose, draw it
-   instead. Authored SVG, project palette, no screenshots of Figma.
-   The rejected route is drawn and dimmed; the chosen one carries the
-   accent. Both are labelled with why.
-   ══════════════════════════════════════════════════════════════════ */
-.diagram{margin:0}
-.diagram .board{position:relative;width:100%;background:var(--deep);
-  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
-.diagram svg{width:100%;height:auto;display:block;overflow:visible}
-
-.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
-  text-transform:uppercase;fill:var(--ink-45)}
-.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
-.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
-.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
-.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
-
-/* the rejected route */
-.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
-.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
-.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
-.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;fill:rgba(251,247,240,.38)}
-
-/* the route taken */
-.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
-.dg-in .dg-step-lbl{fill:var(--ink)}
-.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
-.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;fill:var(--accent)}
-
-/* reveal: the rejected route first, then the chosen one over it */
-[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
-  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
-[data-reveal].is-in .dg-in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){
-  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+  .wire--h,.wire--v,.is-in .wire--h,.is-in .wire--v,.turn__rule{transform:none}
+  .node,.is-in .node{transform:translate(-50%,-50%) scale(1);opacity:1}
+  [data-reveal] .rise{transform:none;transition:opacity 300ms ease-out}
+  .skip,.next em{transition:none}
+  .pitch{display:none}
+  .twirl .t,.statement.is-in .twirl .t{animation:none!important}
+  .ln > i{transform:none !important}
+  .statement__bg{transform:none !important}
 }
 </style>
 </head>
+
 <body>
 
-<a class="skip" href="#main">Skip to content</a>
-<div class="progress" data-progress aria-hidden="true"></div>
-<a class="back" data-back href="/#work">← Work</a>
+<a class="skip" href="#main">Skip to the case study</a>
 
-<main id="main">
-
-<!-- ══ 00 · HERO ═══════════════════════════════════════════════ -->
-<header class="hero">
-  <div class="hero-bg" aria-hidden="true">
-    <img src="img/hero-floodlight.jpg" alt="">
-  </div>
-
-  <div class="hero-inner">
-    <h1 class="hero-title">Futee</h1>
-    <p class="hero-tagline">A matchmaking platform for people who play football <em>for the love of it</em>.</p>
-
-    <dl class="meta">
-      <div><dt>Role</dt><dd>UX research, UI design,<br>identity</dd></div>
-      <div><dt>Year</dt><dd>2021 — 2022</dd></div>
-      <div><dt>Scope</dt><dd>Web platform &amp; iOS app,<br>17 screens</dd></div>
-      <div><dt>Context</dt><dd>Bangkok, Thailand<br>Client project, in a team</dd></div>
-    </dl>
-  </div>
-
-  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
-  <div class="tally" data-reveal data-stagger>
-    <div><p class="n rise"><span data-count="17">0</span></p><p class="lab rise d1">Screens designed, web &amp; iOS</p></div>
-    <div><p class="n rise d1"><span data-count="2">0</span></p><p class="lab rise d2">Personas, journey-mapped</p></div>
-    <div><p class="n rise d2"><span data-count="5">0</span></p><p class="lab rise d3">Research &amp; mapping methods</p></div>
+<header class="chrome">
+  <div class="bar">
+    <a class="bar__mark" href="/">Neel Parikh</a>
+    <nav class="bar__nav">
+      <a href="/#work">Work</a><a href="/#about">About</a><a href="mailto:neelparikh7@gmail.com">Contact</a>
+    </nav>
   </div>
 </header>
 
-<!-- ══ 01 · BAND — motion slot ═════════════════════════════════
-     A band takes an <img> or a <video>. To drop in the real motion
-     graphic, swap the img for:
-
-       <video data-motion muted loop playsinline preload="metadata"
-              poster="Macbook_Air_Mockup_2.png">
-         <source src="motion/01-profile.mp4" type="video/mp4">
-       </video>
-
-     Nothing else changes. [data-motion] videos play only while on
-     screen and stay paused entirely under prefers-reduced-motion,
-     with the poster standing in.
-     ════════════════════════════════════════════════════════════ -->
-<div class="band" data-reveal>
-  <img src="Macbook_Air_Mockup_2.png" alt="The Futee player profile open on a laptop.">
+<div class="projbar">
+  <div class="bar">
+    <canvas class="pitch" id="pitch" aria-hidden="true"></canvas>
+    <span class="bar__mark">Futee</span>
+    <span class="projbar__disc">UX design</span>
+  </div>
 </div>
-<p class="band-note">The product, end to end.</p>
 
-<!-- ══ 02 · RUN — dossier pinned LEFT ══════════════════════════ -->
-<section class="run" id="context">
-  <aside class="dossier" data-reveal>
-    <p class="dossier-mark rise">Futee <span>; TLDR</span></p>
-    <div class="dossier-body">
-      <dl class="facts">
-        <div><dt class="rise">Role</dt><dd class="rise">UX research, UI design, identity</dd></div>
-        <div><dt class="rise d1">Industry</dt><dd class="rise d1">Sport &amp; community</dd></div>
-        <div><dt class="rise d2">Client</dt><dd class="rise d2">Futee, Bangkok</dd></div>
-        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">14-week engagement,<br>across 2021—22</dd></div>
-      </dl>
-      <div class="impacts">
-        <div class="impact rise d1"><b>17</b><small>Screens, web &amp; iOS</small></div>
-        <div class="impact rise d2"><b>2</b><small>Audiences, one funnel</small></div>
-      </div>
-    </div>
-  </aside>
+<main id="main" tabindex="-1">
 
-  <div class="track">
+<!-- ── 01 ─────────────────────────────────────────────────────── -->
+<section class="statement" data-reveal>
+  <img class="statement__bg" data-parallax
+       src="img/hero-floodlight.jpg" alt="" aria-hidden="true">
 
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Summary</h2>
-      <div class="rise d1">
-        <p class="prose lead">Futee is an all-in-one platform for finding, creating and joining football games in Bangkok, across a web platform and an iOS app.</p>
-        <p class="prose"><strong>This was a team project, not a solo one.</strong> My lane was the UX research, the information architecture, the UI system and the visual identity. The stakeholder and player calls were run by the team together rather than outsourced, and the build was handled afterwards by an external development firm.</p>
-        <p class="prose">The whole thing is built for <strong>two people who never speak to each other</strong>: the person creating a game, and the person looking for one. Every screen has to serve both without either noticing the other's needs.</p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The problem</h2>
-      <div class="rise d1">
-        <p class="prose lead">Football is a community sport played by people with <em>no way of finding each other.</em></p>
-        <p class="prose">Once players leave school or university, the pickup game goes with them. Organising one means a group chat, a pitch nobody has vouched for, and a squad of strangers whose skill level you discover at kickoff.</p>
-        <p class="prose">Futee's stakeholders wanted one place to solve all three — venue, squad, and standard — without turning the app into a booking system.</p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Target users</h2>
-      <div class="stack">
-        <div class="pair">
-          <figure class="rise d1" style="margin:0">
-            <div class="shot"><img src="PERSONA%20-%20Light.png" alt="Persona one — the game creator, with goals, frustrations and behaviours."></div>
-            <figcaption class="cap">01 — The creator</figcaption>
-          </figure>
-          <figure class="rise d2" style="margin:0">
-            <div class="shot"><img src="PERSONA%20-%20Light-1.png" alt="Persona two — the player looking for a game, with goals, frustrations and behaviours."></div>
-            <figcaption class="cap">02 — The player</figcaption>
-          </figure>
-        </div>
-        <div class="rise d3">
-          <p class="prose">Desk research, a questionnaire, and calls with stakeholders in Thailand and regular players in Bangkok produced two personas — and they fail in different places. <strong>The creator dips at venue selection</strong>, with no way to judge a pitch. <strong>The player dips waiting to hear back</strong>, with no signal that an application went anywhere.</p>
-        </div>
-      </div>
-    </section>
-
+  <div class="statement__body">
+    <h1><span class="ln"><i>What is <span class="twirl"><span class="sr-only">Futee</span><span class="t" aria-hidden="true" style="--i:0">F</span><span class="t" aria-hidden="true" style="--i:1">u</span><span class="t" aria-hidden="true" style="--i:2">t</span><span class="t" aria-hidden="true" style="--i:3">e</span><span class="t" aria-hidden="true" style="--i:4">e</span></span>?</i></span></h1>
+    <p class="rise d2">A total solution for a football player&rsquo;s needs, from finding
+      pickup games to coaches.</p>
   </div>
 </section>
 
-<!-- ══ 03 · BAND ═══════════════════════════════════════════════ -->
-<div class="band" data-reveal>
-  <img src="Macbook_Air_Mockup_4.png" alt="Find a game, open on a laptop — the date strip, venue and open games on one screen.">
-</div>
-<p class="band-note">One screen, no navigating to compare.</p>
-
-<!-- ══ 04 · RUN — dossier pinned RIGHT ═════════════════════════ -->
-<section class="run flip" id="process">
-  <aside class="dossier" data-reveal>
-    <p class="dossier-mark rise">Futee</p>
-    <div class="dossier-body">
-      <dl class="facts">
-        <div><dt class="rise">Methods</dt><dd class="rise">Desk research,<br>questionnaire</dd></div>
-        <div><dt class="rise d1">Mapping</dt><dd class="rise d1">Ecosystem, card sort,<br>journey</dd></div>
-        <div><dt class="rise d2">Output</dt><dd class="rise d2">Sitemap, flows,<br>UI system</dd></div>
-        <div><dt class="rise d3">Tools</dt><dd class="rise d3">Figma, Illustrator</dd></div>
-      </dl>
-      <div class="impacts">
-        <div class="impact rise d1"><b>17</b><small>Screens shipped</small></div>
-        <div class="impact rise d2"><b>2</b><small>Quotes → shipped features</small></div>
+<!-- ── 03 · the problem ───────────────────────────────────────── -->
+<section class="dossier" data-reveal>
+  <div class="dossier__head">
+    <h2 class="h-sec rise">The problem of being a solo football player.</h2>
+  </div>
+  <div class="dossier__rows">
+    <div class="drow">
+      <p class="q-lede rise">How do you get a game when the people
+        organising one have no way of finding you?</p>
+      <p class="a rise d1">Once players leave school or university, the pickup
+        game goes with them. Organising one means a group chat, a pitch nobody
+        has vouched for, and a squad of strangers whose skill level you find
+        out at kickoff.</p>
+      <figure class="blobfig blobfig--lede" data-pose="confused" aria-hidden="true"><canvas></canvas></figure>
+    </div>
+    <div class="drow">
+      <div class="qa">
+        <p class="q">Where do you play?</p>
+        <p class="a">A pitch nobody has vouched for. There is no way to judge a
+          venue until you have already paid for it.</p>
+      </div>
+      <div class="qa">
+        <p class="q">Who do you play with?</p>
+        <p class="a">Whoever answers the group chat. The creator stalls at venue
+          selection; the player stalls waiting to hear back, with no signal that
+          an application went anywhere.</p>
+      </div>
+      <div class="qa">
+        <p class="q">How good will the game be?</p>
+        <p class="a">Nobody knows until kickoff. Standard is the one thing no
+          organiser can promise and every player wants.</p>
       </div>
     </div>
-  </aside>
-
-  <div class="track">
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Insights</h2>
-      <div class="rise d1">
-        <p class="prose">Every finding was inverted into a feature, one at a time. <em>"Finding a good game is a coin flip"</em> became ratings visible before you apply. <em>"I don't know if I'm in"</em> became a squad list that fills in front of you.</p>
-        <p class="prose"><strong>Nothing entered the product that couldn't be traced back to a quote.</strong> It also meant the one place research contradicted the brief — create-then-fill, rather than fill-then-create — was an easy argument to win.</p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The one argument with the brief</h2>
-      <div class="rise d1">
-        <p class="prose">The brief assumed you gather a squad and then book something. Research said the opposite — so this is the decision drawn out, including the version that lost.</p>
-      </div>
-      <figure class="diagram rise d2" style="margin:0">
-        <div class="board">
-    <svg viewBox="0 0 1000 280" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Two possible orders for making a game. The brief assumed fill-then-create; the research pointed to create-then-fill.">
-<g class="dg-out">
-      <text class="dg-title" x="8" y="20">Fill, then create — what the brief assumed</text>
-      <rect class="dg-step" x="8.0" y="34" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="121.2" y="67.0" text-anchor="middle">Find players</text>
-      <path class="dg-arrow" d="M239.5 62.0H251.5m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="260.5" y="34" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="373.8" y="59.0" text-anchor="middle">Agree</text>
-      <text class="dg-step-lbl" x="373.8" y="76.0" text-anchor="middle">a time</text>
-      <path class="dg-arrow" d="M492.0 62.0H504.0m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="513.0" y="34" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="626.2" y="59.0" text-anchor="middle">Book</text>
-      <text class="dg-step-lbl" x="626.2" y="76.0" text-anchor="middle">a pitch</text>
-      <path class="dg-arrow" d="M744.5 62.0H756.5m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="765.5" y="34" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="878.8" y="67.0" text-anchor="middle">Game exists</text>
-      <text class="dg-verdict-out" x="8" y="116">Rejected · nothing exists until everyone agrees, and nobody knows if they are in</text>
-      </g>
-      <g class="dg-in">
-      <text class="dg-title" x="8" y="166">Create, then fill — what the research pointed to</text>
-      <rect class="dg-step" x="8.0" y="180" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="121.2" y="205.0" text-anchor="middle">Pick date</text>
-      <text class="dg-step-lbl" x="121.2" y="222.0" text-anchor="middle">and pitch</text>
-      <path class="dg-arrow" d="M239.5 208.0H251.5m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="260.5" y="180" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="373.8" y="213.0" text-anchor="middle">Game exists</text>
-      <path class="dg-arrow" d="M492.0 208.0H504.0m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="513.0" y="180" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="626.2" y="213.0" text-anchor="middle">Players join</text>
-      <path class="dg-arrow" d="M744.5 208.0H756.5m-5,-4 5,4-5,4"/>
-      <rect class="dg-step" x="765.5" y="180" width="226.5" height="56" rx="3"/>
-      <text class="dg-step-lbl" x="878.8" y="213.0" text-anchor="middle">Squad fills</text>
-      <text class="dg-verdict-in" x="8" y="262">Taken · the game is real at step one; joining is a tap, not a negotiation</text>
-      </g>
-    </svg>
-        </div>
-        <figcaption class="cap">The rejected order is drawn, not just mentioned</figcaption>
-      </figure>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Journey map</h2>
-      <figure class="rise d1" style="margin:0">
-        <div class="shot"><img src="Journey%20map.png" alt="Journey map for the game creator across search, choose, make, share, play and rate — with an emotional curve dipping at venue selection."></div>
-        <figcaption class="cap">Creator journey — the dip sits at venue selection</figcaption>
-      </figure>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Problems, inverted</h2>
-      <figure class="rise d1" style="margin:0">
-        <div class="shot"><img src="Frame%2059.png" alt="Matrix mapping each research problem to the product feature that answers it, for creators and players."></div>
-        <figcaption class="cap">Every problem, paired with the feature that answers it</figcaption>
-      </figure>
-    </section>
-
-    <section class="beat indent" data-reveal>
-      <h2 class="h-beat rise">Information architecture</h2>
-      <figure class="rise d1" style="margin:0">
-        <div class="shot"><img src="Group%20953.png" alt="Colour-coded sitemap covering the register flow and the main homepage tree."></div>
-        <figcaption class="cap">Sitemap — register flow and homepage tree</figcaption>
-      </figure>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The solution</h2>
-      <div class="stack">
-        <div class="rise d1">
-          <p class="prose lead">A date, a pitch, three taps.</p>
-          <p class="prose">Onboarding collects only what changes the match — position, preferred foot, availability — and defers the rest. Matchmaking puts the date strip, the venue and every open game on one screen, so a player never has to navigate in order to compare.</p>
-          <p class="prose">Yellow has exactly one job in the system: <em>it marks the thing you are being asked to decide.</em> Everything else is black, white, and the photograph of the pitch.</p>
-        </div>
-        <div class="pair">
-          <figure class="rise d2" style="margin:0">
-            <div class="shot"><img src="Group%201000002956.png" alt="Onboarding — sign up to Futee, with email and password fields beside coaching content."></div>
-            <figcaption class="cap">01 — Onboarding</figcaption>
-          </figure>
-          <figure class="rise d3" style="margin:0">
-            <div class="device laptop">
-            <div class="lid"><div class="screen" data-scrollshot><img src="img/screen-matchmaking.jpg" alt="Matchmaking — find a game, with a date strip, venue selection and three open games."></div></div>
-            <div class="base" aria-hidden="true"></div>
-          </div>
-            <figcaption class="cap">02 — Matchmaking</figcaption>
-          </figure>
-        </div>
-        <div class="pair">
-          <figure class="rise d2" style="margin:0">
-            <div class="shot"><img src="Group%201000002955.png" alt="Player directory and profile screens."></div>
-            <figcaption class="cap">03 — Directory</figcaption>
-          </figure>
-          <figure class="rise d3" style="margin:0">
-            <div class="shot"><img src="Frame%2011.png" alt="Account settings and invite players screens."></div>
-            <figcaption class="cap">04 — Settings</figcaption>
-          </figure>
-        </div>
-        <figure class="rise d2" style="margin:0">
-          <div class="device laptop">
-            <div class="lid"><div class="screen" data-scrollshot><img src="img/screen-dashboard.jpg" alt="The refined Futee dashboard — upcoming game, stats, venue card and create/find shortcuts."></div></div>
-            <div class="base" aria-hidden="true"></div>
-          </div>
-          <figcaption class="cap">05 — Dashboard, refined</figcaption>
-        </figure>
-        <figure class="rise d2" style="margin:0">
-          <div class="shot"><img src="Group%201000002959.png" alt="The Futee app running on a phone."></div>
-          <figcaption class="cap">06 — iOS</figcaption>
-        </figure>
-      </div>
-    </section>
-
+    <div class="drow">
+      <blockquote class="quote">&ldquo;Finding a good game is a coin
+        flip.&rdquo;</blockquote>
+      <p class="quote__by">A regular player, Bangkok &mdash; from the
+        questionnaire and calls</p>
+      <figure class="blobfig blobfig--quote" data-pose="sad" aria-hidden="true"><canvas></canvas></figure>
+    </div>
   </div>
 </section>
 
-<!-- ══ 05 · BAND ═══════════════════════════════════════════════ -->
-<div class="band tall" data-reveal>
-  <img src="Macbook_Air_Mockup_5.png" alt="The Futee platform running on a laptop.">
-</div>
-
-<!-- ══ 05b · THE COMPLETE SET — read whole, so uncropped ══ -->
-<figure class="full" data-reveal style="margin-inline:var(--pad)">
-  <div class="shot"><img src="Frame%20102.png" alt="The complete Futee screen set laid out as a grid — every screen across web and iOS."></div>
-  <figcaption class="cap">The system, end to end — 17 screens, web &amp; iOS</figcaption>
-</figure>
-
-<!-- ══ 05c · OUTCOME ═══════════════════════════════════════════ -->
-<section class="run" id="outcome">
-  <aside class="dossier" data-reveal>
-    <p class="dossier-mark rise">Futee <span>; end</span></p>
-    <div class="dossier-body">
-      <dl class="facts">
-        <div><dt class="rise">Delivered</dt><dd class="rise">Research, IA, UI system,<br>17 screens</dd></div>
-        <div><dt class="rise d1">Handed to</dt><dd class="rise d1">Futee, Bangkok</dd></div>
-        <div><dt class="rise d2">Built by</dt><dd class="rise d2">An external firm,<br>after handover</dd></div>
-        <div><dt class="rise d3">Year</dt><dd class="rise d3">2021 — 2022</dd></div>
-      </dl>
-      <div class="impacts">
-        <div class="impact rise d1"><b>2</b><small>Audiences, one funnel</small></div>
-        <div class="impact rise d2"><b>17</b><small>Screens handed over</small></div>
-      </div>
+<!-- ── 04 · the answer ────────────────────────────────────────── -->
+<section class="row" data-reveal>
+  <h2 class="h-sec rise">How did Futee solve this?</h2>
+  <div class="row__body">
+    <p class="em rise d1">A date, a pitch, three taps.</p>
+    <p class="em rise d1">Every finding was inverted into a feature, one at a
+      time. Three of them carried the product.</p>
+    <div class="cols3 rise d2">
+      <div class="box"><span><b>Create, then fill.</b>The brief assumed you
+        gather a squad and then book. Research said the opposite, so the game is
+        real at step one and joining is a tap, not a negotiation.</span></div>
+      <div class="box"><span><b>One screen, no navigating.</b>The date strip,
+        the venue and every open game sit together, so a player never has to
+        leave a screen in order to compare.</span></div>
+      <div class="box"><span><b>Yellow means decide.</b>Yellow has exactly one
+        job in the system: it marks the thing you are being asked to decide.
+        Everything else is black, white and the pitch.</span></div>
     </div>
-  </aside>
-  <div class="track">
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">What went over</h2>
-      <div class="rise d1">
-        <p class="prose lead">It went to the stakeholders as a system, not a screen set.</p>
-        <p class="prose">Two personas, two journeys, a sitemap traceable back to research, and a UI that holds the same rules whether you are organising a game or joining one. <strong>Create-then-fill — the one place research contradicted the brief — was adopted without argument</strong>, because the journey map made the case before I did.</p>
-        <p class="prose">It was handed over and <strong>built by an external development firm</strong>. It ran, and it has since been taken down. I don't have usage figures from the period it was live, and I'd rather say that than imply a launch I can't evidence.</p>
-      </div>
-    </section>
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">What this case study doesn't have</h2>
-      <div class="rise d1">
-        <p class="prose">Worth saying plainly, because a research-led case study should be held to it: <strong>there is no usability testing shown here</strong>, and no post-launch numbers. The evidence on this page is research → decision, not design → measured result. I also no longer have the participant counts from the questionnaire or the calls.</p>
-        <p class="prose">If I ran it again, a five-person test on the create-then-fill flow would come before the visual system — that flow was the one real disagreement with the brief, and it is the one thing I argued rather than proved.</p>
-      </div>
-    </section>
   </div>
 </section>
 
-<!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
-<section class="credits">
-  <div><h4>Role</h4>UX research, UI design, identity — Neel Parikh</div>
-  <div><h4>Client</h4>Futee — Bangkok</div>
-  <div><h4>Methods</h4>Desk research, questionnaire, ecosystem mapping, card sorting, journey mapping</div>
-  <div><h4>Tools</h4>Figma, Illustrator</div>
-
-<section class="contact">
-  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
-  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
-  <a href="/#work">See the rest of the work</a>
+<!-- ── 05 · the role ──────────────────────────────────────────── -->
+<section class="row" data-reveal>
+  <h2 class="h-sec rise">What I did</h2>
+  <figure class="blobfig blobfig--head" data-pose="working" aria-hidden="true"><canvas></canvas></figure>
+  <div class="row__body">
+    <p class="say rise d1">UX research, information architecture, the UI system
+      and the visual identity, over a fourteen-week engagement across 2021&ndash;22.
+      A team project, not a solo one &mdash; the stakeholder and player calls were
+      run together rather than outsourced. Seventeen screens across web and iOS,
+      handed to an external firm to build.</p>
+  </div>
 </section>
 
+<!-- ── 06 · the thesis, and the wire it hangs from ────────────── -->
+<section class="thesis" data-reveal>
+  <div class="thesis__frame">
+    <h2><span class="ln"><i>So how did an app</i></span> <span class="ln"><i style="--d:90ms">plan to solve a</i></span> <span class="ln"><i style="--d:180ms">problem for the</i></span> <span class="ln"><i style="--d:270ms">community?</i></span></h2>
+    <span class="wire wire--h" style="--wd:120ms;left:0;top:0;width:100%"></span>
+    <span class="wire wire--v" style="--wd:420ms;left:calc(100% - 1px);top:0;height:100%"></span>
+    <span class="wire wire--h" style="--wd:900ms;left:0;bottom:0;width:100%" data-from="end"></span>
+  </div>
+  <figure class="blobfig blobfig--corner" data-pose="thinking" aria-hidden="true"><canvas></canvas></figure>
+</section>
+
+<!-- ── 07 · the walkthrough ───────────────────────────────────── -->
+<section class="trace">
+  <div class="trace__box" data-reveal style="--h:50.9%">
+    <span class="wire wire--v" style="--wd:0ms;left:79.6%;top:0;height:47.7%"></span>
+    <span class="node" style="--wd:760ms;left:79.6%;top:47.7%"></span>
+    <p class="trace__aside" style="left:56.8%;top:44%">Let me walk you<br>through how we did it.</p>
+    <span class="node" style="--wd:900ms;left:50%;top:47.7%"></span>
+    <span class="wire wire--h" style="--wd:940ms;left:27.9%;top:47.7%;width:22.1%" data-from="end"></span>
+    <span class="node" style="--wd:1240ms;left:27.9%;top:47.7%"></span>
+    <span class="wire wire--v" style="--wd:1280ms;left:27.9%;top:47.7%;height:31.6%"></span>
+    <span class="node" style="--wd:1620ms;left:27.9%;top:79.3%"></span>
+    <div class="walk__head" style="left:2.97%;top:74.2%">
+      <h3>How can I as a player find games?</h3>
+    </div>
+  </div>
+
+  <div class="plates">
+    <div class="explainers">
+      <div><b>Pick a date</b><span>Today comes first, and the strip
+        runs a week ahead.</span></div>
+      <div><b>Pick a venue</b><span>Browse, search a pitch by address,
+        or open a private game&rsquo;s link.</span></div>
+      <div><b>See what&rsquo;s open</b><span>Every open game shows its pitch,
+        district and time slot.</span></div>
+      <div><b>Join</b><span>One tap. The game already exists, so there is
+        nothing to negotiate.</span></div>
+    </div>
+    <figure class="plate" style="--ar:1.33">
+      <img src="Group%201000002953.png"
+           alt="Matchmaking — a date strip, the venue, and every open game on one screen.">
+    </figure>
+    <p class="plate__note">Matchmaking &mdash; web</p>
+  </div>
+
+  <div class="trace__box" data-reveal style="--h:36.7%">
+    <div class="walk__head" style="left:17.7%;top:9.6%">
+      <h3>Now how do I find a place to play?</h3>
+    </div>
+    <p class="trace__say" style="left:49.4%;top:20.2%">Search splits three ways
+      &mdash; all, players, pitches. A pitch shows how many timeslots are open
+      before you tap in, and the top-rated pitches sit above everything,
+      certified and boosted.</p>
+    <span class="wire wire--v" style="--wd:200ms;left:23.7%;top:52.1%;height:43.2%"></span>
+    <span class="node" style="--wd:620ms;left:23.7%;top:95.3%"></span>
+  </div>
+
+  <div class="plates">
+    <figure class="plate" style="--ar:1.326">
+      <img src="Group%201000002955.png"
+           alt="Search — tabs for all, players and pitches, recent searches, and results for a player and a pitch with five timeslots.">
+    </figure>
+    <p class="plate__note">Detailed search &mdash; all, players, pitches</p>
+  </div>
+
+</section>
+
+<!-- ── 08 · ratings ───────────────────────────────────────────── -->
+<section class="step" data-reveal>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <div>
+      <h3 class="step__q rise">Who am I actually playing with?</h3>
+      <ul class="legend rise d1">
+        <li><span>Position</span>RW</li>
+        <li><span>Rating</span>8.1 / 10</li>
+        <li><span>Wins</span>73%</li>
+      </ul>
+      <p class="legend__src rise d1">Kittisak Wang, from the invite list and search</p>
+    </div>
+    <div class="step__say rise d1">
+      <p>Standard is the one thing a group chat can&rsquo;t tell you. So every
+        player carries a rating out of ten, given by the organiser after each game.</p>
+      <p>It turns up <strong>before you apply</strong>, not at kickoff &mdash; on
+        the invite list, beside a player in search, and on your own dashboard. The research line that asked
+        for it was blunt: finding a good game is a coin flip.</p>
+    </div>
+  </div>
+  <div class="plates">
+    <figure class="plate" style="--ar:1.484">
+      <img src="Frame%2011.png"
+           alt="Invite players with positions and ratings, account settings with position and preferred foot, and top-rated pitches.">
+    </figure>
+    <p class="plate__note">Invite players, settings and top-rated pitches &mdash; web</p>
+  </div>
+</section>
+
+<!-- ── 09 · onboarding ────────────────────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--step" data-pose="phone" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <h3 class="step__q rise">What does Futee need to know about me?</h3>
+    
+    <div class="step__say rise d1">
+      <p>Only what changes the match. Sign-up is an email, or Google or Facebook,
+        then a short step to personalise the account. Everything else is deferred
+        until it is needed.</p>
+    </div>
+    <div class="fields rise d2">
+      <div><h4>Position</h4><p>Up to two you play best in. You can change them later.</p></div>
+      <div><h4>Preferred foot</h4><p>Asked once, kept on the profile.</p></div>
+      <div><h4>Physical info</h4><p>Height, in its own tab, away from everything
+        else.</p></div>
+      <div><h4>Availability</h4><p>A single toggle. It decides whether you appear
+        in an organiser&rsquo;s Available Players list.</p></div>
+    </div>
+  </div>
+  <div class="plates">
+    <figure class="plate" style="--ar:1.334">
+      <img src="Group%201000002959.png"
+           alt="The iOS app open on its first screen — let's personalise your account.">
+    </figure>
+    <p class="plate__note">Personalising the account &mdash; iOS</p>
+  </div>
+</section>
+
+<!-- ── 10 · the dashboard ─────────────────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--under" data-pose="laptop" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <h3 class="step__q rise">When&rsquo;s my next game?</h3>
+    <div class="step__say rise d1">
+      <p>The dashboard opens on the reason most people come back: the next game,
+        with its date and ground, pinned to the top.</p>
+      <p>Underneath it the record builds itself. One persona&rsquo;s pain point was
+        having to write stats down by hand; here nobody does.</p>
+    </div>
+    <div class="fields rise d2">
+      <div><h4>Upcoming game</h4><p>Date and ground first. On the phone, every
+        upcoming game in one dropdown.</p></div>
+      <div><h4>Games played</h4><p>Counted for you, game by game.</p></div>
+      <div><h4>Average rating</h4><p>What an organiser sees before they invite you.</p></div>
+      <div><h4>Create or find</h4><p>Both one tap from home, on web and on the phone.</p></div>
+    </div>
+  </div>
+  <div class="plates">
+    <figure class="plate" style="--ar:1.326">
+      <img src="Group%201000002954.png"
+           alt="The refined dashboard on web and phone — upcoming game, games played, average rating, games created, and create and find game cards.">
+    </figure>
+    <p class="plate__note">Refined dashboard &mdash; web and iOS</p>
+  </div>
+</section>
+
+<!-- ── 11 · the life of a game ────────────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--step" data-pose="tired" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <h3 class="step__q rise">The life of a game</h3>
+    <div class="step__say rise d1">
+      <p>Every game goes through the same six stages. I mapped how the person
+        running it feels across them, and the mood drops in two places &mdash;
+        <strong>choosing the venue</strong>, and <strong>rating afterwards</strong>.
+        Both got a feature of their own.</p>
+    </div>
+    <div class="fields rise d2" style="--n:6">
+      <div><h4>Search</h4><p>Excited, and already thinking about everyone
+        else&rsquo;s convenience.</p></div>
+      <div class="dip"><h4>Choose</h4><p>A bunch of venues and no way to judge
+        them. Hence top-rated, certified pitches.</p></div>
+      <div><h4>Make</h4><p>Public or private, and a match link generated on the spot.</p></div>
+      <div><h4>Share</h4><p>The link goes to the inner circle, or out in public.</p></div>
+      <div><h4>Play</h4><p>Split the teams, then the game itself.</p></div>
+      <div class="dip"><h4>Rate</h4><p>The chore after the fun. Hence rating built
+        into the flow, not left to memory.</p></div>
+      <p class="fields__key"><i></i>Where the mood dips</p>
+    </div>
+  </div>
+  <div class="plates">
+    <figure class="plate" style="--ar:1.79">
+      <img src="Journey%20map.png"
+           alt="Journey map for the game creator across search, choose, make, share, play and rate, with an emotional curve that dips at choose and rate.">
+    </figure>
+    <p class="plate__note">Journey map &mdash; the game creator</p>
+  </div>
+</section>
+
+<!-- ── 12 · the other person in every screen ──────────────────── -->
+<section class="turn" data-reveal>
+  <figure class="blobfig blobfig--turn" data-pose="stressed" aria-hidden="true"><canvas></canvas></figure>
+  <span class="turn__rule"></span>
+  <div>
+    <h2 class="turn__big rise">That&rsquo;s the player&rsquo;s side.</h2>
+    <p class="turn__big rise d1">But every game on Futee has a second person behind
+      it &mdash; the one who made it. The two never speak to each other, and every
+      screen has to serve both.</p>
+    <p class="turn__say rise d2">Desk research, a questionnaire, and calls with
+      stakeholders in Thailand and regular players in Bangkok produced two
+      personas. They stall in different places.</p>
+  </div>
+</section>
+
+<div class="pair" data-reveal>
+  <figure class="plate rise"><img src="PERSONA%20-%20Light.png"
+    alt="Persona — Chatri Wang, 18, a student in Bangkok who organises games to meet and play better players."></figure>
+  <div class="rise d1">
+    <h3>The creator &mdash; Chatri, 18</h3>
+    <p>A student who organises games to meet new players and get better. He stalls
+      at <strong>venue selection</strong>, with no way to judge a pitch.</p>
+  </div>
+</div>
+
+<div class="pair" data-reveal>
+  <figure class="plate rise"><img src="PERSONA%20-%20Light-1.png"
+    alt="Persona — Chai Charoen, 47, a working professional in Bangkok who still plays when he can."></figure>
+  <div class="rise d1">
+    <h3>The player &mdash; Chai, 47</h3>
+    <p>&ldquo;I used to play football regularly when I was in school and
+      college&hellip; But I still love the game.&rdquo;</p>
+    <p>He works full time and has no time to organise. He stalls <strong>waiting to
+      hear back</strong>, with no signal that his request went anywhere.</p>
+  </div>
+</div>
+
+<div class="flows" data-reveal>
+  <figure class="blobfig blobfig--flows" data-pose="angry" aria-hidden="true"><canvas></canvas></figure>
+  <p class="turn__say rise" style="margin-top:0">The brief assumed you gather a
+    squad and then book something. The research said the opposite. It was the one
+    real argument with the brief, so here it is drawn out, including the version
+    that lost.</p>
+  <div class="flow flow--lost rise d1">
+    <p class="flow__label">What the brief assumed &mdash; fill, then create</p>
+    <ol><li>Find players</li><li>Agree a time</li><li>Book a pitch</li>
+      <li class="exists">Game exists</li></ol>
+    <p class="flow__verdict"><b>Rejected.</b> Nothing exists until everyone agrees,
+      and nobody knows if they&rsquo;re in.</p>
+  </div>
+  <div class="flow flow--won rise d2">
+    <p class="flow__label">What the research pointed to &mdash; create, then fill</p>
+    <ol><li>Pick a date and pitch</li><li class="exists">Game exists</li>
+      <li>Players join</li><li>Squad fills</li></ol>
+    <p class="flow__verdict"><b>Taken.</b> The game is real at step two, and joining
+      is a tap, not a negotiation.</p>
+  </div>
+</div>
+
+<div class="pair" data-reveal>
+  <figure class="plate rise" style="--ar:1.647"><img src="Frame%2059.png"
+    alt="Four problems from research, each paired with the feature that answers it."></figure>
+  <div class="rise d1">
+    <h3>Problems, inverted</h3>
+    <p>Every finding became a feature, one at a time. Finding reliable players
+      became the organiser&rsquo;s rating. Wanting a game soon became open games in
+      your area. Building a circle became direct invites.</p>
+    <p>Nothing went into the product that couldn&rsquo;t be traced back to research.</p>
+  </div>
+</div>
+
+<div class="pair" data-reveal>
+  <figure class="plate rise" style="--ar:2.3"><img src="Group%20953.png"
+    alt="Sitemap — the register flow and the homepage tree, colour-coded by section."></figure>
+  <div class="rise d1">
+    <h3>Information architecture</h3>
+    <p>The register flow and the homepage tree sit on one sitemap. Creating a game,
+      finding one, the directory and coaches all hang off the same home, so the
+      creator and the player never end up in different products.</p>
+  </div>
+</div>
+
+<!-- ── 13 · the close ─────────────────────────────────────────── -->
+<div class="close">
+  <section class="row" data-reveal>
+    <h2 class="h-sec rise">What went over</h2>
+    <figure class="blobfig blobfig--over" data-pose="happy" aria-hidden="true"><canvas></canvas></figure>
+    <div class="row__body">
+      <p class="say rise d1">It went to the stakeholders as a system, not a screen
+        set &mdash; two personas, two journeys, a sitemap traceable back to research,
+        and a UI that holds the same rules whether you&rsquo;re organising a game or
+        joining one. Create-then-fill was adopted without argument, because the
+        journey map made the case before I did.</p>
+      <p class="say rise d1" style="margin-top:1em">An external development firm built
+        it after handover. It ran, and it has since been taken down. I don&rsquo;t
+        have usage figures from the period it was live, and I&rsquo;d rather say that
+        than imply a launch I can&rsquo;t evidence.</p>
+    </div>
+  </section>
+
+  <section class="row" data-reveal>
+    <h2 class="h-sec rise">What I&rsquo;d do differently</h2>
+    <div class="row__body">
+      <p class="say rise d1">There is no usability testing on this page, and no
+        post-launch numbers. The evidence here runs from research to decision, not
+        from design to a measured result.</p>
+      <p class="say rise d1" style="margin-top:1em">If I ran it again, a five-person
+        test on the create-then-fill flow would come before the visual system. It was
+        the one real disagreement with the brief, and the one thing I argued rather
+        than proved.</p>
+    </div>
+  </section>
+
+</div>
 </main>
 
-<a class="next" href="/work/emf-ace/" aria-label="Next project: EMF ACE">
-  <img src="/work/emf-ace/img/room-gala.jpg" alt="">
-  <span class="lbl"><small>Next project</small><strong>EMF ACE</strong></span>
-</a>
+<!-- ── 14 · credits, and on to the next one ───────────────────── -->
+<footer>
+  <dl class="credits" data-reveal>
+    <div class="rise"><dt>Role</dt><dd>UX research, UI design, identity</dd></div>
+    <div class="rise"><dt>Client</dt><dd>Futee, Bangkok</dd></div>
+    <div class="rise d1"><dt>Methods</dt><dd>Desk research, questionnaire, ecosystem
+      mapping, card sorting, journey mapping</dd></div>
+    <div class="rise d1"><dt>Tools</dt><dd>Figma, Illustrator</dd></div>
+    <div class="rise d2"><dt>Year</dt><dd>2021&ndash;22, fourteen weeks</dd></div>
+  </dl>
 
+  <a class="next" href="../emf-ace/">
+    <div><span>Next project</span><strong>EMF ACE</strong></div>
+    <em aria-hidden="true">&rarr;</em>
+  </a>
+</footer>
+
+<script src="../../blob-assets/blob-field.js"></script>
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   Shared case-study behaviour.
-   transform/opacity only · custom easing · once-only reveals ·
-   no scroll hijacking · full prefers-reduced-motion opt-out.
-   ══════════════════════════════════════════════════════════════════ */
-const REDUCED = typeof window.matchMedia === 'function'
-  && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(() => {
+'use strict';
+const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* 1 — reveal on enter, once, never on scroll-up */
-(function reveals(){
-  const targets = document.querySelectorAll('[data-reveal]');
-  if (REDUCED) { targets.forEach(t => t.classList.add('is-in')); return; }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('is-in');
-      io.unobserve(e.target);
+/* ── reveals ─────────────────────────────────────────────────── */
+const io = new IntersectionObserver((es) => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+}, { rootMargin:'0px 0px -12% 0px', threshold:0 });
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+/* ══ the blob ═══════════════════════════════════════════════════
+   In when a third of its box is on screen, out when it leaves. One
+   sprite per instance — the manifest is handed over inline, so each
+   canvas loads only the pose it shows. */
+(() => {
+  const figs = [...document.querySelectorAll('.blobfig')];
+  if (!figs.length || !window.BlobField) return;
+  const BASE = '../../blob-assets/';
+  const small = matchMedia('(max-width:900px)').matches;
+  figs.forEach(fig => {
+    const pose = fig.dataset.pose;
+    const field = BlobField.create({
+      canvas: fig.querySelector('canvas'),
+      base: BASE,
+      manifest: { grid:340, anchor:{x:170,y:318,norm:300},
+                  poses:[{ id:pose, file:'sprites/' + pose + '.webp' }] },
+      points: small ? 5000 : 9000,
+      floor: 62, crop: 286,
+      inset: .1875, speed: 2.6,   /* .3 overhang ÷ 1.6 canvas */
+      gain: 1.9,                  /* brighter than the engine's default */
+      occlude: true,              /* lines under a blob go behind it */
+      pointer: false, hidden: true,
+      onError: e => console.warn(e)
     });
-  }, { rootMargin:'0px 0px -12% 0px', threshold:0.01 });
-  targets.forEach(t => io.observe(t));
-})();
-
-/* 2 — line-mask any [data-lines] headline. Splits on authored <br>,
-       so the text stays selectable and screen-reader legible. */
-(function maskLines(){
-  document.querySelectorAll('[data-lines]').forEach(el => {
-    el.innerHTML = el.innerHTML.split('<br>').map(s => s.trim())
-      .map((l,i) => `<span class="ln"><i style="--d:${i*70}ms">${l}</i></span>`).join('');
+    new IntersectionObserver(es => {
+      es[0].isIntersecting ? field.gather() : field.scatter();
+    }, { threshold:.33 }).observe(fig);
   });
 })();
 
-/* 3 — scroll progress */
-(function progress(){
-  const bar = document.querySelector('[data-progress]');
-  if (!bar) return;
-  const run = () => {
-    const max = document.body.scrollHeight - window.innerHeight;
-    bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
-  };
-  addEventListener('scroll', run, { passive:true });
-  addEventListener('resize', run);
-  run();
-})();
+if (reduced) return;
 
-/* 4 — back chip: past the hero, and only while reading upward, so it
-       never sits on top of the dossier on the way down */
-(function back(){
-  const el = document.querySelector('[data-back]');
-  if (!el) return;
-  let last = scrollY;
-  const run = () => {
-    const y = scrollY;
-    const past = y > innerHeight * 0.7;
-    if (y > last + 4) el.classList.remove('is-live');
-    else if (y < last - 4 && past) el.classList.add('is-live');
-    if (!past) el.classList.remove('is-live');
-    last = y;
-  };
-  addEventListener('scroll', run, { passive:true });
-  run();
-})();
-
-/* 5 — motion slots: play only while on screen, never under reduced
-       motion. Saves battery and keeps the poster as the fallback. */
-(function motion(){
-  const vids = document.querySelectorAll('video[data-motion]');
-  if (!vids.length) return;
-  if (REDUCED) { vids.forEach(v => { v.autoplay = false; v.pause(); }); return; }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      const v = e.target;
-      if (e.isIntersecting) { const p = v.play(); if (p) p.catch(()=>{}); }
-      else v.pause();
-    });
-  }, { threshold:0.15 });
-  vids.forEach(v => io.observe(v));
-})();
-
-/* 6 — count-up for the outcome tally */
-(function countUp(){
-  document.querySelectorAll('[data-count]').forEach(el => {
-    const end = parseFloat(el.dataset.count);
-    if (REDUCED) { el.textContent = end; return; }
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      const t0 = performance.now(), dur = 1200;
-      const tick = t => {
-        const p = Math.min((t - t0) / dur, 1);
-        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, { threshold:0.6 });
-    io.observe(el);
+/* ── 01 · "Futee" twirls again on hover ────────────────────────── */
+const tw = document.querySelector('.twirl');
+if (tw && matchMedia('(hover:hover) and (pointer:fine)').matches){
+  let busy = false;
+  tw.addEventListener('mouseenter', () => {
+    if (busy) return; busy = true;
+    tw.classList.remove('again'); void tw.offsetWidth; tw.classList.add('again');
+    setTimeout(() => { busy = false; }, 1300);
   });
+}
+
+/* ── 01 · the photograph drifts, very slightly ───────────────── */
+const bg = document.querySelector('[data-parallax]');
+const statement = document.querySelector('.statement');
+
+/* ══ the football ════════════════════════════════════════════════
+   Made of the same dust as everything else. It lives in the gap
+   between "Futee" and "UX design" and never crosses either: it fades
+   up a ball's width clear of one word, rolls, and fades out the same
+   distance short of the other.
+
+   It rolls rather than slides — rotation is distance over radius — and
+   it hops as it goes. The hops lose height along the run like a real
+   ball losing energy, and it squashes a touch on each landing, kicking
+   up a little dust only at the moment of contact.
+
+   A gap of nine to twenty-six seconds between runs, a direction picked
+   each time, and nothing while the bar is off screen or motion is
+   turned down.
+   ═════════════════════════════════════════════════════════════════ */
+(() => {
+  const pitch = document.getElementById('pitch');
+  if (!pitch) return;
+  const bar   = pitch.parentElement;
+  const wordL = bar.querySelector('.bar__mark');
+  const wordR = bar.querySelector('.projbar__disc');
+  const px = pitch.getContext('2d');
+  const BD = Math.min(devicePixelRatio || 1, 2);
+
+  const PTS = (() => {
+    const p = [];
+    for (let i=0;i<120;i++){ const a=i/120*6.28318; p.push(Math.cos(a), Math.sin(a)); }
+    const r0 = .40;
+    for (let k=0;k<5;k++){
+      const a = k/5*6.28318 - 1.5708, b = (k+1)/5*6.28318 - 1.5708;
+      for (let j=0;j<14;j++){ const t=j/14;
+        p.push((Math.cos(a)*(1-t)+Math.cos(b)*t)*r0, (Math.sin(a)*(1-t)+Math.sin(b)*t)*r0); }
+      for (let j=1;j<=11;j++){ const r=r0+(j/11)*.58; p.push(Math.cos(a)*r, Math.sin(a)*r); }
+    }
+    return new Float32Array(p);
+  })();
+  const NP = PTS.length/2;
+
+  let W=0, H=0, R=0, DOT=1, X0=0, X1=0, GROUND=0;
+  let live=false, seen=false, timer=0, raf=0;
+  let s=0, span=0, dir=1, v=0, last=0;
+  const TR = [];
+  const smooth = t => t*t*(3-2*t);
+
+  function size(){
+    const b = pitch.getBoundingClientRect();
+    if (!b.width) return;
+    W = Math.round(b.width*BD); H = Math.round(b.height*BD);
+    pitch.width = W; pitch.height = H;
+    R = H*0.22;
+    GROUND = H*0.80;
+    DOT = Math.max(1, Math.round(BD*0.9));
+    /* the centre never comes nearer a word than a radius plus 16px */
+    const clear = R + 16*BD;
+    X0 = (wordL.getBoundingClientRect().right - b.left)*BD + clear;
+    X1 = (wordR.getBoundingClientRect().left  - b.left)*BD - clear;
+  }
+
+  function frame(now){
+    raf = 0;
+    const dt = Math.min(.05, (now - last)/1000 || 0); last = now;
+    s += v*dt;
+    if (s >= span){ stop(); schedule(); return; }
+
+    const x   = dir > 0 ? X0 + s : X1 - s;
+    const rot = s/R*dir;
+
+    const HOP = R*3.4;
+    const h   = Math.sin(Math.PI*((s/HOP) % 1));        /* 0 on the ground, 1 at the top */
+    const A   = H*0.15*(1 - .6*s/span);                  /* each hop a little lower */
+    const k   = Math.max(0, 1 - h/.2);                   /* how close to a landing */
+    const sx  = 1 + .10*k, sy = 1 - .12*k;               /* squash on contact */
+    const cy  = GROUND - R*sy - A*h;
+    const alpha = smooth(Math.min(1, Math.min(s, span - s)/(R*2.4)));
+
+    px.clearRect(0,0,W,H);
+
+    px.fillStyle = 'rgba(251,247,240,.5)';
+    for (let i=TR.length-1;i>=0;i--){
+      const t = TR[i];
+      t.x += t.vx*dt; t.y += t.vy*dt; t.vy += 260*dt; t.l -= dt*2.6;
+      if (t.l <= 0 || t.y > GROUND + 2){ TR.splice(i,1); continue; }
+      px.globalAlpha = t.l*.5*alpha;
+      px.fillRect(t.x|0, t.y|0, DOT, DOT);
+    }
+
+    px.globalAlpha = alpha;
+    px.fillStyle = '#FBF7F0';
+    const c = Math.cos(rot), sn = Math.sin(rot);
+    for (let i=0;i<NP;i++){
+      const ax = PTS[i*2], ay = PTS[i*2+1];
+      px.fillRect((x + (ax*c - ay*sn)*R*sx)|0, (cy + (ax*sn + ay*c)*R*sy)|0, DOT, DOT);
+    }
+    px.globalAlpha = 1;
+
+    if (k > .85){
+      for (let n=0;n<2;n++) TR.push({ x:x + (Math.random()-.5)*R*1.2, y:GROUND - 1,
+        vx:(Math.random()-.5)*80 - dir*30, vy:-(30 + Math.random()*70), l:.35 + Math.random()*.3 });
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function stop(){
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; live = false; TR.length = 0;
+    if (W) px.clearRect(0,0,W,H);
+  }
+  function kick(){
+    if (!seen || live){ schedule(); return; }
+    size();
+    span = X1 - X0;
+    if (!W || span < R*10){ schedule(); return; }      /* too narrow to be worth it */
+    live = true; s = 0;
+    dir = Math.random() < .5 ? 1 : -1;
+    v = span/(2.3 + Math.random()*.9);
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+  function schedule(){
+    clearTimeout(timer);
+    timer = setTimeout(kick, 9000 + Math.random()*17000);
+  }
+  pitch.kick = kick;   /* for testing from the console */
+
+  new IntersectionObserver(es => {
+    seen = es[0].isIntersecting;
+    if (!seen && live) stop();
+  }).observe(pitch);
+
+  addEventListener('resize', () => { if (!live) size(); });
+  size();
+  timer = setTimeout(kick, 3000 + Math.random()*4000);
 })();
 
-/* 7 — hero settles on load */
-requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+/* ── scroll ──────────────────────────────────────────────────── */
+let raf = 0;
+function frame(){
+  raf = 0;
 
-/* ── device frames: the page inside scrolls with the reader ────────
-   Progress is measured across the frame's whole travel through the
-   viewport, so the internal scroll finishes exactly as the frame
-   leaves. Transform only, rAF-throttled, passive, and inert under
-   prefers-reduced-motion. */
-(function deviceScroll(){
-  const frames = [...document.querySelectorAll('[data-scrollshot]')];
-  if (!frames.length || REDUCED) return;
+  if (bg){
+    const b = statement.getBoundingClientRect();
+    if (b.bottom > 0 && b.top < innerHeight){
+      const q = (b.top + b.height/2 - innerHeight/2) / innerHeight;
+      bg.style.transform = 'translate3d(0,' + (q * -42).toFixed(2) + 'px,0)';
+    }
+  }
 
-  let ticking = false;
-  const run = () => {
-    const vh = innerHeight;
-    frames.forEach(f => {
-      const r = f.getBoundingClientRect();
-      if (r.bottom < -160 || r.top > vh + 160) return;
-      const img = f.querySelector('img');
-      if (!img) return;
-      const travel = img.offsetHeight - f.clientHeight;
-      if (travel <= 4) return;
-      /* 0 as the frame's top edge reaches the bottom of the screen,
-         1 as its bottom edge clears the top */
-      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
-      /* ease so the ends settle rather than clip */
-      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
-    });
-    ticking = false;
-  };
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
-  addEventListener('resize', run);
-  run();
+}
+function onScroll(){ if (!raf) raf = requestAnimationFrame(frame); }
+
+addEventListener('scroll', onScroll, { passive:true });
+addEventListener('resize', onScroll);
+onScroll();
 })();
-
 </script>
 </body>
 </html>
