@@ -1316,6 +1316,20 @@ img, video { display: block; max-width: 100%; }
   .chrome { padding: 1.1rem 6vw; }
   .chrome__nav { gap: 1.1rem; }
 }
+/* Four links and the name do not fit one row of a phone at the desktop
+   label size: "Contact" ran off the right edge and the row sat on top of
+   the mark. Smaller and tighter rather than a second row — the sections
+   below only reserve one row's height for the chrome. The 15px padding on
+   each link keeps the tap target where it was. */
+@media (max-width: 480px) {
+  .chrome { padding: 1.1rem 5vw; gap: .6rem; }
+  .chrome__mark { font-size: .6875rem; }
+  .chrome__nav { gap: .7rem; font-size: .6875rem; letter-spacing: .04em; }
+}
+@media (max-width: 350px) {
+  .chrome__mark { font-size: .625rem; }
+  .chrome__nav { gap: .45rem; font-size: .625rem; letter-spacing: .02em; }
+}
 
 /* Below 1000px the two columns become two rows: files first, then the
    person. Work before bio at every width — the order is the argument. */
