@@ -12,7 +12,9 @@ Each generated page is the live page with exactly these differences:
   - <meta name="robots" content="noindex, nofollow">
   - links to the site's own pages kept inside /dive (canonical included)
   - every other relative URL made root-absolute, so the copy loads the
-    ORIGINAL css/js/images/fonts and no asset is duplicated
+    ORIGINAL css/js/images/fonts and no asset is duplicated (href, src,
+    poster, srcset, file paths in data-* attributes, url() in inline CSS,
+    and './' or '../' string literals in inline scripts)
 
 The public pages are only read, never written. Nothing is written at all
 unless every generated page passes verify().
@@ -96,6 +98,11 @@ def rewrite(value, base, stats):
 
 ATTR = re.compile(r'''(\s(?:href|src|poster))(\s*=\s*)(["'])(.*?)\3''', re.I | re.S)
 SRCSET = re.compile(r'''(\ssrcset)(\s*=\s*)(["'])(.*?)\3''', re.I | re.S)
+# A data-* attribute is only a URL if it reads like a file: scripts load
+# these by hand (Superfood's character sprites are data-src), so a relative
+# one would resolve inside /dive and 404.
+FILE = r'[^\s"\'<>:]+\.(?:png|jpe?g|webp|gif|avif|svg|mp4|webm|json|js|css|woff2?)(?:[?#][^\s"\'<>]*)?'
+DATA_ATTR = re.compile(r'''(\sdata-[\w-]+)(\s*=\s*)(["'])(%s)\3''' % FILE, re.I)
 STYLE_ATTR = re.compile(r'''(\sstyle)(\s*=\s*)(["'])(.*?)\3''', re.I | re.S)
 CSS_URL = re.compile(r'''url\(\s*(["']?)(.*?)\1\s*\)''', re.I)
 # In an inline script only an explicitly relative literal ('./x', '../x') is a
@@ -123,6 +130,7 @@ def tag(text, base, stats):
 
     text = ATTR.sub(lambda m: m.group(1) + m.group(2) + m.group(3) + rewrite(m.group(4), base, stats) + m.group(3), text)
     text = SRCSET.sub(srcset, text)
+    text = DATA_ATTR.sub(lambda m: m.group(1) + m.group(2) + m.group(3) + rewrite(m.group(4), base, stats) + m.group(3), text)
     return STYLE_ATTR.sub(lambda m: m.group(1) + m.group(2) + m.group(3) + css(m.group(4), base, stats) + m.group(3), text)
 
 
@@ -188,6 +196,9 @@ class Audit(HTMLParser):
         for key in ('href', 'src', 'poster'):
             if a.get(key):
                 self.urls.append((name, key, a[key]))
+        for key, val in attrs:
+            if key.startswith('data-') and val and re.fullmatch(FILE, val):
+                self.urls.append((name, key, val))
         for cand in (a.get('srcset') or '').split(','):
             if cand.split():
                 self.urls.append((name, 'srcset', cand.split()[0]))

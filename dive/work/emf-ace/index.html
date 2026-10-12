@@ -6,875 +6,1399 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EMF ACE — Neel Parikh</title>
-<meta name="description" content="EMF ACE Abu Dhabi — an awards weekend branded end to end. Design Lead at Media Mushroom, 2024. 1000+ creatives, three venues, three months.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="EMF ACE — an awards weekend in Abu Dhabi, branded end to end. Design lead at Media Mushroom, 2024.">
+
+<!-- ══════════════════════════════════════════════════════════════
+     CASE STUDY TEMPLATE  ·  the Futee system, EMF ACE's content
+
+       01  .statement   full-bleed photograph, name, one-line answer
+       03  .dossier     the problem          04–05 .row  solution, role
+       06  .thesis      the big question     07  .trace  walkthrough
+       08–11 .step      one question each, hung off a wire
+       12  .turn        the other side of it
+       13–14 .close     what went over, credits, next project
+
+     Same tokens, type and components as work/futee/index.html.
+     --accent: EMF ACE gold, from the lockup.
+     ══════════════════════════════════════════════════════════════ -->
 
 <style>
-/* ══════════════════════════════════════════════════════════════════
-   EMF ACE — MARK 5 SKELETON
-   Identical structure to Futee. Only the palette, the copy, the media
-   and the EMF-only block at the bottom differ.
-
-     00  hero        full-bleed photograph, wordmark, meta row,
-                     outcome numbers
-     01  band        full-bleed motion graphic
-     02  run         DOSSIER PINNED LEFT   · content runs right
-     03  band        full-bleed motion graphic
-     04  run.flip    DOSSIER PINNED RIGHT  · content runs left
-     05  band        full-bleed motion graphic
-     06  credits + next
-
-   Only the palette, the copy and the media change between projects.
-   Everything below this line is shared.
-   ══════════════════════════════════════════════════════════════════ */
+@font-face{
+  font-family:'DM Sans';
+  src:url('/fonts/DMSans-Variable.woff2') format('woff2');
+  font-weight:100 1000;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'DM Sans';
+  src:url('/fonts/DMSans-Italic-Variable.woff2') format('woff2');
+  font-weight:100 1000;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Panchang';
+  src:url('/fonts/Panchang-Variable.woff2') format('woff2');
+  font-weight:200 800;font-style:normal;font-display:block;
+}
 
 :root{
-  /* ── ground ── */
-  --void:#000000;            /* page — true black */
-  --deep:#150C22;             /* media wells keep the project tint */
-
-  --ink:#FBF7F0;              /* never pure #FFF */
+  --void:#000;
+  --ink:#FBF7F0;
   --ink-70:rgba(251,247,240,.74);
-  --ink-45:rgba(251,247,240,.46);
-  --rule:rgba(251,247,240,.20);
+  --ink-mute:rgba(251,247,240,.52);   /* labels, captions — 5.4:1 on black, AA */
+  --rule:rgba(251,247,240,.26);
 
-  /* ── the project's own accent. Swap per case study. ── */
-  --gold:#E4BC6B;
-  --accent:var(--gold);
+  /* ── the two faces, and nothing else ──────────────────────────
+     Panchang   headings, wordmarks, plate labels. Never body copy.
+     DM Sans    everything that is read as a sentence, plus labels,
+                answers and captions. Italic carries the voice — the
+                questions, the quote, the asides.
+     ─────────────────────────────────────────────────────────── */
+  --display:'Panchang',ui-sans-serif,system-ui,sans-serif;
+  --body:'DM Sans',ui-sans-serif,system-ui,-apple-system,sans-serif;
 
-  /* ── motion ── */
+  /* ── type scale ───────────────────────────────────────────────
+     Sizes are the Figma's, measured at a 1280 frame, expressed so
+     that 1280 lands exactly on them. FACE · WEIGHT · SIZE@1280.
+     ─────────────────────────────────────────────────────────── */
+  --t-mark:      clamp(17px,1.64vw,23px);  /* Panchang 500 · 21 — wordmarks        */
+  --t-nav:       clamp(14px,1.33vw,18px);  /* Panchang 400 · 17 — nav links        */
+  --t-disc:      clamp(16px,1.48vw,20px);  /* Panchang 400 · 19 — discipline       */
+  --t-head:      clamp(23px,2.42vw,34px);  /* Panchang 700 · 31 — section heads    */
+  --t-thesis:    clamp(33px,4.22vw,60px);  /* Panchang 700 · 54 — the big question */
+  --t-plate:     clamp(18px,2.19vw,30px);  /* Panchang 700 · 28 — plate label      */
+
+  --t-quote:     clamp(21px,2.19vw,31px);  /* DM Sans it. 400 · 28 — pull quote    */
+  --t-lede:      clamp(20px,2.03vw,29px);  /* DM Sans it. 400 · 26 — lead question */
+  --t-sub:       clamp(18px,1.88vw,26px);  /* DM Sans it. 400 · 24 — sub-questions */
+  --t-body:      clamp(15px,1.48vw,20px);  /* DM Sans 400 · 19 — right-column copy */
+  --t-small:     clamp(13.5px,1.33vw,18px);
+  --t-label:     clamp(11px,.94vw,13px);   /* DM Sans 500 caps · 12 — keys, credits *//* DM Sans 400 · 17 — answers, captions */
+
   --ease-out:cubic-bezier(.16,1,.3,1);
-  --ease-soft:cubic-bezier(.23,1,.32,1);
 
-  /* ── rhythm ── */
-  --pad:clamp(20px,8.4vw,108px);
-  --gap:clamp(26px,4.4vw,72px);
-  --sec:clamp(80px,10vw,150px);    /* between major sections */
-  --beat:clamp(52px,6.4vw,96px);   /* between beats inside a track */
-  --radius:0px;
-  --radius-pill:22px;
+  --pad-g:clamp(18px,2.97vw,44px);   /* the one gutter, 38px @1280  */
+  --sec:clamp(90px,13vw,190px);
+  --col-1:28.7%;                     /* 367 of 1280 — the head column */
+  --bar:clamp(44px,4.22vw,60px);
 
-  /* ── type ── */
-  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
-  --body:"DM Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
-  --ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* The one colour the page spends. It marks what the reader is
+     being asked to notice — and nothing else. */
+  --accent:#E4BC6B;
 }
-
-/* To run the site's own Panchang instead of Bricolage, uncomment this
-   and change --display to 'Panchang'. Path is Futee/ → ../Mark4/fonts/.
-@font-face{font-family:'Panchang';src:url('/work/Mark4/fonts/Panchang-Variable.woff2') format('woff2');
-  font-weight:200 800;font-style:normal;font-display:swap}
-*/
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%;background:var(--void)}  /* no white on overscroll */
 body{
   margin:0;background:var(--void);color:var(--ink);
-  font-family:var(--body);font-size:17px;line-height:1.62;
-  letter-spacing:-.006em;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-family:var(--body);font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
-img{display:block;max-width:100%;height:auto}
-a{color:inherit}
-::selection{background:var(--accent);color:#000000}
-.skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--accent);color:#000000;
-  padding:12px 18px;font-family:var(--ui);font-size:13px}
-.skip:focus{left:8px;top:8px}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+img{display:block;max-width:100%}
 
-/* ══ shared type ═══════════════════════════════════════════════ */
-/* a hairline holds the section, now that there is no box to do it */
-.h-beat{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.1vw,30px);
-  line-height:1.1;letter-spacing:-.018em;margin:0 0 clamp(18px,2vw,30px);
-  padding-top:clamp(14px,1.6vw,22px);border-top:1px solid var(--rule)}
-.eyebrow{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--ink-45);margin:0 0 14px}
-.prose{margin:0;max-width:60ch;font-size:16.5px;line-height:1.66;color:var(--ink-70)}
-.prose + .prose{margin-top:1.05em}
-.prose strong{font-weight:500;color:var(--ink)}
-.prose em{font-style:normal;font-weight:500;color:var(--ink)}
-.prose.lead{font-size:clamp(18px,1.5vw,21px);line-height:1.5;color:var(--ink);max-width:46ch;
-  letter-spacing:-.012em}
-.cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-45);margin:11px 0 0}
-
-/* ══ reveals — transform / opacity only, once, fully opt-out ════ */
+/* line-rise reveal, the site's shared idiom */
 .ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
-.ln > i{display:block;font-style:inherit;transform:translate3d(0,105%,0);
-  transition:transform 900ms var(--ease-out);transition-delay:var(--d,0ms)}
-[data-reveal].is-in .ln > i{transform:translate3d(0,0,0)}
+.ln > i{display:block;font-style:inherit;text-wrap:balance;transform:translate3d(0,108%,0);
+  transition:transform 1040ms var(--ease-out);transition-delay:var(--d,0ms)}
+.is-in .ln > i{transform:none}
 
-[data-reveal]{--rd:0ms}
-[data-reveal] .rise{opacity:0;transform:translate3d(0,16px,0);
-  transition:opacity 720ms var(--ease-soft),transform 720ms var(--ease-soft);transition-delay:var(--rd)}
-[data-reveal].is-in .rise{opacity:1;transform:none}
-.d1{--rd:100ms}.d2{--rd:200ms}.d3{--rd:300ms}.d4{--rd:400ms}
+/* ══ 01 · statement ═══════════════════════════════════════════ */
+.statement{
+  position:relative;isolation:isolate;overflow:clip;
+  min-height:clamp(540px,74vh,880px);
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(80px,9vw,130px) var(--pad-g);
+}
+.statement__bg{
+  position:absolute;inset:-6% 0;width:100%;height:112%;
+  object-fit:cover;z-index:-2;
+  will-change:transform;
+}
+/* the photograph is already dark — this only holds the type off the
+   floodlight bloom, it is not a scrim over the picture */
+.statement::after{
+  content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 62% at 50% 34%,rgba(0,0,0,.42),transparent 68%);
+}
+.statement__body{width:min(90%,980px);text-align:center}
+.statement h1 .ln{padding-block:.12em;margin-block:-.12em}
+.statement h1{
+  font-family:var(--display);
+  margin:0 0 .34em;font-weight:700;
+  font-size:clamp(28px,4.15vw,60px);line-height:1.02;letter-spacing:-.03em;
+}
+.statement p{
+  font-family:var(--body);font-weight:400;color:var(--ink);
+  font-size:clamp(16px,1.64vw,22px);line-height:1.5;letter-spacing:0;
+  max-width:40ch;margin:clamp(14px,1.6vw,22px) auto 0;text-wrap:balance;
+}
+/* "Futee" twirls in after its line rises — each letter turns a full
+   revolution about its own axis, one after another, and settles with
+   a little overshoot. Hovering the word plays it again. */
+.twirl{display:inline-block;perspective:1600px}
+.twirl .t{display:inline-block;transform-origin:50% 62%}
+.statement.is-in .twirl .t{animation:twirl 1150ms var(--ease-out) both;
+  animation-delay:calc(900ms + var(--i)*75ms)}
+.statement.is-in .twirl.again .t{animation:twirl-again 900ms var(--ease-out) both;
+  animation-delay:calc(var(--i)*60ms)}
+@keyframes twirl{
+  0%{transform:rotateY(-360deg);opacity:.4}
+  62%{transform:rotateY(14deg);opacity:1}
+  100%{transform:none;opacity:1}}
+@keyframes twirl-again{
+  0%{transform:rotateY(-360deg)}
+  62%{transform:rotateY(14deg)}
+  100%{transform:none}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
-/* ══ shot — a piece of media. No ground, no frame: the artwork is the
-   block. Wipes up on entry. ══════════════════════════════════════ */
-.shot{overflow:hidden;position:relative;background:var(--deep);border-radius:var(--radius)}
-.shot > img{width:100%;clip-path:inset(0 0 100% 0);transform:scale(1.05);
-  transition:clip-path 1050ms var(--ease-out),transform 1500ms var(--ease-out);
-  will-change:clip-path,transform}
-[data-reveal].is-in .shot > img,.shot[data-reveal].is-in > img{clip-path:inset(0 0 0 0);transform:scale(1)}
+/* ══ access ═══════════════════════════════════════════════════ */
+.skip{position:absolute;left:var(--pad-g);top:-100px;z-index:90;
+  background:var(--accent);color:#0A0A0A;font-family:var(--body);font-weight:500;
+  font-size:var(--t-small);padding:12px 18px;text-decoration:none;
+  transition:top 200ms var(--ease-out)}
+.skip:focus{top:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
+:focus:not(:focus-visible){outline:none}
+main:focus,main:focus-visible{outline:none}   /* the skip link's landing, not a control */
 
-/* ══ progress + back ═══════════════════════════════════════════ */
-.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:70;background:var(--accent);
-  transform:scaleX(0);transform-origin:0 50%}
-/* chip, not bare text — it crosses the sticky dossier on both sides */
-.back{position:fixed;z-index:60;top:16px;left:var(--pad);font-family:var(--ui);font-size:11px;
-  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink-45);
-  padding:8px 16px;border:1px solid var(--rule);border-radius:100px;
-  background:rgba(0,0,0,.92);backdrop-filter:saturate(160%) blur(12px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
-  opacity:0;pointer-events:none;transform:translate3d(0,-8px,0);
-  transition:opacity 320ms ease,transform 320ms var(--ease-out),color 200ms ease,border-color 200ms ease}
-.back.is-live{opacity:1;pointer-events:auto;transform:none}
-@media (hover:hover) and (pointer:fine){ .back:hover{color:var(--ink);border-color:var(--ink)} }
+/* ══ chrome ═══════════════════════════════════════════════════ */
+.chrome{border-bottom:1px solid var(--rule)}
+.bar{
+  display:flex;align-items:center;gap:clamp(12px,2vw,28px);
+  height:var(--bar);padding:0 var(--pad-g);
+}
+.bar__mark{display:inline-flex;align-items:center;min-height:44px;
+  font-family:var(--display);font-weight:500;
+  font-size:var(--t-mark);letter-spacing:-.015em;margin-right:auto;
+  color:var(--ink);text-decoration:none;white-space:nowrap}
+.bar__nav{display:flex;gap:clamp(14px,1.9vw,26px)}
+.bar__nav a{display:inline-flex;align-items:center;min-height:44px;
+  font-family:var(--display);font-size:var(--t-nav);
+  color:var(--ink-mute);text-decoration:none;transition:color 220ms ease}
+@media (hover:hover){ .bar__nav a:hover{color:var(--ink)} }
 
-/* ══ 00 · HERO ═════════════════════════════════════════════════ */
-.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;
-  justify-content:flex-end;padding:clamp(64px,10vw,120px) var(--pad) 0;overflow:hidden}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:112%;object-fit:cover;object-position:50% 46%;
-  transform:scale(1.08);transition:transform 2200ms var(--ease-out) 120ms;will-change:transform}
-.is-ready .hero-bg img{transform:scale(1)}
-.hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.14) 34%,rgba(0,0,0,.66) 82%,var(--void) 100%)}
+/* the project bar stays with you — it is the only thing naming the
+   project once the opening photograph has gone by */
+.projbar{
+  position:sticky;top:0;z-index:40;
+  border-bottom:1px solid var(--rule);background:var(--void);
+}
+.projbar .bar{position:relative}
+.projbar__disc{font-family:var(--display);font-size:var(--t-disc)}
+/* the header motif runs behind the labels, never over them */
+.pitch{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.projbar .bar__mark,.projbar__disc{position:relative;z-index:1}
 
-.hero-inner{position:relative;z-index:1;margin-top:auto;text-align:center}
-.hero-title{font-family:var(--display);font-weight:800;font-variation-settings:'opsz' 96;
-  font-size:clamp(40px,13.5vw,190px);line-height:.86;letter-spacing:-.045em;margin:0}
-.hero-tagline{font-size:clamp(19px,3.2vw,42px);line-height:1.12;letter-spacing:-.02em;
-  color:var(--ink);margin:clamp(14px,1.8vw,26px) auto 0;max-width:26ch;font-weight:400;
-  opacity:0;transform:translate3d(0,12px,0);
-  transition:opacity 760ms ease 520ms,transform 760ms var(--ease-soft) 520ms}
-.is-ready .hero-tagline{opacity:1;transform:none}
-.hero-tagline em{font-style:normal;color:var(--accent)}
+/* ══ 03 · the dossier grid ════════════════════════════════════ */
+.dossier{display:grid;grid-template-columns:var(--col-1) 1fr;
+  border-bottom:1px solid var(--rule)}
+.dossier__head{border-right:1px solid var(--rule);
+  padding:clamp(28px,3.1vw,44px) var(--pad-g) clamp(40px,6vw,90px)}
+.h-sec{font-family:var(--display);font-weight:700;
+  font-size:var(--t-head);line-height:1.28;letter-spacing:-.02em;
+  margin:0;max-width:12ch;text-wrap:balance}
 
-.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);
-  border-top:1px solid var(--ink);margin-top:clamp(22px,3vw,42px);
-  padding:clamp(16px,1.8vw,26px) 0 clamp(26px,3.4vw,48px);text-align:left;
-  opacity:0;transform:translate3d(0,12px,0);
-  transition:opacity 760ms ease 660ms,transform 760ms var(--ease-soft) 660ms}
-.is-ready .meta{opacity:1;transform:none}
-.meta dt{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-45);margin:0 0 8px}
-.meta dd{margin:0;font-family:var(--mono);font-size:13px;line-height:1.45;letter-spacing:-.01em}
-@media (max-width:760px){ .meta{grid-template-columns:1fr 1fr;row-gap:22px} }
+.drow{padding:clamp(34px,4.6vw,66px) var(--pad-g) clamp(48px,8.4vw,120px)
+  clamp(24px,3.9vw,56px)}
+.drow + .drow{border-top:1px solid var(--rule)}
+.q-lede{font-family:var(--body);font-style:italic;font-size:var(--t-lede);
+  line-height:1.24;margin:0 0 .5em;max-width:26ch}
+.a{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-70);margin:0;max-width:34ch}
 
-/* the outcome numbers, sitting on the photograph itself */
-.tally{position:relative;z-index:1;padding:clamp(30px,4vw,56px) 0 clamp(46px,6vw,86px);
-  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);text-align:center}
-.tally .n{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,104px);
-  line-height:.86;letter-spacing:-.045em;margin:0}
-.tally .n sup{font-size:.34em;font-weight:600;vertical-align:super;letter-spacing:0;margin-left:.1em}
-.tally .lab{font-family:var(--ui);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--ink-45);margin:14px 0 0}
-@media (max-width:760px){ .tally{grid-template-columns:1fr;gap:34px} }
+/* question left, answer at 58% of the column — the Figma's split */
+.qa{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(16px,3vw,44px);align-items:start}
+.qa + .qa{margin-top:clamp(38px,5.4vw,78px)}
+.qa .q{font-family:var(--body);font-style:italic;font-size:var(--t-sub);
+  line-height:1.24;margin:0}
+.quote{font-family:var(--body);font-style:italic;font-size:var(--t-quote);
+  line-height:1.32;margin:0;max-width:38ch;text-wrap:balance}
+.quote__by{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(14px,1.6vw,22px) 0 0}
 
-/* ══ 01 · BAND — full-bleed motion graphic ═════════════════════
-   Bands are a fixed wide crop by design: they are a beat, not a
-   document. Anything that must be read whole goes in a .shot. */
-.band{position:relative;overflow:hidden;background:var(--deep);
-  margin:var(--sec) var(--pad) 0;aspect-ratio:16/6}
-.band.bleed{margin-inline:0}
-.band.tall{aspect-ratio:16/8}
-.band.short{aspect-ratio:16/4.6}
-.band img,.band video{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
-  display:block;clip-path:inset(0 0 100% 0);transform:scale(1.05);
-  transition:clip-path 1100ms var(--ease-out),transform 1600ms var(--ease-out)}
-.band.is-in img,.band.is-in video{clip-path:inset(0 0 0 0);transform:scale(1)}
-.band-note{font-family:var(--ui);font-size:13px;letter-spacing:-.005em;color:var(--ink);
-  text-align:right;margin:16px var(--pad) 0;font-weight:500}
-@media (max-width:700px){ .band,.band.tall,.band.short{aspect-ratio:4/3} }
+/* ══ 04–05 · plain two-column rows ════════════════════════════ */
+.row{display:grid;grid-template-columns:var(--col-1) 1fr;
+  border-bottom:1px solid var(--rule);
+  padding:clamp(48px,7.5vw,108px) var(--pad-g) clamp(48px,7.5vw,108px)}
+.row__body{padding-left:clamp(24px,3.9vw,56px)}
+.em{font-family:var(--body);font-style:italic;font-size:var(--t-body);
+  line-height:1.4;margin:0 0 1.5em;max-width:40ch}
+.say{font-family:var(--body);font-size:var(--t-body);
+  line-height:1.5;margin:0;max-width:46ch;color:var(--ink-70)}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(14px,1.9vw,26px);margin-top:clamp(28px,4vw,56px)}
+.cols3 .box{border-top:1px solid var(--rule);padding-top:clamp(12px,1.2vw,16px)}
+.cols3 .box span{font-family:var(--body);font-size:var(--t-small);
+  line-height:1.5;color:var(--ink-70)}
+.cols3 .box b{display:block;color:var(--ink);font-weight:500;margin-bottom:.45em}
 
-/* full-width media — for artefacts that must be read whole, uncropped */
-.full{margin:var(--sec) var(--pad) 0}
+/* ══ 06–07 · the trace ════════════════════════════════════════ */
+/* One wiring diagram runs from the big question down into the
+   walkthrough. Every segment draws itself once, in order, as you
+   reach it, and each one ends in a node. */
+.thesis{position:relative}
+.trace__box{position:relative;padding-top:var(--h)}
+.trace__box > *{position:absolute}
+.walk__head{width:min(40%,26ch)}
+.thesis__frame{
+  position:relative;width:79.6%;
+  padding:clamp(56px,8.2vw,118px) 0 clamp(60px,9vw,128px) clamp(40px,7vw,100px);
+}
+.thesis h2{font-family:var(--display);font-weight:700;
+  font-size:var(--t-thesis);line-height:1.13;letter-spacing:-.03em;
+  margin:0;max-width:15ch;text-wrap:balance}
 
-/* ══ RUN — the sticky-dossier two-column engine ════════════════ */
-.run{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.28fr);
-  gap:var(--gap);padding:var(--sec) var(--pad) 0;align-items:start}
-.run .dossier{grid-column:1;position:sticky;top:clamp(60px,14vh,120px);align-self:start;height:max-content}
-.run .track{grid-column:2;min-width:0;display:grid;gap:var(--beat)}
+.wire{position:absolute;background:var(--rule);transform-origin:0 0;
+  transition:transform 900ms var(--ease-out);transition-delay:var(--wd,0ms)}
+.wire--h{height:1px;transform:scaleX(0)}
+.wire--v{width:1px;transform:scaleY(0)}
+.is-in .wire--h,.is-in .wire--v{transform:none}
+.wire[data-from="end"]{transform-origin:100% 0}
+.node{position:absolute;width:9px;height:9px;border-radius:50%;
+  background:#D4D4D4;transform:translate(-50%,-50%) scale(.4);opacity:0;
+  transition:transform 420ms var(--ease-out),opacity 240ms ease-out;
+  transition-delay:var(--wd,0ms)}
+.is-in .node{transform:translate(-50%,-50%) scale(1);opacity:1}
 
-/* the swap: dossier pins right, content runs left */
-.run.flip{grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr)}
-.run.flip .dossier{grid-column:2}
-.run.flip .track{grid-column:1}
+.trace{position:relative}
+.trace__aside{font-family:var(--body);font-style:italic;
+  font-size:var(--t-small);line-height:1.36;margin:0;width:22ch}
+.trace__say{font-family:var(--body);font-size:var(--t-body);
+  line-height:1.45;margin:0;color:var(--ink-70);width:min(38%,34ch)}
+.plates{padding:0 var(--pad-g)}
+
+.walk__head h3{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.28;letter-spacing:-.02em;margin:0;max-width:12ch;text-wrap:balance}
+.explainers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(10px,1.4vw,20px);margin:clamp(30px,4.4vw,64px) 0 clamp(14px,1.6vw,22px);
+  padding-left:clamp(40px,7.2vw,100px)}
+.explainers span{font-family:var(--body);font-size:var(--t-small);color:var(--ink-70)}
+
+/* A plate is a placeholder until an <img> is put inside it; then the
+   grey ground never shows. Both states are the same element. */
+.plate{position:relative;margin:0;width:100%;aspect-ratio:var(--ar,2.6)/1;
+  background:#D9D9D9;overflow:hidden;display:grid;place-items:center}
+.plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.plate__note{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(10px,1.2vw,16px) 0 0}
+.plate figcaption{font-family:var(--display);font-weight:700;
+  font-size:var(--t-plate);color:#0A0A0A;letter-spacing:-.02em}
+.plate:has(img) figcaption{display:none}
+
+/* the explainers under a question: a label and one line each */
+.explainers div{min-width:0}
+.explainers b{display:block;font-family:var(--body);font-weight:500;
+  font-size:var(--t-small);color:var(--ink);margin-bottom:.3em}
+
+/* ══ the blob ══════════════════════════════════════════════════
+   Neel's particle creature (blob-assets/, engine extended for this
+   page). One canvas per appearance, each a single pose chosen for
+   what its section is saying. It gathers out of a scatter as it
+   scrolls in and blows apart as it scrolls out; once gone its loop
+   sleeps, so only the blobs on screen cost anything.
+
+   Each .blobfig IS the area the blob fills — sized and placed to
+   Neel's marked-up boxes (1 Oct), measured off a 1027px-wide page and
+   so written in vw. The canvas overhangs the box by 30% on every side
+   and the engine is told so (inset), so the blob fills the box while
+   the scatter flies out past it. Decorative throughout. */
+.blobfig{position:absolute;margin:0;pointer-events:none;z-index:0}
+.blobfig canvas{position:absolute;left:-30%;top:-30%;width:160%;height:160%;display:block}
+main{overflow-x:clip}   /* the overhang must never widen the page */
+
+/* 03 · beside the lede, top-aligned with the question */
+.drow{position:relative}
+.drow > *:not(.blobfig){position:relative;z-index:1}
+.blobfig--lede{right:4vw;top:5.4vw;width:24.3vw;height:22.7vw}
+/* 03 · beside the quote, centred on its row */
+.blobfig--quote{right:2.6vw;top:2.2vw;width:24.3vw;height:13.2vw}
+/* 05 · under "What I did", in its own column */
+.row{position:relative}
+.row:has(> .blobfig--head) > .row__body{grid-row:1 / span 2}
+.blobfig--head{position:relative;grid-column:1;grid-row:2;
+  width:22.4vw;height:10.7vw;margin-top:2.6vw;left:calc(2.4vw - var(--pad-g))}
+/* 06 · on the bracket's bottom-right corner */
+.blobfig--corner{left:60.9vw;bottom:-9.9vw;width:32.9vw;height:22.9vw;z-index:2}
+/* 09 · 11 · in the margin beside the question */
+.step > .blobfig--step{left:1.6vw;top:calc(var(--wl) + clamp(26px,3.2vw,46px));width:14vw;height:11vw}
+/* 10 · under "When's my next game?", out into the margin */
+.step > .blobfig--under{left:5.4vw;top:calc(var(--wl) + clamp(26px,3.2vw,46px) + 8vw);width:22.2vw;height:9.3vw}
+/* 12 · the turn's empty left column, below the rule */
+.turn{position:relative}
+.turn > *:not(.blobfig){position:relative;z-index:1}
+.blobfig--turn{left:3.1vw;top:calc(clamp(100px,13vw,190px) + 6vw);width:27.9vw;height:27.8vw}
+/* 12 · left of the two flows, the full height of the argument */
+.flows{position:relative}
+.blobfig--flows{left:-30.6vw;top:6vw;width:25.6vw;height:30.5vw}
+/* 13 · bottom right of "What went over", across the row's line */
+.blobfig--over{right:1.8vw;bottom:-3.3vw;width:18.9vw;height:14.8vw;z-index:2}
+
+/* ══ 08–11 · the walkthrough, continued ══════════════════════
+   Each question hangs from a wire that comes down out of the last
+   plate — the same line the Figma draws between screens — so the
+   page reads as one path through the product. The question sits at
+   17.7% and the answer at 49.4%, the two x-positions the Figma uses
+   for "Now how do I find a place to play?". */
+.step{position:relative;--wl:clamp(90px,11vw,160px);
+  padding-top:calc(var(--wl) + clamp(26px,3.2vw,46px))}
+.step > .wire--v{left:23.7%;top:0;height:var(--wl)}
+.step > .node{left:23.7%;top:var(--wl)}
+.step__grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);
+  column-gap:clamp(24px,4vw,60px);row-gap:clamp(26px,3.4vw,48px);
+  margin-left:17.7%;padding-right:var(--pad-g)}
+.step__q{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.28;letter-spacing:-.02em;margin:0;max-width:13ch;text-wrap:balance}
+.step__say p{font-family:var(--body);font-size:var(--t-body);line-height:1.5;
+  margin:0;color:var(--ink-70);max-width:40ch}
+.step__say p + p{margin-top:.9em}
+.step__say strong{color:var(--ink);font-weight:500}
+.step .plates{margin-top:clamp(40px,5.6vw,80px)}
+
+/* one player card, read field by field */
+.legend{list-style:none;margin:clamp(26px,3.2vw,44px) 0 0;padding:0;
+  display:grid;gap:clamp(10px,1vw,14px)}
+.legend li{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr);gap:14px;
+  align-items:baseline;font-family:var(--body);font-size:var(--t-small);color:var(--ink)}
+.legend li span{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute)}
+.legend__src{font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:clamp(12px,1.2vw,18px) 0 0}
+
+/* a row of named parts — fields, stages, states */
+.fields{grid-column:1/-1;display:grid;
+  grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:clamp(16px,2.2vw,32px)}
+.fields > div{border-top:1px solid var(--rule);padding-top:clamp(12px,1.2vw,16px);min-width:0}
+.fields h4{font-family:var(--body);font-weight:500;font-size:var(--t-small);
+  color:var(--ink);margin:0 0 .4em}
+.fields p{font-family:var(--body);font-size:var(--t-small);line-height:1.45;
+  color:var(--ink-70);margin:0}
+/* yellow is the only colour the page spends: where the mood dips */
+.fields .dip{border-top-color:var(--accent)}
+.fields .dip h4::after{content:'';display:inline-block;width:7px;height:7px;
+  border-radius:50%;background:var(--accent);margin-left:.55em;vertical-align:.12em}
+.fields__key{grid-column:1/-1;font-family:var(--body);font-size:var(--t-small);
+  color:var(--ink-mute);margin:0}
+.fields__key i{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);margin-right:.6em;vertical-align:.1em}
+
+/* ══ 12 · the turn — the other person in every screen ═══════ */
+.turn{display:grid;grid-template-columns:36% minmax(0,1fr);
+  padding:clamp(100px,13vw,190px) var(--pad-g) 0 0}
+.turn__rule{height:1px;background:var(--rule);margin:calc(var(--t-head)*.68) 28px 0 0;
+  transform:scaleX(0);transform-origin:0 0;transition:transform 1100ms var(--ease-out)}
+.is-in .turn__rule{transform:none}
+.turn__big{font-family:var(--display);font-weight:700;font-size:var(--t-head);
+  line-height:1.3;letter-spacing:-.02em;margin:0;max-width:26ch;text-wrap:balance}
+.turn__big + .turn__big{margin-top:1.1em}
+.turn__say{font-family:var(--body);font-size:var(--t-body);line-height:1.5;
+  color:var(--ink-70);margin:clamp(26px,3vw,40px) 0 0;max-width:46ch}
+
+/* a plate with its caption beside it rather than under it */
+.pair{display:grid;grid-template-columns:minmax(0,57fr) minmax(0,25fr);column-gap:5%;
+  align-items:end;margin:clamp(56px,7vw,100px) 0 0 12.8%;padding-right:var(--pad-g)}
+.pair .plate{--ar:1.9}
+.pair h3{font-family:var(--body);font-weight:500;font-size:var(--t-small);
+  color:var(--ink);margin:0 0 .45em}
+.pair p{font-family:var(--body);font-size:var(--t-small);line-height:1.5;
+  color:var(--ink-70);margin:0}
+.pair p + p{margin-top:.7em}
+
+/* the argument with the brief, drawn as two paths */
+.flows{margin:clamp(56px,7vw,100px) var(--pad-g) 0 36%;display:grid;
+  gap:clamp(40px,4.8vw,68px)}
+.flow__label{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 clamp(16px,1.8vw,24px)}
+.flow ol{list-style:none;margin:0;padding:0;position:relative;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr))}
+.flow ol::before{content:'';position:absolute;left:4px;right:12%;top:4px;height:1px;
+  background:var(--rule)}
+.flow li{position:relative;padding:22px 12px 0 0;font-family:var(--body);
+  font-size:var(--t-small);line-height:1.35;color:var(--ink)}
+.flow li::before{content:'';position:absolute;left:0;top:0;width:9px;height:9px;
+  border-radius:50%;background:#D4D4D4}
+/* "game exists" is the whole argument — where it falls in each path */
+.flow li.exists::before{background:var(--accent)}
+.flow--lost li{color:var(--ink-mute)}
+.flow--lost li::before{background:var(--void);border:1px solid var(--ink-mute);
+  box-sizing:border-box}
+.flow--lost li.exists::before{border-color:var(--accent);background:var(--void)}
+.flow__verdict{font-family:var(--body);font-style:italic;font-size:var(--t-small);
+  line-height:1.45;color:var(--ink-70);margin:clamp(14px,1.6vw,20px) 0 0;max-width:46ch}
+.flow__verdict b{font-style:normal;font-weight:500;color:var(--ink)}
+
+/* ══ 13–14 · the close ═══════════════════════════════════════ */
+.close{margin-top:clamp(100px,13vw,190px);border-top:1px solid var(--rule)}
+.close .row:last-child{border-bottom:0}
+footer{border-top:1px solid var(--rule)}
+.credits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(16px,2.2vw,32px);margin:0;padding:clamp(40px,5vw,72px) var(--pad-g)}
+.credits dt{font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 .6em}
+.credits dd{font-family:var(--body);font-size:var(--t-small);line-height:1.45;
+  color:var(--ink);margin:0}
+.next{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  border-top:1px solid var(--rule);padding:clamp(48px,6vw,90px) var(--pad-g);
+  text-decoration:none;color:var(--ink)}
+.next span{display:block;font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:clamp(12px,1.4vw,20px)}
+.next strong{font-family:var(--display);font-weight:700;font-size:var(--t-thesis);
+  line-height:1;letter-spacing:-.03em}
+.next em{font-style:normal;font-family:var(--display);font-size:var(--t-thesis);
+  line-height:1;transition:transform 240ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){ .next:hover em{transform:translateX(10px)} }
+.next:active em{transform:translateX(4px)}
+
+@media (max-width:440px){
+  .bar{gap:8px}
+  .bar__nav{gap:10px}
+  .bar__nav a{font-size:12.5px}
+  .chrome .bar__mark{font-size:15px}
+}
+@media (max-width:900px){
+  .dossier,.row{grid-template-columns:1fr}
+  .dossier__head{border-right:0;border-bottom:1px solid var(--rule);
+    padding-bottom:clamp(24px,5vw,40px)}
+  .drow,.row__body{padding-left:var(--pad-g)}
+  .row{padding-left:0;padding-right:0}
+  .row > .h-sec{padding:0 var(--pad-g);margin-bottom:clamp(20px,4vw,32px)}
+  .qa{grid-template-columns:1fr;gap:8px}
+  .cols3{grid-template-columns:1fr}
+  .explainers{grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:clamp(12px,3vw,20px);padding-left:0}
+  .thesis{padding:0 var(--pad-g)}
+  .thesis__frame{width:100%;padding-left:0}
+  .wire,.node{display:none}                 /* the wiring is a desktop read */
+  .blobfig,.blobfig--lede,.blobfig--quote,.blobfig--head,.blobfig--corner,
+  .step > .blobfig--step,.step > .blobfig--under,.blobfig--turn,.blobfig--flows,.blobfig--over{
+    position:relative;left:auto;right:auto;top:auto;bottom:auto;
+    width:min(62vw,240px);height:min(48vw,190px);margin:24px 0 8px auto;display:block}
+  .row:has(> .blobfig--head) > .row__body{grid-row:auto}
+  .blobfig--head{grid-row:auto;margin:16px var(--pad-g) 0 auto}
+  .step > .blobfig--step,.step > .blobfig--under{margin-right:var(--pad-g)}
+  .blobfig--corner{margin-right:var(--pad-g)}
+  .trace__box{padding-top:0 !important;padding:clamp(40px,8vw,64px) var(--pad-g) 0;
+    display:flex;flex-direction:column;gap:clamp(14px,3vw,22px)}
+  .trace__box > *{position:static}
+  .trace__aside,.trace__say,.walk__head{width:auto;max-width:36ch}
+  .step{padding-top:clamp(56px,12vw,80px)}
+  .step__grid{grid-template-columns:1fr;margin-left:0;padding:0 var(--pad-g)}
+  .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .turn{grid-template-columns:1fr;padding:clamp(80px,16vw,120px) var(--pad-g) 0}
+  .turn__rule{display:none}
+  .pair{grid-template-columns:1fr;row-gap:14px;margin-left:0;padding:0 var(--pad-g)}
+  .flows{margin-left:var(--pad-g)}
+  .credits{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .next strong,.next em{font-size:clamp(30px,9vw,44px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .wire--h,.wire--v,.is-in .wire--h,.is-in .wire--v,.turn__rule{transform:none}
+  .node,.is-in .node{transform:translate(-50%,-50%) scale(1);opacity:1}
+  [data-reveal] .rise{transform:none;transition:opacity 300ms ease-out}
+  .skip,.next em{transition:none}
+  .pitch{display:none}
+  .twirl .t,.statement.is-in .twirl .t{animation:none!important}
+  .ln > i{transform:none !important}
+  .statement__bg{transform:none !important}
+}
+
+/* ══ added for CSEDS, EMF ACE, Into Yesterday, Superfood ══════════
+   The same system as Futee. These are the few parts the other four
+   projects need that Futee didn't: rows of screens, a darker hold on
+   a bright opening photograph, and the small live demos. */
+
+/* a bright photograph needs more than the floodlight hold */
+.statement--dim::after{
+  background:radial-gradient(120% 62% at 50% 40%,rgba(0,0,0,.62),rgba(0,0,0,.34) 70%)}
+
+/* several screens side by side, each with its own note */
+.gallery{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));
+  gap:clamp(10px,1.4vw,20px);align-items:start}
+.gallery > figure{margin:0;min-width:0}
+.plate--top img{object-position:50% 0}
+.plate--contain{background:transparent}
+.plate--contain img{object-fit:contain}
+.plate--black{background:#0A0A0A}
+.px img{image-rendering:pixelated}
+.plates--narrow{width:min(100% - 17.7%,560px);margin-left:17.7%;padding:0 var(--pad-g) 0 0}
+
+/* the flows take any number of stops */
+.flow ol{grid-template-columns:repeat(var(--n,4),minmax(0,1fr))}
+.flows__key{font-family:var(--body);font-size:var(--t-small);color:var(--ink-mute);margin:0}
+.flows__key i{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);margin-right:.6em;vertical-align:.1em}
+
+/* the project bar holds one line at any width */
+.projbar .bar__mark,.projbar__disc{white-space:nowrap}
+@media (max-width:440px){
+  .projbar .bar__mark{font-size:14px}
+  .projbar__disc{font-size:12.5px}
+}
+
+/* a quote that shares its row with the blob keeps clear of it */
+.drow:has(> .blobfig--quote) .quote{max-width:min(38ch,calc(100% - 26vw))}
+
+/* a pair can carry a row of plates instead of one */
+.pair .gallery .plate{--ar:.75}
+
+/* the opening line holds against the bright parts of a photograph */
+.statement h1,.statement p{text-shadow:0 1px 22px rgba(0,0,0,.55),0 0 2px rgba(0,0,0,.35)}
+
+/* ── Superfood · the opening is the cast, at the size it was drawn ──
+   No photograph: the standees stand along the floor of the frame, sized
+   relative to each other as exported, and rise in one after another. */
+.statement--cast{--cast-h:clamp(150px,19vw,270px);
+  align-items:flex-start;padding-top:clamp(70px,8vw,120px);
+  padding-bottom:calc(var(--cast-h) + clamp(40px,5vw,72px));
+  background:radial-gradient(70% 55% at 50% 100%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 72%)}
+.statement--cast::after{display:none}
+.hero-neat{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-3;
+  opacity:0;transition:opacity 900ms ease-out;
+  /* Neat renders this palette as near-white with colour-fringed shards.
+     Inverting turns the white field black, and the half-turn of hue puts
+     every shard back to its own colour, so the shards keep their colours on black. */
+  filter:invert(1) hue-rotate(180deg)}
+.statement--cast.has-neat .hero-neat{opacity:1}
+.statement--cast.has-neat::before{opacity:0;transition:opacity 900ms ease-out}
+.statement--cast.has-neat{background:none}
+/* a slow-moving gradient in the cards' own colours — teal, coral and the
+   yellow of the junk-food cards — drifting under the cast. It sits low
+   in the frame so the headline stays on black. */
+.statement--cast::before{content:'';position:absolute;inset:-25% -15%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(46% 52% at 20% 82%,rgba(49,169,158,.85),transparent 70%),
+    radial-gradient(42% 50% at 80% 86%,rgba(242,131,107,.7),transparent 70%),
+    radial-gradient(36% 40% at 50% 100%,rgba(247,184,75,.6),transparent 70%),
+    radial-gradient(40% 36% at 88% 18%,rgba(49,169,158,.28),transparent 70%);
+  filter:blur(36px);animation:sf-drift 14s ease-in-out infinite alternate}
+@keyframes sf-drift{
+  0%{transform:translate3d(-9%,3%,0) rotate(-6deg) scale(1)}
+  50%{transform:translate3d(8%,-5%,0) rotate(5deg) scale(1.12)}
+  100%{transform:translate3d(-3%,2%,0) rotate(-2deg) scale(1.04)}}
+.hero-cast{position:absolute;left:0;right:0;bottom:0;margin:0;padding:0 var(--pad-g);list-style:none;
+  display:flex;justify-content:center;align-items:flex-end;gap:clamp(6px,1.6vw,26px);z-index:-1}
+.hero-cast li{flex:none;transform:translateY(40%);opacity:0;
+  transition:transform 900ms var(--ease-out),opacity 500ms ease-out;
+  transition-delay:calc(500ms + var(--i)*80ms)}
+.statement.is-in .hero-cast li{transform:none;opacity:1}
+.hero-cast img{display:block;width:auto;height:calc(var(--h) / 556 * var(--cast-h))}
+
+/* ── any screen opens larger ─────────────────────────────────── */
+.plate.is-zoomable{cursor:zoom-in}
+.plate.is-zoomable:focus-visible{outline-offset:3px}
+.lightbox{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;
+  margin:0;padding:0;border:0;background:transparent;color:var(--ink)}
+.lightbox::backdrop{background:rgba(0,0,0,.97)}
+.lightbox[open]{animation:lb-in 260ms var(--ease-out)}
+@keyframes lb-in{from{opacity:0}to{opacity:1}}
+.lightbox__stage{position:absolute;inset:0;overflow:auto;display:grid;place-items:center;
+  padding:clamp(56px,6vw,80px) var(--pad-g) clamp(24px,3vw,40px)}
+.lightbox__fig{margin:0;display:grid;gap:14px;justify-items:center;min-width:0}
+.lightbox__fig img{max-width:100%;max-height:calc(100vh - 150px);width:auto;height:auto;
+  object-fit:contain;cursor:zoom-out}
+.lightbox.is-tall .lightbox__stage{place-items:start center}
+.lightbox.is-tall .lightbox__fig img{max-height:none;width:min(100%,960px)}
+.lightbox__fig figcaption{font-family:var(--body);font-size:var(--t-small);color:var(--ink-70);
+  max-width:60ch;text-align:center}
+.lightbox__close{position:fixed;top:12px;right:12px;z-index:2;min-width:44px;min-height:44px;
+  padding:0 16px;border:1px solid var(--rule);border-radius:22px;background:rgba(0,0,0,.6);
+  color:var(--ink);cursor:pointer;font-family:var(--body);font-size:var(--t-label);
+  font-weight:500;letter-spacing:.11em;text-transform:uppercase}
+@media (hover:hover){ .lightbox__close:hover{border-color:var(--accent)} }
+
+/* ── EMF · the lockup, cropped out of four pieces ────────────── */
+.plate--lockup img{transform:scale(var(--z,2.6));transform-origin:100% 0}
+
+/* ── EMF · the feed, running ─────────────────────────────────── */
+.feed{position:relative;margin:0 auto;width:min(100%,340px);aspect-ratio:9/16;
+  overflow:hidden;border-radius:22px;border:1px solid var(--rule);background:#0b0b0b}
+.feed img{position:absolute;left:0;top:0;width:100%;height:auto;
+  animation:feed 48s ease-in-out infinite alternate}
+@media (hover:hover){ .feed:hover img{animation-play-state:paused} }
+.feed.is-paused img{animation-play-state:paused}
+.feed__foot{display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-top:clamp(10px,1.2vw,16px)}
+.feed__foot .plate__note{margin:0}
+.feed__btn{min-height:44px;min-width:76px;padding:0 16px;border:1px solid var(--rule);
+  border-radius:22px;background:transparent;color:var(--ink);cursor:pointer;
+  font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;transition:border-color 200ms ease}
+@media (hover:hover){ .feed__btn:hover{border-color:var(--accent)} }
+.feed__btn[aria-pressed="true"]{border-color:var(--accent)}
+/* the feed's first tile is the desert teaser, which the comparison below
+   shows in full; the feed starts one tile in so it isn't seen twice */
+.feed img{transform:translateY(-14.3%)}
+@keyframes feed{from{transform:translateY(-14.3%)}to{transform:translateY(-74.5%)}}
+
+/* ── EMF · draft against final, dragged ──────────────────────── */
+.compare{position:relative;margin:0;aspect-ratio:1/1;overflow:hidden;
+  background:#0A0A0A;touch-action:pan-y;--p:50%}
+.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.compare__top{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--p)) 0 0)}
+.compare__line{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;
+  background:var(--accent);pointer-events:none}
+.compare__line::after{content:'';position:absolute;top:50%;left:50%;width:34px;height:34px;
+  border-radius:50%;border:2px solid var(--accent);background:rgba(0,0,0,.55);
+  transform:translate(-50%,-50%)}
+.compare input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+.compare:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:4px}
+.compare__tag{position:absolute;top:12px;font-family:var(--body);font-size:var(--t-label);
+  font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink);
+  background:rgba(0,0,0,.6);padding:6px 9px;pointer-events:none}
+.compare__tag--l{left:12px}.compare__tag--r{right:12px}
+
+/* ── Superfood · the two decks, as tables ────────────────────── */
+.ledger{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(20px,3vw,44px)}
+.ledger table{width:100%;border-collapse:collapse;font-family:var(--body);font-size:var(--t-small)}
+.ledger caption{text-align:left;font-size:var(--t-label);font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-mute);padding-bottom:clamp(10px,1vw,14px)}
+.ledger caption i{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);margin-right:.6em;vertical-align:.1em}
+.ledger caption i.o{background:transparent;border:1px solid var(--ink-mute);box-sizing:border-box}
+.ledger th{text-align:left;font-weight:500;color:var(--ink-mute);padding:0 0 8px}
+.ledger td{border-top:1px solid var(--rule);padding:9px 12px 9px 0;color:var(--ink-70);vertical-align:top}
+.ledger td:first-child{color:var(--ink)}
+
+/* ── Superfood · the cast stands up ──────────────────────────── */
+.cast{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(8px,1.2vw,18px);
+  align-items:end;margin:0;padding:0;list-style:none}
+.cast li{transform:translateY(24px);opacity:0;
+  transition:transform 700ms var(--ease-out),opacity 400ms ease-out;transition-delay:calc(var(--i)*70ms)}
+.is-in .cast li{transform:none;opacity:1}
+.cast img{width:100%;height:auto;transition:transform 260ms var(--ease-out)}
+@media (hover:hover){ .cast li:hover img{transform:translateY(-8px) rotate(-3deg)} }
+
+/* ── Into Yesterday · a dial for each sense ──────────────────── */
+.legend .lv{font-style:normal}
+.meter{display:inline-flex;gap:3px;margin-right:.7em;vertical-align:-.05em}
+.meter i{display:block;width:16px;height:9px;border:1px solid var(--rule);box-sizing:border-box;
+  background:transparent;transition:background-color 500ms ease-out;
+  transition-delay:calc(400ms + var(--k)*180ms)}
+.is-in .meter i{background:var(--accent);border-color:var(--accent)}
+.is-in .meter i:nth-child(1){opacity:.3}.is-in .meter i:nth-child(2){opacity:.55}
+.is-in .meter i:nth-child(3){opacity:.8}
 
 @media (max-width:900px){
-  .run,.run.flip{grid-template-columns:1fr;gap:clamp(40px,7vw,64px)}
-  .run .dossier,.run.flip .dossier{position:static;grid-column:1;top:auto}
-  .run .track,.run.flip .track{grid-column:1;gap:clamp(46px,8vw,80px)}
+  .statement--cast{--cast-h:clamp(110px,30vw,170px)}
+  .hero-cast li:nth-child(4),.hero-cast li:nth-child(7){display:none}
+  .plates + .trace__box{margin-top:clamp(28px,8vw,48px)}
+  .plates--narrow{width:auto;margin-left:0;padding:0 var(--pad-g)}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* a row of three stays a row of three, so no slot is left empty */
+  .gallery[style*="--n:3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ledger{grid-template-columns:1fr}
+  .cast{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .flow ol{grid-template-columns:repeat(var(--n,4),minmax(0,1fr))}
 }
-
-/* ── the dossier card itself ── */
-.dossier-mark{font-family:var(--display);font-weight:700;font-size:clamp(19px,1.8vw,26px);
-  letter-spacing:-.02em;margin:0 0 clamp(26px,3vw,44px)}
-.dossier-mark span{color:var(--ink-45);font-weight:500}
-.dossier-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:clamp(16px,2vw,30px);align-items:start}
-.facts{margin:0;display:grid;gap:clamp(18px,2vw,30px);align-content:start}
-.facts dt{font-family:var(--ui);font-size:11.5px;letter-spacing:.06em;color:var(--ink-45);margin:0 0 3px}
-.facts dd{margin:0;font-size:16px;line-height:1.35;letter-spacing:-.01em}
-.impacts{display:grid;gap:clamp(16px,2vw,30px)}
-.impact{border:1px solid var(--ink);border-radius:var(--radius-pill);
-  min-height:clamp(96px,9vw,124px);padding:18px 20px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-.impact b{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,34px);
-  line-height:1;letter-spacing:-.03em}
-.impact small{font-family:var(--ui);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink-45);line-height:1.35}
-@media (max-width:520px){ .dossier-body{grid-template-columns:1fr} }
-
-/* ── beats inside a track ── */
-.beat{min-width:0}
-.beat .stack{display:grid;gap:clamp(20px,2.6vw,38px)}
-.beat.indent{padding-left:clamp(0px,1.4vw,18px)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,40px)}
-@media (max-width:640px){ .pair{grid-template-columns:1fr} }
-
-/* ══ CREDITS + NEXT ════════════════════════════════════════════ */
-.credits{font-family:var(--ui);border-top:1px solid var(--rule);margin-top:var(--sec);
-  padding:clamp(36px,4.5vw,64px) var(--pad);display:grid;grid-template-columns:repeat(4,1fr);
-  gap:var(--gap);font-size:13.5px;color:var(--ink-70)}
-.credits h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink-45);font-weight:500}
-@media (max-width:760px){ .credits{grid-template-columns:1fr 1fr;row-gap:26px} }
-
-.next{display:block;text-decoration:none;position:relative;overflow:hidden;
-  height:clamp(280px,40vw,520px);background:#000}
-.next img{width:100%;height:100%;object-fit:cover;opacity:.5;transform:scale(1.02);
-  transition:transform 800ms var(--ease-soft),opacity 800ms ease}
-@media (hover:hover) and (pointer:fine){ .next:hover img{transform:scale(1.06);opacity:.66} }
-.next .lbl{position:absolute;inset:auto 0 0 0;padding:var(--pad);color:var(--ink)}
-.next .lbl small{display:block;font-family:var(--ui);font-size:11.5px;letter-spacing:.15em;
-  text-transform:uppercase;opacity:.62;margin-bottom:10px}
-.next .lbl strong{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,74px);
-  letter-spacing:-.03em;line-height:1}
-
-/* ══ reduced motion ════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .ln > i{transform:none}
-  .hero-bg img,.hero-tagline,.meta{transform:none;opacity:1}
-  .band img,.band video,.shot > img{clip-path:none;transform:none}
-  .run .dossier{position:static}
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   EMF-ONLY COMPONENTS
-   Case studies share the structure above, not the look. Anything in
-   this block belongs to this project alone.
-   ══════════════════════════════════════════════════════════════════ */
-
-/* ── the creative wall. Sources are 430–615px squares, so the track
-      caps at 340px — nothing is ever scaled past itself. ── */
-.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:clamp(12px,1.6vw,22px)}
-.wall figure{margin:0;min-width:0}
-.wall .shot{aspect-ratio:1/1}
-.wall .shot > img{width:100%;height:100%;object-fit:cover}
-.wall .wide{grid-column:span 2}
-.wall .wide .shot{aspect-ratio:615/234}
-@media (max-width:520px){ .wall{grid-template-columns:1fr 1fr} .wall .wide{grid-column:span 2} }
-
-/* ── three-up venue run ── */
-.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.8vw,26px)}
-.tri .shot{aspect-ratio:4/3}
-.tri .shot > img{width:100%;height:100%;object-fit:cover}
-@media (max-width:640px){ .tri{grid-template-columns:1fr} }
-
-/* ── the date fix — drag comparison. clip-path on the top image:
-      no extra DOM, fully composited. ── */
-.compare{position:relative;width:min(520px,100%);margin:clamp(22px,3vw,40px) auto 0;
-  aspect-ratio:1/1;overflow:hidden;background:var(--deep);cursor:ew-resize;touch-action:none;
-  border-radius:var(--radius)}
-.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.compare .cmp-over{clip-path:inset(0 calc(100% - var(--x)) 0 0)}
-.compare .cmp-line{position:absolute;top:0;bottom:0;left:var(--x);width:2px;
-  background:var(--accent);transform:translateX(-1px);pointer-events:none}
-.compare .cmp-line::after{content:"";position:absolute;top:50%;left:50%;width:34px;height:34px;
-  transform:translate(-50%,-50%);border:2px solid var(--accent);border-radius:100px;
-  background:rgba(0,0,0,.55)}
-.compare .cmp-tag{position:absolute;bottom:12px;font-family:var(--ui);font-size:10.5px;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--ink);pointer-events:none;
-  background:rgba(0,0,0,.72);padding:6px 10px;border-radius:100px}
-.compare .cmp-tag.l{left:12px}
-.compare .cmp-tag.r{right:12px}
-.compare:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){ .compare{cursor:default} }
-
-/* ── the hero is a night skyline, already dark. It only needs the
-      shared scrim plus a little extra weight under the meta row. ── */
-.hero-bg::after{background:linear-gradient(180deg,
-  rgba(0,0,0,.34) 0%, rgba(0,0,0,.16) 30%,
-  rgba(0,0,0,.72) 78%, var(--void) 100%)}
-.hero-bg img{object-position:50% 58%}
-
-
-/* ══════════════════════════════════════════════════════════════════
-   DEVICE FRAMES
-   A screenshot is a document; a device frame makes it a screen. The
-   page inside scrolls, driven by the reader's own scroll position —
-   no autoplay, no loop, nothing to wait for, and it reverses when
-   they scroll back up. Frames are drawn, not photographed, so they
-   inherit the palette and cost nothing to load.
-   ══════════════════════════════════════════════════════════════════ */
-
-.device{position:relative}
-.device .screen{position:relative;overflow:hidden;background:var(--deep)}
-.device .screen > img{width:100%;min-height:100%;object-fit:cover;object-position:50% 0;
-  display:block;will-change:transform}
-
-/* the page keeps moving past the frame edge — a hairline says so */
-.device .screen::after{content:"";position:absolute;inset:auto 0 0 0;height:38px;
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.28));pointer-events:none}
-
-/* ── browser ── */
-.device.browser{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:#131313}
-.device.browser .bar{display:flex;align-items:center;gap:7px;padding:10px 13px;
-  background:#191919;border-bottom:1px solid var(--rule)}
-.device.browser .dot{width:9px;height:9px;border-radius:50%;background:rgba(251,247,240,.20);flex:none}
-.device.browser .url{margin-left:9px;flex:1;min-width:0;height:19px;border-radius:100px;
-  background:rgba(251,247,240,.07);display:flex;align-items:center;padding:0 11px;
-  font-family:var(--mono);font-size:9.5px;color:var(--ink-45);
-  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.device.browser .screen{aspect-ratio:16/10}
-
-/* ── phone ── */
-.device.phone{width:min(290px,100%);margin-inline:auto;border:1px solid var(--rule);
-  border-radius:36px;padding:10px;background:#0D0D0D}
-.device.phone .screen{aspect-ratio:9/19;border-radius:27px}
-.device.phone .screen::after{border-radius:0 0 27px 27px}
-.device.phone .notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);
-  width:62px;height:5px;border-radius:100px;background:rgba(251,247,240,.16);z-index:2}
-
-/* ── laptop ── */
-.device.laptop .lid{border:1px solid var(--rule);border-radius:11px 11px 3px 3px;
-  padding:11px 11px 13px;background:#131313}
-.device.laptop .screen{aspect-ratio:16/10;border-radius:3px}
-.device.laptop .base{height:11px;margin:0 -5%;border-radius:0 0 13px 13px;
-  background:linear-gradient(180deg,#242424,#111);border:1px solid var(--rule);border-top:none}
-.device.laptop .base::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
-  margin-top:1px;width:15%;height:3px;border-radius:0 0 6px 6px;background:rgba(251,247,240,.10)}
-
-/* a pair of phones sits tighter than a pair of anything else */
-.pair.phones{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,30px)}
-@media (max-width:560px){ .pair.phones{grid-template-columns:1fr} }
-
-@media (prefers-reduced-motion:reduce){
-  .device .screen > img{transform:none!important}
-}
-
-
-/* the tally is a facts row, not a results row — say so */
-.tally-label{position:relative;z-index:1;margin:0 0 clamp(10px,1.2vw,18px);text-align:center;
-  font-family:var(--ui);font-size:10.5px;letter-spacing:.20em;text-transform:uppercase;
-  color:var(--ink-45)}
-
-/* a reader who is convinced needs somewhere to go */
-.contact{border-top:1px solid var(--rule);padding:clamp(26px,3vw,40px) var(--pad);
-  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
-  font-family:var(--ui);font-size:13.5px;color:var(--ink-45)}
-.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);
-  padding-bottom:2px;transition:border-color 200ms ease}
-@media (hover:hover) and (pointer:fine){ .contact a:hover{border-color:var(--accent)} }
-
-/* ══════════════════════════════════════════════════════════════════
-   DIAGRAMS
-   Where the page has been describing a decision in prose, draw it
-   instead. Authored SVG, project palette, no screenshots of Figma.
-   The rejected route is drawn and dimmed; the chosen one carries the
-   accent. Both are labelled with why.
-   ══════════════════════════════════════════════════════════════════ */
-.diagram{margin:0}
-.diagram .board{position:relative;width:100%;background:var(--deep);
-  border:1px solid var(--rule);border-radius:var(--radius);padding:clamp(18px,2.4vw,32px)}
-.diagram svg{width:100%;height:auto;display:block;overflow:visible}
-
-.dg-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
-  text-transform:uppercase;fill:var(--ink-45)}
-.dg-step{fill:none;stroke:var(--rule);stroke-width:1.5}
-.dg-step-lbl{font-family:var(--ui);font-size:12.5px;fill:var(--ink-70)}
-.dg-arrow{stroke:var(--rule);stroke-width:1.5;fill:none}
-.dg-note{font-family:var(--ui);font-size:11.5px;fill:var(--ink-45)}
-
-/* the rejected route */
-.dg-out .dg-step{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
-.dg-out .dg-step-lbl{fill:rgba(251,247,240,.34)}
-.dg-out .dg-arrow{stroke:rgba(251,247,240,.16);stroke-dasharray:4 4}
-.dg-verdict-out{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;fill:rgba(251,247,240,.38)}
-
-/* the route taken */
-.dg-in .dg-step{stroke:var(--accent);stroke-width:2}
-.dg-in .dg-step-lbl{fill:var(--ink)}
-.dg-in .dg-arrow{stroke:var(--accent);stroke-width:2}
-.dg-verdict-in{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;fill:var(--accent)}
-
-/* reveal: the rejected route first, then the chosen one over it */
-[data-reveal] .dg-in{opacity:0;transform:translate3d(0,8px,0);
-  transition:opacity 700ms var(--ease-soft) 260ms,transform 700ms var(--ease-soft) 260ms}
-[data-reveal].is-in .dg-in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){
-  [data-reveal] .dg-in{opacity:1;transform:none;transition:none}
+  .feed img{animation:none}
+  .feed__btn{display:none}
+  .hero-cast li{transform:none;opacity:1;transition:none}
+  .statement--cast::before{animation:none}
+  .lightbox[open]{animation:none}
+  .cast li{transform:none;opacity:1;transition:none}
+  .meter i{transition:none}
 }
 </style>
 <script src="https://inflight.co/widget.js" data-org="aius9qpt" data-path="/dive" async></script>
 </head>
+
 <body>
 
-<a class="skip" href="#main">Skip to content</a>
-<div class="progress" data-progress aria-hidden="true"></div>
-<a class="back" data-back href="/dive/#work">← Work</a>
+<a class="skip" href="#main">Skip to the case study</a>
 
-<main id="main">
-
-<!-- ══ 00 · HERO ═══════════════════════════════════════════════ -->
-<header class="hero">
-  <div class="hero-bg" aria-hidden="true">
-    <!-- Abu Dhabi Corniche at night — Kevin JD / Unsplash -->
-    <img src="https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?fm=jpg&q=80&w=2400&auto=format&fit=crop" alt="">
-  </div>
-
-  <div class="hero-inner">
-    <h1 class="hero-title">EMF ACE</h1>
-    <p class="hero-tagline">An awards weekend branded end to end, from a desk <em>2,000km away</em>.</p>
-
-    <dl class="meta">
-      <div><dt>Role</dt><dd>Design Lead,<br>Media Mushroom</dd></div>
-      <div><dt>Year</dt><dd>2024</dd></div>
-      <div><dt>Scope</dt><dd>Environmental, social, film,<br>award &amp; print design</dd></div>
-      <div><dt>Context</dt><dd>Abu Dhabi, UAE<br>3 months · 2 designers</dd></div>
-    </dl>
-  </div>
-
-  <p class="tally-label" data-reveal><span class="rise">At a glance</span></p>
-  <div class="tally" data-reveal data-stagger>
-    <div><p class="n rise"><span data-count="1000">0</span><sup>+</sup></p><p class="lab rise d1">Creatives exported</p></div>
-    <div><p class="n rise d1"><span data-count="3">0</span></p><p class="lab rise d2">Venues, none of them visited</p></div>
-    <div><p class="n rise d2"><span data-count="12">0</span></p><p class="lab rise d3">Approvers, equal authority</p></div>
+<header class="chrome">
+  <div class="bar">
+    <a class="bar__mark" href="/dive/">Neel Parikh</a>
+    <nav class="bar__nav">
+      <a href="/dive/#work">Work</a><a href="/dive/#about">About</a><a href="mailto:neelparikh7@gmail.com">Contact</a>
+    </nav>
   </div>
 </header>
 
-<!-- ══ 01 · BAND — motion slot ═════════════════════════════════
-     Swap the img for a <video data-motion muted loop playsinline
-     poster="img/hero-ace.jpg"> when the reel is exported.
-     ════════════════════════════════════════════════════════════ -->
-<div class="band" data-reveal>
-  <img src="/work/emf-ace/img/hero-ace.jpg" width="1760" height="660"
-       alt="The ACE lockup on the main-stage LED wall — the identity at full size, dressed in violet and gold.">
+<div class="projbar" role="region" aria-label="Project">
+  <div class="bar">
+    <canvas class="pitch" id="motif" aria-hidden="true"></canvas>
+    <span class="bar__mark">EMF ACE</span>
+    <span class="projbar__disc">Brand design</span>
+  </div>
 </div>
-<p class="band-note">Three months, two designers, one weekend.</p>
 
-<!-- ══ 02 · RUN — dossier pinned LEFT ══════════════════════════ -->
-<section class="run" id="context">
-  <aside class="dossier" data-reveal>
-    <p class="dossier-mark rise">EMF ACE <span>; TLDR</span></p>
-    <div class="dossier-body">
-      <dl class="facts">
-        <div><dt class="rise">Role</dt><dd class="rise">Design Lead</dd></div>
-        <div><dt class="rise d1">Industry</dt><dd class="rise d1">Events &amp; awards</dd></div>
-        <div><dt class="rise d2">Client</dt><dd class="rise d2">EMF Global</dd></div>
-        <div><dt class="rise d3">Timeline</dt><dd class="rise d3">3 months</dd></div>
-      </dl>
-      <div class="impacts">
-        <div class="impact rise d1"><b>1000+</b><small>Creatives shipped</small></div>
-        <div class="impact rise d2"><b>12</b><small>Equal approvers</small></div>
-      </div>
-    </div>
-  </aside>
+<main id="main" tabindex="-1">
 
-  <div class="track">
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Summary</h2>
-      <div class="rise d1">
-        <p class="prose lead">EMF hired us to brand their ACE awards weekend in Abu Dhabi, end to end.</p>
-        <p class="prose">Environmental branding, social, YouTube ads, award designs, attendee packages, welcome letters, the magazine. I led the design out of Media Mushroom as one of two designers on it.</p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The problem</h2>
-      <div class="rise d1">
-        <p class="prose lead">The hard part was never any one design. It was the volume.</p>
-        <p class="prose">Three months. Two designers. Over a thousand individual creatives. <strong>Twelve decision-makers with equal authority</strong>, a brief that expanded every week, and every deadline arriving last-minute.</p>
-        <p class="prose">And three venues — the Ritz-Carlton, Emirates Palace and Ferrari World — that nobody on the team had ever stood in.</p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The work, up front</h2>
-      <div class="stack">
-        <div class="rise d1">
-          <p class="prose">Volume is the whole argument, so here it is before the explanation. A sample of the thousand-odd pieces — teasers, countdowns, panels, venues, milestones — every one of them made to the same rules.</p>
-          <p class="prose"><strong>The desert scenes are generative.</strong> This was 2024 and the first wave of usable image generation, and I used it as a production tool on the backgrounds while the lockup, the type, the composition and the art direction stayed hand-made. Worth naming rather than leaving for someone to notice: the system had to hold a rule over imagery I hadn't drawn, which is exactly the test it was built for.</p>
-        </div>
-        <div class="wall rise d2">
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-teaser-desert-final.png" alt="Desert teaser creative with the ACE lockup."></div><figcaption class="cap">Teaser</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-teaser-magic-carpet.png" alt="Magic carpet teaser creative."></div><figcaption class="cap">Teaser</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-countdown-oneweek.png" alt="One week to go countdown creative."></div><figcaption class="cap">Countdown</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-countdown-hourglass.png" alt="Hourglass countdown creative."></div><figcaption class="cap">Countdown</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-panel-global-design-fusion.png" alt="Speaker panel creative for the Global Design Fusion session."></div><figcaption class="cap">Panel</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-venue-ritz-carlton.png" alt="Ritz-Carlton venue announcement creative."></div><figcaption class="cap">Venue</figcaption></figure>
-          <figure><div class="shot"><img src="/work/emf-ace/img/emf-500-registered.png" alt="500 registered milestone creative."></div><figcaption class="cap">Milestone</figcaption></figure>
-          <figure class="wide"><div class="shot"><img src="/work/emf-ace/img/emf-anniversary-11years.png" alt="Eleven Glorious Years anniversary banner."></div><figcaption class="cap">Anniversary banner</figcaption></figure>
-        </div>
-        <div class="pair" style="align-items:start">
-          <figure class="rise d3" style="margin:0"><div class="device phone">
-            <span class="notch" aria-hidden="true"></span>
-            <div class="screen" data-scrollshot><img src="/work/emf-ace/img/feed.jpg" alt="The ACE creatives running as a social feed — teasers, countdowns, panels and milestones, one after another."></div>
-          </div></figure>
-          <div class="rise d3">
-            <p class="prose">Almost all of it was consumed this way — thumbed past, at speed, between other people's posts. That is the real test of a lockup: it has about a second to say which weekend this belongs to.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
+<!-- ── 01 ─────────────────────────────────────────────────────── -->
+<section class="statement statement--dim" data-reveal>
+  <img class="statement__bg" data-parallax
+       src="/work/emf-ace/img/hero-skyline.jpg" alt="" aria-hidden="true" width="2069" height="1382">
+  <div class="statement__body">
+    <h1><span class="ln"><i>What is <span class="name"><span class="sr-only">EMF ACE</span><span class="twirl"><span class="t" aria-hidden="true" style="--i:0">E</span><span class="t" aria-hidden="true" style="--i:1">M</span><span class="t" aria-hidden="true" style="--i:2">F</span></span> <span class="twirl"><span class="t" aria-hidden="true" style="--i:4">A</span><span class="t" aria-hidden="true" style="--i:5">C</span><span class="t" aria-hidden="true" style="--i:6">E</span></span></span>?</i></span></h1>
+    <p class="rise d2">An awards weekend in Abu Dhabi, branded end to end, from a
+      desk 2,000&nbsp;km away.</p>
   </div>
 </section>
 
-<!-- ══ 03 · BAND ═══════════════════════════════════════════════ -->
-<div class="band" data-reveal>
-  <img src="/work/emf-ace/img/room-gala.jpg" alt="The gala room dressed for the awards night.">
-</div>
-
-<!-- ══ 04 · RUN — dossier pinned RIGHT ═════════════════════════ -->
-<section class="run flip" id="process">
-  <aside class="dossier" data-reveal>
-    <p class="dossier-mark rise">EMF ACE</p>
-    <div class="dossier-body">
-      <dl class="facts">
-        <div><dt class="rise">Studio</dt><dd class="rise">Media Mushroom</dd></div>
-        <div><dt class="rise d1">Deliverables</dt><dd class="rise d1">Environmental, social,<br>film, print — designed<br>in-house</dd></div>
-        <div><dt class="rise d2">Venues</dt><dd class="rise d2">Ritz-Carlton, Emirates<br>Palace, Ferrari World</dd></div>
-        <div><dt class="rise d3">Team</dt><dd class="rise d3">2 designers</dd></div>
-      </dl>
-      <div class="impacts">
-        <div class="impact rise d1"><b>3</b><small>Venues, none visited</small></div>
-        <div class="impact rise d2"><b>4</b><small>Formats: print, film,<br>social, environmental</small></div>
+<!-- ── 03 · the problem ───────────────────────────────────────── -->
+<section class="dossier" data-reveal>
+  <div class="dossier__head">
+    <h2 class="h-sec rise">The problem of a thousand pieces and twelve approvers.</h2>
+  </div>
+  <div class="dossier__rows">
+    <div class="drow">
+      <p class="q-lede rise">How do two designers make a thousand pieces look like
+        one weekend?</p>
+      <p class="a rise d1">EMF hired Media Mushroom to brand their ACE awards weekend
+        end to end &mdash; environmental branding, social, YouTube ads, award designs,
+        attendee packages, welcome letters, the magazine. Three months, two
+        designers, over a thousand individual creatives.</p>
+    </div>
+    <div class="drow">
+      <div class="qa">
+        <p class="q">Who decides?</p>
+        <p class="a">Twelve decision-makers with equal authority, and a brief that
+          expanded every week.</p>
+      </div>
+      <div class="qa">
+        <p class="q">When is it due?</p>
+        <p class="a">Every deadline arrived last-minute. A piece made in an hour at
+          11pm had to stand next to one that took two days.</p>
+      </div>
+      <div class="qa">
+        <p class="q">Where does it go?</p>
+        <p class="a">Three venues &mdash; the Ritz-Carlton, Emirates Palace and
+          Ferrari World &mdash; that nobody on the team had ever stood in.</p>
       </div>
     </div>
-  </aside>
-
-  <div class="track">
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The survival move</h2>
-      <div class="rise d1">
-        <p class="prose lead">Build a system that absorbs the chaos.</p>
-        <p class="prose">With that volume and that many approvers, no individual piece could be defended on its own merits. So the work went into the system instead: <strong>a fixed lockup</strong> — the ace wordmark, the 11 Glorious Years mark, the dates — that never moved, on anything. <strong>One palette and one light:</strong> violet, gold, and a desert horizon. Every brief resolved into those.</p>
-        <p class="prose">The test was simple. A piece made in an hour at 11pm had to look like it belonged to the same weekend as one that took two days — <em>without anyone holding its hand.</em></p>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The rule, drawn</h2>
-      <figure class="diagram rise d1" style="margin:0">
-        <div class="board">
-    <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The fixed lockup: three elements never move; everything else is a variable.">
-      <g class="dg-in">
-        <text class="dg-title" x="8" y="20">Never moves — on any of the 1000+</text>
-        <rect class="dg-step" x="8" y="34" width="300" height="196" rx="3"/>
-        <text class="dg-step-lbl" x="158" y="74" text-anchor="middle">ace wordmark</text>
-        <line x1="40" y1="96" x2="276" y2="96" stroke="var(--rule)" stroke-width="1"/>
-        <text class="dg-step-lbl" x="158" y="130" text-anchor="middle">11 Glorious Years</text>
-        <line x1="40" y1="152" x2="276" y2="152" stroke="var(--rule)" stroke-width="1"/>
-        <text class="dg-step-lbl" x="158" y="186" text-anchor="middle">26 · 27 · 28 July</text>
-        <text class="dg-verdict-in" x="8" y="256">The rule</text>
-      </g>
-      <g class="dg-out">
-        <text class="dg-title" x="360" y="20">Everything else — free to change</text>
-        <rect class="dg-step" x="360" y="34" width="632" height="196" rx="3"/>
-        <text class="dg-step-lbl" x="676.0" y="96" text-anchor="middle">Photography · illustration · generative backgrounds</text>
-        <text class="dg-step-lbl" x="676.0" y="130" text-anchor="middle">Format · crop · language · headline</text>
-        <text class="dg-step-lbl" x="676.0" y="164" text-anchor="middle">Who made it · how long it took</text>
-        <text class="dg-verdict-out" x="360" y="256">The variables</text>
-      </g>
-    </svg>
-        </div>
-        <figcaption class="cap">Three fixed elements on the left; everything a brief could throw at it on the right</figcaption>
-      </figure>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The lockup, holding</h2>
-      <div class="pair">
-        <figure class="rise d1" style="margin:0">
-          <div class="shot"><img src="/work/emf-ace/img/emf-panel-global-design-fusion.png" alt="A speaker panel creative — five portraits and dense copy, inside the fixed lockup."></div>
-          <figcaption class="cap">Five portraits, dense copy</figcaption>
-        </figure>
-        <figure class="rise d2" style="margin:0">
-          <div class="shot"><img src="/work/emf-ace/img/emf-teaser-magic-carpet.png" alt="A teaser creative — one image and four words, inside the same lockup."></div>
-          <figcaption class="cap">One image, four words. Same weekend.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ══ EMF-only: the date fix. Project-specific components are
-         allowed on top of the skeleton — they are never in it. ══ -->
-    <section class="beat indent" data-reveal>
-      <h2 class="h-beat rise">The one that got caught</h2>
-      <div class="rise d1">
-        <p class="prose lead">A system is also what catches your mistakes.</p>
-        <p class="prose">The first desert teaser went out for approval carrying the wrong dates — 20–21 July, against an event running 26, 27 and 28. Twelve approvers had signed it off. <strong>It was the lockup rule that caught it:</strong> the dates live in a fixed element, so the moment they disagreed with the master they were visibly wrong rather than quietly wrong.</p>
-      </div>
-      <div class="compare rise d2" id="cmp" tabindex="0" role="slider"
-           aria-label="Compare the draft teaser with the corrected version"
-           aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" style="--x:50%">
-        <img class="cmp-under" src="/work/emf-ace/img/emf-teaser-desert-final.png" alt="The corrected teaser, dated 26, 27 and 28 July.">
-        <img class="cmp-over"  src="/work/emf-ace/img/emf-teaser-desert-draft.png" alt="The draft teaser, wrongly dated 20 to 21 July.">
-        <span class="cmp-line" aria-hidden="true"></span>
-        <span class="cmp-tag l" aria-hidden="true">Draft — 20–21 July</span>
-        <span class="cmp-tag r" aria-hidden="true">Final — 26·27·28</span>
-      </div>
-      <p class="cap">Drag, or use the arrow keys</p>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">Sight unseen</h2>
-      <div class="stack">
-        <div class="rise d1">
-          <p class="prose lead">Three venues, none of them visited.</p>
-          <p class="prose">The Ritz-Carlton, Emirates Palace and Ferrari World — all designed from measurements, floor plans and photographs, from a desk in India. Stage widths, sightlines, ceiling heights, where a print would be read from twelve metres and where from one.</p>
-          <p class="prose">I had <strong>one day on the ground</strong> before the weekend opened. Everything either fitted or it didn't.</p>
-        </div>
-        <div class="tri rise d2">
-          <figure style="margin:0"><div class="shot"><img src="/work/emf-ace/img/venue-ritz.jpg" alt="The Ritz-Carlton ballroom."></div><figcaption class="cap">Ritz-Carlton</figcaption></figure>
-          <figure style="margin:0"><div class="shot"><img src="/work/emf-ace/img/venue-emirates.jpg" alt="Emirates Palace."></div><figcaption class="cap">Emirates Palace</figcaption></figure>
-          <figure style="margin:0"><div class="shot"><img src="/work/emf-ace/img/venue-ferrari.jpg" alt="Ferrari World."></div><figcaption class="cap">Ferrari World</figcaption></figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="beat" data-reveal>
-      <h2 class="h-beat rise">The outcome</h2>
-      <div class="rise d1">
-        <p class="prose lead">It shipped, across three venues, on time — to a room of <strong>500–800 people</strong>.</p>
-        <p class="prose">The weekend generated in the order of <strong>₹1–2 crore</strong> for the client. Both figures are theirs, not mine, and I'm reporting them as given rather than as something design can take credit for on its own.</p>
-        <p class="prose">And I'd structure it differently now. I ran it the way I'd run any project — piece by piece, approval by approval — and the workload compounded faster than the process could carry.</p>
-        <p class="prose"><strong>A job that scales this fast, with this many people holding a veto, needs its governance designed on day one alongside the identity.</strong> That's the lesson I actually took from it.</p>
-      </div>
-    </section>
-
+    <div class="drow">
+      <blockquote class="quote">&ldquo;The hard part was never any one design. It
+        was the volume.&rdquo;</blockquote>
+      <p class="quote__by">Looking back at the brief</p>
+      <figure class="blobfig blobfig--quote" data-pose="tired" aria-hidden="true"><canvas></canvas></figure>
+    </div>
   </div>
 </section>
 
-<!-- ══ 06 · CREDITS ════════════════════════════════════════════ -->
-<section class="credits">
-  <div><h4>Role</h4>Design Lead — identity system, environmental, social, print</div>
-  <div><h4>Studio</h4>Media Mushroom</div>
-  <div><h4>Client</h4>EMF Global — ACE Abu Dhabi 2024</div>
-  <div><h4>Team</h4>2 designers, 3 months. Digital and print assets made in-house; production and install delivered with a partner team on the ground overseas.</div>
+<!-- ── 04 · the answer ────────────────────────────────────────── -->
+<section class="row" data-reveal>
+  <h2 class="h-sec rise">How did EMF ACE solve this?</h2>
+  <div class="row__body">
+    <p class="em rise d1">Build a system that absorbs the chaos.</p>
+    <p class="em rise d1">No individual piece could be defended on its own merits,
+      so the work went into the system instead.</p>
+    <div class="cols3 rise d2">
+      <div class="box"><span><b>A lockup that never moves.</b>The ace wordmark,
+        the 11 Glorious Years mark and the dates &mdash; on anything, at any
+        size.</span></div>
+      <div class="box"><span><b>One palette, one light.</b>Violet, gold and a
+        desert horizon. Every brief resolved into those.</span></div>
+      <div class="box"><span><b>Everything else is free.</b>Photography,
+        illustration, format, crop, language, headline &mdash; and who made it, and
+        how long it took.</span></div>
+    </div>
+  </div>
 </section>
 
-<section class="contact">
-  <span>Neel Parikh — product &amp; experience design, Sydney.</span>
-  <a href="mailto:neelparikh7@gmail.com">neelparikh7@gmail.com</a>
-  <a href="/dive/#work">See the rest of the work</a>
+<!-- ── 05 · the role ──────────────────────────────────────────── -->
+<section class="row" data-reveal>
+  <h2 class="h-sec rise">What I did</h2>
+  <figure class="blobfig blobfig--head" data-pose="working" aria-hidden="true"><canvas></canvas></figure>
+  <div class="row__body">
+    <p class="say rise d1">Design Lead at Media Mushroom, one of two designers on
+      it, over three months in 2024. The identity system and the environmental,
+      social, film, award and print design &mdash; every digital and print asset made
+      in-house, with production and install delivered by a partner team on the
+      ground overseas.</p>
+  </div>
 </section>
 
+<!-- ── 06 · the thesis ────────────────────────────────────────── -->
+<section class="thesis" data-reveal>
+  <div class="thesis__frame">
+    <h2><span class="ln"><i>So how does one</i></span> <span class="ln"><i style="--d:90ms">lockup hold a</i></span> <span class="ln"><i style="--d:180ms">thousand pieces</i></span> <span class="ln"><i style="--d:270ms">together?</i></span></h2>
+    <span class="wire wire--h" style="--wd:120ms;left:0;top:0;width:100%"></span>
+    <span class="wire wire--v" style="--wd:420ms;left:calc(100% - 1px);top:0;height:100%"></span>
+    <span class="wire wire--h" style="--wd:900ms;left:0;bottom:0;width:100%" data-from="end"></span>
+  </div>
+</section>
+
+<!-- ── 07 · the walkthrough ───────────────────────────────────── -->
+<section class="trace">
+  <div class="trace__box" data-reveal style="--h:50.9%">
+    <span class="wire wire--v" style="--wd:0ms;left:79.6%;top:0;height:47.7%"></span>
+    <span class="node" style="--wd:760ms;left:79.6%;top:47.7%"></span>
+    <p class="trace__aside" style="left:56.8%;top:44%">Let me walk you<br>through how it held.</p>
+    <span class="node" style="--wd:900ms;left:50%;top:47.7%"></span>
+    <span class="wire wire--h" style="--wd:940ms;left:27.9%;top:47.7%;width:22.1%" data-from="end"></span>
+    <span class="node" style="--wd:1240ms;left:27.9%;top:47.7%"></span>
+    <span class="wire wire--v" style="--wd:1280ms;left:27.9%;top:47.7%;height:31.6%"></span>
+    <span class="node" style="--wd:1620ms;left:27.9%;top:79.3%"></span>
+    <div class="walk__head" style="left:2.97%;top:74.2%">
+      <h3>Which weekend is this?</h3>
+    </div>
+  </div>
+
+  <div class="plates">
+    <div class="explainers">
+      <div><b>Countdown</b><span>One week to go, on a desert runway.</span></div>
+      <div><b>Panel</b><span>Five portraits and dense copy, in the same frame.</span></div>
+      <div><b>Venue</b><span>The Ritz-Carlton, announced.</span></div>
+      <div><b>Milestone</b><span>500 registered, said in gold.</span></div>
+    </div>
+    <div class="gallery" style="--n:4">
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-countdown-oneweek.png"
+        alt="One week to go countdown creative." width="491" height="491" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-panel-global-design-fusion.png"
+        alt="Speaker panel creative for the Global Design Fusion session." width="462" height="462" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-venue-ritz-carlton.png"
+        alt="Ritz-Carlton venue announcement creative." width="516" height="516" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-500-registered.png"
+        alt="500 registered milestone creative." width="478" height="478" loading="lazy" decoding="async"></div></figure>
+    </div>
+    <figcaption class="plate__note">Four of the thousand-odd &mdash; every one of them made to
+      the same rules</p>
+  </div>
+
+  <div class="trace__box" data-reveal style="--h:36.7%">
+    <div class="walk__head" style="left:17.7%;top:9.6%">
+      <h3>How fast does it have to read?</h3>
+    </div>
+    <p class="trace__say" style="left:49.4%;top:20.2%">Almost all of it was seen in
+      a feed &mdash; thumbed past, at speed, between other people&rsquo;s posts.
+      That is the real test of a lockup: it has about a second to say which weekend
+      this belongs to.</p>
+    <span class="wire wire--v" style="--wd:200ms;left:23.7%;top:52.1%;height:43.2%"></span>
+    <span class="node" style="--wd:620ms;left:23.7%;top:95.3%"></span>
+  </div>
+
+  <div class="plates">
+    <div class="feed">
+      <img src="/work/emf-ace/img/feed.jpg"
+           alt="The ACE creatives running as a social feed — teasers, countdowns, panels and milestones, one after another." width="900" height="6300" loading="lazy" decoding="async">
+    </div>
+    <div class="feed__foot">
+      <p class="plate__note">The creatives as a feed</p>
+      <button class="feed__btn" type="button" aria-pressed="false" data-feed-toggle>Pause</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 · the rule ──────────────────────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--step" data-pose="thinking" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <div>
+      <h3 class="step__q rise">What never moves?</h3>
+      <ul class="legend rise d1">
+        <li><span>Wordmark</span>ace</li>
+        <li><span>Mark</span>11 Glorious Years</li>
+        <li><span>Dates</span>26 &middot; 27 &middot; 28 July</li>
+      </ul>
+      <p class="legend__src rise d1">The lockup, on every one of the 1000+</p>
+    </div>
+    <div class="step__say rise d1">
+      <p>Three elements that never moved, on any of the thousand-plus. One palette
+        and one light &mdash; violet, gold and a desert horizon. Every brief
+        resolved into those.</p>
+      <p>The test was simple. <strong>A piece made in an hour at 11pm had to look
+        like it belonged to the same weekend as one that took two days</strong>
+        &mdash; without anyone holding its hand.</p>
+    </div>
+  </div>
+  <div class="plates">
+    <div class="gallery" style="--n:4">
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="/work/emf-ace/img/emf-countdown-oneweek.png"
+        alt="The top-right corner of the one-week countdown: the ace wordmark, Abu Dhabi and 26, 27, 28 July." width="491" height="491" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="/work/emf-ace/img/emf-panel-global-design-fusion.png"
+        alt="The same corner of the speaker panel creative, with the identical lockup." width="462" height="462" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1;--z:2.05"><img src="/work/emf-ace/img/emf-countdown-hourglass.png"
+        alt="The same corner of the hourglass countdown, with the identical lockup." width="513" height="513" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="/work/emf-ace/img/emf-500-registered.png"
+        alt="The same corner of the 500 registered milestone, with the identical lockup." width="478" height="478" loading="lazy" decoding="async"></div></figure>
+    </div>
+    <p class="plate__note">The same corner of four different pieces &mdash; the lockup
+      never moves</p>
+  </div>
+</section>
+
+<!-- ── 09 · generative ────────────────────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--under" data-pose="laptop" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <h3 class="step__q rise">Who drew the desert?</h3>
+    <div class="step__say rise d1">
+      <p>The desert scenes are generative. This was 2024 and the first wave of usable
+        image generation, and I used it as a production tool on the backgrounds
+        while the lockup, the type, the composition and the art direction stayed
+        hand-made.</p>
+      <p>Worth naming rather than leaving for someone to notice: <strong>the system
+        had to hold a rule over imagery I hadn&rsquo;t drawn</strong>, which is
+        exactly the test it was built for.</p>
+    </div>
+    <div class="fields rise d2">
+      <div class="dip"><h4>Backgrounds</h4><p>Generated &mdash; the desert
+        scenes.</p></div>
+      <div><h4>Lockup</h4><p>Hand-set, and never moved.</p></div>
+      <div><h4>Type</h4><p>Hand-set.</p></div>
+      <div><h4>Composition</h4><p>Art-directed piece by piece.</p></div>
+      <p class="fields__key"><i></i>The only part a machine made</p>
+    </div>
+  </div>
+  <div class="plates">
+    <div class="gallery" style="--n:2">
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-teaser-magic-carpet.png"
+        alt="Magic carpet teaser creative — one image and four words, inside the lockup." width="430" height="430" loading="lazy" decoding="async"></div>
+        <p class="plate__note">Teaser &mdash; one image, four words</figcaption></figure>
+      <figure><div class="plate" style="--ar:1"><img src="/work/emf-ace/img/emf-countdown-hourglass.png"
+        alt="Hourglass countdown creative." width="513" height="513" loading="lazy" decoding="async"></div>
+        <figcaption class="plate__note">Countdown &mdash; early bird closes</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── 10 · the one that got caught ───────────────────────────── -->
+<section class="step" data-reveal>
+  <figure class="blobfig blobfig--step" data-pose="confused" aria-hidden="true"><canvas></canvas></figure>
+  <span class="wire wire--v" style="--wd:0ms"></span>
+  <span class="node" style="--wd:620ms"></span>
+  <div class="step__grid">
+    <h3 class="step__q rise">Who caught the wrong dates?</h3>
+    <div class="step__say rise d1">
+      <p>The first desert teaser went out for approval carrying the wrong dates
+        &mdash; 20&ndash;21 July, against an event running 26, 27 and 28. Twelve
+        approvers had signed it off.</p>
+      <p>It was the lockup rule that caught it. The dates live in a fixed element, so
+        the moment they disagreed with the master they were <strong>visibly wrong
+        rather than quietly wrong</strong>.</p>
+    </div>
+  </div>
+  <div class="plates plates--narrow">
+    <div class="compare" data-compare>
+      <img src="/work/emf-ace/img/emf-teaser-desert-final.png" alt="The corrected teaser, dated 26, 27 and 28 July." width="461" height="461" loading="lazy" decoding="async">
+      <div class="compare__top"><img src="/work/emf-ace/img/emf-teaser-desert-draft.png" alt="The draft teaser, wrongly dated 20 to 21 July." width="461" height="461" loading="lazy" decoding="async"></div>
+      <span class="compare__line"></span>
+      <span class="compare__tag compare__tag--l">Draft &mdash; 20&ndash;21</span>
+      <span class="compare__tag compare__tag--r">Final &mdash; 26&middot;27&middot;28</span>
+      <input type="range" min="0" max="100" value="50"
+             aria-label="Drag to compare the draft teaser with the final one">
+    </div>
+    <p class="plate__note">Drag, or use the arrow keys</p>
+  </div>
+</section>
+
+<!-- ── 12 · sight unseen ──────────────────────────────────────── -->
+<section class="turn" data-reveal>
+  <figure class="blobfig blobfig--turn" data-pose="phone" aria-hidden="true"><canvas></canvas></figure>
+  <span class="turn__rule"></span>
+  <div>
+    <h2 class="turn__big rise">That&rsquo;s the feed.</h2>
+    <p class="turn__big rise d1">But the weekend happened in three rooms nobody
+      had stood in.</p>
+    <p class="turn__say rise d2">The Ritz-Carlton, Emirates Palace and Ferrari World.
+      Nobody on the team had ever been inside them, and all three were designed from measurements, floor plans and photographs, from a desk
+      in India. Stage widths, sightlines, ceiling heights &mdash; where a print would
+      be read from twelve metres and where from one.</p>
+  </div>
+</section>
+
+<div class="pair" data-reveal>
+  <div class="gallery rise" style="--n:3">
+    <figure><div class="plate" style="--ar:.75"><img src="/work/emf-ace/img/venue-ritz.jpg" alt="The Ritz-Carlton, Abu Dhabi." width="1400" height="2489" loading="lazy" decoding="async"></div>
+      <figcaption class="plate__note">Ritz-Carlton</figcaption></figure>
+    <figure><div class="plate" style="--ar:.75"><img src="/work/emf-ace/img/venue-emirates.jpg" alt="Emirates Palace." width="1400" height="1867" loading="lazy" decoding="async"></div>
+      <figcaption class="plate__note">Emirates Palace</figcaption></figure>
+    <figure><div class="plate" style="--ar:.75"><img src="/work/emf-ace/img/venue-ferrari.jpg" alt="Ferrari World." width="1400" height="1867" loading="lazy" decoding="async"></div>
+      <figcaption class="plate__note">Ferrari World</figcaption></figure>
+  </div>
+  <div class="rise d1">
+    <h3>Sight unseen</h3>
+    <p>I had one day on the ground before the weekend opened. Everything either
+      fitted or it didn&rsquo;t.</p>
+  </div>
+</div>
+
+<div class="flows" data-reveal>
+  <figure class="blobfig blobfig--flows" data-pose="angry" aria-hidden="true"><canvas></canvas></figure>
+  <p class="turn__say rise" style="margin-top:0">A system is also what catches your
+    mistakes. Here is the wrong-dates teaser twice &mdash; once through the
+    approvals, once through the rule.</p>
+  <div class="flow flow--lost rise d1">
+    <p class="flow__label">Through twelve approvals</p>
+    <ol><li>Draft dated 20&ndash;21 July</li><li>Twelve approvers</li>
+      <li>Signed off</li><li class="exists">Still wrong</li></ol>
+    <p class="flow__verdict"><b>Missed.</b> Twelve sign-offs, and the dates were
+      still wrong.</p>
+  </div>
+  <div class="flow flow--won rise d2">
+    <p class="flow__label">Through the lockup</p>
+    <ol><li>Draft dated 20&ndash;21 July</li><li>Dates sit in the fixed element</li>
+      <li class="exists">Disagree with the master</li><li>Corrected</li></ol>
+    <p class="flow__verdict"><b>Caught.</b> Visibly wrong, rather than quietly
+      wrong.</p>
+  </div>
+  <p class="flows__key rise d2"><i></i>Where the mistake shows</p>
+</div>
+
+<div class="pair" data-reveal>
+  <figure class="plate rise" style="--ar:1.2"><img src="/work/emf-ace/img/room-lobby.jpg"
+    alt="A gold-domed atrium, lit warm, with balconies rising on every side." width="1600" height="2133" loading="lazy" decoding="async"></figure>
+  <div class="rise d1">
+    <h3>Behind the scenes</h3>
+    <p>Production and install were delivered with a partner team on the ground.
+      The digital and print assets in the venues were all made in-house, by two
+      designers.</p>
+  </div>
+</div>
+
+<!-- ── 13 · the close ─────────────────────────────────────────── -->
+<div class="close">
+  <section class="row" data-reveal>
+    <h2 class="h-sec rise">What went over</h2>
+    <figure class="blobfig blobfig--over" data-pose="happy" aria-hidden="true"><canvas></canvas></figure>
+    <div class="row__body">
+      <p class="say rise d1">It shipped, across three venues, on time &mdash; to a room
+        of 500&ndash;800 people.</p>
+      <p class="say rise d1" style="margin-top:1em">The weekend generated in the order
+        of &#8377;1&ndash;2 crore for the client. Both figures are theirs, not mine,
+        and I&rsquo;m reporting them as given rather than as something design can
+        take credit for on its own.</p>
+    </div>
+  </section>
+
+  <section class="row" data-reveal>
+    <h2 class="h-sec rise">What I&rsquo;d do differently</h2>
+    <div class="row__body">
+      <p class="say rise d1">I ran it the way I&rsquo;d run any project &mdash; piece
+        by piece, approval by approval &mdash; and the workload compounded faster than
+        the process could carry.</p>
+      <p class="say rise d1" style="margin-top:1em">A job that scales this fast, with
+        this many people holding a veto, needs its governance designed on day one
+        alongside the identity. That&rsquo;s the lesson I actually took from it.</p>
+    </div>
+  </section>
+</div>
 </main>
 
-<a class="next" href="/dive/work/cseds/" aria-label="Next project: CSEDS">
-  <img src="/work/cseds/img/landing-01.jpg" alt="">
-  <span class="lbl"><small>Next project</small><strong>CSEDS</strong></span>
-</a>
+<!-- ── 14 · credits ───────────────────────────────────────────── -->
+<footer>
+  <dl class="credits" data-reveal>
+    <div class="rise"><dt>Role</dt><dd>Design Lead &mdash; identity system,
+      environmental, social, print</dd></div>
+    <div class="rise"><dt>Studio</dt><dd>Media Mushroom</dd></div>
+    <div class="rise d1"><dt>Client</dt><dd>EMF Global &mdash; ACE Abu Dhabi 2024</dd></div>
+    <div class="rise d1"><dt>Team</dt><dd>2 designers, with a partner team on the
+      ground for production and install</dd></div>
+    <div class="rise d2"><dt>Year</dt><dd>2024, three months</dd></div>
+  </dl>
+  <a class="next" href="/dive/work/cseds/">
+    <div><span>Next project</span><strong>CSEDS</strong></div>
+    <em aria-hidden="true">&rarr;</em>
+  </a>
+</footer>
 
+<script src="/blob-assets/blob-field.js"></script>
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   Shared case-study behaviour.
-   transform/opacity only · custom easing · once-only reveals ·
-   no scroll hijacking · full prefers-reduced-motion opt-out.
-   ══════════════════════════════════════════════════════════════════ */
-const REDUCED = typeof window.matchMedia === 'function'
-  && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(() => {
+'use strict';
+const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* 1 — reveal on enter, once, never on scroll-up */
-(function reveals(){
-  const targets = document.querySelectorAll('[data-reveal]');
-  if (REDUCED) { targets.forEach(t => t.classList.add('is-in')); return; }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('is-in');
-      io.unobserve(e.target);
+/* ── reveals ─────────────────────────────────────────────────── */
+const io = new IntersectionObserver((es) => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+}, { rootMargin:'0px 0px -12% 0px', threshold:0 });
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+/* ══ the blob ═══════════════════════════════════════════════════
+   In when a third of its box is on screen, out when it leaves. One
+   sprite per instance — the manifest is handed over inline, so each
+   canvas loads only the pose it shows. */
+(() => {
+  const figs = [...document.querySelectorAll('.blobfig')];
+  if (!figs.length || !window.BlobField) return;
+  const BASE = '/blob-assets/';
+  const small = matchMedia('(max-width:900px)').matches;
+  figs.forEach(fig => {
+    const pose = fig.dataset.pose || 'figure';
+    const src = fig.dataset.src;
+    const field = BlobField.create({
+      canvas: fig.querySelector('canvas'),
+      base: src ? '' : BASE,
+      manifest: { grid:340, anchor:{x:170,y:318,norm:300},
+                  poses:[{ id:pose, file: src || ('sprites/' + pose + '.webp') }] },
+      points: small ? 5000 : 9000,
+      floor: src ? 30 : 62, crop: src ? null : 286,
+      inset: .1875, speed: 2.6,   /* .3 overhang ÷ 1.6 canvas */
+      gain: fig.dataset.gain ? +fig.dataset.gain : 1.9,   /* brighter than the engine's default */
+      occlude: true,              /* lines under a blob go behind it */
+      pointer: false, hidden: true,
+      onError: e => console.warn(e)
     });
-  }, { rootMargin:'0px 0px -12% 0px', threshold:0.01 });
-  targets.forEach(t => io.observe(t));
-})();
-
-/* 2 — line-mask any [data-lines] headline. Splits on authored <br>,
-       so the text stays selectable and screen-reader legible. */
-(function maskLines(){
-  document.querySelectorAll('[data-lines]').forEach(el => {
-    el.innerHTML = el.innerHTML.split('<br>').map(s => s.trim())
-      .map((l,i) => `<span class="ln"><i style="--d:${i*70}ms">${l}</i></span>`).join('');
+    new IntersectionObserver(es => {
+      es[0].isIntersecting ? field.gather() : field.scatter();
+    }, { threshold:.33 }).observe(fig);
   });
 })();
 
-/* 3 — scroll progress */
-(function progress(){
-  const bar = document.querySelector('[data-progress]');
-  if (!bar) return;
-  const run = () => {
-    const max = document.body.scrollHeight - window.innerHeight;
-    bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
-  };
-  addEventListener('scroll', run, { passive:true });
-  addEventListener('resize', run);
-  run();
-})();
+/* ── the draft-against-final comparison ───────────────────────── */
+document.querySelectorAll('[data-compare]').forEach(c => {
+  const r = c.querySelector('input');
+  const set = () => { c.style.setProperty('--p', r.value + '%');
+    r.setAttribute('aria-valuetext', r.value + '% draft, ' + (100 - r.value) + '% final'); };
+  r.addEventListener('input', set); set();
+});
 
-/* 4 — back chip: past the hero, and only while reading upward, so it
-       never sits on top of the dossier on the way down */
-(function back(){
-  const el = document.querySelector('[data-back]');
-  if (!el) return;
-  let last = scrollY;
-  const run = () => {
-    const y = scrollY;
-    const past = y > innerHeight * 0.7;
-    if (y > last + 4) el.classList.remove('is-live');
-    else if (y < last - 4 && past) el.classList.add('is-live');
-    if (!past) el.classList.remove('is-live');
-    last = y;
-  };
-  addEventListener('scroll', run, { passive:true });
-  run();
-})();
+/* ── the feed: moves on its own, so it can be stopped (WCAG 2.2.2) ── */
+document.querySelectorAll('[data-feed-toggle]').forEach(btn => {
+  const feed = btn.closest('.plates').querySelector('.feed');
+  let user = false, seen = false;
+  const apply = () => feed.classList.toggle('is-paused', user || !seen);
+  btn.addEventListener('click', () => {
+    user = !user; btn.setAttribute('aria-pressed', String(user));
+    btn.textContent = user ? 'Play' : 'Pause'; apply();
+  });
+  new IntersectionObserver(es => { seen = es[0].isIntersecting; apply(); }).observe(feed);
+});
 
-/* 5 — motion slots: play only while on screen, never under reduced
-       motion. Saves battery and keeps the poster as the fallback. */
-(function motion(){
-  const vids = document.querySelectorAll('video[data-motion]');
-  if (!vids.length) return;
-  if (REDUCED) { vids.forEach(v => { v.autoplay = false; v.pause(); }); return; }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      const v = e.target;
-      if (e.isIntersecting) { const p = v.play(); if (p) p.catch(()=>{}); }
-      else v.pause();
+/* ── any screen opens larger: click, Enter or Space ─────────────── */
+(() => {
+  const plates = [...document.querySelectorAll('.plate')].filter(p =>
+    p.querySelector('img') && !p.closest('.compare,.feed'));
+  if (!plates.length || typeof HTMLDialogElement === 'undefined') return;
+  const dlg = document.createElement('dialog');
+  dlg.className = 'lightbox';
+  dlg.setAttribute('aria-label', 'Image, enlarged');
+  dlg.innerHTML = '<button class="lightbox__close" type="button">Close</button>' +
+    '<div class="lightbox__stage"><figure class="lightbox__fig"><img alt=""><figcaption></figcaption></figure></div>';
+  document.body.append(dlg);
+  const big = dlg.querySelector('img'), cap = dlg.querySelector('figcaption');
+  let from = null;
+  const open = img => {
+    from = img.closest('.plate');
+    big.src = img.currentSrc || img.src; big.alt = img.alt;
+    cap.textContent = img.alt;
+    const r = (img.naturalWidth || +img.getAttribute('width')) / (img.naturalHeight || +img.getAttribute('height'));
+    dlg.classList.toggle('is-tall', r < 1);   /* portrait screens: read at width, scroll down */
+    dlg.showModal();
+    dlg.querySelector('.lightbox__stage').scrollTop = 0;
+  };
+  const close = () => dlg.close();
+  dlg.querySelector('.lightbox__close').addEventListener('click', close);
+  dlg.addEventListener('click', e => { if (e.target === dlg || e.target.classList.contains('lightbox__stage') || e.target === big) close(); });
+  dlg.addEventListener('close', () => { if (from) from.focus({ preventScroll:true }); });
+  plates.forEach(p => {
+    const img = p.querySelector('img');
+    p.classList.add('is-zoomable');
+    p.tabIndex = 0;
+    p.setAttribute('role', 'button');
+    p.setAttribute('aria-label', 'View larger: ' + (img.alt || 'image'));
+    p.addEventListener('click', () => open(img));
+    p.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(img); }
     });
-  }, { threshold:0.15 });
-  vids.forEach(v => io.observe(v));
-})();
-
-/* 6 — count-up for the outcome tally */
-(function countUp(){
-  document.querySelectorAll('[data-count]').forEach(el => {
-    const end = parseFloat(el.dataset.count);
-    if (REDUCED) { el.textContent = end; return; }
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      const t0 = performance.now(), dur = 1200;
-      const tick = t => {
-        const p = Math.min((t - t0) / dur, 1);
-        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, { threshold:0.6 });
-    io.observe(el);
   });
 })();
 
-/* 7 — hero settles on load */
-requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+if (reduced) return;
 
-/* ══ EMF-only: the date-fix comparison ═══════════════════════════ */
-(function compare(){
-  const el = document.getElementById('cmp');
-  if (!el) return;
-  const set = pct => {
-    const v = Math.max(0, Math.min(100, pct));
-    el.style.setProperty('--x', v + '%');
-    el.setAttribute('aria-valuenow', Math.round(v));
-  };
-  const at = e => {
-    const r = el.getBoundingClientRect();
-    return ((e.clientX - r.left) / r.width) * 100;
-  };
-  /* once the visitor touches it, the intro sweep gets out of the way */
-  let taken = false;
-  const take = () => { taken = true; };
-
-  /* tracked on the window, not via setPointerCapture — the drag keeps
-     following the cursor after it leaves the frame, which is what a
-     compare slider is expected to do. */
-  let dragging = false;
-  el.addEventListener('pointerdown', e => { take(); dragging = true; set(at(e)); e.preventDefault(); });
-  addEventListener('pointermove', e => { if (dragging) set(at(e)); }, { passive:true });
-  addEventListener('pointerup',     () => { dragging = false; });
-  addEventListener('pointercancel', () => { dragging = false; });
-  el.addEventListener('keydown', e => {
-    const step = e.shiftKey ? 10 : 2;
-    const cur = parseFloat(el.style.getPropertyValue('--x')) || 50;
-    const map = { ArrowLeft: cur - step, ArrowRight: cur + step, Home: 0, End: 100 };
-    if (e.key in map) { take(); set(map[e.key]); e.preventDefault(); }
+/* ── 01 · the name twirls again on hover ─────────────────────── */
+const tws = [...document.querySelectorAll('.statement h1 .twirl')];
+const name = document.querySelector('.statement h1 .name');
+if (name && tws.length && matchMedia('(hover:hover) and (pointer:fine)').matches){
+  let busy = false;
+  name.addEventListener('mouseenter', () => {
+    if (busy) return; busy = true;
+    tws.forEach(tw => { tw.classList.remove('again'); void tw.offsetWidth; tw.classList.add('again'); });
+    setTimeout(() => { busy = false; }, 1300);
   });
+}
 
-  /* one unprompted sweep on entry, so the interaction announces itself
-     without needing a tooltip */
-  if (REDUCED) return;
-  const io = new IntersectionObserver(([e]) => {
-    if (!e.isIntersecting) return;
-    io.disconnect();
-    const t0 = performance.now(), dur = 1500;
-    const tick = t => {
-      if (taken) return;                       /* visitor has the handle */
-      const p = Math.min((t - t0) / dur, 1);
-      const ease = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      set(50 + Math.sin(ease * Math.PI) * 34);
-      if (p < 1) requestAnimationFrame(tick);
+/* ── 01 · the photograph drifts, very slightly ───────────────── */
+const bg = document.querySelector('[data-parallax]');
+const statement = document.querySelector('.statement');
+
+/* EMF ACE — an award, turning. A trophy made of the same dust rises
+   out of the bar, spins on its base like it's on a turntable — fast,
+   then slowing — catches a few gold glints off the cup, and sinks
+   away again. The points are a true lathe, so the far side of the cup
+   is dimmer than the near side as it turns. */
+const MOTIF = {
+  half: E => E.H*.34,
+  min:  E => E.H*1.4,
+  start(E){
+    const { H, G, cx, DOT } = E;
+    const HT = H*.66, S = HT*.56;
+    const span = E.X1 - E.X0;
+    const dir = Math.random() < .5 ? 1 : -1;
+    const x0 = E.X0 + span*(.25 + Math.random()*.5);
+
+    /* the profile, bottom to top: height 0..1, radius */
+    const prof = [[0,.40],[.05,.40],[.07,.28],[.11,.14],[.14,.07],[.26,.06],
+                  [.29,.10],[.32,.06],[.42,.07],[.47,.22],[.56,.36],[.68,.45],
+                  [.82,.50],[.94,.53],[1,.56]];
+    const P = [];                                  /* r, theta, y */
+    for (let i=0;i<prof.length-1;i++){
+      const [ya,ra] = prof[i], [yb,rb] = prof[i+1];
+      const rows = Math.max(1, Math.round((yb-ya)*22));
+      for (let j=0;j<rows;j++){
+        const u = j/rows, y = ya+(yb-ya)*u, r = ra+(rb-ra)*u;
+        const n = Math.max(5, Math.round(r*46));
+        for (let k=0;k<n;k++) P.push(r, k/n*6.28318 + j*.3, y);
+      }
+    }
+    const rim = Math.round(.56*60);                /* the lip, drawn heavier */
+    for (let k=0;k<rim;k++) P.push(.56, k/rim*6.28318, 1);
+    for (const side of [0, Math.PI]){              /* two handles */
+      for (let k=0;k<=16;k++){
+        const s = k/16;
+        P.push(.5 + .24*Math.sin(Math.PI*s), side, .9 - .34*s);
+      }
+    }
+    const N = P.length/3;
+    const glints = [];
+    const GOLD = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#E4BC6B';
+
+    let t = 0, phi = Math.random()*6.28;
+    const T = 3.5;
+    return {
+      step(dt){
+        t += dt;
+        phi += (11*Math.exp(-t*1.1) + 1.1)*dt;
+        const rise = 1 - E.smooth(t/.6), sink = E.smooth((t - (T - .7))/.7);
+        const a = E.smooth(t/.4)*(1 - sink);
+        const base = G + (rise*.7 + sink*.7)*H;
+        const x = x0 + dir*H*.25*t;
+        for (let i=0;i<N;i++){
+          const r = P[i*3], th = P[i*3+1] + phi, y = P[i*3+2];
+          const z = Math.sin(th);
+          cx.globalAlpha = a*(.32 + .68*(z + 1)/2);
+          cx.fillStyle = '#FBF7F0';
+          cx.fillRect((x + r*Math.cos(th)*S)|0, (base - y*HT)|0, DOT, DOT);
+        }
+        /* glints off the near side of the cup */
+        if (a > .5 && Math.random() < dt*9){
+          const th = Math.random()*2 - 1;
+          glints.push({ u:Math.sin(th)*.5, y:.6 + Math.random()*.38, l:.32 });
+        }
+        cx.fillStyle = GOLD;
+        for (let i=glints.length-1;i>=0;i--){
+          const g = glints[i]; g.l -= dt;
+          if (g.l <= 0){ glints.splice(i,1); continue; }
+          const gx = (x + g.u*S)|0, gy = (base - g.y*HT)|0, L = Math.round(DOT*(1 + 3*Math.sin(g.l/.32*Math.PI)));
+          cx.globalAlpha = a;
+          cx.fillRect(gx - L, gy, L*2 + DOT, DOT);
+          cx.fillRect(gx, gy - L, DOT, L*2 + DOT);
+        }
+        cx.globalAlpha = 1;
+        return t < T;
+      }
     };
-    requestAnimationFrame(tick);
-  }, { threshold:0.5 });
-  io.observe(el);
-})();
+  }
+};
 
+/* ══ the header motif ═════════════════════════════════════════════
+   The same harness as Futee's football, with the object swapped. It
+   lives in the gap between the project name and the discipline and
+   never crosses either word; it runs every nine to twenty-six seconds,
+   sleeps while the bar is off screen, and is gone with reduced motion.
+   MOTIF (defined above) says how big the object is and how it moves.
+   ═════════════════════════════════════════════════════════════════ */
+(() => {
+  const cv = document.getElementById('motif');
+  if (!cv || typeof MOTIF === 'undefined') return;
+  const bar   = cv.parentElement;
+  const wordL = bar.querySelector('.bar__mark');
+  const wordR = bar.querySelector('.projbar__disc');
+  const cx = cv.getContext('2d');
+  const BD = Math.min(devicePixelRatio || 1, 2);
+  const E = { W:0, H:0, BD, X0:0, X1:0, DOT:1, G:0, cx, D:[] };
 
-/* ── device frames: the page inside scrolls with the reader ────────
-   Progress is measured across the frame's whole travel through the
-   viewport, so the internal scroll finishes exactly as the frame
-   leaves. Transform only, rAF-throttled, passive, and inert under
-   prefers-reduced-motion. */
-(function deviceScroll(){
-  const frames = [...document.querySelectorAll('[data-scrollshot]')];
-  if (!frames.length || REDUCED) return;
-
-  let ticking = false;
-  const run = () => {
-    const vh = innerHeight;
-    frames.forEach(f => {
-      const r = f.getBoundingClientRect();
-      if (r.bottom < -160 || r.top > vh + 160) return;
-      const img = f.querySelector('img');
-      if (!img) return;
-      const travel = img.offsetHeight - f.clientHeight;
-      if (travel <= 4) return;
-      /* 0 as the frame's top edge reaches the bottom of the screen,
-         1 as its bottom edge clears the top */
-      const p = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
-      /* ease so the ends settle rather than clip */
-      const e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      img.style.transform = `translate3d(0,${(-travel * e).toFixed(1)}px,0)`;
-    });
-    ticking = false;
+  /* dust: kicked up on contact, falls back, fades */
+  E.puff = (x, y, n, o = {}) => {
+    for (let i=0;i<n;i++) E.D.push({ x:x + (Math.random()-.5)*(o.w||0), y,
+      vx:(Math.random()-.5)*(o.spread||80) + (o.vx||0),
+      vy:-((o.up||30) + Math.random()*(o.upr||70)), l:.35 + Math.random()*.3 });
   };
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive:true });
-  addEventListener('resize', run);
-  run();
+  E.dust = (dt, a = 1) => {
+    cx.fillStyle = 'rgba(251,247,240,.5)';
+    for (let i=E.D.length-1;i>=0;i--){
+      const t = E.D[i];
+      t.x += t.vx*dt; t.y += t.vy*dt; t.vy += 260*dt; t.l -= dt*2.6;
+      if (t.l <= 0 || t.y > E.G + 2){ E.D.splice(i,1); continue; }
+      cx.globalAlpha = t.l*.5*a;
+      cx.fillRect(t.x|0, t.y|0, E.DOT, E.DOT);
+    }
+    cx.globalAlpha = 1;
+  };
+  E.smooth = t => t<=0 ? 0 : t>=1 ? 1 : t*t*(3-2*t);
+
+  let live=false, seen=false, timer=0, raf=0, last=0, run=null;
+
+  function size(){
+    const b = cv.getBoundingClientRect();
+    if (!b.width) return false;
+    E.W = Math.round(b.width*BD); E.H = Math.round(b.height*BD);
+    cv.width = E.W; cv.height = E.H;
+    E.DOT = Math.max(1, Math.round(BD*.9));
+    E.G = E.H*.80;
+    const clear = MOTIF.half(E) + 16*BD;
+    E.X0 = (wordL.getBoundingClientRect().right - b.left)*BD + clear;
+    E.X1 = (wordR.getBoundingClientRect().left  - b.left)*BD - clear;
+    return true;
+  }
+  function frame(now){
+    raf = 0;
+    const dt = Math.min(.05, (now - last)/1000 || 0); last = now;
+    cx.clearRect(0,0,E.W,E.H);
+    if (!run.step(dt)){ stop(); schedule(); return; }
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(){
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; live = false; E.D.length = 0;
+    if (E.W) cx.clearRect(0,0,E.W,E.H);
+  }
+  function kick(){
+    if (!seen || live){ schedule(); return; }
+    if (!size() || E.X1 - E.X0 < MOTIF.min(E)){ schedule(); return; }
+    live = true; run = MOTIF.start(E);
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+  function schedule(){
+    clearTimeout(timer);
+    timer = setTimeout(kick, 9000 + Math.random()*17000);
+  }
+  cv.kick = kick;   /* for testing from the console */
+
+  new IntersectionObserver(es => {
+    seen = es[0].isIntersecting;
+    if (!seen && live) stop();
+  }).observe(cv);
+  addEventListener('resize', () => { if (!live) size(); });
+  size();
+  timer = setTimeout(kick, 3000 + Math.random()*4000);
 })();
 
+
+/* ── scroll ──────────────────────────────────────────────────── */
+let raf = 0;
+function frame(){
+  raf = 0;
+
+  if (bg){
+    const b = statement.getBoundingClientRect();
+    if (b.bottom > 0 && b.top < innerHeight){
+      const q = (b.top + b.height/2 - innerHeight/2) / innerHeight;
+      bg.style.transform = 'translate3d(0,' + (q * -42).toFixed(2) + 'px,0)';
+    }
+  }
+
+}
+function onScroll(){ if (!raf) raf = requestAnimationFrame(frame); }
+
+addEventListener('scroll', onScroll, { passive:true });
+addEventListener('resize', onScroll);
+onScroll();
+})();
 </script>
 </body>
 </html>
