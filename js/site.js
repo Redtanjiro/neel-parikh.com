@@ -76,41 +76,49 @@
   onScroll();
 
   /* ---------------------------------------------------------
-     ABOUT, BY CLICK, PLAYS THE SAME WAY IT DOES BY SCROLL
+     WORK AND ABOUT, BY CLICK, PLAY THE WAY THEY DO BY SCROLL
 
-     The island track is driven by scroll position, so an anchor jump
-     lands on the settled frame and skips the whole disperse. Instead the
-     link carries the page there: from above the track it cuts to the
-     Work grid at rest — the frame the sequence starts from — then runs
-     the scroll down to the settle, so the grid flies apart and the island
-     gathers on the way. Scrolling by hand is untouched.
+     The island track is driven by scroll position, so a plain anchor
+     jump is wrong in both directions. To About it lands on the settled
+     frame and skips the whole disperse. To Work it does nothing at all
+     from inside the track: #work lives in the pinned pane, so the browser
+     measures it where it is pinned (and it is hidden by then), not where
+     the track begins.
 
-     Any wheel, touch or key during the run hands the page straight back.
-     Reduced motion, and no track (no JS for it, or the still island),
-     keep the plain jump. While the opening's lid is down, js/opening.js
-     owns the link. */
+     So the two links carry the page instead. About: from above the track
+     it cuts to the Work grid at rest — the frame the sequence starts
+     from — then runs the scroll down to the settle, so the grid flies
+     apart and the island gathers on the way. Work: from inside or below
+     the track it runs back up to the track's top, which is the same
+     sequence unplayed; from above, it is the plain jump. Scrolling by
+     hand is untouched.
+
+     A deliberate wheel, touch or key during the run hands the page
+     straight back. A trackpad that is still coasting does not count: the
+     tail of a momentum scroll arrives as small wheel events for a second
+     after the fingers lift, and cancelling on those killed the run the
+     moment it started. Reduced motion, and no track (no JS for it, or
+     the still island), keep the plain jump. While the opening's lid is
+     down, js/opening.js owns the links.
+     --------------------------------------------------------- */
   var atoll = document.getElementById('atoll');
-  var cue   = document.getElementById('about');
+  var aboutCue = document.getElementById('about');
   var carrying = 0;
 
   function stopCarry() {
     if (!carrying) return;
     cancelAnimationFrame(carrying);
     carrying = 0;
-    ['wheel', 'touchstart', 'keydown'].forEach(function (t) { window.removeEventListener(t, stopCarry); });
+    window.removeEventListener('wheel', onCarryWheel);
+    window.removeEventListener('touchstart', stopCarry);
+    window.removeEventListener('keydown', stopCarry);
+  }
+  function onCarryWheel(e) {
+    var d = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+    if (d >= 16) stopCarry();
   }
 
-  function carryToAbout() {
-    var r = atoll.getBoundingClientRect();
-    var trackTop = r.top + window.scrollY;
-    var hold = parseFloat(getComputedStyle(atoll).getPropertyValue('--hold')) || window.innerHeight;
-    var margin = parseFloat(getComputedStyle(cue).scrollMarginTop) || 0;
-    var target = cue.getBoundingClientRect().top + window.scrollY - margin;
-    var from = window.scrollY;
-    if (from < trackTop + hold && target > trackTop + hold) {
-      from = trackTop + hold;
-      window.scrollTo(0, from);
-    }
+  function carry(from, target) {
     var dist = target - from;
     if (Math.abs(dist) < 2) return;
     var screens = Math.abs(dist) / window.innerHeight;
@@ -124,20 +132,47 @@
       if (k < 1) carrying = requestAnimationFrame(step);
       else stopCarry();
     }
-    ['wheel', 'touchstart', 'keydown'].forEach(function (t) { window.addEventListener(t, stopCarry, { passive: true }); });
+    window.addEventListener('wheel', onCarryWheel, { passive: true });
+    window.addEventListener('touchstart', stopCarry, { passive: true });
+    window.addEventListener('keydown', stopCarry);
     carrying = requestAnimationFrame(step);
   }
 
-  if (atoll && cue) {
-    [].slice.call(document.querySelectorAll('a[href="#about"]')).forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var root = document.documentElement;
-        if (root.classList.contains('is-opening') || !root.classList.contains('atoll-on')) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        e.preventDefault();
-        stopCarry();
-        if (window.location.hash !== '#about' && history.pushState) history.pushState(null, '', '#about');
-        carryToAbout();
+  function trackTop() { return atoll.getBoundingClientRect().top + window.scrollY; }
+
+  function toAbout() {
+    var top = trackTop();
+    var hold = parseFloat(getComputedStyle(atoll).getPropertyValue('--hold')) || window.innerHeight;
+    var margin = parseFloat(getComputedStyle(aboutCue).scrollMarginTop) || 0;
+    var target = aboutCue.getBoundingClientRect().top + window.scrollY - margin;
+    var from = window.scrollY;
+    if (from < top + hold && target > top + hold) {
+      from = top + hold;
+      window.scrollTo(0, from);
+    }
+    carry(from, target);
+  }
+
+  function toWork() {
+    var top = trackTop();
+    if (window.scrollY <= top) window.scrollTo(0, top);
+    else carry(window.scrollY, top);
+  }
+
+  if (atoll && aboutCue) {
+    [['#about', toAbout], ['#work', toWork]].forEach(function (pair) {
+      /* The header's links only: "Skip to work" has to stay a real jump
+         that moves focus. */
+      [].slice.call(document.querySelectorAll('.chrome__nav a[href="' + pair[0] + '"]')).forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var root = document.documentElement;
+          if (root.classList.contains('is-opening') || !root.classList.contains('atoll-on')) return;
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          e.preventDefault();
+          stopCarry();
+          if (window.location.hash !== pair[0] && history.pushState) history.pushState(null, '', pair[0]);
+          pair[1]();
+        });
       });
     });
   }
@@ -152,23 +187,23 @@
      first arrives once the opening's lid has lifted — watched for on
      html's class, since the lid is js/opening.js's business.
      --------------------------------------------------------- */
-  var cue = document.getElementById('scroll-cue');
+  var arrow = document.getElementById('scroll-cue');
   var footer = document.querySelector('.footer');
-  if (cue) {
+  if (arrow) {
     var REST = 220, restT = 0, atEnd = false, root = document.documentElement;
     var cueShow = function () {
       if (atEnd || root.classList.contains('is-opening')) return;
-      cue.setAttribute('data-on', '');
+      arrow.setAttribute('data-on', '');
     };
     var cueRest = function (ms) { clearTimeout(restT); restT = setTimeout(cueShow, ms); };
     window.addEventListener('scroll', function () {
-      cue.removeAttribute('data-on');
+      arrow.removeAttribute('data-on');
       cueRest(REST);
     }, { passive: true });
     if (footer && 'IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         atEnd = entries[0].isIntersecting;
-        if (atEnd) { clearTimeout(restT); cue.removeAttribute('data-on'); }
+        if (atEnd) { clearTimeout(restT); arrow.removeAttribute('data-on'); }
         else cueRest(REST);
       }).observe(footer);
     }
