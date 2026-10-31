@@ -1,6 +1,7 @@
 /**
  * Receiver for the /dive reaction tab (js/dive-reactions.js).
- * Every Like / Love it / Not for me becomes one row in a Google Sheet.
+ * Every Like / Love it / Could be better becomes one row in a Google Sheet.
+ * ("Could be better" is stored as `meh`.)
  *
  * SETUP — about five minutes, once:
  *   1. Make a new Google Sheet, e.g. "neel-parikh.com — dive reactions".
@@ -76,7 +77,7 @@ function doGet() {
   });
   var lines = Object.keys(tally).sort().map(function (k) {
     var t = tally[k];
-    return k + '   like ' + t.like + '   love ' + t.love + '   not for me ' + t.meh;
+    return k + '   like ' + t.like + '   love ' + t.love + '   could be better ' + t.meh;
   });
   return ContentService.createTextOutput(
     rows.length + ' reactions\n\n' + (lines.join('\n') || 'none yet'));

@@ -1,6 +1,6 @@
 /* ============ THE REACTION TAB — /dive only ============
    After a reader leaves a section, a small tab slides up above the
-   Inflight button: "How did this land?" — Like / Love it / Not for me.
+   Inflight button: "How did this land?" — Like / Love it / Could be better.
    One tap, a short thanks with an optional Comment (which opens the
    Inflight panel), then it hides itself. Each checkpoint is asked once
    per visit. Loaded only by the review copy; scripts/build-dive.py adds
@@ -14,7 +14,7 @@
    the tab still works end to end; answers are only logged to the console.
 
    QUICK INPUT: A AND S
-     A   Like          S   Not for me
+     A   Like          S   Could be better
    While the tab is asking, A and S answer it, with the same pressed beat
    as a click. Any other time they react to whatever is under the cursor
    (mid-screen if there is no cursor), with a small burst there. Ignored
@@ -143,8 +143,8 @@
     meh:  '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M11 9V2.5h2.5V9H11zm0 0l-2.6 4.6c-.3.5-.9.6-1.3.3-.4-.3-.6-.8-.5-1.3L7 10H3.4c-.8 0-1.4-.7-1.2-1.5l1-4.8c.1-.7.7-1.2 1.4-1.2H11"/></svg>',
     x:    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>'
   };
-  var LABEL = { like: 'Like', love: 'Love it', meh: 'Not for me' };
-  var THANKS = { like: 'Nice — noted.', love: 'Made my day. Thank you!', meh: 'Fair. That helps me fix it.' };
+  var LABEL = { like: 'Like', love: 'Love it', meh: 'Could be better' };
+  var THANKS = { like: 'Nice — noted.', love: 'Made my day. Thank you!', meh: 'Thanks. That helps me fix it.' };
 
   var tab = document.createElement('div');
   tab.className = 'rx';
@@ -177,7 +177,7 @@
   var live = tab.querySelector('.rx__sr');
   var hint = tab.querySelector('.rx__hint');
   var finePointer = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (finePointer) hint.innerHTML = 'Quicker: <kbd>A</kbd> like <kbd>S</kbd> not for me, anywhere on the page.';
+  if (finePointer) hint.innerHTML = 'Quicker: <kbd>A</kbd> like, <kbd>S</kbd> could be better, anywhere on the page.';
   else hint.hidden = true;
 
   // ---------- state ----------
@@ -296,7 +296,7 @@
   }
 
   var RX_ICON = { like: ICON.like, meh: ICON.meh };
-  var RX_WORD = { like: 'Liked', meh: 'Not for me' };
+  var RX_WORD = { like: 'Liked', meh: 'Could be better' };
   function burst(kind, x, y) {
     var b = document.createElement('div');
     b.className = 'rx-burst rx-burst--' + kind;
@@ -382,10 +382,11 @@
   coach.className = 'rx-coach' + (finePointer ? '' : ' rx-coach--touch');
   coach.setAttribute('role', 'note');
   coach.innerHTML =
-    '<p class="rx-coach__t">Quick reactions</p>' +
+    '<p class="rx-coach__t">Hey!</p>' +
+    '<p class="rx-coach__b">I\u2019m trying to find out which parts of my site people like and which could be better.</p>' +
     (finePointer
-      ? '<p class="rx-coach__b">Press <kbd>A</kbd> to like, <kbd>S</kbd> for not for me. It reacts to whatever is under your cursor.</p>'
-      : '<p class="rx-coach__b">Tap ' + ICON.like + ' to like, ' + ICON.meh + ' for not for me. It reacts to what is on screen.</p>') +
+      ? '<p class="rx-coach__b">Point at anything and press <kbd>A</kbd> if you like it, or <kbd>S</kbd> if it could be improved. Thanks!</p>'
+      : '<p class="rx-coach__b">Tap ' + ICON.like + ' if you like what\u2019s on screen, or ' + ICON.meh + ' if it could be improved. Thanks!</p>') +
     '<button type="button" class="rx-coach__ok">Got it</button>';
   // once it has been used or dismissed it never comes back; left alone it
   // steps aside after COACH_FOR and tries again on the next visit
@@ -404,7 +405,7 @@
     quick.setAttribute('aria-label', 'Quick reaction to what is on screen');
     quick.innerHTML =
       '<button type="button" class="rx-quick__b" data-rx="like" aria-label="Like">' + ICON.like + '</button>' +
-      '<button type="button" class="rx-quick__b" data-rx="meh" aria-label="Not for me">' + ICON.meh + '</button>';
+      '<button type="button" class="rx-quick__b" data-rx="meh" aria-label="Could be better">' + ICON.meh + '</button>';
     quick.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('button');
       if (!b || blocked()) return;

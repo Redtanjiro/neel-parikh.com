@@ -1,6 +1,6 @@
 /* ============ THE REACTION TAB — /dive only ============
    A small panel that slides up above the Inflight button after a reader
-   leaves a section: Like / Love it / Not for me, one tap, then gone.
+   leaves a section: Like / Love it / Could be better, one tap, then gone.
    Loaded only by the review copy (scripts/build-dive.py adds it); the
    public pages never reference this file.
 
@@ -80,7 +80,10 @@
 }
 .rx__x:hover { background: rgba(255, 255, 255, .06); color: #fff; }
 
-.rx__picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+/* sized to their labels, sharing what is left: "Could be better" is the
+   longest and would not fit an equal third */
+.rx__picks { display: flex; gap: 6px; }
+.rx__pick { flex: 1 1 auto; }
 .rx__pick {
   height: 44px; padding: 0 6px;
   border: .5px solid var(--rx-line); border-radius: 12px;
@@ -196,6 +199,7 @@
 }
 .rx-coach__t { margin: 0 0 4px; font-size: 13px; font-weight: 510; color: #fff; }
 .rx-coach__b { margin: 0; color: #a8a8a8; }
+.rx-coach__b + .rx-coach__b { margin-top: 6px; }
 .rx-coach__b kbd {
   display: inline-block; min-width: 18px; height: 18px; padding: 0 5px; margin: 0 1px;
   border-radius: 4px; border: .5px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06);
