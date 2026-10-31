@@ -169,6 +169,79 @@
   100%    { opacity: 0; transform: translate(-50%, -26px); }
 }
 
+/* ---------- teaching it ----------
+   Desktop: a one-time card top right, under the nav (mid-right sat on
+   the end of the title card's longest line), saying what A and S do.
+   Phones: the two quick reactions as buttons, top right under the nav
+   bar (72px clears the home header and the case studies' project bar),
+   and the same card under them, pointing up. */
+.rx-coach {
+  position: fixed; right: 22px; top: 88px;
+  z-index: 2147482999;
+  width: 248px; box-sizing: border-box;
+  padding: 14px 14px 12px; border-radius: 16px;
+  background: #161616; border: .5px solid rgba(255, 255, 255, .12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 12px 32px -8px rgba(0, 0, 0, .45), 0 1px 2px rgba(0, 0, 0, .3);
+  color: #e7e7e7;
+  font: 450 12px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-8px);
+  transition: transform 380ms cubic-bezier(.22, 1, .36, 1), opacity 240ms ease, visibility 0s linear 380ms;
+}
+.rx-coach[data-show] {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: none;
+  transition: transform 380ms cubic-bezier(.22, 1, .36, 1), opacity 240ms ease, visibility 0s;
+}
+.rx-coach__t { margin: 0 0 4px; font-size: 13px; font-weight: 510; color: #fff; }
+.rx-coach__b { margin: 0; color: #a8a8a8; }
+.rx-coach__b kbd {
+  display: inline-block; min-width: 18px; height: 18px; padding: 0 5px; margin: 0 1px;
+  border-radius: 4px; border: .5px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06);
+  font: 510 11px/18px Inter, ui-sans-serif, system-ui, sans-serif; color: #fff; text-align: center;
+}
+.rx-coach__b svg { width: 14px; height: 14px; vertical-align: -2px; color: #fff; }
+.rx-coach__ok {
+  margin-top: 10px; height: 28px; padding: 0 12px; border: 0; border-radius: 999px;
+  background: #313131; color: #fff; font: 510 12px/1 Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer;
+}
+.rx-coach__ok:hover { background: #3d3d3d; }
+.rx-coach__ok:focus-visible, .rx-quick__b:focus-visible { outline: 2px solid #e7e7e7; outline-offset: 2px; }
+
+.rx-quick {
+  position: fixed; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 72px);
+  z-index: 2147482999;
+  display: flex; gap: 8px;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 240ms ease, visibility 0s linear 240ms;
+}
+.rx-quick[data-show] { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 240ms ease, visibility 0s; }
+.rx-quick__b {
+  width: 44px; height: 44px; padding: 0; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #161616; border: .5px solid rgba(255, 255, 255, .12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 8px 20px -6px rgba(0, 0, 0, .55);
+  color: #fff; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 160ms ease;
+}
+.rx-quick__b:active { transform: scale(.94); }
+.rx-quick__b svg { width: 18px; height: 18px; }
+
+.rx-coach--touch {
+  top: calc(env(safe-area-inset-top, 0px) + 72px + 44px + 12px); right: 16px;
+  width: min(248px, calc(100vw - 32px));
+  transform: translateY(-8px);
+}
+.rx-coach--touch[data-show] { transform: none; }
+.rx-coach--touch::before {
+  content: ''; position: absolute; top: -5px; right: 42px;
+  width: 10px; height: 10px; background: #161616;
+  border-left: .5px solid rgba(255, 255, 255, .12); border-top: .5px solid rgba(255, 255, 255, .12);
+  transform: rotate(45deg);
+}
+
 .rx__sr {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -186,4 +259,9 @@
   .rx-burst__dot, .rx-burst__word { animation-name: rx-fade; }
   @keyframes rx-fade { 0% { opacity: 0; } 20%, 70% { opacity: 1; } 100% { opacity: 0; } }
   .rx-burst__word { transform: translateX(-50%); }
+  .rx-coach, .rx-coach[data-show] { transition: opacity 160ms linear, visibility 0s linear 160ms; }
+  .rx-coach[data-show] { transition: opacity 160ms linear, visibility 0s; }
+  .rx-coach { transform: none; }
+  .rx-coach--touch, .rx-coach--touch[data-show] { transform: none; }
+  .rx-quick__b, .rx-quick__b:active { transform: none; transition: none; }
 }

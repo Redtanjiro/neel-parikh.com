@@ -28,6 +28,13 @@
    There are no tap or double-click gestures: the page's own clicks, text
    selection and double-tap zoom are left exactly as they are.
 
+   TEACHING IT
+   Desktop: a small card on the right says what A and S do, once per
+   browser, and goes as soon as a key is used or it is dismissed. Phones
+   have no keys, so they get the two quick reactions as buttons at the top
+   right, under the nav — they answer the tab when it is asking, and react
+   to what is on screen otherwise — with the same card under them once.
+
    WHEN IT ASKS
    A checkpoint fires once the reader has scrolled past it — the section
    has left the top half of the screen — so people react to something they
@@ -317,7 +324,7 @@
     send(d.cp, kind, { target: d.target, via: via });
     burst(kind, x, y);
     live.textContent = RX_WORD[kind] + ': ' + d.target.replace(/^\w+: /, '');
-    tab.setAttribute('data-taught', '');
+    learn();
     if (d.cp.key !== 'page') {
       mark(d.cp);
       if (current === d.cp && !tab.hasAttribute('data-picked')) hide();
@@ -347,7 +354,7 @@
     var kind = k === 'a' ? 'like' : 'meh';
     // the tab is asking: the key is the answer
     if (current && !tab.hasAttribute('data-picked')) {
-      tab.setAttribute('data-taught', '');
+      learn();
       pick(kind, 'key ' + k.toUpperCase());
       return;
     }
@@ -361,12 +368,78 @@
     react(kind, x, y, node, 'key ' + k.toUpperCase());
   });
 
+  // ---------- teaching it: a one-time card, and the phone's own buttons ----------
+  var TAUGHT = 'np:rx:taught';
+  function taught() { try { return localStorage.getItem(TAUGHT) === '1'; } catch (e) { return false; } }
+  function learn() {
+    try { localStorage.setItem(TAUGHT, '1'); } catch (e) {}
+    tab.setAttribute('data-taught', '');
+    coachGone = true;
+    coach.removeAttribute('data-show');
+  }
+
+  var coach = document.createElement('div');
+  coach.className = 'rx-coach' + (finePointer ? '' : ' rx-coach--touch');
+  coach.setAttribute('role', 'note');
+  coach.innerHTML =
+    '<p class="rx-coach__t">Quick reactions</p>' +
+    (finePointer
+      ? '<p class="rx-coach__b">Press <kbd>A</kbd> to like, <kbd>S</kbd> for not for me. It reacts to whatever is under your cursor.</p>'
+      : '<p class="rx-coach__b">Tap ' + ICON.like + ' to like, ' + ICON.meh + ' for not for me. It reacts to what is on screen.</p>') +
+    '<button type="button" class="rx-coach__ok">Got it</button>';
+  // once it has been used or dismissed it never comes back; left alone it
+  // steps aside after COACH_FOR and tries again on the next visit
+  var coachGone = taught(), coachAt = 0, COACH_FOR = 14000;
+  coach.querySelector('.rx-coach__ok').addEventListener('click', function () {
+    try { localStorage.setItem(TAUGHT, '1'); } catch (e) {}
+    coachGone = true;
+    coach.removeAttribute('data-show');
+  });
+
+  var quick = null;
+  if (!finePointer) {
+    quick = document.createElement('div');
+    quick.className = 'rx-quick';
+    quick.setAttribute('role', 'group');
+    quick.setAttribute('aria-label', 'Quick reaction to what is on screen');
+    quick.innerHTML =
+      '<button type="button" class="rx-quick__b" data-rx="like" aria-label="Like">' + ICON.like + '</button>' +
+      '<button type="button" class="rx-quick__b" data-rx="meh" aria-label="Not for me">' + ICON.meh + '</button>';
+    quick.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('button');
+      if (!b || blocked()) return;
+      var kind = b.getAttribute('data-rx');
+      learn();
+      if (current && !tab.hasAttribute('data-picked')) { pick(kind, 'button'); return; }
+      var x = window.innerWidth / 2, y = window.innerHeight / 2;
+      react(kind, x, y, document.elementFromPoint(x, y), 'button');
+    });
+  }
+
+  // both wait for the page to be the reader's: never over the opening or
+  // the Inflight panel, and the card a beat after that
+  function teach() {
+    var ok = !blocked();
+    if (quick) {
+      if (ok) quick.setAttribute('data-show', '');
+      else quick.removeAttribute('data-show');
+    }
+    if (coachGone) return;
+    if (!ok) { coach.removeAttribute('data-show'); return; }
+    var now = Date.now();
+    if (!coachAt) { coachAt = now + 1200; setTimeout(teach, 1250); }
+    if (now < coachAt) return;
+    if (now - coachAt > COACH_FOR) { coachGone = true; coach.removeAttribute('data-show'); return; }
+    coach.setAttribute('data-show', '');
+  }
+
   // ---------- watching the scroll ----------
   function blocked() {
     return root.classList.contains('is-opening') || panelOpen();
   }
 
   function check() {
+    teach();
     if (blocked()) {
       if (current && !tab.hasAttribute('data-picked') && panelOpen()) hide();
       return;
@@ -406,9 +479,15 @@
 
   function start() {
     document.body.appendChild(tab);
+    document.body.appendChild(coach);
+    if (quick) document.body.appendChild(quick);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
-    // the opening ending, and the panel closing, are not scroll events
+    // the opening ending, and the panel closing, are not scroll events: the
+    // first is seen the moment html loses .is-opening, the second on a tick
+    if ('MutationObserver' in window) {
+      new MutationObserver(onScroll).observe(root, { attributes: true, attributeFilter: ['class'] });
+    }
     setInterval(check, 1000);
     check();
   }
