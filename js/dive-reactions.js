@@ -125,9 +125,20 @@
     var host = document.getElementById('inflight-widget-host');
     return host && host.shadowRoot;
   }
+  /* Inflight's panel is a .widget-panel that never leaves the DOM: closed,
+     it is transparent and takes no pointer (and an "Open panel" button
+     appears). Checked by how it looks, since it carries no open-state
+     attribute; the older dialog markup is kept as a fallback. */
   function panelOpen() {
     var sr = inflight();
-    return !!(sr && sr.querySelector('[role="dialog"][data-state="open"]'));
+    if (!sr) return false;
+    var p = sr.querySelector('.widget-panel');
+    if (p) {
+      var st = getComputedStyle(p), r = p.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 && st.display !== 'none' && st.visibility !== 'hidden' &&
+             parseFloat(st.opacity) > 0.05 && st.pointerEvents !== 'none';
+    }
+    return !!sr.querySelector('[role="dialog"][data-state="open"]');
   }
   function openPanel() {
     var sr = inflight();
