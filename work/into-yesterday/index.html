@@ -695,6 +695,7 @@ footer{border-top:1px solid var(--rule)}
   .meter i{transition:none}
 }
 </style>
+<link rel="stylesheet" href="../../css/case-index.css">
 </head>
 
 <body>
@@ -721,7 +722,7 @@ footer{border-top:1px solid var(--rule)}
 <main id="main" tabindex="-1">
 
 <!-- ── 01 ─────────────────────────────────────────────────────── -->
-<section class="statement statement--dim" data-reveal>
+<section data-index="Intro" class="statement statement--dim" data-reveal>
   <img class="statement__bg" data-parallax
        src="img/now.jpg" alt="" aria-hidden="true" width="1182" height="975">
   <div class="statement__body">
@@ -732,7 +733,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 03 · the problem ───────────────────────────────────────── -->
-<section class="dossier" data-reveal>
+<section data-index="The problem" class="dossier" data-reveal>
   <div class="dossier__head">
     <h2 class="h-sec rise">The problem of building a feeling, not a picture.</h2>
   </div>
@@ -775,7 +776,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 04 · the answer ────────────────────────────────────────── -->
-<section class="row" data-reveal>
+<section data-index="The answer" class="row" data-reveal>
   <h2 class="h-sec rise">How did Into Yesterday solve this?</h2>
   <div class="row__body">
     <p class="em rise d1">Nothing in the maze is a display. Everything is a dial.</p>
@@ -795,7 +796,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 05 · the role ──────────────────────────────────────────── -->
-<section class="row" data-reveal>
+<section data-index="The role" class="row" data-reveal>
   <h2 class="h-sec rise">What I did</h2>
   <div class="row__body">
     <p class="say rise d1">Mine end to end &mdash; the concept, the site logic, the
@@ -806,7 +807,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 06 · the thesis ────────────────────────────────────────── -->
-<section class="thesis" data-reveal>
+<section data-index="The thesis" class="thesis" data-reveal>
   <div class="thesis__frame">
     <h2><span class="ln"><i>So how does a</i></span> <span class="ln"><i style="--d:90ms">maze walk you</i></span> <span class="ln"><i style="--d:180ms">back into a</i></span> <span class="ln"><i style="--d:270ms">summer?</i></span></h2>
     <span class="wire wire--h" style="--wd:120ms;left:0;top:0;width:100%"></span>
@@ -816,7 +817,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 07 · the walkthrough ───────────────────────────────────── -->
-<section class="trace">
+<section data-index="The walkthrough" class="trace">
   <div class="trace__box" data-reveal style="--h:50.9%">
     <span class="wire wire--v" style="--wd:0ms;left:79.6%;top:0;height:47.7%"></span>
     <span class="node" style="--wd:760ms;left:79.6%;top:47.7%"></span>
@@ -874,7 +875,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 08 · the four zones ────────────────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="The four zones" class="step" data-reveal>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
   <div class="step__grid">
@@ -916,7 +917,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 09 · the sound ─────────────────────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="The sound" class="step" data-reveal>
   <figure class="blobfig blobfig--step" data-pose="happy" aria-hidden="true"><canvas></canvas></figure>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
@@ -942,7 +943,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 10 · throughput ────────────────────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="Throughput" class="step" data-reveal>
   <figure class="blobfig blobfig--step" data-pose="tired" aria-hidden="true"><canvas></canvas></figure>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
@@ -976,7 +977,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 12 · making it badly ───────────────────────────────────── -->
-<section class="turn" data-reveal>
+<section data-index="Making it badly" class="turn" data-reveal>
   <figure class="blobfig blobfig--turn" data-pose="stressed" aria-hidden="true"><canvas></canvas></figure>
   <span class="turn__rule"></span>
   <div>
@@ -1064,7 +1065,7 @@ footer{border-top:1px solid var(--rule)}
 </div>
 
 <!-- ── 13 · the close ─────────────────────────────────────────── -->
-<div class="close">
+<div data-index="The close" class="close">
   <section class="row" data-reveal>
     <h2 class="h-sec rise">What went over</h2>
     <figure class="blobfig blobfig--over" data-pose="happy" aria-hidden="true"><canvas></canvas></figure>
@@ -1095,7 +1096,7 @@ footer{border-top:1px solid var(--rule)}
 </main>
 
 <!-- ── 14 · credits ───────────────────────────────────────────── -->
-<footer>
+<footer data-index="Credits">
   <dl class="credits" data-reveal>
     <div class="rise"><dt>Role</dt><dd>Concept, spatial design, 3D, sound &mdash; solo</dd></div>
     <div class="rise"><dt>Context</dt><dd>UNSW, Term 2 2025 &mdash; High Distinction</dd></div>
@@ -1449,5 +1450,6 @@ addEventListener('resize', onScroll);
 onScroll();
 })();
 </script>
+<script src="../../js/case-index.js" defer></script>
 </body>
 </html>

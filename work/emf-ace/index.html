@@ -600,18 +600,64 @@ footer{border-top:1px solid var(--rule)}
   font-weight:500;letter-spacing:.11em;text-transform:uppercase}
 @media (hover:hover){ .lightbox__close:hover{border-color:var(--accent)} }
 
-/* ── EMF · the lockup, cropped out of four pieces ────────────── */
-.plate--lockup img{transform:scale(var(--z,2.6));transform-origin:100% 0}
+/* ── EMF · the lockup, marked on four whole pieces ──────────── */
+.plate--lockup .lk{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:var(--h);
+  box-sizing:border-box;border:2px dashed #fff;border-radius:8px;pointer-events:none;opacity:0;
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.35)transform:scale(1.12);
+  transition:opacity 500ms var(--ease-out),transform 700ms var(--ease-out)}
+.is-in .plate--lockup .lk{opacity:1;transform:none}
+.plates figure:nth-child(2) .lk{transition-delay:120ms}
+.plates figure:nth-child(3) .lk{transition-delay:240ms}
+.plates figure:nth-child(4) .lk{transition-delay:360ms}
 
-/* ── EMF · the feed, running ─────────────────────────────────── */
-.feed{position:relative;margin:0 auto;width:min(100%,340px);aspect-ratio:9/16;
-  overflow:hidden;border-radius:22px;border:1px solid var(--rule);background:#0b0b0b}
-.feed img{position:absolute;left:0;top:0;width:100%;height:auto;
-  animation:feed 48s ease-in-out infinite alternate}
-@media (hover:hover){ .feed:hover img{animation-play-state:paused} }
-.feed.is-paused img{animation-play-state:paused}
+/* ── EMF · the feed, on a phone ──────────────────────────────── */
+.feed{position:relative;margin:0 auto;width:min(100%,320px);aspect-ratio:9/19.2;
+  padding:11px;border-radius:52px;background:#151515;
+  box-shadow:inset 0 0 0 1px #2e2e2e,inset 0 0 0 4px #0b0b0b,0 30px 80px rgba(0,0,0,.55)}
+.feed::before,.feed::after{content:'';position:absolute;right:-3px;width:3px;border-radius:0 2px 2px 0;background:#222}
+.feed::before{top:22%;height:11%}
+.feed::after{top:36%;height:7%;left:-3px;right:auto;border-radius:2px 0 0 2px}
+.phone__screen{position:relative;height:100%;overflow:hidden;border-radius:41px;background:#000;
+  container-type:inline-size;display:flex;flex-direction:column}
+.phone__island{position:absolute;top:10px;left:50%;width:31%;height:27px;margin-left:-15.5%;
+  border-radius:14px;background:#000;box-shadow:0 0 0 1px #111;z-index:3}
+.phone__status{flex:none;display:flex;justify-content:space-between;align-items:center;
+  height:46px;padding:4px 26px 0 30px;font:600 13px/1 var(--body);color:#fff;letter-spacing:0}
+.phone__status svg{display:block;height:11px;width:auto}
+.phone__bar{flex:none;display:flex;justify-content:space-between;align-items:center;
+  height:42px;padding:0 14px;border-bottom:1px solid #1d1d1d;font:600 15px/1 var(--body);color:#fff}
+.phone__bar svg,.post__act svg{display:block;width:21px;height:21px;fill:none;stroke:#fff;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.phone__bar span{display:flex;gap:16px}
+.phone__view{position:relative;flex:1 1 auto;overflow:hidden}
+.feed__track{--post:calc(100cqw + 104px);animation:feed 44s cubic-bezier(.6,0,.3,1) infinite alternate}
+.feed.is-paused .feed__track{animation-play-state:paused}
+@media (hover:hover){ .feed:hover .feed__track{animation-play-state:paused} }
+.post{height:var(--post);display:flex;flex-direction:column}
+.post__head{flex:none;display:flex;align-items:center;gap:9px;height:48px;padding:0 12px;
+  font:600 12.5px/1.15 var(--body);color:#fff}
+.post__head small{display:block;font-weight:400;font-size:11px;color:#a8a8a8}
+.post__av{flex:none;width:30px;height:30px;border-radius:50%;padding:2px;
+  background:linear-gradient(135deg,#f2c14e,#a25ad9)}
+.post__av::after{content:'';display:block;width:100%;height:100%;border-radius:50%;
+  border:2px solid #000;background:#2a1748 url(img/emf-countdown-oneweek.jpg) 96% 4%/320% auto}
+.post__dots{margin-left:auto;color:#fff;font-size:16px;letter-spacing:1px;line-height:1}
+.post__img{flex:none;aspect-ratio:1/1;width:100%;background:#111 url(img/feed.jpg) 0 0/100% 700% no-repeat;
+  background-position:0 calc(var(--i) * 100% / 6)}
+.post__act{flex:none;display:flex;gap:14px;padding:10px 12px 6px}
+.post__act svg:last-child{margin-left:auto}
+.post__cap{margin:0;padding:0 12px;font:400 12px/1.35 var(--body);color:#e8e8e8;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post__cap b{font-weight:600;margin-right:5px}
+.feed__end{height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  font:400 12px/1.3 var(--body);color:#a8a8a8;border-top:1px solid #1d1d1d}
+.feed__end b{color:#fff;font-weight:600;font-size:13px}
+.feed__end svg{width:34px;height:34px;fill:none;stroke:var(--accent);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.phone__home{position:absolute;bottom:7px;left:50%;width:36%;height:5px;margin-left:-18%;
+  border-radius:3px;background:rgba(255,255,255,.85);z-index:3}
 .feed__foot{display:flex;align-items:center;justify-content:center;gap:16px;
-  margin-top:clamp(10px,1.2vw,16px)}
+  margin-top:clamp(18px,2vw,26px)}
 .feed__foot .plate__note{margin:0}
 .feed__btn{min-height:44px;min-width:76px;padding:0 16px;border:1px solid var(--rule);
   border-radius:22px;background:transparent;color:var(--ink);cursor:pointer;
@@ -619,10 +665,23 @@ footer{border-top:1px solid var(--rule)}
   text-transform:uppercase;transition:border-color 200ms ease}
 @media (hover:hover){ .feed__btn:hover{border-color:var(--accent)} }
 .feed__btn[aria-pressed="true"]{border-color:var(--accent)}
-/* the feed's first tile is the desert teaser, which the comparison below
-   shows in full; the feed starts one tile in so it isn't seen twice */
-.feed img{transform:translateY(-14.3%)}
-@keyframes feed{from{transform:translateY(-14.3%)}to{transform:translateY(-74.5%)}}
+/* thumbed, a post at a time: holds on each, then flicks to the next */
+@keyframes feed{
+  0%{transform:translateY(calc(var(--post) * -0))}
+  10.64%{transform:translateY(calc(var(--post) * -0))}
+  14.89%{transform:translateY(calc(var(--post) * -1))}
+  25.53%{transform:translateY(calc(var(--post) * -1))}
+  29.79%{transform:translateY(calc(var(--post) * -2))}
+  40.43%{transform:translateY(calc(var(--post) * -2))}
+  44.68%{transform:translateY(calc(var(--post) * -3))}
+  55.32%{transform:translateY(calc(var(--post) * -3))}
+  59.57%{transform:translateY(calc(var(--post) * -4))}
+  70.21%{transform:translateY(calc(var(--post) * -4))}
+  74.47%{transform:translateY(calc(var(--post) * -5))}
+  85.11%{transform:translateY(calc(var(--post) * -5))}
+  89.36%{transform:translateY(calc(var(--post) * -6))}
+  100%{transform:translateY(calc(var(--post) * -6))}
+}
 
 /* ── EMF · draft against final, dragged ──────────────────────── */
 .compare{position:relative;margin:0;aspect-ratio:1/1;overflow:hidden;
@@ -631,15 +690,21 @@ footer{border-top:1px solid var(--rule)}
 .compare__top{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--p)) 0 0)}
 .compare__line{position:absolute;top:0;bottom:0;left:var(--p);width:2px;margin-left:-1px;
   background:var(--accent);pointer-events:none}
-.compare__line::after{content:'';position:absolute;top:50%;left:50%;width:34px;height:34px;
+.compare__line::after{content:'';position:absolute;top:86%;left:50%;width:34px;height:34px;
   border-radius:50%;border:2px solid var(--accent);background:rgba(0,0,0,.55);
   transform:translate(-50%,-50%)}
 .compare input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
 .compare:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:4px}
-.compare__tag{position:absolute;top:12px;font-family:var(--body);font-size:var(--t-label);
-  font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--ink);
-  background:rgba(0,0,0,.6);padding:6px 9px;pointer-events:none}
-.compare__tag--l{left:12px}.compare__tag--r{right:12px}
+.compare__ring{position:absolute;left:10.5%;top:50.5%;width:27.5%;height:20%;
+  border:2px dashed var(--accent);border-radius:8px;pointer-events:none}
+.compare__ring::before{content:'The dates';position:absolute;left:-2px;bottom:calc(100% + 6px);
+  font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;color:#000;background:var(--accent);padding:4px 7px;border-radius:3px;white-space:nowrap}
+.compare__tags{display:flex;justify-content:space-between;gap:12px;margin-top:12px;
+  font-family:var(--body);font-size:var(--t-label);font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-70)}
+.compare__tags b{font-weight:500;color:var(--ink)}
+.compare + .compare__tags + .plate__note{text-align:center}
 
 /* ── Superfood · the two decks, as tables ────────────────────── */
 .ledger{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
@@ -686,7 +751,8 @@ footer{border-top:1px solid var(--rule)}
   .flow ol{grid-template-columns:repeat(var(--n,4),minmax(0,1fr))}
 }
 @media (prefers-reduced-motion:reduce){
-  .feed img{animation:none}
+  .feed__track{animation:none}
+  .phone__view{overflow-y:auto;overscroll-behavior:contain}
   .feed__btn{display:none}
   .hero-cast li{transform:none;opacity:1;transition:none}
   .statement--cast::before{animation:none}
@@ -695,6 +761,7 @@ footer{border-top:1px solid var(--rule)}
   .meter i{transition:none}
 }
 </style>
+<link rel="stylesheet" href="../../css/case-index.css">
 </head>
 
 <body>
@@ -721,7 +788,7 @@ footer{border-top:1px solid var(--rule)}
 <main id="main" tabindex="-1">
 
 <!-- ── 01 ─────────────────────────────────────────────────────── -->
-<section class="statement statement--dim" data-reveal>
+<section data-index="Intro" class="statement statement--dim" data-reveal>
   <img class="statement__bg" data-parallax
        src="img/hero-skyline.jpg" alt="" aria-hidden="true" width="2069" height="1382">
   <div class="statement__body">
@@ -732,7 +799,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 03 · the problem ───────────────────────────────────────── -->
-<section class="dossier" data-reveal>
+<section data-index="The problem" class="dossier" data-reveal>
   <div class="dossier__head">
     <h2 class="h-sec rise">The problem of a thousand pieces and twelve approvers.</h2>
   </div>
@@ -772,7 +839,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 04 · the answer ────────────────────────────────────────── -->
-<section class="row" data-reveal>
+<section data-index="The answer" class="row" data-reveal>
   <h2 class="h-sec rise">How did EMF ACE solve this?</h2>
   <div class="row__body">
     <p class="em rise d1">Build a system that absorbs the chaos.</p>
@@ -792,7 +859,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 05 · the role ──────────────────────────────────────────── -->
-<section class="row" data-reveal>
+<section data-index="The role" class="row" data-reveal>
   <h2 class="h-sec rise">What I did</h2>
   <figure class="blobfig blobfig--head" data-pose="working" aria-hidden="true"><canvas></canvas></figure>
   <div class="row__body">
@@ -805,7 +872,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 06 · the thesis ────────────────────────────────────────── -->
-<section class="thesis" data-reveal>
+<section data-index="The thesis" class="thesis" data-reveal>
   <div class="thesis__frame">
     <h2><span class="ln"><i>So how does one</i></span> <span class="ln"><i style="--d:90ms">lockup hold a</i></span> <span class="ln"><i style="--d:180ms">thousand pieces</i></span> <span class="ln"><i style="--d:270ms">together?</i></span></h2>
     <span class="wire wire--h" style="--wd:120ms;left:0;top:0;width:100%"></span>
@@ -815,7 +882,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 07 · the walkthrough ───────────────────────────────────── -->
-<section class="trace">
+<section data-index="The walkthrough" class="trace">
   <div class="trace__box" data-reveal style="--h:50.9%">
     <span class="wire wire--v" style="--wd:0ms;left:79.6%;top:0;height:47.7%"></span>
     <span class="node" style="--wd:760ms;left:79.6%;top:47.7%"></span>
@@ -838,16 +905,16 @@ footer{border-top:1px solid var(--rule)}
       <div><b>Milestone</b><span>500 registered, said in gold.</span></div>
     </div>
     <div class="gallery" style="--n:4">
-      <figure><div class="plate" style="--ar:1"><img src="img/emf-countdown-oneweek.png"
-        alt="One week to go countdown creative." width="491" height="491" loading="lazy" decoding="async"></div></figure>
-      <figure><div class="plate" style="--ar:1"><img src="img/emf-panel-global-design-fusion.png"
-        alt="Speaker panel creative for the Global Design Fusion session." width="462" height="462" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="img/emf-countdown-oneweek.jpg"
+        alt="One week to go countdown creative." width="1200" height="1200" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="img/emf-panel-global-design-fusion.jpg"
+        alt="Speaker panel creative for the Global Design Fusion session." width="1200" height="1200" loading="lazy" decoding="async"></div></figure>
       <figure><div class="plate" style="--ar:1"><img src="img/emf-venue-ritz-carlton.png"
         alt="Ritz-Carlton venue announcement creative." width="516" height="516" loading="lazy" decoding="async"></div></figure>
-      <figure><div class="plate" style="--ar:1"><img src="img/emf-500-registered.png"
-        alt="500 registered milestone creative." width="478" height="478" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate" style="--ar:1"><img src="img/emf-500-registered.jpg"
+        alt="500 registered milestone creative." width="1200" height="1200" loading="lazy" decoding="async"></div></figure>
     </div>
-    <figcaption class="plate__note">Four of the thousand-odd &mdash; every one of them made to
+    <p class="plate__note">Four of the thousand-odd &mdash; every one of them made to
       the same rules</p>
   </div>
 
@@ -864,9 +931,44 @@ footer{border-top:1px solid var(--rule)}
   </div>
 
   <div class="plates">
-    <div class="feed">
-      <img src="img/feed.jpg"
-           alt="The ACE creatives running as a social feed — teasers, countdowns, panels and milestones, one after another." width="900" height="6300" loading="lazy" decoding="async">
+    <div class="feed" role="img" aria-label="The ACE creatives running as a social feed on a phone — teasers, countdowns, panels and milestones, one after another.">
+      <div class="phone__screen" aria-hidden="true">
+        <span class="phone__island"></span>
+        <div class="phone__status"><span>9:41</span><svg viewBox="0 0 46 12"><g fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><rect x="22" y="1" width="21" height="10.5" rx="3" fill="none" stroke="#fff" stroke-opacity=".5"/><rect x="24" y="3" width="15" height="6.5" rx="1.6"/><rect x="44" y="4" width="1.6" height="4" rx=".8" fill-opacity=".5"/></g></svg></div>
+        <div class="phone__bar">Feed<span><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg></span></div>
+        <div class="phone__view"><div class="feed__track">
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:0"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Abu Dhabi &mdash; 26, 27, 28 July. Save the dates.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:1"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Your ride to a magical world of opportunities. Stay tuned.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:2"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>The countdown begins &mdash; one week to go.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:3"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Early bird registration closes 8 June.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:4"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Global Design Fusion &mdash; meet the panel.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:5"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Beyond luxury, at the Ritz-Carlton.</p></article>
+          <article class="post"><div class="post__head"><span class="post__av"></span><span>EMF Global ACE<small>Abu Dhabi</small></span><span class="post__dots">&middot;&middot;&middot;</span></div>
+            <div class="post__img" style="--i:6"></div>
+            <div class="post__act"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></div>
+            <p class="post__cap"><b>EMF Global ACE</b>Thank you &mdash; 500+ registered.</p></article>
+          <div class="feed__end"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg><b>You&rsquo;re all caught up</b>Seven of the thousand-plus</div>
+        </div></div>
+        <span class="phone__home"></span>
+      </div>
     </div>
     <div class="feed__foot">
       <p class="plate__note">The creatives as a feed</p>
@@ -876,7 +978,7 @@ footer{border-top:1px solid var(--rule)}
 </section>
 
 <!-- ── 08 · the rule ──────────────────────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="The rule" class="step" data-reveal>
   <figure class="blobfig blobfig--step" data-pose="thinking" aria-hidden="true"><canvas></canvas></figure>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
@@ -901,22 +1003,22 @@ footer{border-top:1px solid var(--rule)}
   </div>
   <div class="plates">
     <div class="gallery" style="--n:4">
-      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-countdown-oneweek.png"
-        alt="The top-right corner of the one-week countdown: the ace wordmark, Abu Dhabi and 26, 27, 28 July." width="491" height="491" loading="lazy" decoding="async"></div></figure>
-      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-panel-global-design-fusion.png"
-        alt="The same corner of the speaker panel creative, with the identical lockup." width="462" height="462" loading="lazy" decoding="async"></div></figure>
-      <figure><div class="plate plate--lockup" style="--ar:1;--z:2.05"><img src="img/emf-countdown-hourglass.png"
-        alt="The same corner of the hourglass countdown, with the identical lockup." width="513" height="513" loading="lazy" decoding="async"></div></figure>
-      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-500-registered.png"
-        alt="The same corner of the 500 registered milestone, with the identical lockup." width="478" height="478" loading="lazy" decoding="async"></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-countdown-oneweek.jpg"
+        alt="The one-week countdown, with its two lockup corners marked: the EMF Global 11 Glorious Years mark top left, and the ace wordmark, Abu Dhabi and 26, 27, 28 July top right." width="1200" height="1200" loading="lazy" decoding="async"><i class="lk" style="--x:1.2%;--y:1.2%;--w:17%;--h:19%"></i><i class="lk" style="--x:79%;--y:1.2%;--w:19.8%;--h:19%"></i></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-panel-global-design-fusion.jpg"
+        alt="The speaker panel creative, with the identical lockup corners marked." width="1200" height="1200" loading="lazy" decoding="async"><i class="lk" style="--x:1.2%;--y:1.2%;--w:17%;--h:19%"></i><i class="lk" style="--x:80%;--y:1.2%;--w:18.8%;--h:19%"></i></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-countdown-hourglass.jpg"
+        alt="The hourglass countdown, with the identical lockup corners marked." width="1200" height="1200" loading="lazy" decoding="async"><i class="lk" style="--x:3%;--y:1.2%;--w:19%;--h:20%"></i><i class="lk" style="--x:72%;--y:1.5%;--w:26.8%;--h:26%"></i></div></figure>
+      <figure><div class="plate plate--lockup" style="--ar:1"><img src="img/emf-500-registered.jpg"
+        alt="The 500 registered milestone, with the identical lockup corners marked." width="1200" height="1200" loading="lazy" decoding="async"><i class="lk" style="--x:1.5%;--y:1.2%;--w:16.5%;--h:19%"></i><i class="lk" style="--x:79.5%;--y:1.2%;--w:19.3%;--h:19%"></i></div></figure>
     </div>
-    <p class="plate__note">The same corner of four different pieces &mdash; the lockup
+    <p class="plate__note">Four different pieces, the same two corners &mdash; the lockup
       never moves</p>
   </div>
 </section>
 
 <!-- ── 09 · generative ────────────────────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="Generative" class="step" data-reveal>
   <figure class="blobfig blobfig--under" data-pose="laptop" aria-hidden="true"><canvas></canvas></figure>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
@@ -942,18 +1044,18 @@ footer{border-top:1px solid var(--rule)}
   </div>
   <div class="plates">
     <div class="gallery" style="--n:2">
-      <figure><div class="plate" style="--ar:1"><img src="img/emf-teaser-magic-carpet.png"
-        alt="Magic carpet teaser creative — one image and four words, inside the lockup." width="430" height="430" loading="lazy" decoding="async"></div>
-        <p class="plate__note">Teaser &mdash; one image, four words</figcaption></figure>
-      <figure><div class="plate" style="--ar:1"><img src="img/emf-countdown-hourglass.png"
-        alt="Hourglass countdown creative." width="513" height="513" loading="lazy" decoding="async"></div>
+      <figure><div class="plate" style="--ar:1"><img src="img/emf-teaser-magic-carpet.jpg"
+        alt="Magic carpet teaser creative — one image and four words, inside the lockup." width="1200" height="1200" loading="lazy" decoding="async"></div>
+        <figcaption class="plate__note">Teaser &mdash; one image, four words</figcaption></figure>
+      <figure><div class="plate" style="--ar:1"><img src="img/emf-countdown-hourglass.jpg"
+        alt="Hourglass countdown creative." width="1200" height="1200" loading="lazy" decoding="async"></div>
         <figcaption class="plate__note">Countdown &mdash; early bird closes</figcaption></figure>
     </div>
   </div>
 </section>
 
 <!-- ── 10 · the one that got caught ───────────────────────────── -->
-<section class="step" data-reveal>
+<section data-index="The one that got caught" class="step" data-reveal>
   <figure class="blobfig blobfig--step" data-pose="confused" aria-hidden="true"><canvas></canvas></figure>
   <span class="wire wire--v" style="--wd:0ms"></span>
   <span class="node" style="--wd:620ms"></span>
@@ -970,20 +1072,20 @@ footer{border-top:1px solid var(--rule)}
   </div>
   <div class="plates plates--narrow">
     <div class="compare" data-compare>
-      <img src="img/emf-teaser-desert-final.png" alt="The corrected teaser, dated 26, 27 and 28 July." width="461" height="461" loading="lazy" decoding="async">
-      <div class="compare__top"><img src="img/emf-teaser-desert-draft.png" alt="The draft teaser, wrongly dated 20 to 21 July." width="461" height="461" loading="lazy" decoding="async"></div>
+      <img src="img/emf-teaser-desert-final.jpg" alt="The corrected teaser, dated 26, 27 and 28 July." width="1200" height="1200" loading="lazy" decoding="async">
+      <div class="compare__top"><img src="img/emf-teaser-desert-draft.jpg" alt="The draft teaser, wrongly dated 20 to 21 July." width="1200" height="1200" loading="lazy" decoding="async"></div>
+      <span class="compare__ring" aria-hidden="true"></span>
       <span class="compare__line"></span>
-      <span class="compare__tag compare__tag--l">Draft &mdash; 20&ndash;21</span>
-      <span class="compare__tag compare__tag--r">Final &mdash; 26&middot;27&middot;28</span>
-      <input type="range" min="0" max="100" value="50"
+      <input type="range" min="0" max="100" value="40"
              aria-label="Drag to compare the draft teaser with the final one">
     </div>
+    <div class="compare__tags" aria-hidden="true"><span><b>Draft</b> &middot; 20&ndash;21 July</span><span><b>Final</b> &middot; 26, 27, 28 July</span></div>
     <p class="plate__note">Drag, or use the arrow keys</p>
   </div>
 </section>
 
 <!-- ── 12 · sight unseen ──────────────────────────────────────── -->
-<section class="turn" data-reveal>
+<section data-index="Sight unseen" class="turn" data-reveal>
   <figure class="blobfig blobfig--turn" data-pose="phone" aria-hidden="true"><canvas></canvas></figure>
   <span class="turn__rule"></span>
   <div>
@@ -1047,7 +1149,7 @@ footer{border-top:1px solid var(--rule)}
 </div>
 
 <!-- ── 13 · the close ─────────────────────────────────────────── -->
-<div class="close">
+<div data-index="The close" class="close">
   <section class="row" data-reveal>
     <h2 class="h-sec rise">What went over</h2>
     <figure class="blobfig blobfig--over" data-pose="happy" aria-hidden="true"><canvas></canvas></figure>
@@ -1076,7 +1178,7 @@ footer{border-top:1px solid var(--rule)}
 </main>
 
 <!-- ── 14 · credits ───────────────────────────────────────────── -->
-<footer>
+<footer data-index="Credits">
   <dl class="credits" data-reveal>
     <div class="rise"><dt>Role</dt><dd>Design Lead &mdash; identity system,
       environmental, social, print</dd></div>
@@ -1141,6 +1243,23 @@ document.querySelectorAll('[data-compare]').forEach(c => {
   const set = () => { c.style.setProperty('--p', r.value + '%');
     r.setAttribute('aria-valuetext', r.value + '% draft, ' + (100 - r.value) + '% final'); };
   r.addEventListener('input', set); set();
+  /* once, on first sight: sweep the line across the date sign and back,
+     so the change reads before anyone thinks to drag */
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let stop = false;
+  ['pointerdown','keydown','input'].forEach(t => r.addEventListener(t, () => { stop = true; }, { once:true }));
+  new IntersectionObserver((es, io) => {
+    if (!es[0].isIntersecting) return; io.disconnect();
+    const from = +r.value, to = 6, t0 = performance.now() + 500, d = 2600;
+    const tick = now => {
+      if (stop) return;
+      const k = Math.min(Math.max((now - t0) / d, 0), 1);
+      const e = (1 - Math.cos(k * Math.PI * 2)) / 2;   /* there and back */
+      r.value = Math.round(from + (to - from) * e); set();
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, { threshold: .6 }).observe(c);
 });
 
 /* ── the feed: moves on its own, so it can be stopped (WCAG 2.2.2) ── */
@@ -1397,5 +1516,6 @@ addEventListener('resize', onScroll);
 onScroll();
 })();
 </script>
+<script src="../../js/case-index.js" defer></script>
 </body>
 </html>
