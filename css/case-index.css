@@ -1,133 +1,119 @@
-/* Case study index — a fixed rail in the left gutter (js/case-index.js).
-   One tick per chapter: read ones bright, the current one long and gold,
-   the rest dim, so the rail says where you are and how much is left.
-   Desktop: hover or focus opens the chapter names; click jumps.
-   Phone: ticks only, and the chapter name shows briefly as you enter it. */
+/* Case study index (js/case-index.js) — a second row inside the sticky
+   project bar, so it never sits over the page. "08 / 12 · Generative",
+   then one segment per chapter: read ones bright, the current one gold and
+   filling as you read it, the rest dim. Segments jump to their chapter. */
 
 .cix {
-  --cix-ink: rgba(251, 247, 240, .92);
-  --cix-dim: rgba(251, 247, 240, .26);
+  --cix-ink: rgba(251, 247, 240, .9);
+  --cix-dim: rgba(251, 247, 240, .2);
   --cix-gold: var(--accent, #E4BC6B);
-  position: fixed;
-  left: clamp(6px, 1.05vw, 16px);
-  top: 50%;
-  z-index: 30;                       /* under the project bar (40) */
-  transform: translateY(-50%);
-  font-family: var(--body, system-ui, sans-serif);
-  opacity: 0;
-  transition: opacity 400ms ease;
-  pointer-events: none;
-}
-.cix[data-show] { opacity: 1; pointer-events: auto; }
-
-.cix__count {
-  display: block;
-  margin: 0 0 10px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  color: var(--cix-ink);
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 6px rgba(0, 0, 0, .8);
-  white-space: nowrap;
-}
-.cix__count b { font-weight: 500; color: var(--cix-gold); }
-.cix__count i { font-style: normal; }
-
-.cix__list { list-style: none; margin: 0; padding: 0; }
-.cix__list li { margin: 0; }
-
-.cix__a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 18px;
-  color: var(--cix-dim);
-  text-decoration: none;
+  gap: clamp(14px, 2vw, 28px);
+  height: 30px;
+  padding: 0 var(--pad-g, 24px) 2px;
+  font-family: var(--body, system-ui, sans-serif);
+}
+
+.cix__now {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 42%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: .06em;
+  color: rgba(251, 247, 240, .55);
+  white-space: nowrap;
+}
+.cix__count { flex: none; font-variant-numeric: tabular-nums; }
+.cix__count b { font-weight: 500; color: var(--cix-gold); }
+.cix__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--cix-ink);
+  letter-spacing: .02em;
+}
+
+.cix__list {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cix__list li { flex: 1 1 0; min-width: 0; }
+
+/* a 14px hit area around a 2px segment */
+.cix__a {
+  position: relative;
+  display: block;
+  height: 14px;
   outline: none;
 }
-.cix__tick {
-  flex: none;
-  width: 9px;
+.cix__a::before, .cix__a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
   height: 2px;
   border-radius: 1px;
-  background: currentColor;
-  box-shadow: 0 0 4px rgba(0, 0, 0, .7);
-  transition: width 300ms cubic-bezier(.16, 1, .3, 1), background-color 300ms ease;
 }
-.cix__a.is-read { color: var(--cix-ink); }
-.cix__a.is-here { color: var(--cix-gold); }
-.cix__a.is-here .cix__tick { width: 20px; }
-.cix__a.is-here { --tw: 20px; }
+.cix__a::before { background: var(--cix-dim); transition: background-color 250ms ease; }
+.cix__a.is-read::before { background: var(--cix-ink); }
+.cix__a::after {
+  background: var(--cix-gold);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+.cix__a.is-here::after { transform: scaleX(var(--cix-f, 0)); }
+.cix__a.is-here::before { background: rgba(228, 188, 107, .3); }
+.cix__a:focus-visible::before { box-shadow: 0 0 0 2px var(--cix-gold); }
 
-.cix__name {
-  margin-left: calc(20px - var(--tw, 9px));   /* names line up whatever the tick */
-  font-size: 12px;
+/* hover: the chapter's name, just under its segment */
+.cix__tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, .1);
+  color: var(--cix-ink);
+  font-size: 11px;
   line-height: 1;
   letter-spacing: .02em;
   white-space: nowrap;
   opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity 200ms ease, transform 300ms cubic-bezier(.16, 1, .3, 1);
-}
-.cix__a.is-here .cix__name { font-weight: 500; }
-
-/* open: a dark card behind the names so they read over full-bleed images */
-.cix::before {
-  content: '';
-  position: absolute;
-  inset: -14px -18px -14px -10px;
-  z-index: -1;
-  border-radius: 12px;
-  background: rgba(8, 8, 8, .86);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, .08);
-  opacity: 0;
-  transition: opacity 200ms ease;
+  transform: translate(-50%, -3px);
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(.16, 1, .3, 1);
   pointer-events: none;
 }
-@media (hover: hover) and (min-width: 900px) {
-  .cix:hover::before, .cix:focus-within::before { opacity: 1; }
-  .cix:hover .cix__name, .cix:focus-within .cix__name { opacity: 1; transform: none; }
-  .cix:hover .cix__count, .cix:focus-within .cix__count { text-shadow: none; }
-  .cix__a:hover { color: var(--cix-ink); }
-  .cix__a.is-here:hover { color: var(--cix-gold); }
+.cix__list li:first-child .cix__tip { left: 0; transform: translate(0, -3px); }
+.cix__list li:last-child .cix__tip { left: auto; right: 0; transform: translate(0, -3px); }
+@media (hover: hover) {
+  .cix__a:hover .cix__tip, .cix__a:focus-visible .cix__tip { opacity: 1; transform: translate(-50%, 0); }
+  .cix__list li:first-child .cix__a:hover .cix__tip,
+  .cix__list li:first-child .cix__a:focus-visible .cix__tip,
+  .cix__list li:last-child .cix__a:hover .cix__tip,
+  .cix__list li:last-child .cix__a:focus-visible .cix__tip { transform: none; }
+  .cix__a:hover::before { background: var(--cix-ink); }
 }
-.cix__a:focus-visible .cix__tick { outline: 2px solid var(--cix-gold); outline-offset: 3px; }
 
-/* the name of the chapter just entered, beside the rail (phones) */
-.cix__toast { display: none; }
-
-@media (max-width: 899px), (hover: none) {
-  .cix { left: 3px; pointer-events: none !important; }
-  .cix__count { font-size: 9px; letter-spacing: .08em; margin-bottom: 8px; }
-  .cix__count i { display: none; }   /* the gutter is 18px: the ticks show what's left */
-  .cix__a { height: 13px; gap: 0; }
-  .cix__tick { width: 5px; }
-  .cix__a.is-here .cix__tick { width: 11px; }
-  .cix__name { display: none; }
-  .cix__toast {
-    display: block;
-    position: absolute;
-    left: 18px;
-    top: var(--cix-y, 50%);
-    transform: translate(-4px, -50%);
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: rgba(8, 8, 8, .86);
-    border: 1px solid rgba(255, 255, 255, .1);
-    color: var(--cix-ink);
-    font-size: 11px;
-    line-height: 1;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 260ms ease, transform 360ms cubic-bezier(.16, 1, .3, 1);
-  }
-  .cix__toast[data-show] { opacity: 1; transform: translate(0, -50%); }
-  .cix__toast b { font-weight: 500; color: var(--cix-gold); margin-right: 6px; }
+@media (max-width: 600px) {
+  .cix { height: 28px; gap: 12px; }
+  .cix__now { max-width: 50%; font-size: 10.5px; gap: 8px; }
+  .cix__list { gap: 2px; }
 }
+
+/* /dive: the phone reaction buttons sit under the bar, which is now taller */
+body:has(.cix) .rx-quick { top: calc(env(safe-area-inset-top, 0px) + 100px); }
 
 @media (prefers-reduced-motion: reduce) {
-  .cix, .cix *, .cix::before { transition: none !important; }
+  .cix *, .cix *::before, .cix *::after { transition: none !important; }
 }
