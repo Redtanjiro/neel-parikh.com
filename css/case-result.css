@@ -1,0 +1,78 @@
+/* "What shipped" — the finished work, straight after each case study's
+   title, before the problem. One lead image and two beside it (or three
+   level, --even), a line on what it is, and three facts from the close.
+   Uses the page's own tokens; .plate images open in the page's lightbox. */
+
+.result {
+  border-bottom: 1px solid var(--rule);
+  padding: clamp(48px, 7.5vw, 108px) var(--pad-g);
+}
+.result__head {
+  display: grid;
+  grid-template-columns: var(--col-1) 1fr;
+  align-items: end;
+  margin-bottom: clamp(28px, 4vw, 56px);
+}
+.result__head .say {
+  padding-left: clamp(24px, 3.9vw, 56px);
+  max-width: 52ch;
+  color: var(--ink);
+}
+
+.result__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 20px);
+}
+.result__grid figure { margin: 0; min-width: 0; min-height: 0; }
+.result__grid .plate { height: 100%; aspect-ratio: auto; }
+.result__grid figure:first-child { grid-row: 1 / span 2; }
+.result__grid figure:first-child .plate { aspect-ratio: 16 / 10.5; }
+.result__grid .plate img { object-position: var(--pos, 50% 50%); }
+
+.result__grid--even {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto;
+}
+.result__grid--even figure:first-child { grid-row: auto; }
+.result__grid--even .plate,
+.result__grid--even figure:first-child .plate { aspect-ratio: 4 / 3; }
+
+.result__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.9vw, 26px);
+  margin: clamp(28px, 4vw, 56px) 0 0;
+}
+.result__facts div { border-top: 1px solid var(--rule); padding-top: clamp(12px, 1.2vw, 16px); }
+.result__facts dt {
+  font-family: var(--body);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 .7em;
+}
+.result__facts dd {
+  margin: 0;
+  font-family: var(--body);
+  font-size: var(--t-sub);
+  line-height: 1.25;
+  color: var(--ink);
+}
+.result__facts a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .2em; }
+@media (hover: hover) { .result__facts a:hover { color: var(--accent); } }
+
+@media (max-width: 760px) {
+  .result__head { grid-template-columns: 1fr; gap: clamp(14px, 3vw, 20px); }
+  .result__head .say { padding-left: 0; }
+  .result__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .result__grid figure:first-child { grid-column: 1 / -1; grid-row: auto; }
+  .result__grid .plate { aspect-ratio: 1 / 1; height: auto; }
+  .result__grid--even figure:first-child { grid-column: 1 / -1; }
+  .result__grid--even .plate { aspect-ratio: 4 / 3; }
+  .result__facts { grid-template-columns: 1fr; gap: 0; }
+  .result__facts div { padding: 14px 0; }
+}
