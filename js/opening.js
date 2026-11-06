@@ -76,7 +76,10 @@
   function seenGet() { try { return sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) { return false; } }
   function seenSet() { try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {} }
 
-  var skipOpening = seenGet() || !E || !hero || !cvs;
+  /* Arriving at /#work or /#about (a case study's name or back arrow) is
+     a reader who asked for a place, not the story: put them straight there. */
+  var asked = /^#(work|about)$/.test(window.location.hash);
+  var skipOpening = seenGet() || asked || !E || !hero || !cvs;
 
   if (site && !skipOpening) {
     site.setAttribute('aria-hidden', 'true');

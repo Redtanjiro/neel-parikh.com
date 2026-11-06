@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Before first paint: a return in the same tab never sees the lid, not
      even for a frame. js/opening.js reads the same flag. -->
-<script>try{if(sessionStorage.getItem('np:opening-seen')==='1')document.documentElement.classList.add('op-seen')}catch(e){}</script>
+<script>try{if(sessionStorage.getItem('np:opening-seen')==='1'||/^#(work|about)$/.test(location.hash))document.documentElement.classList.add('op-seen')}catch(e){}</script>
 <title>Neel Parikh — Designer</title>
 <!-- "A designer without a team is, well, marooned" was the joke the old
      hero concept was built around; that hero is gone, and a joke with
